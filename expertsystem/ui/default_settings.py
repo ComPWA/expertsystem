@@ -1,4 +1,5 @@
 from copy import deepcopy
+import sys
 
 from ..state.particle import (
     StateQuantumNumberNames,
@@ -26,7 +27,10 @@ default_particle_list_search_paths = [
     "../../../../Physics",
     "../../../..",
     "../../",
+    "../",
 ]
+default_particle_list_search_paths += [sys.prefix + "/share"]
+default_particle_list_search_paths += sys.path
 
 # If a conservation law is not listed here, a default priority of 1 is assumed.
 # Higher number means higher priority
