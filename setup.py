@@ -38,5 +38,6 @@ setuptools.setup(
     tests_require=["pytest"],
     install_requires=INSTALL_REQUIRES,
     data_files=DATA_FILES,
+    package_data=dict(DATA_FILES),
     include_package_data=True,
 )
