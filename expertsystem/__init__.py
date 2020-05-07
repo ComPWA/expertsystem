@@ -18,6 +18,7 @@ parameters so that they resemble the data set as good as possible.
 
 __all__ = [
     "amplitude",
+    "io",
     "state",
     "topology",
     "ui",
