@@ -1,5 +1,6 @@
 import pytest
 
+from expertsystem.io import xml
 from expertsystem.ui.system_control import (
     StateTransitionManager,
     InteractionTypes,
@@ -12,7 +13,6 @@ from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     SpinQNConverter,
     Spin,
-    XMLLabelConstants,
 )
 from expertsystem.state.conservationrules import ParityConservationHelicity
 
@@ -131,7 +131,7 @@ def test_canonical_clebsch_gordan_ls_coupling(
 
     l_label = InteractionQuantumNumberNames.L
     s_label = InteractionQuantumNumberNames.S
-    qn_label = XMLLabelConstants.QuantumNumber
+    qn_label = xml.CONSTANTS.QuantumNumber
 
     spin_converter = SpinQNConverter()
     node_props = {
