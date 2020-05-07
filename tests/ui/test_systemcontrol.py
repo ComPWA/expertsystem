@@ -1,5 +1,6 @@
 import pytest
 
+from expertsystem.io import xml
 from expertsystem.ui.system_control import (
     StateTransitionManager,
     InteractionTypes,
@@ -19,8 +20,6 @@ from expertsystem.topology.graph import (
 from expertsystem.state.particle import (
     create_spin_domain,
     InteractionQuantumNumberNames,
-    get_xml_label,
-    XMLLabelConstants,
 )
 
 
@@ -228,8 +227,8 @@ class TestSolutionFilter(object):
         self, input_values, filter_parameters, result
     ):
         graphs = []
-        name_label = get_xml_label(XMLLabelConstants.Name)
-        value_label = get_xml_label(XMLLabelConstants.Value)
+        name_label = xml.get_label(xml.CONSTANTS.Name)
+        value_label = xml.get_label(xml.CONSTANTS.Value)
         for x in input_values:
             tempgraph = make_ls_test_graph(x[1][0], x[1][1])
             tempgraph.add_edges([0])

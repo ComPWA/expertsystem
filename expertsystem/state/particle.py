@@ -1,17 +1,20 @@
 """
 This module defines a particle as a collection of quantum numbers and
-things related to this
+things related to this.
 """
+
 import logging
+from abc import ABC, abstractmethod
+from collections import OrderedDict
 from copy import deepcopy
 from enum import Enum
-from abc import ABC, abstractmethod
-from numpy import arange
 from itertools import permutations
 from json import loads, dumps
-from collections import OrderedDict
+from numpy import arange
 
 import xmltodict
+
+from expertsystem.io import xml
 
 from ..topology.graph import (
     get_initial_state_edges,
@@ -20,32 +23,6 @@ from ..topology.graph import (
     get_originating_initial_state_edges,
     get_originating_final_state_edges,
 )
-
-
-XMLLabelConstants = Enum(
-    "XMLLabelConstants",
-    "Name Pid Type Value QuantumNumber Class Projection \
-                          Component Parameter PreFactor DecayInfo",
-)
-
-XMLLabelTags = [
-    XMLLabelConstants.QuantumNumber,
-    XMLLabelConstants.Parameter,
-    XMLLabelConstants.PreFactor,
-    XMLLabelConstants.DecayInfo,
-]
-
-
-def get_xml_label(enum):
-    """
-    Return the the correctly formatted XML label as required by ComPWA and
-    ``xmltodict``.
-    """
-    attribute_prefix = "@"
-    if enum in XMLLabelTags:
-        return enum.name
-    else:
-        return attribute_prefix + enum.name
 
 
 class Spin:
@@ -185,9 +162,9 @@ class AbstractQNConverter(ABC):
 
 
 class IntQNConverter(AbstractQNConverter):
-    value_label = get_xml_label(XMLLabelConstants.Value)
-    type_label = get_xml_label(XMLLabelConstants.Type)
-    class_label = get_xml_label(XMLLabelConstants.Class)
+    value_label = xml.get_label(xml.CONSTANTS.Value)
+    type_label = xml.get_label(xml.CONSTANTS.Type)
+    class_label = xml.get_label(xml.CONSTANTS.Class)
 
     def parse_from_dict(self, data_dict):
         return int(data_dict[self.value_label])
@@ -201,9 +178,9 @@ class IntQNConverter(AbstractQNConverter):
 
 
 class FloatQNConverter(AbstractQNConverter):
-    value_label = get_xml_label(XMLLabelConstants.Value)
-    type_label = get_xml_label(XMLLabelConstants.Type)
-    class_label = get_xml_label(XMLLabelConstants.Class)
+    value_label = xml.get_label(xml.CONSTANTS.Value)
+    type_label = xml.get_label(xml.CONSTANTS.Type)
+    class_label = xml.get_label(xml.CONSTANTS.Class)
 
     def parse_from_dict(self, data_dict):
         return float(data_dict[self.value_label])
@@ -217,10 +194,10 @@ class FloatQNConverter(AbstractQNConverter):
 
 
 class SpinQNConverter(AbstractQNConverter):
-    type_label = get_xml_label(XMLLabelConstants.Type)
-    class_label = get_xml_label(XMLLabelConstants.Class)
-    value_label = get_xml_label(XMLLabelConstants.Value)
-    proj_label = get_xml_label(XMLLabelConstants.Projection)
+    type_label = xml.get_label(xml.CONSTANTS.Type)
+    class_label = xml.get_label(xml.CONSTANTS.Class)
+    value_label = xml.get_label(xml.CONSTANTS.Value)
+    proj_label = xml.get_label(xml.CONSTANTS.Projection)
 
     def __init__(self, parse_projection=True):
         self.parse_projection = parse_projection
@@ -271,7 +248,7 @@ def load_particle_list_from_xml(file_path):
     If a particle name in the loaded XML file already exists in the
     ``particle_list``, the one in the ``particle_list`` will be overwritten.
     """
-    name_label = get_xml_label(XMLLabelConstants.Name)
+    name_label = xml.get_label(xml.CONSTANTS.Name)
     with open(file_path, "rb") as xmlfile:
         full_dict = xmltodict.parse(xmlfile)
         for p in full_dict["ParticleList"]["Particle"]:
@@ -299,7 +276,7 @@ def add_to_particle_list(particle):
     if not isinstance(particle, dict):
         logging.warning("Can only add dictionary entries to particle_list")
         return
-    particle_name = particle[get_xml_label(XMLLabelConstants.Name)]
+    particle_name = particle[xml.get_label(xml.CONSTANTS.Name)]
     particle_list[particle_name] = particle
 
 
@@ -321,9 +298,9 @@ def get_particle_copy_by_name(particle_name):
 
 
 def get_particle_property(particle_properties, qn_name, converter=None):
-    qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
-    type_label = get_xml_label(XMLLabelConstants.Type)
-    value_label = get_xml_label(XMLLabelConstants.Value)
+    qns_label = xml.get_label(xml.CONSTANTS.QuantumNumber)
+    type_label = xml.get_label(xml.CONSTANTS.Type)
+    value_label = xml.get_label(xml.CONSTANTS.Value)
 
     found_prop = None
     if isinstance(qn_name, StateQuantumNumberNames):
@@ -339,10 +316,10 @@ def get_particle_property(particle_properties, qn_name, converter=None):
                 break
             if key == "Parameter" and val[type_label] == qn_name.name:
                 # parameters have a separate value tag
-                tagname = XMLLabelConstants.Value.name
+                tagname = xml.CONSTANTS.Value.name
                 found_prop = {value_label: val[tagname]}
                 break
-            if key == XMLLabelConstants.DecayInfo.name:
+            if key == xml.CONSTANTS.DecayInfo.name:
                 for decinfo_key, decinfo_val in val.items():
                     if decinfo_key == qn_name.name:
                         found_prop = {value_label: decinfo_val}
@@ -353,7 +330,7 @@ def get_particle_property(particle_properties, qn_name, converter=None):
                         for parval in decinfo_val:
                             if parval[type_label] == qn_name.name:
                                 # parameters have a separate value tag
-                                tagname = XMLLabelConstants.Value.name
+                                tagname = xml.CONSTANTS.Value.name
                                 found_prop = {value_label: parval[tagname]}
                                 break
                         if found_prop:
@@ -373,8 +350,8 @@ def get_particle_property(particle_properties, qn_name, converter=None):
 
 
 def get_interaction_property(interaction_properties, qn_name, converter=None):
-    qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
-    type_label = get_xml_label(XMLLabelConstants.Type)
+    qns_label = xml.get_label(xml.CONSTANTS.QuantumNumber)
+    type_label = xml.get_label(xml.CONSTANTS.Type)
 
     found_prop = None
     if isinstance(qn_name, InteractionQuantumNumberNames):
@@ -417,7 +394,7 @@ class CompareGraphElementPropertiesFunctor:
     def compare_qn_numbers(self, qns1, qns2):
         new_qns1 = {}
         new_qns2 = {}
-        type_label = get_xml_label(XMLLabelConstants.Type)
+        type_label = xml.get_label(xml.CONSTANTS.Type)
         for x in qns1:
             if x[type_label] not in self.ignored_qn_list:
                 temp_qn_dict = dict(x)
@@ -439,7 +416,7 @@ class CompareGraphElementPropertiesFunctor:
     def __call__(self, props1, props2):
         # for more speed first compare the names (if they exist)
 
-        name_label = get_xml_label(XMLLabelConstants.Name)
+        name_label = xml.get_label(xml.CONSTANTS.Name)
         names1 = {
             k: v[name_label] for k, v in props1.items() if name_label in v
         }
@@ -453,7 +430,7 @@ class CompareGraphElementPropertiesFunctor:
                 return False
 
         # then compare the qn lists (if they exist)
-        qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
+        qns_label = xml.get_label(xml.CONSTANTS.QuantumNumber)
         for ele_id, props in props1.items():
             qns1 = []
             qns2 = []
@@ -467,7 +444,7 @@ class CompareGraphElementPropertiesFunctor:
         copy_props1 = deepcopy(props1)
         copy_props2 = deepcopy(props2)
         # remove the qn dicts
-        qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
+        qns_label = xml.get_label(xml.CONSTANTS.QuantumNumber)
         for ele_id in props1.keys():
             if qns_label in copy_props1[ele_id]:
                 del copy_props1[ele_id][qns_label]
@@ -645,9 +622,9 @@ def initialize_edges(graph, edge_particle_dict):
 
 
 def populate_edge_with_spin_projections(graph, edge_id, spin_projections):
-    qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
-    type_label = get_xml_label(XMLLabelConstants.Type)
-    class_label = get_xml_label(XMLLabelConstants.Class)
+    qns_label = xml.get_label(xml.CONSTANTS.QuantumNumber)
+    type_label = xml.get_label(xml.CONSTANTS.Type)
+    class_label = xml.get_label(xml.CONSTANTS.Class)
     type_value = StateQuantumNumberNames.Spin
     class_value = QNNameClassMapping[type_value]
 
@@ -667,7 +644,7 @@ def populate_edge_with_spin_projections(graph, edge_id, spin_projections):
         for spin_proj in spin_projections:
             graph_copy = deepcopy(graph)
             graph_copy.edge_props[edge_id][qns_label][index_list[0]][
-                get_xml_label(XMLLabelConstants.Projection)
+                xml.get_label(xml.CONSTANTS.Projection)
             ] = spin_proj
             new_graphs.append(graph_copy)
 
@@ -722,7 +699,7 @@ def initialize_allowed_particle_list(allowed_particle_list):
 
 def get_particle_candidates_for_state(state, allowed_particle_list):
     particle_edges = []
-    qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
+    qns_label = xml.get_label(xml.CONSTANTS.QuantumNumber)
 
     for allowed_state in allowed_particle_list:
         if check_qns_equal(state[qns_label], allowed_state[qns_label]):
@@ -736,8 +713,8 @@ def get_particle_candidates_for_state(state, allowed_particle_list):
 
 def check_qns_equal(qns_state, qns_particle):
     equal = True
-    class_label = get_xml_label(XMLLabelConstants.Class)
-    type_label = get_xml_label(XMLLabelConstants.Type)
+    class_label = xml.get_label(xml.CONSTANTS.Class)
+    type_label = xml.get_label(xml.CONSTANTS.Type)
     for qn_entry in qns_state:
         qn_found = False
         qn_value_match = False
@@ -770,9 +747,9 @@ def check_qns_equal(qns_state, qns_particle):
 
 def compare_qns(qn_dict, qn_dict2):
     qn_class = QuantumNumberClasses[
-        qn_dict[get_xml_label(XMLLabelConstants.Class)]
+        qn_dict[xml.get_label(xml.CONSTANTS.Class)]
     ]
-    value_label = get_xml_label(XMLLabelConstants.Value)
+    value_label = xml.get_label(xml.CONSTANTS.Value)
 
     val1 = None
     val2 = qn_dict2
@@ -785,7 +762,7 @@ def compare_qns(qn_dict, qn_dict2):
         if isinstance(qn_dict2, dict):
             val2 = float(qn_dict2[value_label])
     elif qn_class is QuantumNumberClasses.Spin:
-        spin_proj_label = get_xml_label(XMLLabelConstants.Projection)
+        spin_proj_label = xml.get_label(xml.CONSTANTS.Projection)
         if isinstance(qn_dict2, dict):
             if spin_proj_label in qn_dict and spin_proj_label in qn_dict2:
                 val1 = Spin(qn_dict[value_label], qn_dict[spin_proj_label])
@@ -802,8 +779,8 @@ def compare_qns(qn_dict, qn_dict2):
 
 
 def merge_qn_props(qns_state, qns_particle):
-    class_label = get_xml_label(XMLLabelConstants.Class)
-    type_label = get_xml_label(XMLLabelConstants.Type)
+    class_label = xml.get_label(xml.CONSTANTS.Class)
+    type_label = xml.get_label(xml.CONSTANTS.Type)
     qns = deepcopy(qns_particle)
     for qn_entry in qns_state:
         qn_found = False

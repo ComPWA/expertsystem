@@ -11,6 +11,8 @@ from enum import Enum
 from abc import ABC, abstractmethod
 import logging
 
+from expertsystem.io import xml
+
 from ..solvers.constraint import (
     Problem,
     Constraint,
@@ -27,8 +29,6 @@ from ..topology.graph import (
 )
 from ..state.conservationrules import AbstractRule
 from ..state.particle import (
-    get_xml_label,
-    XMLLabelConstants,
     StateQuantumNumberNames,
     InteractionQuantumNumberNames,
     ParticlePropertyNames,
@@ -269,9 +269,9 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
         Creates variables for the quantum numbers of the specified node.
         """
         variables = {}
-        type_label = get_xml_label(XMLLabelConstants.Type)
+        type_label = xml.get_label(xml.CONSTANTS.Type)
         if node_id in self.graph.node_props:
-            qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
+            qns_label = xml.get_label(xml.CONSTANTS.QuantumNumber)
             for qn_name in qn_list:
                 converter = QNClassConverterMapping[
                     QNNameClassMapping[qn_name]
@@ -627,7 +627,7 @@ class CSPPropagator(AbstractPropagator):
 def add_qn_to_graph_element(graph, var_info, value):
     if value is None:
         return
-    qns_label = get_xml_label(XMLLabelConstants.QuantumNumber)
+    qns_label = xml.get_label(xml.CONSTANTS.QuantumNumber)
 
     element_id = var_info.element_id
     qn_name = var_info.qn_name
