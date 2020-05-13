@@ -1,6 +1,12 @@
 """Tags used when writing to and from XML files."""
 
 
+__all__ = [
+    "CONSTANTS",
+    "get_label",
+]
+
+
 from enum import Enum
 
 
@@ -27,7 +33,7 @@ TAGS = [
 ]
 
 
-def get_label(enum):
+def get_label(enum: Enum) -> str:
     """
     Return the the correctly formatted XML label as required by ComPWA and
     ``xmltodict``.
