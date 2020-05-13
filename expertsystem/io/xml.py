@@ -19,7 +19,7 @@ CONSTANTS = Enum(
     "DecayInfo",
 )
 
-Tags = [
+TAGS = [
     CONSTANTS.QuantumNumber,
     CONSTANTS.Parameter,
     CONSTANTS.PreFactor,
@@ -33,6 +33,6 @@ def get_label(enum):
     ``xmltodict``.
     """
     attribute_prefix = "@"
-    if enum in Tags:
+    if enum in TAGS:
         return enum.name
     return attribute_prefix + enum.name
