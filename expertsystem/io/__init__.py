@@ -1,5 +1,4 @@
-"""This is a collection of helpers for file representations of the
-`expertsystem` input/output."""
+"""Collection of parsers and related tools for input/output."""
 
 
 __all__ = [
