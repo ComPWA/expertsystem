@@ -35,8 +35,9 @@ TAGS = [
 
 def get_label(enum: Enum) -> str:
     """
-    Return the the correctly formatted XML label as required by ComPWA and
-    ``xmltodict``.
+    Return the correctly formatted XML label.
+
+    The labels agree with what ComPWA expects and are used by ``xmltodict``.
     """
     attribute_prefix = "@"
     if enum in TAGS:
