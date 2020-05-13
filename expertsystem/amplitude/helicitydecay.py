@@ -1,9 +1,10 @@
-from collections import OrderedDict
+"""Functions and classes for working in the helicity formalism."""
+
+
 import json
 import logging
 from copy import deepcopy
-
-import xmltodict
+from typing import Callable
 
 from expertsystem.io import xml
 from .abstractgenerator import (
@@ -643,19 +644,13 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
         )
         return self.fit_parameter_names
 
-    def write_to_file(self, filename):
-        with open(filename, mode="w") as xmlfile:
-            full_dict = self.particle_list
-            full_dict.update(self.kinematics)
-            full_dict.update(self.helicity_amplitudes)
-            # xmltodict only allows a single xml root
-            xmlstring = xmltodict.unparse(
-                OrderedDict({"root": full_dict}), pretty=True
-            )
-            # before writing it to file we remove the root tag again
-            xmlstring = xmlstring.replace("<root>", "", 1)
-            xmlstring = xmlstring[:-10] + xmlstring[-10:].replace(
-                "</root>", "", 1
-            )
-            xmlfile.write(xmlstring)
-            xmlfile.close()
+    def write_to_file(
+        self,
+        filename: str,
+        parser: Callable[[dict, str, bool], None] = xml.write_dict,
+    ) -> None:
+        """Write helicity amplitude module to a recipe file."""
+        full_dict = self.particle_list
+        full_dict.update(self.kinematics)
+        full_dict.update(self.helicity_amplitudes)
+        parser(full_dict, filename, True)

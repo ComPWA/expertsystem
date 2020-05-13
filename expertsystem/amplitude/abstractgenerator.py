@@ -4,7 +4,11 @@
 from abc import ABC
 from abc import abstractmethod
 
+from typing import Callable
 from typing import Tuple
+
+
+from expertsystem.io import xml
 
 
 class AbstractAmplitudeNameGenerator(ABC):
@@ -44,7 +48,11 @@ class AbstractAmplitudeGenerator(ABC):
         """
 
     @abstractmethod
-    def write_to_file(self, filename: str) -> None:
+    def write_to_file(
+        self,
+        filename: str,
+        parser: Callable[[dict, str], None] = xml.write_dict,
+    ) -> None:
         """
         Write generated amplitude model to a recipe file.
 
