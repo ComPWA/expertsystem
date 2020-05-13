@@ -59,12 +59,7 @@ def write_dict(
         mode = "w"
     with open(filename, mode=mode) as xmlfile:
         xmlstring = xmltodict.unparse(
-            OrderedDict({"root": input_dict}),
-            pretty=True,
-            full_document=False,
+            OrderedDict({"root": input_dict}), pretty=True,
         )
-        # The root tag needs to be removed again for ComPWA
-        xmlstring = xmlstring.replace("<root>", "", 1)
-        xmlstring = xmlstring[:-10] + xmlstring[-10:].replace("</root>", "", 1)
         xmlfile.write(xmlstring)
         xmlfile.close()
