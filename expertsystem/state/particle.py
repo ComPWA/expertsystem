@@ -3,15 +3,18 @@ This module defines a particle as a collection of quantum numbers and
 things related to this
 """
 import logging
+from abc import ABC, abstractmethod
+from collections import OrderedDict
 from copy import deepcopy
 from enum import Enum
-from abc import ABC, abstractmethod
-from numpy import arange
 from itertools import permutations
 from json import loads, dumps
-from collections import OrderedDict
+
+from numpy import arange
 
 import xmltodict
+
+import yaml
 
 from ..topology.graph import (
     get_initial_state_edges,
@@ -291,9 +294,7 @@ def load_particle_list_from_xml(file_path: str) -> None:
             particle_list[particle_name] = to_dict(particle_definition)
 
 
-def write_particle_list_to_xml(
-    file_path: str = "new_particle_list.xml",
-) -> None:
+def write_particle_list_to_xml(file_path: str) -> None:
     """Write ``particle_list`` instance to XML file."""
     entries = list(particle_list.values())
     particle_dict = {"ParticleList": {"Particle": entries}}
@@ -301,6 +302,32 @@ def write_particle_list_to_xml(
         output_file.write(
             xmltodict.unparse(particle_dict, full_document=False, pretty=True)
         )
+
+
+def load_particle_list_from_yaml(file_path: str) -> None:
+    """
+    Use `.load_particle_list_from_yaml` to append to the ``particle_list`` from
+    a YAML file.
+
+    .. note::
+        If a particle name in the YAML file already exists in the
+        ``particle_list`` instance, the one in ``particle_list`` will be
+        overwritten.
+    """
+    name_label = LABELS.Name.name
+    with open(file_path, "rb") as input_file:
+        full_dict = yaml.load(input_file, Loader=yaml.FullLoader)
+        for particle_definition in full_dict["ParticleList"]:
+            particle_name = particle_definition[name_label]
+            particle_list[particle_name] = particle_definition
+
+
+def write_particle_list_to_yaml(file_path: str) -> None:
+    """Write ``particle_list`` instance to a YAML file."""
+    entries = list(particle_list.values())
+    particle_dict = {"ParticleList": entries}
+    with open(file_path, "w") as output_file:
+        yaml.dump(particle_dict, output_file)
 
 
 def add_to_particle_list(particle):
