@@ -268,14 +268,15 @@ def is_boson(qn_dict):
 particle_list = dict()
 
 
-def load_particle_list_from_xml(file_path):
+def load_particle_list_from_xml(file_path: str) -> None:
     """
     By default, the expert system loads the ``particle_list``
     from the XML file ``particle_list.xml`` located in the ComPWA module.
     Use `.load_particle_list_from_xml` to append to the ``particle_list``.
+
     .. note::
-    If a particle name in the loaded XML file already exists in the
-    ``particle_list``, the one in the ``particle_list`` will be overwritten.
+        If a particle name in the loaded XML file already exists in the
+        ``particle_list``, the one in the ``particle_list`` will be overwritten.
     """
     name_label = LABELS.Name.name
     with open(file_path, "rb") as xmlfile:
@@ -285,11 +286,13 @@ def load_particle_list_from_xml(file_path):
             particle_list[particle_name] = particle_definition
 
 
-def write_particle_list_to_xml(file_path: str):
+def write_particle_list_to_xml(
+    file_path: str = "new_particle_list.xml",
+) -> None:
     """Write ``particle_list`` instance to XML file."""
-    entries = [entry for entry in particle_list.values()]
+    entries = list(particle_list.values())
     particle_dict = {"ParticleList": {"Particle": entries}}
-    with open("new_particle_list.xml", "w") as output_file:
+    with open(file_path, "w") as output_file:
         output_file.write(
             xmltodict.unparse(particle_dict, full_document=False, pretty=True)
         )
