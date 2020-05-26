@@ -40,6 +40,11 @@ LABELS = Enum(
 )
 
 
+def to_dict(input_ordered_dict: OrderedDict) -> dict:
+    """Convert nested `OrderedDict` to a nested `dict`."""
+    return loads(dumps(input_ordered_dict))
+
+
 class Spin:
     """
     Simple struct-like class defining spin as a magnitude plus the projection
@@ -283,7 +288,7 @@ def load_particle_list_from_xml(file_path: str) -> None:
         full_dict = xmltodict.parse(xmlfile)
         for particle_definition in full_dict["ParticleList"]["Particle"]:
             particle_name = particle_definition[name_label]
-            particle_list[particle_name] = particle_definition
+            particle_list[particle_name] = to_dict(particle_definition)
 
 
 def write_particle_list_to_xml(
