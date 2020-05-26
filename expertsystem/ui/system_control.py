@@ -24,8 +24,6 @@ from ..topology.topologybuilder import SimpleStateTransitionTopologyBuilder
 
 from ..state import particle
 from ..state.particle import (
-    load_particle_list_from_xml,
-    particle_list,
     initialize_graph,
     get_particle_property,
     get_interaction_property,
@@ -807,7 +805,7 @@ def load_default_particle_list(
     method: Callable = particle.load_particle_list_from_xml,
 ) -> None:
     """Load the default particle list that comes with the expertsystem."""
-    if len(particle_list) == 0:
+    if len(particle.DATABASE) == 0:
         for search_path in default_particle_list_search_paths:
             if search_path.startswith("/"):  # absolute path
                 file_path = search_path
@@ -820,12 +818,12 @@ def load_default_particle_list(
                 method(file_path)
                 logging.info(
                     "loaded "
-                    + str(len(particle_list))
-                    + " particles from xml file!"
+                    + str(len(particle.DATABASE))
+                    + " particles from particle_list file!"
                 )
                 break
-    if len(particle_list) == 0:
+    if len(particle.DATABASE) == 0:
         raise FileNotFoundError(
-            "\n  Failed to load particle_list.xml from search paths!"
+            "\n  Failed to load particle_list file from search paths!"
             "\n  Please contact the developers: https://github.com/ComPWA"
         )
