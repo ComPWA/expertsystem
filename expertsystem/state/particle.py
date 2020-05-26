@@ -23,7 +23,7 @@ from ..topology.graph import (
 
 
 LABELS = Enum(
-    "Labels",
+    "LABELS",
     [
         "Class",
         "Component",
