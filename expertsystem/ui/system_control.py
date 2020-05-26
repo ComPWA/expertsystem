@@ -6,8 +6,11 @@ from abc import ABC, abstractmethod
 from multiprocessing import Pool
 import inspect
 from os import path
+from typing import Callable
 
 from progress.bar import IncrementalBar
+
+import expertsystem
 
 from ..topology.graph import (
     StateTransitionGraph,
@@ -568,31 +571,7 @@ class StateTransitionManager:
                 )
         self.topology_builder = SimpleStateTransitionTopologyBuilder(int_nodes)
 
-        # load default particles from database/file
-        if len(particle_list) == 0:
-            for search_path in default_particle_list_search_paths:
-                if search_path.startswith("/"):  # absolute path
-                    file_path = search_path
-                else:  # relative path
-                    file_path = (
-                        path.dirname(inspect.getfile(StateTransitionManager))
-                        + "/"
-                        + search_path
-                    )
-                file_path += "/particle_list.xml"
-                if path.exists(file_path):
-                    load_particle_list_from_xml(file_path)
-                    logging.info(
-                        "loaded "
-                        + str(len(particle_list))
-                        + " particles from xml file!"
-                    )
-                    break
-        if len(particle_list) == 0:
-            raise FileNotFoundError(
-                "\n  Failed to load particle_list.xml from search paths!"
-                "\n  Please contact the developers: https://github.com/ComPWA"
-            )
+        load_default_particle_list()
 
     def set_topology_builder(self, topology_builder):
         self.topology_builder = topology_builder
@@ -822,3 +801,31 @@ class StateTransitionManager:
         )
 
         return propagator
+
+
+def load_default_particle_list(
+    method: Callable = particle.load_particle_list_from_xml,
+) -> None:
+    """Load the default particle list that comes with the expertsystem."""
+    if len(particle_list) == 0:
+        for search_path in default_particle_list_search_paths:
+            if search_path.startswith("/"):  # absolute path
+                file_path = search_path
+            else:  # relative path
+                file_path = (
+                    path.dirname(expertsystem.__file__) + "/" + search_path
+                )
+            file_path += "/particle_list.xml"
+            if path.exists(file_path):
+                method(file_path)
+                logging.info(
+                    "loaded "
+                    + str(len(particle_list))
+                    + " particles from xml file!"
+                )
+                break
+    if len(particle_list) == 0:
+        raise FileNotFoundError(
+            "\n  Failed to load particle_list.xml from search paths!"
+            "\n  Please contact the developers: https://github.com/ComPWA"
+        )
