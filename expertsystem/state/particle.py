@@ -43,11 +43,6 @@ LABELS = Enum(
 )
 
 
-def to_dict(input_ordered_dict: OrderedDict) -> dict:
-    """Convert nested `OrderedDict` to a nested `dict`."""
-    return loads(dumps(input_ordered_dict))
-
-
 class Spin:
     """
     Simple struct-like class defining spin as a magnitude plus the projection
@@ -278,6 +273,8 @@ particle_list = dict()
 
 def load_particle_list_from_xml(file_path: str) -> None:
     """
+    Add entries to the ``particle_list`` from definitions in an XML file.
+
     By default, the expert system loads the ``particle_list``
     from the XML file ``particle_list.xml`` located in the ComPWA module.
     Use `.load_particle_list_from_xml` to append to the ``particle_list``.
@@ -286,6 +283,11 @@ def load_particle_list_from_xml(file_path: str) -> None:
         If a particle name in the loaded XML file already exists in the
         ``particle_list``, the one in the ``particle_list`` will be overwritten.
     """
+
+    def to_dict(input_ordered_dict: OrderedDict) -> dict:
+        """Convert nested `OrderedDict` to a nested `dict`."""
+        return loads(dumps(input_ordered_dict))
+
     name_label = LABELS.Name.name
     with open(file_path, "rb") as xmlfile:
         full_dict = xmltodict.parse(xmlfile)
