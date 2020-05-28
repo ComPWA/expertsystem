@@ -537,13 +537,9 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
                 get_particle_property(graph.edge_props[x], spin_label)
                 for x in out_edges
             ]
-            if (
-                in_spin is not None
-                and None not in out_spins
-                and in_spin.magnitude() == 0
-            ):
+            if in_spin is not None and in_spin.magnitude == 0:
                 if (
-                    abs(out_spins[0].projection() - out_spins[1].projection())
+                    abs(out_spins[0].projection - out_spins[1].projection)
                     == 0.0
                 ):
                     # check if dynamics is non-resonant (constant)

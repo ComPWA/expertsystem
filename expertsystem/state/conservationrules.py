@@ -233,7 +233,7 @@ class ParityConservation(AbstractRule):
         parity_out = reduce(
             lambda x, y: x * y[parity_label], outgoing_part_qns, 1
         )
-        ang_mom = interaction_qns[InteractionQuantumNumberNames.L].magnitude()
+        ang_mom = interaction_qns[InteractionQuantumNumberNames.L].magnitude
         if parity_in == (parity_out * (-1) ** ang_mom):
             return True
         return False
@@ -269,7 +269,7 @@ class ParityConservationHelicity(AbstractRule):
             parity_label = StateQuantumNumberNames.Parity
 
             spins = [
-                x[spin_label].magnitude()
+                x[spin_label].magnitude
                 for x in ingoing_part_qns + outgoing_part_qns
             ]
             parity_product = reduce(
@@ -283,9 +283,7 @@ class ParityConservationHelicity(AbstractRule):
             )
 
             daughter_hel = [
-                0
-                for x in outgoing_part_qns
-                if x[spin_label].projection() == 0.0
+                0 for x in outgoing_part_qns if x[spin_label].projection == 0.0
             ]
             if len(daughter_hel) == 2:
                 if prefactor == -1:
@@ -373,12 +371,12 @@ class CParityConservation(AbstractRule):
             if is_particle_antiparticle_pair(
                 part_qns[0][pid_label], part_qns[1][pid_label]
             ):
-                ang_mom = interaction_qns[ang_mom_label].magnitude()
+                ang_mom = interaction_qns[ang_mom_label].magnitude
                 # if boson
                 if is_boson(part_qns[0]):
                     return (-1) ** ang_mom
                 else:
-                    coupled_spin = interaction_qns[int_spin_label].magnitude()
+                    coupled_spin = interaction_qns[int_spin_label].magnitude
                     return (-1) ** (ang_mom + coupled_spin)
         """elif len(no_cpar_part) > 0 and len(no_cpar_part) % 2 == 0:
             # does this also work for more than 2 particles?
@@ -500,13 +498,13 @@ class GParityConservation(AbstractRule):
         if is_particle_antiparticle_pair(
             double_state_qns[0][pid_label], double_state_qns[1][pid_label]
         ):
-            ang_mom = interaction_qns[ang_mom_label].magnitude()
-            isospin = single_state_qns[0][isospin_label].magnitude()
+            ang_mom = interaction_qns[ang_mom_label].magnitude
+            isospin = single_state_qns[0][isospin_label].magnitude
             # if boson
             if is_boson(double_state_qns[0]):
                 return (-1) ** (ang_mom + isospin)
             else:
-                coupled_spin = interaction_qns[int_spin_label].magnitude()
+                coupled_spin = interaction_qns[int_spin_label].magnitude
                 return (-1) ** (ang_mom + coupled_spin + isospin)
         return None
 
@@ -604,8 +602,8 @@ class SpinConservation(AbstractRule):
         return self.check_magnitude(in_spins, out_spins, interaction_qns)
 
     def check_projections(self, in_part, out_part):
-        in_proj = [x.projection() for x in in_part]
-        out_proj = [x.projection() for x in out_part]
+        in_proj = [x.projection for x in in_part]
+        out_proj = [x.projection for x in out_part]
         return sum(in_proj) == sum(out_proj)
 
     def check_magnitude(self, in_part, out_part, interaction_qns):
@@ -622,7 +620,7 @@ class SpinConservation(AbstractRule):
             if self.use_projection:
                 total_spins.add(part_list[0])
             else:
-                total_spins.add(Spin(part_list[0].magnitude(), 0))
+                total_spins.add(Spin(part_list[0].magnitude, 0))
         else:
             # first couple all spins together
             spins_daughters_coupled = set()
@@ -644,8 +642,8 @@ class SpinConservation(AbstractRule):
                     if S in spins_daughters_coupled:
                         total_spins.update(self.spin_couplings(S, L))
                 else:
-                    if S.magnitude() in [
-                        x.magnitude() for x in spins_daughters_coupled
+                    if S.magnitude in [
+                        x.magnitude for x in spins_daughters_coupled
                     ]:
                         total_spins.update(self.spin_couplings(S, L))
             else:
@@ -653,8 +651,7 @@ class SpinConservation(AbstractRule):
                     total_spins = spins_daughters_coupled
                 else:
                     total_spins = [
-                        Spin(x.magnitude(), 0.0)
-                        for x in spins_daughters_coupled
+                        Spin(x.magnitude, 0.0) for x in spins_daughters_coupled
                     ]
         return total_spins
 
@@ -663,10 +660,10 @@ class SpinConservation(AbstractRule):
         implements the coupling of two spins
         :math:`|S_1 - S_2| \\leq S \\leq |S_1 + S_2|` and :math:`M_1 + M_2 = M`
         """
-        j1 = spin1.magnitude()
-        j2 = spin2.magnitude()
+        j1 = spin1.magnitude
+        j2 = spin2.magnitude
         if self.use_projection:
-            m = spin1.projection() + spin2.projection()
+            m = spin1.projection + spin2.projection
             possible_spins = [
                 Spin(x, m)
                 for x in arange(abs(j1 - j2), j1 + j2 + 1, 1).tolist()
@@ -686,12 +683,12 @@ class SpinConservation(AbstractRule):
 
 
 def is_clebsch_gordan_coefficient_zero(spin1, spin2, spin_coupled):
-    m1 = spin1.projection()
-    j1 = spin1.magnitude()
-    m2 = spin2.projection()
-    j2 = spin2.magnitude()
-    m = spin_coupled.projection()
-    j = spin_coupled.magnitude()
+    m1 = spin1.projection
+    j1 = spin1.magnitude
+    m2 = spin2.projection
+    j2 = spin2.magnitude
+    m = spin_coupled.projection
+    j = spin_coupled.magnitude
     iszero = False
     if (j1 == j2 and m1 == m2) or (m1 == 0.0 and m2 == 0.0):
         if abs(j - j1 - j2) % 2 == 1:
@@ -732,21 +729,21 @@ class ClebschGordanCheckHelicityToCanonical(AbstractRule):
             in_spins = [x[spin_label] for x in ingoing_part_qns]
             out_spins = [x[spin_label] for x in outgoing_part_qns]
             out_spins[1] = Spin(
-                out_spins[1].magnitude(), -out_spins[1].projection()
+                out_spins[1].magnitude, -out_spins[1].projection
             )
-            helicity_diff = sum([x.projection() for x in out_spins])
+            helicity_diff = sum([x.projection for x in out_spins])
             L = interaction_qns[InteractionQuantumNumberNames.L]
             S = interaction_qns[InteractionQuantumNumberNames.S]
-            if S.magnitude() < abs(helicity_diff) or in_spins[
-                0
-            ].magnitude() < abs(helicity_diff):
+            if S.magnitude < abs(helicity_diff) or in_spins[0].magnitude < abs(
+                helicity_diff
+            ):
                 return False
-            S = Spin(S.magnitude(), helicity_diff)
+            S = Spin(S.magnitude, helicity_diff)
             if is_clebsch_gordan_coefficient_zero(
                 out_spins[0], out_spins[1], S
             ):
                 return False
-            in_spins[0] = Spin(in_spins[0].magnitude(), helicity_diff)
+            in_spins[0] = Spin(in_spins[0].magnitude, helicity_diff)
             return not is_clebsch_gordan_coefficient_zero(L, S, in_spins[0])
         return False
 
@@ -767,9 +764,9 @@ class HelicityConservation(AbstractRule):
         if len(ingoing_part_qns) == 1 and len(outgoing_part_qns) == 2:
             spin_label = StateQuantumNumberNames.Spin
 
-            mother_spin = ingoing_part_qns[0][spin_label].magnitude()
+            mother_spin = ingoing_part_qns[0][spin_label].magnitude
             daughter_hel = [
-                x[spin_label].projection() for x in outgoing_part_qns
+                x[spin_label].projection for x in outgoing_part_qns
             ]
             if mother_spin >= abs(daughter_hel[0] - daughter_hel[1]):
                 return True
@@ -823,7 +820,7 @@ class GellMannNishijimaRule(AbstractRule):
                 continue
             isospin_3 = 0
             if isospin_label in particle:
-                isospin_3 = particle[isospin_label].projection()
+                isospin_3 = particle[isospin_label].projection
             if float(particle[charge_label]) != (
                 isospin_3 + 0.5 * self.calculate_hypercharge(particle)
             ):

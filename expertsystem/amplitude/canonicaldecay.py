@@ -23,7 +23,7 @@ def generate_clebsch_gordan_string(graph, node_id):
     node_props = graph.node_props[node_id]
     L = get_interaction_property(node_props, InteractionQuantumNumberNames.L)
     S = get_interaction_property(node_props, InteractionQuantumNumberNames.S)
-    return "_L_" + str(L.magnitude()) + "_S_" + str(S.magnitude())
+    return "_L_" + str(L.magnitude) + "_S_" + str(S.magnitude)
 
 
 class CanonicalAmplitudeNameGenerator(HelicityAmplitudeNameGenerator):
@@ -119,32 +119,32 @@ class CanonicalAmplitudeGeneratorXML(HelicityAmplitudeGeneratorXML):
                 )
 
             decay_particle_lambda = (
-                daughter_spins[0].projection() - daughter_spins[1].projection()
+                daughter_spins[0].projection - daughter_spins[1].projection
             )
             cg_ls = OrderedDict()
             cg_ls["Type"] = "LS"
-            cg_ls["@j1"] = L.magnitude()
-            if L.projection() != 0.0:
+            cg_ls["@j1"] = L.magnitude
+            if L.projection != 0.0:
                 raise ValueError(
-                    "Projection of L is non-zero!: " + str(L.projection())
+                    "Projection of L is non-zero!: " + str(L.projection)
                 )
-            cg_ls["@m1"] = L.projection()
-            cg_ls["@j2"] = S.magnitude()
+            cg_ls["@m1"] = L.projection
+            cg_ls["@j2"] = S.magnitude
             cg_ls["@m2"] = decay_particle_lambda
-            cg_ls["J"] = parent_spin.magnitude()
+            cg_ls["J"] = parent_spin.magnitude
             cg_ls["M"] = decay_particle_lambda
             cg_ss = OrderedDict()
             cg_ss["Type"] = "s2s3"
-            cg_ss["@j1"] = daughter_spins[0].magnitude()
-            cg_ss["@m1"] = daughter_spins[0].projection()
-            cg_ss["@j2"] = daughter_spins[1].magnitude()
-            cg_ss["@m2"] = -daughter_spins[1].projection()
-            cg_ss["J"] = S.magnitude()
+            cg_ss["@j1"] = daughter_spins[0].magnitude
+            cg_ss["@m1"] = daughter_spins[0].projection
+            cg_ss["@j2"] = daughter_spins[1].magnitude
+            cg_ss["@m2"] = -daughter_spins[1].projection
+            cg_ss["J"] = S.magnitude
             cg_ss["M"] = decay_particle_lambda
             cg_dict = {
                 "CanonicalSum": {
-                    "L": int(L.magnitude()),
-                    "S": S.magnitude(),
+                    "L": int(L.magnitude),
+                    "S": S.magnitude,
                     "ClebschGordan": [cg_ls, cg_ss],
                 }
             }

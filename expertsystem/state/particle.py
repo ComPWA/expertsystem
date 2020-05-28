@@ -7,6 +7,7 @@ from copy import deepcopy
 from enum import Enum
 from itertools import permutations
 from json import dumps, loads
+from typing import Any, List, Union
 
 from numpy import arange
 
@@ -24,67 +25,58 @@ from expertsystem.topology.graph import (
 
 
 class Spin:
-    """
-    Simple struct-like class defining spin as a magnitude plus the projection
-    """
+    """Struct-like class defining spin as a magnitude plus projection."""
 
-    def __init__(self, mag, proj):
-        self.__magnitude = float(mag)
-        self.__projection = float(proj)
-        # remove negative zero projections -0.0
+    def __init__(
+        self,
+        magnitude: Union[float, int] = 0.0,
+        projection: Union[float, int] = 0.0,
+    ):
+        self.__magnitude = float(magnitude)
+        self.__projection = float(projection)
         if self.__projection == -0.0:
-            self.__projection += 0
+            self.__projection = 0.0
         if self.__magnitude < abs(self.__projection):
             raise ValueError(
-                "The spin projection cannot be larger than the"
-                " magnitude " + self.__str__()
+                f"The spin projection cannot be larger than the magnitude {self}"
             )
 
-    def magnitude(self):
+    @property
+    def magnitude(self) -> float:
         return self.__magnitude
 
-    def projection(self):
+    @property
+    def projection(self) -> float:
         return self.__projection
 
-    def __str__(self):
-        return (
-            "(mag: "
-            + str(self.__magnitude)
-            + ", proj: "
-            + str(self.__projection)
-            + ")"
-        )
+    def __repr__(self) -> str:
+        return f"(mag: {self.__magnitude}, proj: {self.__projection})"
 
-    def __repr__(self):
-        return (
-            "(mag: "
-            + str(self.__magnitude)
-            + ", proj: "
-            + str(self.__projection)
-            + ")"
-        )
+    def __eq__(self, other: object) -> bool:
+        """Equal operator for the spin class.
 
-    def __eq__(self, other):
-        """
-        define the equal operator for the spin class, which is needed for
-        equality checks of states in certain rules
+        Is needed for equality checks of states in certain rules.
         """
         if isinstance(other, Spin):
             return (
-                self.__magnitude == other.magnitude()
-                and self.__projection == other.projection()
+                self.__magnitude == other.magnitude
+                and self.__projection == other.projection
             )
-        else:
-            return NotImplemented
+        if isinstance(other, (float, int)):
+            return self.__magnitude == other
+        raise NotImplementedError
 
-    def __hash__(self):
+    def __hash__(self) -> Any:
         return hash(repr(self))
 
 
 # TODO: all the following should be handled by the classes above
 
 
-def create_spin_domain(list_of_magnitudes, set_projection_zero=False):
+def create_spin_domain(
+    list_of_magnitudes: List[Union[float, int]],
+    set_projection_zero: bool = False,
+) -> List[Spin]:
     domain_list = []
     for mag in list_of_magnitudes:
         if set_projection_zero:
@@ -252,8 +244,8 @@ class SpinQNConverter(AbstractQNConverter):
         return {
             self.type_label: qn_type.name,
             self.class_label: QuantumNumberClasses.Spin.name,
-            self.value_label: str(qn_value.magnitude()),
-            self.proj_label: str(qn_value.projection()),
+            self.value_label: str(qn_value.magnitude),
+            self.proj_label: str(qn_value.projection),
         }
 
 
@@ -266,7 +258,7 @@ QNClassConverterMapping = {
 
 def is_boson(qn_dict):
     spin_label = StateQuantumNumberNames.Spin
-    return abs(qn_dict[spin_label].magnitude() % 1) < 0.01
+    return abs(qn_dict[spin_label].magnitude % 1) < 0.01
 
 
 DATABASE = dict()
@@ -576,7 +568,7 @@ def check_if_spin_projections_set(state):
             raise ValueError(
                 "Spin not defined for particle: \n" + str(particle)
             )
-        mag = spin.magnitude()
+        mag = spin.magnitude
         spin_projs = arange(-mag, mag + 1, 1.0).tolist()
         mass = get_particle_property(particle, mass_label)
         if mass == 0.0:
