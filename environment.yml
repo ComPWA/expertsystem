@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python
+  - python>=3.6
   - pip
   - pip:
       - -r requirements.txt
