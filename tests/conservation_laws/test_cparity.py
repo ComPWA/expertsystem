@@ -2,10 +2,10 @@ from itertools import product
 
 from expertsystem.state.conservationrules import CParityConservation
 from expertsystem.state.particle import (
-    StateQuantumNumberNames,
-    ParticlePropertyNames,
     InteractionQuantumNumberNames,
+    ParticlePropertyNames,
     Spin,
+    StateQuantumNumberNames,
 )
 
 

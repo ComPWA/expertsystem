@@ -3,21 +3,20 @@
 """
 
 import logging
+
 import pytest
 
+from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGeneratorXML
 from expertsystem.topology.graph import (
     get_final_state_edges,
     get_initial_state_edges,
     get_intermediate_state_edges,
 )
-
 from expertsystem.ui.system_control import (
-    StateTransitionManager,
     InteractionTypes,
+    StateTransitionManager,
     create_edge_id_particle_mapping,
 )
-
-from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGeneratorXML
 
 
 @pytest.mark.slow

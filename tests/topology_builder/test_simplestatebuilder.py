@@ -14,4 +14,4 @@ class TestSimpleStateBuilder:  # pylint: disable=no-self-use
 
         all_graphs = simple_builder.build_graphs(1, 3)
 
-        assert len(all_graphs) is 1
+        assert len(all_graphs) == 1

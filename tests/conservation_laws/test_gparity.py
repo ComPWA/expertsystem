@@ -1,9 +1,9 @@
 from expertsystem.state.conservationrules import GParityConservation
 from expertsystem.state.particle import (
-    StateQuantumNumberNames,
-    ParticlePropertyNames,
     InteractionQuantumNumberNames,
+    ParticlePropertyNames,
     Spin,
+    StateQuantumNumberNames,
 )
 
 

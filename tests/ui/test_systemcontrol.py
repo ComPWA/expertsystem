@@ -1,25 +1,25 @@
 import pytest
 
-from expertsystem.ui.system_control import (
-    StateTransitionManager,
-    InteractionTypes,
-    remove_duplicate_solutions,
-    CompareGraphElementPropertiesFunctor,
-    match_external_edges,
-    create_edge_id_particle_mapping,
-    perform_external_edge_identical_particle_combinatorics,
-    filter_graphs,
-    require_interaction_property,
+from expertsystem.state import particle
+from expertsystem.state.particle import (
+    InteractionQuantumNumberNames,
+    create_spin_domain,
 )
 from expertsystem.topology.graph import (
     StateTransitionGraph,
     get_final_state_edges,
     get_initial_state_edges,
 )
-from expertsystem.state import particle
-from expertsystem.state.particle import (
-    create_spin_domain,
-    InteractionQuantumNumberNames,
+from expertsystem.ui.system_control import (
+    CompareGraphElementPropertiesFunctor,
+    InteractionTypes,
+    StateTransitionManager,
+    create_edge_id_particle_mapping,
+    filter_graphs,
+    match_external_edges,
+    perform_external_edge_identical_particle_combinatorics,
+    remove_duplicate_solutions,
+    require_interaction_property,
 )
 
 

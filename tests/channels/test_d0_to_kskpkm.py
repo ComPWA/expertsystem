@@ -4,9 +4,8 @@
 
 import logging
 
-from expertsystem.ui.system_control import StateTransitionManager
-
 from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGeneratorXML
+from expertsystem.ui.system_control import StateTransitionManager
 
 
 def test_script():

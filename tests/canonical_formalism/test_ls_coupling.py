@@ -1,20 +1,20 @@
 import pytest
 
-from expertsystem.ui.system_control import (
-    StateTransitionManager,
-    InteractionTypes,
-    remove_conservation_law,
+from expertsystem.state import particle
+from expertsystem.state.conservationrules import ParityConservationHelicity
+from expertsystem.state.particle import (
+    InteractionQuantumNumberNames,
+    Spin,
+    SpinQNConverter,
 )
 from expertsystem.ui.default_settings import (
     create_default_interaction_settings,
 )
-from expertsystem.state import particle
-from expertsystem.state.particle import (
-    InteractionQuantumNumberNames,
-    SpinQNConverter,
-    Spin,
+from expertsystem.ui.system_control import (
+    InteractionTypes,
+    StateTransitionManager,
+    remove_conservation_law,
 )
-from expertsystem.state.conservationrules import ParityConservationHelicity
 
 
 @pytest.mark.parametrize(
