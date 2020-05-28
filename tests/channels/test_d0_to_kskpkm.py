@@ -29,8 +29,8 @@ def test_script():
     assert len(solutions) == 5
 
     # print intermediate state particle names
-    for g in solutions:
-        print(g.edge_props[1]["Name"])
+    for solution in solutions:
+        print(solution.edge_props[1]["Name"])
 
     xml_generator = HelicityAmplitudeGeneratorXML()
     xml_generator.generate(solutions)

@@ -6,12 +6,12 @@ from expertsystem.topology.topologybuilder import (
 
 class TestSimpleStateBuilder(object):
     def test_two_body_states(self):
-        TwoBodyDecayNode = InteractionNode("TwoBodyDecay", 1, 2)
+        two_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
 
-        SimpleBuilder = SimpleStateTransitionTopologyBuilder(
-            [TwoBodyDecayNode]
+        simple_builder = SimpleStateTransitionTopologyBuilder(
+            [two_body_decay_node]
         )
 
-        all_graphs = SimpleBuilder.build_graphs(1, 3)
+        all_graphs = simple_builder.build_graphs(1, 3)
 
         assert len(all_graphs) is 1

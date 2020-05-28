@@ -49,19 +49,19 @@ def test_script():
     ref_mapping_is = create_edge_id_particle_mapping(
         solutions[0], get_initial_state_edges
     )
-    for x in solutions[1:]:
+    for solution in solutions[1:]:
         assert ref_mapping_fs == create_edge_id_particle_mapping(
-            x, get_final_state_edges
+            solution, get_final_state_edges
         )
         assert ref_mapping_is == create_edge_id_particle_mapping(
-            x, get_initial_state_edges
+            solution, get_initial_state_edges
         )
 
     print("intermediate states:")
     intermediate_states = set()
-    for g in solutions:
-        int_edge_id = get_intermediate_state_edges(g)[0]
-        intermediate_states.add(g.edge_props[int_edge_id]["Name"])
+    for solution in solutions:
+        int_edge_id = get_intermediate_state_edges(solution)[0]
+        intermediate_states.add(solution.edge_props[int_edge_id]["Name"])
     print(intermediate_states)
 
     xml_generator = HelicityAmplitudeGeneratorXML()
