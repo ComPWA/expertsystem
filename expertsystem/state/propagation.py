@@ -11,23 +11,23 @@ from enum import Enum
 from abc import ABC, abstractmethod
 import logging
 
-from ..solvers.constraint import (
+from expertsystem.solvers.constraint import (
     Problem,
     Constraint,
     Unassigned,
     BacktrackingSolver,
 )
 
-from ..topology.graph import (
+from expertsystem.topology.graph import (
     get_initial_state_edges,
     get_final_state_edges,
     get_edges_ingoing_to_node,
     get_edges_outgoing_to_node,
     get_intermediate_state_edges,
 )
-from ..state.conservationrules import AbstractRule
-from ..state import particle
-from ..state.particle import (
+from expertsystem.state.conservationrules import AbstractRule
+from expertsystem.state import particle
+from expertsystem.state.particle import (
     StateQuantumNumberNames,
     InteractionQuantumNumberNames,
     ParticlePropertyNames,

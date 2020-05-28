@@ -292,8 +292,10 @@ def load_particle_list_from_xml(file_path: str) -> None:
 
 def write_particle_list_to_xml(file_path: str) -> None:
     """Write the particle database to an XML file."""
-    entries = list(DATABASE.values())
-    particle_dict = {"ParticleList": {"Particle": entries}}
+    particle_list = [
+        {LABELS.Name.name: key, **value} for key, value in DATABASE.items()
+    ]
+    particle_dict = {"ParticleList": {"Particle": particle_list}}
     with open(file_path, "w") as output_file:
         output_file.write(
             xmltodict.unparse(particle_dict, full_document=False, pretty=True)
@@ -305,18 +307,15 @@ def load_particle_list_from_yaml(file_path: str) -> None:
     Use `.load_particle_list_from_yaml` to overwrite entries in the particle
     database with definitions in a YAML file.
     """
-    name_label = LABELS.Name.name
     with open(file_path, "rb") as input_file:
         full_dict = yaml.load(input_file, Loader=yaml.FullLoader)
-        for particle_definition in full_dict["ParticleList"]:
-            particle_name = particle_definition[name_label]
-            DATABASE[particle_name] = particle_definition
+        for name, definition in full_dict["ParticleList"].items():
+            DATABASE[name] = definition
 
 
 def write_particle_list_to_yaml(file_path: str) -> None:
     """Write the particle database to an YAML file."""
-    entries = list(DATABASE.values())
-    particle_dict = {"ParticleList": entries}
+    particle_dict = {"ParticleList": DATABASE}
     with open(file_path, "w") as output_file:
         yaml.dump(particle_dict, output_file)
 
