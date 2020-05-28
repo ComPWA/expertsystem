@@ -36,7 +36,7 @@ def test_script():
     )
     graph_interaction_settings_groups = tbd_manager.prepare_graphs()
 
-    (solutions, violated_rules) = tbd_manager.find_solutions(
+    solutions, _ = tbd_manager.find_solutions(
         graph_interaction_settings_groups
     )
 

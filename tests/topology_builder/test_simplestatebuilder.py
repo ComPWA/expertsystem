@@ -4,7 +4,7 @@ from expertsystem.topology.topologybuilder import (
 )
 
 
-class TestSimpleStateBuilder(object):
+class TestSimpleStateBuilder:  # pylint: disable=no-self-use
     def test_two_body_states(self):
         two_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
 

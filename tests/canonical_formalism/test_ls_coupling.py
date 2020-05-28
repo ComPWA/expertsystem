@@ -103,7 +103,7 @@ from expertsystem.state.conservationrules import ParityConservationHelicity
             Spin(1, 0),
             Spin(2, 0),
             1,
-        ),
+        ),  # pylint: disable=too-many-locals
     ],
 )
 def test_canonical_clebsch_gordan_ls_coupling(

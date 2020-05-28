@@ -152,7 +152,7 @@ def make_ls_test_graph_scrambled(
     return graph
 
 
-class TestSolutionFilter(object):
+class TestSolutionFilter:  # pylint: disable=no-self-use
     @pytest.mark.parametrize(
         "ls_pairs, result", [([(1, 0), (1, 1)], 2), ([(1, 0), (1, 0)], 1),]
     )
