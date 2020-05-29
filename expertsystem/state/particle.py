@@ -78,6 +78,27 @@ class Spin:
         raise NotImplementedError
 
 
+class Parity:
+    """Restrict values to 𝕫₂."""
+
+    def __init__(self, parity: int) -> None:
+        if parity not in [-1, +1]:
+            raise ValueError("Parity can only be -1 or +1")
+        self.__value: int = parity
+
+    def __int__(self) -> int:
+        return self.__value
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Parity):
+            return self.__value == other.value
+        return int(self) == other
+
+    @property
+    def value(self) -> int:
+        return self.__value
+
+
 # TODO: all the following should be handled by the classes above
 
 
