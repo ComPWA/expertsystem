@@ -53,10 +53,6 @@ class Spin:
         return f"(mag: {self.__magnitude}, proj: {self.__projection})"
 
     def __eq__(self, other: object) -> bool:
-        """Equal operator for the spin class.
-
-        Is needed for equality checks of states in certain rules.
-        """
         if isinstance(other, Spin):
             return (
                 self.__magnitude == other.magnitude
