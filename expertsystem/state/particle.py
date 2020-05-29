@@ -23,24 +23,6 @@ from expertsystem.topology.graph import (
 )
 
 
-LABELS = Enum(
-    "LABELS",
-    [
-        "Class",
-        "Component",
-        "DecayInfo",
-        "Name",
-        "Parameter",
-        "Pid",
-        "PreFactor",
-        "Projection",
-        "QuantumNumber",
-        "Type",
-        "Value",
-    ],
-)
-
-
 class Spin:
     """
     Simple struct-like class defining spin as a magnitude plus the projection
@@ -99,6 +81,9 @@ class Spin:
         return hash(repr(self))
 
 
+# TODO: all the following should be handled by the classes above
+
+
 def create_spin_domain(list_of_magnitudes, set_projection_zero=False):
     domain_list = []
     for mag in list_of_magnitudes:
@@ -108,6 +93,24 @@ def create_spin_domain(list_of_magnitudes, set_projection_zero=False):
             for proj in arange(-mag, mag + 1, 1.0):
                 domain_list.append(Spin(mag, proj))
     return domain_list
+
+
+LABELS = Enum(
+    "LABELS",
+    [
+        "Class",
+        "Component",
+        "DecayInfo",
+        "Name",
+        "Parameter",
+        "Pid",
+        "PreFactor",
+        "Projection",
+        "QuantumNumber",
+        "Type",
+        "Value",
+    ],
+)
 
 
 QuantumNumberClasses = Enum("QuantumNumberClasses", ["Int", "Float", "Spin"])
