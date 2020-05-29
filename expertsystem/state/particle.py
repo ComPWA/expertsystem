@@ -81,13 +81,16 @@ class Spin:
 class Parity:
     """Restrict values to 𝕫₂."""
 
-    def __init__(self, parity: int) -> None:
-        if parity not in [-1, +1]:
+    def __init__(self, parity: int = 0) -> None:
+        if parity not in [-1, +1, 0]:
             raise ValueError("Parity can only be -1 or +1")
         self.__value: int = parity
 
     def __int__(self) -> int:
         return self.__value
+
+    def __bool__(self) -> bool:
+        return self.__value != 0
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Parity):

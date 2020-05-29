@@ -5,17 +5,22 @@ from expertsystem.state.particle import Parity, Spin
 
 class TestParity:
     @staticmethod
-    @pytest.mark.parametrize("parity_value", [0, -2, 3.14, "some string"])
+    @pytest.mark.parametrize("parity_value", [-2, 3.14, "some string"])
     def test_value_error(parity_value):
         with pytest.raises(ValueError):
             Parity(parity_value)
 
     @staticmethod
     def test_equality():
+        undefined = Parity()
         parity_even = Parity(+1)
         parity_odd1 = Parity(-1)
         parity_odd2 = Parity(-1)
+        assert undefined == 0
+        assert undefined != 1
+        assert undefined != -1.5
         assert parity_even != parity_odd1
+        assert parity_even != undefined
         assert parity_even != 2
         assert parity_even != -1
         assert parity_even == +1
@@ -25,6 +30,12 @@ class TestParity:
         assert parity_odd2 != -1.1
         assert parity_odd2 != +1
 
+    @staticmethod
+    def test_undefined():
+        parity = Parity()
+        assert not parity
+        parity = Parity(+1)
+        assert parity
 
 
 class TestSpin:
