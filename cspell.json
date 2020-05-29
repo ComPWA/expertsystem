@@ -14,7 +14,8 @@
         ".vscode/*",
         "cspell.json",
         "doc/conf.py",
-        "setup.py"
+        "setup.py",
+        "tox.ini"
     ],
     "language": "en-US",
     "words": [
