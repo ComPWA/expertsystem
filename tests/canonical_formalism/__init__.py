@@ -1,1 +1,1 @@
-"""Required to ignore mypy errors in the tests folder."""
+"""Required to set mypy options for the tests folder."""

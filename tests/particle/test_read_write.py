@@ -4,7 +4,7 @@ from expertsystem.state import particle
 from expertsystem.ui.system_control import load_default_particle_list
 
 
-def test_import_xml() -> None:
+def test_import_xml():
     load_default_particle_list()
     assert len(particle.DATABASE) == 69
     assert "sigma+" in particle.DATABASE.keys()
@@ -20,7 +20,7 @@ def test_import_xml() -> None:
     assert int(quantum_number[particle.LABELS.Value.name]) == 1
 
 
-def test_xml_io() -> None:
+def test_xml_io():
     load_default_particle_list()
     particle.write_particle_list_to_xml("test_particle_list.xml")
     particle.DATABASE.clear()
@@ -28,7 +28,7 @@ def test_xml_io() -> None:
     assert len(particle.DATABASE) == 69
 
 
-def test_yaml_io() -> None:
+def test_yaml_io():
     load_default_particle_list()
     particles_xml = deepcopy(particle.DATABASE)
     particle.write_particle_list_to_yaml("test_particle_list.yml")
