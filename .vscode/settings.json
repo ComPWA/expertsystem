@@ -19,7 +19,6 @@
   "python.linting.pylintCategorySeverity.refactor": "Information",
   "python.linting.pylintEnabled": true,
   "python.linting.pylintUseMinimalCheckers": false,
-  "python.pythonPath": "/home/remco/anaconda3/envs/expertsystem/bin/python",
   "python.testing.pytestEnabled": true,
   "restructuredtext.builtDocumentationPath": "${workspaceFolder}/doc/_build/html",
   "restructuredtext.confPath": "${workspaceFolder}/doc",
