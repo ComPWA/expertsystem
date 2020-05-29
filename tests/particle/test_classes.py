@@ -11,6 +11,13 @@ class TestSpin:
             Spin(magnitude, projection)
 
     @staticmethod
+    @pytest.mark.parametrize("magnitude, projection", [(0.5, -0.5), (1, 0)])
+    def test_properties(magnitude, projection):
+        spin = Spin(magnitude, projection)
+        assert spin.magnitude == magnitude
+        assert spin.projection == projection
+
+    @staticmethod
     def test_equality():
         spin_one1 = Spin(1)
         spin_one2 = Spin(1)
