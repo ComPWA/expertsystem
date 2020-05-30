@@ -7,7 +7,9 @@ ParticleList:
       Charge: 0
       Parity: -1
       Cparity: -1
-      IsoSpin: { Value: 0, Projection: 0 }
+      IsoSpin:
+        Value: 0
+        Projection: 0
       BaryonNumber: 0
       Charm: 0
       Strangeness: 0
@@ -91,7 +93,8 @@ ParticleList:
       BaryonNumber: 0
   ve:
     PID: 12
-    Mass: { Value: 1e-9 }
+    Mass:
+      Value: 1e-9
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -102,7 +105,8 @@ ParticleList:
       BaryonNumber: 0
   vebar:
     PID: -12
-    Mass: { Value: 1e-9 }
+    Mass:
+      Value: 1e-9
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -113,7 +117,8 @@ ParticleList:
       BaryonNumber: 0
   vmu:
     PID: 14
-    Mass: { Value: 1e-9 }
+    Mass:
+      Value: 1e-9
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -124,7 +129,8 @@ ParticleList:
       BaryonNumber: 0
   vmubar:
     PID: -14
-    Mass: { Value: 1e-9 }
+    Mass:
+      Value: 1e-9
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -135,7 +141,8 @@ ParticleList:
       BaryonNumber: 0
   vtau:
     PID: 16
-    Mass: { Value: 1e-9 }
+    Mass:
+      Value: 1e-9
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -146,7 +153,8 @@ ParticleList:
       BaryonNumber: 0
   vtaubar:
     PID: -16
-    Mass: { Value: 1e-9 }
+    Mass:
+      Value: 1e-9
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -157,54 +165,73 @@ ParticleList:
       BaryonNumber: 0
   pi0:
     PID: 111
-    Mass: { Value: 0.1349766, Error: 0.000006 }
+    Mass:
+      Value: 0.1349766
+      Error: 0.000006
     QuantumNumbers:
       Spin: 0
       Charge: 0
       Parity: -1
       Cparity: 1
       Gparity: -1
-      IsoSpin: { Value: 1, Projection: 0 }
+      IsoSpin:
+        Value: 1
+        Projection: 0
       BaryonNumber: 0
       Charm: 0
       Strangeness: 0
   pi+:
     PID: 211
-    Mass: { Value: 0.13957018, Error: 0.00000035 }
+    Mass:
+      Value: 0.13957018
+      Error: 0.00000035
     QuantumNumbers:
       Spin: 0
       Charge: +1
       Parity: -1
       Gparity: -1
-      IsoSpin: { Value: 1, Projection: 1 }
+      IsoSpin:
+        Value: 1
+        Projection: 1
       Charm: 0
       Strangeness: 0
       BaryonNumber: 0
   pi-:
     PID: -211
-    Mass: { Value: 0.13957018, Error: 0.00000035 }
+    Mass:
+      Value: 0.13957018
+      Error: 0.00000035
     QuantumNumbers:
       Spin: 0
       Charge: -1
       Parity: -1
       Gparity: -1
-      IsoSpin: { Value: 1, Projection: -1 }
+      IsoSpin:
+        Value: 1
+        Projection: -1
       Charm: 0
       Strangeness: 0
       BaryonNumber: 0
   eta:
     PID: 221
-    Mass: { Value: 0.547862, Error: 0.000017 }
-    Width: { Value: 0.00000131, Error: 0.00000005 }
+    Mass:
+      Value: 0.547862
+      Error: 0.000017
+    Width:
+      Value: 0.00000131
+      Error: 0.00000005
     QuantumNumbers:
       Spin: 0
       Charge: 0
       Parity: -1
       Cparity: 1
-      IsoSpin: { Value: 0 }
+      IsoSpin:
+        Value: 0
   rho(770)0:
     PID: 113
-    Mass: { Value: 0.77526, Error: 0.00025 }
+    Mass:
+      Value: 0.77526
+      Error: 0.00025
     Width: 0.1491
     QuantumNumbers:
       Spin: 1
@@ -212,53 +239,71 @@ ParticleList:
       Parity: -1
       Cparity: -1
       Gparity: 1
-      IsoSpin: { Value: 1, Projection: 0 }
+      IsoSpin:
+        Value: 1
+        Projection: 0
   rho(770)+:
     PID: 213
-    Mass: { Value: 0.77526, Error: 0.00025 }
+    Mass:
+      Value: 0.77526
+      Error: 0.00025
     Width: 0.1491
     QuantumNumbers:
       Spin: 1
       Charge: +1
       Parity: -1
       Cparity: -1
-      IsoSpin: { Value: 1, Projection: +1 }
+      IsoSpin:
+        Value: 1
+        Projection: +1
   rho(770)-:
     PID: -213
-    Mass: { Value: 0.77526, Error: 0.00025 }
+    Mass:
+      Value: 0.77526
+      Error: 0.00025
     Width: 0.1491
     QuantumNumbers:
       Spin: 1
       Charge: -1
       Parity: -1
       Cparity: -1
-      IsoSpin: { Value: 1, Projection: -1 }
+      IsoSpin:
+        Value: 1
+        Projection: -1
       Charm: 0
   omega(782):
     PID: 223
-    Mass: { Value: 0.78265, Error: 0.00012 }
+    Mass:
+      Value: 0.78265
+      Error: 0.00012
     Width: 0.000001491
     QuantumNumbers:
       Spin: 1
       Charge: 0
       Parity: -1
       Cparity: -1
-      IsoSpin: { Value: 0 }
+      IsoSpin:
+        Value: 0
       Gparity: -1
   f0(980):
     PID: 9010221
-    Mass: { Value: 0.994, Error: 0.001 }
+    Mass:
+      Value: 0.994
+      Error: 0.001
     Width: 0.070
     QuantumNumbers:
       Spin: 0
       Charge: 0
       Parity: 1
       Cparity: 1
-      IsoSpin: { Value: 0 }
+      IsoSpin:
+        Value: 0
       Gparity: 1
   f0(1500):
     PID: 9030221
-    Mass: { Value: 1.505, Error: 0.006 }
+    Mass:
+      Value: 1.505
+      Error: 0.006
     Width: 0.109
     QuantumNumbers:
       Spin: 0
@@ -268,7 +313,9 @@ ParticleList:
       Gparity: 1
   f2(1270):
     PID: 225
-    Mass: { Value: 1.2751, Error: 0.0012 }
+    Mass:
+      Value: 1.2751
+      Error: 0.0012
     Width: 0.185
     QuantumNumbers:
       Spin: 2
@@ -278,7 +325,9 @@ ParticleList:
       Gparity: 1
   f2(1950):
     PID: 9050225
-    Mass: { Value: 1.944, Error: 0.012 }
+    Mass:
+      Value: 1.944
+      Error: 0.012
     Width: 0.472
     QuantumNumbers:
       Spin: 2
@@ -288,69 +337,103 @@ ParticleList:
       Gparity: 1
   a0(980)0:
     PID: 9000111
-    Mass: { Value: 0.994, Error: 0.001 }
+    Mass:
+      Value: 0.994
+      Error: 0.001
     QuantumNumbers:
       Spin: 0
       Charge: 0
       Parity: 1
       Cparity: 1
-      IsoSpin: { Value: 1, Projection: 0 }
+      IsoSpin:
+        Value: 1
+        Projection: 0
       Gparity: -1
   a0(980)+:
     PID: 9000211
-    Mass: { Value: 0.994, Error: 0.001 }
+    Mass:
+      Value: 0.994
+      Error: 0.001
     QuantumNumbers:
       Spin: 0
       Charge: 1
       Parity: +1
-      IsoSpin: { Value: 1, Projection: 1 }
+      IsoSpin:
+        Value: 1
+        Projection: 1
       Gparity: -1
   a0(980)-:
     PID: 9000211
-    Mass: { Value: 0.994, Error: 0.001 }
+    Mass:
+      Value: 0.994
+      Error: 0.001
     QuantumNumbers:
       Spin: 0
       Charge: -1
       Parity: +1
-      IsoSpin: { Value: 1, Projection: -1 }
+      IsoSpin:
+        Value: 1
+        Projection: -1
       Gparity: -1
   a2(1320)0:
     PID: 115
-    Mass: { Value: 1.3184, Error: 0.0005 }
-    Width: { Value: 0.00107, Error: 0.00005 }
+    Mass:
+      Value: 1.3184
+      Error: 0.0005
+    Width:
+      Value: 0.00107
+      Error: 0.00005
     QuantumNumbers:
       Spin: 2
       Charge: 0
       Parity: 1
       Cparity: 1
-      IsoSpin: { Value: 1, Projection: 0 }
+      IsoSpin:
+        Value: 1
+        Projection: 0
       Gparity: -1
   a2(1320)+:
     PID: 215
-    Mass: { Value: 1.3184, Error: 0.0005 }
-    Width: { Value: 0.00107, Error: 0.00005 }
+    Mass:
+      Value: 1.3184
+      Error: 0.0005
+    Width:
+      Value: 0.00107
+      Error: 0.00005
     QuantumNumbers:
       Spin: 2
       Charge: 1
       Parity: 1
       Cparity: 1
-      IsoSpin: { Value: 1, Projection: 1 }
+      IsoSpin:
+        Value: 1
+        Projection: 1
       Gparity: -1
   a2(1320)-:
     PID: -215
-    Mass: { Value: 1.3184, Error: 0.0005 }
-    Width: { Value: 0.00107, Error: 0.00005 }
+    Mass:
+      Value: 1.3184
+      Error: 0.0005
+    Width:
+      Value: 0.00107
+      Error: 0.00005
     QuantumNumbers:
       Spin: 2
       Charge: -1
       Parity: 1
       Cparity: 1
-      IsoSpin: { Value: 1, Projection: -1 }
+      IsoSpin:
+        Value: 1
+        Projection: -1
       Gparity: -1
   phi(1020):
     PID: 333
-    Mass: { Value: 1.019461, Error: 0.000019 }
-    Width: { Value: 0.004266, Error: 0.000031 }
+    Mass:
+      Value: 1.019461
+      Error: 0.000019
+    Width:
+      Value: 0.004266
+      Error: 0.000031
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -363,7 +446,9 @@ ParticleList:
       Spin: 0
       Charge: -1
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
       BaryonNumber: 0
       Strangeness: -1
       Charm: 0
@@ -374,7 +459,9 @@ ParticleList:
       Spin: 0
       Charge: 1
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
       BaryonNumber: 0
       Strangeness: 1
       Charm: 0
@@ -385,7 +472,9 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: 0.0 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.0
       BaryonNumber: 0
       Strangeness: 0
       Charm: 0
@@ -396,48 +485,62 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
   D+:
     PID: 411
     Mass: 1.86958
-    Width: { Value: 6.33E-13 }
+    Width:
+      Value: 6.33E-13
     QuantumNumbers:
       Spin: 0
       Charge: +1
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
       Charm: 1
   D-:
     PID: -411
     Mass: 1.86958
-    Width: { Value: 6.33E-13 }
+    Width:
+      Value: 6.33E-13
     QuantumNumbers:
       Spin: 0
       Charge: -1
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
       Charm: -1
   D0:
     PID: 421
     Mass: 1.86483
-    Width: { Value: 1.605E-12 }
+    Width:
+      Value: 1.605E-12
     QuantumNumbers:
       Spin: 0
       Charge: 0
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
       Charm: 1
       Strangeness: 0
       BaryonNumber: 0
   D0bar:
     PID: -421
     Mass: 1.86483
-    Width: { Value: 1.605E-12 }
+    Width:
+      Value: 1.605E-12
     QuantumNumbers:
       Spin: 0
       Charge: 0
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
       Charm: -1
       Strangeness: 0
       BaryonNumber: 0
@@ -449,7 +552,9 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
       Charm: 1
       BaryonNumber: 0
   D*(2007)0bar:
@@ -460,40 +565,51 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
       Charm: -1
       BaryonNumber: 0
   D*(2010)-:
     PID: -413
     Mass: 2.01
-    Width: { Value: 83.4E-6 }
+    Width:
+      Value: 83.4E-6
     QuantumNumbers:
       Spin: 1
       Charge: -1
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
       Charm: -1
       BaryonNumber: 0
   D*(2010)+:
     PID: 413
     Mass: 2.01
-    Width: { Value: 83.4E-6 }
+    Width:
+      Value: 83.4E-6
     QuantumNumbers:
       Spin: 1
       Charge: 1
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
       Charm: 1
       BaryonNumber: 0
   D1(2420)0:
     PID: 10423
     Mass: 2.4214
-    Width: { Value: 27.4E-3 }
+    Width:
+      Value: 27.4E-3
     QuantumNumbers:
       Spin: 1
       Charge: 0
       Parity: 1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
       Charm: 1
       BaryonNumber: 0
   XX:
@@ -503,26 +619,32 @@ ParticleList:
       Spin: 1
       Charge: -1
       Parity: -1
-      IsoSpin: { Value: 1, Projection: -1 }
+      IsoSpin:
+        Value: 1
+        Projection: -1
       BaryonNumber: 0
   J/psi:
     PID: 443
     Mass: 3.096900
-    Width: { Value: 9.29E-05 }
+    Width:
+      Value: 9.29E-05
     QuantumNumbers:
       Spin: 1
       Charge: 0
       Parity: -1
       Cparity: -1
       Gparity: -1
-      IsoSpin: { Value: 0, Projection: 0 }
+      IsoSpin:
+        Value: 0
+        Projection: 0
       BaryonNumber: 0
       Charm: 0
       Strangeness: 0
   "Y":
     PID: 11443
     Mass: 4.300
-    Width: { Value: 9.29E-05 }
+    Width:
+      Value: 9.29E-05
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -541,7 +663,8 @@ ParticleList:
       Parity: 1
       Cparity: 1
       Gparity: 1
-      IsoSpin: { Value: 0 }
+      IsoSpin:
+        Value: 0
       BaryonNumber: 0
       Charm: 0
       Strangeness: 0
@@ -552,7 +675,9 @@ ParticleList:
       Spin: 0.5
       Charge: 1
       Parity: 1
-      IsoSpin: { Value: 0.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
       BaryonNumber: 1
       Charm: 0
       Strangeness: 0
@@ -563,7 +688,9 @@ ParticleList:
       Spin: 0.5
       Charge: -1
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
       BaryonNumber: -1
       Charm: 0
       Strangeness: 0
@@ -574,7 +701,9 @@ ParticleList:
       Spin: 0.5
       Charge: 0
       Parity: 1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
       BaryonNumber: 1
       Charm: 0
       Strangeness: 0
@@ -585,7 +714,9 @@ ParticleList:
       Spin: 0.5
       Charge: 0
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
       BaryonNumber: -1
       Charm: 0
       Strangeness: 0
@@ -597,7 +728,9 @@ ParticleList:
       Spin: 0.5
       Charge: 1
       Parity: -1
-      IsoSpin: { Value: 0.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
       BaryonNumber: 1
       Charm: 0
       Strangeness: 0
@@ -612,7 +745,9 @@ ParticleList:
       Spin: 0.5
       Charge: -1
       Parity: 1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: -0.5
       BaryonNumber: -1
       Charm: 0
       Strangeness: 0
@@ -623,7 +758,9 @@ ParticleList:
       Spin: 1.5
       Charge: 2
       Parity: 1
-      IsoSpin: { Value: 1.5, Projection: 1.5 }
+      IsoSpin:
+        Value: 1.5
+        Projection: 1.5
       BaryonNumber: 1
       Charm: 0
       Strangeness: 0
@@ -634,7 +771,9 @@ ParticleList:
       Spin: 1.5
       Charge: 1
       Parity: 1
-      IsoSpin: { Value: 1.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 1.5
+        Projection: 0.5
       BaryonNumber: 1
       Charm: 0
       Strangeness: 0
@@ -645,7 +784,9 @@ ParticleList:
       Spin: 1.5
       Charge: 0
       Parity: 1
-      IsoSpin: { Value: 1.5, Projection: -0.5 }
+      IsoSpin:
+        Value: 1.5
+        Projection: -0.5
       BaryonNumber: 1
       Charm: 0
       Strangeness: 0
@@ -656,7 +797,9 @@ ParticleList:
       Spin: 1.5
       Charge: -1
       Parity: 1
-      IsoSpin: { Value: 1.5, Projection: -1.5 }
+      IsoSpin:
+        Value: 1.5
+        Projection: -1.5
       BaryonNumber: 1
       Charm: 0
       Strangeness: 0
@@ -667,7 +810,8 @@ ParticleList:
       Spin: 0.5
       Charge: 0
       Parity: 1
-      IsoSpin: { Value: 0.0 }
+      IsoSpin:
+        Value: 0.0
       BaryonNumber: 1
       Charm: 0
       Strangeness: -1
@@ -678,7 +822,8 @@ ParticleList:
       Spin: 0.5
       Charge: 0
       Parity: -1
-      IsoSpin: { Value: 0.0 }
+      IsoSpin:
+        Value: 0.0
       BaryonNumber: -1
       Charm: 0
       Strangeness: 1
@@ -690,7 +835,9 @@ ParticleList:
       Spin: 0.5
       Charge: 0
       Parity: 1
-      IsoSpin: { Value: 1.0, Projection: 0.0 }
+      IsoSpin:
+        Value: 1.0
+        Projection: 0.0
       BaryonNumber: 1
       Charm: 0
       Strangeness: -1
@@ -701,7 +848,9 @@ ParticleList:
       Spin: 0.5
       Charge: 1
       Parity: 1
-      IsoSpin: { Value: 1.0, Projection: 1.0 }
+      IsoSpin:
+        Value: 1.0
+        Projection: 1.0
       BaryonNumber: 1
       Charm: 0
       Strangeness: -1
@@ -712,7 +861,9 @@ ParticleList:
       Spin: 0.5
       Charge: -1
       Parity: 1
-      IsoSpin: { Value: 1.0, Projection: -1.0 }
+      IsoSpin:
+        Value: 1.0
+        Projection: -1.0
       BaryonNumber: 1
       Charm: 0
       Strangeness: -1
@@ -723,7 +874,9 @@ ParticleList:
       Spin: 0.5
       Charge: 0
       Parity: 1
-      IsoSpin: { Value: 0.5, Projection: 0.5 }
+      IsoSpin:
+        Value: 0.5
+        Projection: 0.5
       BaryonNumber: 1
       Charm: 0
       Strangeness: -2
@@ -734,7 +887,9 @@ ParticleList:
       Spin: 0.5
       Charge: -1
       Parity: 1
-      IsoSpin: { Value: 1.0, Projection: -0.5 }
+      IsoSpin:
+        Value: 1.0
+        Projection: -0.5
       BaryonNumber: 1
       Charm: 0
       Strangeness: -2
@@ -747,7 +902,9 @@ ParticleList:
       Parity: -1
       Cparity: -1
       Gparity: -1
-      IsoSpin: { Value: 0, Projection: 0 }
+      IsoSpin:
+        Value: 0
+        Projection: 0
       Charm: 0
       Strangeness: 0
       BaryonNumber: 0
