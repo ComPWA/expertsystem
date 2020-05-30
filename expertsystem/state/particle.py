@@ -42,6 +42,9 @@ class Spin:
                 f"The spin projection cannot be larger than the magnitude {self}"
             )
 
+    def __bool__(self) -> bool:
+        return self.__magnitude != 0.0
+
     @property
     def magnitude(self) -> float:
         return self.__magnitude
@@ -60,7 +63,7 @@ class Spin:
                 and self.__projection == other.projection
             )
         if isinstance(other, (float, int)):
-            return self.__magnitude == other
+            return self.__magnitude == float(other)
         raise NotImplementedError
 
     def __hash__(self) -> Any:

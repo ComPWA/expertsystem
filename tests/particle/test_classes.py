@@ -61,6 +61,15 @@ class TestSpin:
         assert spin.projection == projection
 
     @staticmethod
+    def test_bool():
+        spin = Spin()
+        assert not spin
+        spin = Spin(0.5)
+        assert spin
+        spin = Spin(0.5, -0.5)
+        assert spin
+
+    @staticmethod
     def test_equality():
         spin_one1 = Spin(1)
         spin_one2 = Spin(1)
