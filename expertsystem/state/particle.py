@@ -66,18 +66,6 @@ class Spin:
     def __hash__(self) -> Any:
         return hash(repr(self))
 
-    @staticmethod
-    def from_dict(definition: dict, key: str = "") -> "Spin":
-        if key:
-            definition = definition.get(key, 0)
-        if isinstance(definition, (float, int)):
-            return Spin(definition)
-        if isinstance(definition, dict):
-            magnitude = definition.get("Value", 0.0)
-            projection = definition.get("Projection", 0.0)
-            return Spin(magnitude, projection)
-        raise NotImplementedError
-
 
 class Parity:
     """Restrict values to 𝕫₂."""
@@ -106,18 +94,6 @@ class Parity:
 class ValueWithUncertainty(NamedTuple):  # noqa: D101
     value: float = 0.0
     uncertainty: float = 0.0
-
-    @staticmethod
-    def from_dict(definition: dict, key: str = "") -> "ValueWithUncertainty":
-        if key:
-            definition = definition[key]
-        if isinstance(definition, (float, int)):
-            return ValueWithUncertainty(definition)
-        if "Value" not in definition:
-            return ValueWithUncertainty()
-        value = definition["Value"]
-        uncertainty = definition.get("Error", 0.0)
-        return ValueWithUncertainty(value, uncertainty)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, ValueWithUncertainty):
