@@ -42,7 +42,7 @@ ParticleList:
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
-      Parity: +1
+      Parity: 1
       ElectronLN: 1
       MuonLN: 0
       TauLN: 0
@@ -64,7 +64,7 @@ ParticleList:
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
-      Parity: +1
+      Parity: 1
       ElectronLN: 0
       MuonLN: 1
       TauLN: 0
@@ -86,7 +86,7 @@ ParticleList:
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
-      Parity: +1
+      Parity: 1
       ElectronLN: 0
       MuonLN: 0
       TauLN: 1
@@ -153,8 +153,7 @@ ParticleList:
       BaryonNumber: 0
   vtaubar:
     PID: -16
-    Mass:
-      Value: 1e-9
+    Mass: 1e-9
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -187,7 +186,7 @@ ParticleList:
       Error: 0.00000035
     QuantumNumbers:
       Spin: 0
-      Charge: +1
+      Charge: 1
       Parity: -1
       Gparity: -1
       IsoSpin:
@@ -250,12 +249,12 @@ ParticleList:
     Width: 0.1491
     QuantumNumbers:
       Spin: 1
-      Charge: +1
+      Charge: 1
       Parity: -1
       Cparity: -1
       IsoSpin:
         Value: 1
-        Projection: +1
+        Projection: 1
   rho(770)-:
     PID: -213
     Mass:
@@ -357,7 +356,7 @@ ParticleList:
     QuantumNumbers:
       Spin: 0
       Charge: 1
-      Parity: +1
+      Parity: 1
       IsoSpin:
         Value: 1
         Projection: 1
@@ -370,7 +369,7 @@ ParticleList:
     QuantumNumbers:
       Spin: 0
       Charge: -1
-      Parity: +1
+      Parity: 1
       IsoSpin:
         Value: 1
         Projection: -1
@@ -495,7 +494,7 @@ ParticleList:
       Value: 6.33E-13
     QuantumNumbers:
       Spin: 0
-      Charge: +1
+      Charge: 1
       Parity: -1
       IsoSpin:
         Value: 0.5
