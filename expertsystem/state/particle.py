@@ -305,11 +305,18 @@ class ParticleDatabase:
                 name = str(definition["Name"])
             pid = int(definition["PID"])
             mass = self.__value_from_dict(definition["Mass"])
+            width = None
+            if "Width" in definition:
+                width = self.__value_from_dict(definition["Width"])
             quantum_numbers = quantum_numbers_from_dict(
                 definition["QuantumNumbers"]
             )
             return Particle(
-                name=name, pid=pid, mass=mass, quantum_numbers=quantum_numbers
+                name=name,
+                pid=pid,
+                mass=mass,
+                width=width,
+                quantum_numbers=quantum_numbers,
             )
 
         with open(file_path, "rb") as input_file:
