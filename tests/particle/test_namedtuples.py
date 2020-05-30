@@ -37,6 +37,7 @@ class TestValueWithUncertainty:
         value_different_value = ValueWithUncertainty(-5.3, 0.15)
         value_different_uncertainty = ValueWithUncertainty(1.2, 0.12)
         assert value == 1.2
+        assert float(value) == 1.2
         assert value == value_copy
         assert value != value_different_value
         assert value != value_different_uncertainty

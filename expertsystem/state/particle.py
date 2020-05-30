@@ -101,7 +101,7 @@ class ValueWithUncertainty(NamedTuple):  # noqa: D101
                 self.value == other.value
                 and self.uncertainty == other.uncertainty
             )
-        return float(self) == other
+        return self.value == other
 
     def __float__(self) -> float:
         return self.value
