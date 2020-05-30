@@ -148,6 +148,20 @@ def create_spin_domain(
     return domain_list
 
 
+def create_spin_domain(
+    list_of_magnitudes: List[Union[float, int]],
+    set_projection_zero: bool = False,
+) -> List[Spin]:
+    domain_list = []
+    for mag in list_of_magnitudes:
+        if set_projection_zero:
+            domain_list.append(Spin(mag, 0.0))
+        else:
+            for proj in arange(-mag, mag + 1, 1.0):
+                domain_list.append(Spin(mag, proj))
+    return domain_list
+
+
 LABELS = Enum(
     "LABELS",
     [
