@@ -28,3 +28,18 @@ class TestSpin:
         assert spin_half != 1
         with pytest.raises(NotImplementedError):
             assert spin_half == "string"
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "definition, key, expected",
+        [
+            (0, "", 0),
+            ({}, "", 0),
+            ({"Value": 1}, "", 1),
+            ({"Value": 1.5, "Projection": 0.5}, "", 1.5),
+            ({"Spin": {"Value": 1.5, "Projection": 0.5}}, "Spin", 1.5),
+        ],
+    )
+    def test_from_dict(definition, key, expected):
+        spin = Spin.from_dict(definition, key)
+        assert spin == expected

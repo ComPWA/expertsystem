@@ -65,6 +65,18 @@ class Spin:
     def __hash__(self) -> Any:
         return hash(repr(self))
 
+    @staticmethod
+    def from_dict(definition: dict, key: str = "") -> "Spin":
+        if key:
+            definition = definition.get(key, 0)
+        if isinstance(definition, (float, int)):
+            return Spin(definition)
+        if isinstance(definition, dict):
+            magnitude = definition.get("Value", 0.0)
+            projection = definition.get("Projection", 0.0)
+            return Spin(magnitude, projection)
+        raise NotImplementedError
+
 
 # TODO: all the following should be handled by the classes above
 
