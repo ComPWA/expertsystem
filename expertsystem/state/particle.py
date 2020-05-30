@@ -279,14 +279,14 @@ class ParticleDatabase:
                 parity_c=Parity(definition.get("Cparity", 0)),
                 parity_g=Parity(definition.get("Gparity", 0)),
                 isospin=self.__spin_from_dict(definition.get("IsoSpin", 0)),
-                strangeness=definition.get("Strangeness", int()),
-                charmness=definition.get("Charm", int()),
-                bottomness=definition.get("Bottomness", int()),
-                topness=definition.get("Topness", int()),
-                baryon_number=definition.get("BaryonNumber", int()),
-                ln_electron=definition.get("ElectronLN", int()),
-                ln_muon=definition.get("MuonLN", int()),
-                ln_tau=definition.get("TauLN", int()),
+                strangeness=int(definition.get("Strangeness", 0)),
+                charmness=int(definition.get("Charm", 0)),
+                bottomness=int(definition.get("Bottomness", 0)),
+                topness=int(definition.get("Topness", 0)),
+                baryon_number=int(definition.get("BaryonNumber", 0)),
+                ln_electron=int(definition.get("ElectronLN", 0)),
+                ln_muon=int(definition.get("MuonLN", 0)),
+                ln_tau=int(definition.get("TauLN", 0)),
             )
 
         def particle_from_dict(definition: dict, name: str = "") -> Particle:

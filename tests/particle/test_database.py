@@ -15,13 +15,18 @@ class TestParticleDatabase:
         database = ParticleDatabase("particle_list.yml")
         assert len(database) == 69
 
-    def test_getters(self):
-        assert len(self.database) == 69
-        assert self.database.get_by_pid(-211).name == "pi-"
+    @staticmethod
+    @pytest.mark.parametrize(
+        "input_file", ["particle_list.xml", "particle_list.yml"]
+    )
+    def test_getters(input_file):
+        database = ParticleDatabase(input_file)
+        assert len(database) == 69
+        assert database.get_by_pid(-211).name == "pi-"
         with pytest.raises(LookupError):
-            self.database.get_by_pid(666)
+            database.get_by_pid(666)
 
-        gamma = self.database["gamma"]
+        gamma = database["gamma"]
         assert gamma.pid == 22
         assert gamma.mass == 0
         assert not gamma.has_width
