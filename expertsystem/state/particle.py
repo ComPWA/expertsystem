@@ -379,13 +379,13 @@ class ParticleDatabase:
 
     def __particle_to_dict(
         self, particle: Particle, embed_name: bool = True
-    ) -> dict:
+    ) -> Dict[str, Any]:
         output_dict: Dict[str, Any] = dict()
         if embed_name:
             output_dict["Name"] = particle.name
         output_dict["PID"] = particle.pid
         output_dict["Mass"] = self.__value_to_dict(particle.mass)
-        if particle.has_width:
+        if particle.width is not None:
             output_dict["Width"] = self.__value_to_dict(particle.width)
         output_dict["QuantumNumbers"] = self.__quantum_numbers_to_dict(
             particle.quantum_numbers
@@ -399,9 +399,10 @@ class ParticleDatabase:
             return self.__to_real(value.value)
         return {"Value": value.value, "Error": value.uncertainty}
 
-    def __quantum_numbers_to_dict(self, value: QuantumNumbers) -> dict:
-
-        output_dict = {
+    def __quantum_numbers_to_dict(
+        self, value: QuantumNumbers
+    ) -> Dict[str, Any]:
+        output_dict: Dict[str, Any] = {
             "Spin": self.__spin_to_dict(value.spin, simplify=True),
             "Charge": self.__to_real(value.charge),
         }
