@@ -10,8 +10,8 @@ class TestParticleDatabase:
     def test_construction():
         with pytest.raises(NotImplementedError):
             ParticleDatabase("particle_list.csv")
-        with pytest.raises(NotImplementedError):
-            ParticleDatabase("particle_list.xml")
+        database = ParticleDatabase("particle_list.xml")
+        assert len(database) == 69
         database = ParticleDatabase("particle_list.yml")
         assert len(database) == 69
 
