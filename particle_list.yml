@@ -233,7 +233,7 @@ ParticleList:
     Mass:
       Value: 0.994
       Error: 0.001
-    Width: 0.070
+    Width: 0.07
     QuantumNumbers:
       Spin: 0
       Charge: 0
@@ -539,7 +539,7 @@ ParticleList:
       Charm: 1
   XX:
     PID: 1111
-    Mass: 4.100
+    Mass: 4.1
     QuantumNumbers:
       Spin: 1
       Charge: -1
@@ -549,7 +549,7 @@ ParticleList:
         Projection: -1
   J/psi:
     PID: 443
-    Mass: 3.096900
+    Mass: 3.0969
     Width:
       Value: 9.29E-05
     QuantumNumbers:
@@ -560,7 +560,7 @@ ParticleList:
       Gparity: -1
   "Y":
     PID: 11443
-    Mass: 4.300
+    Mass: 4.3
     Width:
       Value: 9.29E-05
     QuantumNumbers:
@@ -570,7 +570,7 @@ ParticleList:
       Cparity: -1
   Chic1:
     PID: 1234
-    Mass: 3.510
+    Mass: 3.51
     Width: 0.00084
     QuantumNumbers:
       Spin: 1
@@ -624,7 +624,7 @@ ParticleList:
       BaryonNumber: -1
   N(1650)+:
     PID: 3112212
-    Mass: 1.650
+    Mass: 1.65
     Width: 0.125
     QuantumNumbers:
       Spin: 0.5
@@ -636,7 +636,7 @@ ParticleList:
       BaryonNumber: 1
   N(1650)-:
     PID: -3112212
-    Mass: 1.650
+    Mass: 1.65
     Width: 0.125
     QuantumNumbers:
       Spin: 0.5
@@ -717,8 +717,8 @@ ParticleList:
       Charge: 0
       Parity: 1
       IsoSpin:
-        Value: 1.0
-        Projection: 0.0
+        Value: 1
+        Projection: 0
       BaryonNumber: 1
       Strangeness: -1
   sigma+:
@@ -729,8 +729,8 @@ ParticleList:
       Charge: 1
       Parity: 1
       IsoSpin:
-        Value: 1.0
-        Projection: 1.0
+        Value: 1
+        Projection: 1
       BaryonNumber: 1
       Strangeness: -1
   sigma-:
@@ -741,8 +741,8 @@ ParticleList:
       Charge: -1
       Parity: 1
       IsoSpin:
-        Value: 1.0
-        Projection: -1.0
+        Value: 1
+        Projection: -1
       BaryonNumber: 1
       Strangeness: -1
   Xi0:
@@ -765,13 +765,13 @@ ParticleList:
       Charge: -1
       Parity: 1
       IsoSpin:
-        Value: 1.0
+        Value: 1
         Projection: -0.5
       BaryonNumber: 1
       Strangeness: -2
   EpEm (4300 MeV):
     PID: 2299
-    Mass: 4.300
+    Mass: 4.3
     QuantumNumbers:
       Spin: 1
       Charge: 0
