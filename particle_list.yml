@@ -1,7 +1,7 @@
 ParticleList:
   gamma:
     PID: 22
-    Mass: { Value: 0.0 }
+    Mass: 0
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -14,21 +14,21 @@ ParticleList:
 
   W-:
     PID: -24
-    Mass: { Value: 80.385 }
+    Mass: 80.385
     QuantumNumbers:
       Spin: 1
       Charge: -1
 
   W+:
     PID: 24
-    Mass: { Value: 80.385 }
+    Mass: 80.385
     QuantumNumbers:
       Spin: 1
       Charge: 1
 
   e+:
     PID: 11
-    Mass: { Value: 0.0005109989461 }
+    Mass: 0.0005109989461
     QuantumNumbers:
       Spin: 0.5
       Charge: 1
@@ -40,7 +40,7 @@ ParticleList:
 
   e-:
     PID: -11
-    Mass: { Value: 0.0005109989461 }
+    Mass: 0.0005109989461
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
@@ -52,7 +52,7 @@ ParticleList:
 
   mu+:
     PID: 13
-    Mass: { Value: 0.1056583745 }
+    Mass: 0.1056583745
     QuantumNumbers:
       Spin: 0.5
       Charge: 1
@@ -64,7 +64,7 @@ ParticleList:
 
   mu-:
     PID: -13
-    Mass: { Value: 0.1056583745 }
+    Mass: 0.1056583745
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
@@ -76,7 +76,7 @@ ParticleList:
 
   tau+:
     PID: 15
-    Mass: { Value: 1.77686 }
+    Mass: 1.77686
     QuantumNumbers:
       Spin: 0.5
       Charge: 1
@@ -88,7 +88,7 @@ ParticleList:
 
   tau-:
     PID: -15
-    Mass: { Value: 1.77686 }
+    Mass: 1.77686
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
@@ -224,7 +224,7 @@ ParticleList:
   rho(770)0:
     PID: 113
     Mass: { Value: 0.77526, Error: 0.00025 }
-    Width: { Value: 0.1491 }
+    Width: 0.1491
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -236,7 +236,7 @@ ParticleList:
   rho(770)+:
     PID: 213
     Mass: { Value: 0.77526, Error: 0.00025 }
-    Width: { Value: 0.1491 }
+    Width: 0.1491
     QuantumNumbers:
       Spin: 1
       Charge: +1
@@ -247,7 +247,7 @@ ParticleList:
   rho(770)-:
     PID: -213
     Mass: { Value: 0.77526, Error: 0.00025 }
-    Width: { Value: 0.1491 }
+    Width: 0.1491
     QuantumNumbers:
       Spin: 1
       Charge: -1
@@ -259,7 +259,7 @@ ParticleList:
   omega(782):
     PID: 223
     Mass: { Value: 0.78265, Error: 0.00012 }
-    Width: { Value: 0.000001491 }
+    Width: 0.000001491
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -271,7 +271,7 @@ ParticleList:
   f0(980):
     PID: 9010221
     Mass: { Value: 0.994, Error: 0.001 }
-    Width: { Value: 0.070 }
+    Width: 0.070
     QuantumNumbers:
       Spin: 0
       Charge: 0
@@ -283,7 +283,7 @@ ParticleList:
   f0(1500):
     PID: 9030221
     Mass: { Value: 1.505, Error: 0.006 }
-    Width: { Value: 0.109 }
+    Width: 0.109
     QuantumNumbers:
       Spin: 0
       Charge: 0
@@ -294,7 +294,7 @@ ParticleList:
   f2(1270):
     PID: 225
     Mass: { Value: 1.2751, Error: 0.0012 }
-    Width: { Value: 0.185 }
+    Width: 0.185
     QuantumNumbers:
       Spin: 2
       Charge: 0
@@ -305,7 +305,7 @@ ParticleList:
   f2(1950):
     PID: 9050225
     Mass: { Value: 1.944, Error: 0.012 }
-    Width: { Value: 0.472 }
+    Width: 0.472
     QuantumNumbers:
       Spin: 2
       Charge: 0
@@ -392,7 +392,7 @@ ParticleList:
 
   K-:
     PID: -321
-    Mass: { Value: 0.493677 }
+    Mass: 0.493677
     QuantumNumbers:
       Spin: 0
       Charge: -1
@@ -404,7 +404,7 @@ ParticleList:
 
   K+:
     PID: 321
-    Mass: { Value: 0.493677 }
+    Mass: 0.493677
     QuantumNumbers:
       Spin: 0
       Charge: 1
@@ -416,7 +416,7 @@ ParticleList:
 
   K_S0:
     PID: 310
-    Mass: { Value: 0.497614 }
+    Mass: 0.497614
     QuantumNumbers:
       Spin: 0
       Charge: 0
@@ -428,7 +428,7 @@ ParticleList:
 
   K_L0:
     PID: 130
-    Mass: { Value: 0.497614 }
+    Mass: 0.497614
     QuantumNumbers:
       Spin: 0
       Charge: 0
@@ -437,7 +437,7 @@ ParticleList:
 
   D+:
     PID: 411
-    Mass: { Value: 1.86958 }
+    Mass: 1.86958
     Width: { Value: 6.33E-13 }
     QuantumNumbers:
       Spin: 0
@@ -448,7 +448,7 @@ ParticleList:
 
   D-:
     PID: -411
-    Mass: { Value: 1.86958 }
+    Mass: 1.86958
     Width: { Value: 6.33E-13 }
     QuantumNumbers:
       Spin: 0
@@ -459,7 +459,7 @@ ParticleList:
 
   D0:
     PID: 421
-    Mass: { Value: 1.86483 }
+    Mass: 1.86483
     Width: { Value: 1.605E-12 }
     QuantumNumbers:
       Spin: 0
@@ -472,7 +472,7 @@ ParticleList:
 
   D0bar:
     PID: -421
-    Mass: { Value: 1.86483 }
+    Mass: 1.86483
     Width: { Value: 1.605E-12 }
     QuantumNumbers:
       Spin: 0
@@ -485,8 +485,8 @@ ParticleList:
 
   D*(2007)0:
     PID: 423
-    Mass: { Value: 2.007 }
-    Width: { Value: 0.001 }
+    Mass: 2.007
+    Width: 0.001
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -497,8 +497,8 @@ ParticleList:
 
   D*(2007)0bar:
     PID: -423
-    Mass: { Value: 2.007 }
-    Width: { Value: 0.001 }
+    Mass: 2.007
+    Width: 0.001
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -509,7 +509,7 @@ ParticleList:
 
   D*(2010)-:
     PID: -413
-    Mass: { Value: 2.01 }
+    Mass: 2.01
     Width: { Value: 83.4E-6 }
     QuantumNumbers:
       Spin: 1
@@ -521,7 +521,7 @@ ParticleList:
 
   D*(2010)+:
     PID: 413
-    Mass: { Value: 2.01 }
+    Mass: 2.01
     Width: { Value: 83.4E-6 }
     QuantumNumbers:
       Spin: 1
@@ -533,7 +533,7 @@ ParticleList:
 
   D1(2420)0:
     PID: 10423
-    Mass: { Value: 2.4214 }
+    Mass: 2.4214
     Width: { Value: 27.4E-3 }
     QuantumNumbers:
       Spin: 1
@@ -545,7 +545,7 @@ ParticleList:
 
   XX:
     PID: 1111
-    Mass: { Value: 4.100 }
+    Mass: 4.100
     QuantumNumbers:
       Spin: 1
       Charge: -1
@@ -555,7 +555,7 @@ ParticleList:
 
   J/psi:
     PID: 443
-    Mass: { Value: 3.096900 }
+    Mass: 3.096900
     Width: { Value: 9.29E-05 }
     QuantumNumbers:
       Spin: 1
@@ -570,7 +570,7 @@ ParticleList:
 
   "Y":
     PID: 11443
-    Mass: { Value: 4.300 }
+    Mass: 4.300
     Width: { Value: 9.29E-05 }
     QuantumNumbers:
       Spin: 1
@@ -583,8 +583,8 @@ ParticleList:
 
   Chic1:
     PID: 1234
-    Mass: { Value: 3.510 }
-    Width: { Value: 0.00084 }
+    Mass: 3.510
+    Width: 0.00084
     QuantumNumbers:
       Spin: 1
       Charge: 0
@@ -598,7 +598,7 @@ ParticleList:
 
   p:
     PID: 2212
-    Mass: { Value: 0.938272081 }
+    Mass: 0.938272081
     QuantumNumbers:
       Spin: 0.5
       Charge: 1
@@ -610,7 +610,7 @@ ParticleList:
 
   pbar:
     PID: -2212
-    Mass: { Value: 0.938272081 }
+    Mass: 0.938272081
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
@@ -622,7 +622,7 @@ ParticleList:
 
   "n":
     PID: 2112
-    Mass: { Value: 0.939565413 }
+    Mass: 0.939565413
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -634,7 +634,7 @@ ParticleList:
 
   nbar:
     PID: 2112
-    Mass: { Value: 0.939565413 }
+    Mass: 0.939565413
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -646,8 +646,8 @@ ParticleList:
 
   N(1650)+:
     PID: 3112212
-    Mass: { Value: 1.650 }
-    Width: { Value: 0.125 }
+    Mass: 1.650
+    Width: 0.125
     QuantumNumbers:
       Spin: 0.5
       Charge: 1
@@ -662,8 +662,8 @@ ParticleList:
 
   N(1650)-:
     PID: -3112212
-    Mass: { Value: 1.650 }
-    Width: { Value: 0.125 }
+    Mass: 1.650
+    Width: 0.125
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
@@ -675,7 +675,7 @@ ParticleList:
 
   Delta(1232)++:
     PID: 2224
-    Mass: { Value: 1.232 }
+    Mass: 1.232
     QuantumNumbers:
       Spin: 1.5
       Charge: 2
@@ -687,7 +687,7 @@ ParticleList:
 
   Delta(1232)+:
     PID: 2214
-    Mass: { Value: 1.232 }
+    Mass: 1.232
     QuantumNumbers:
       Spin: 1.5
       Charge: 1
@@ -699,7 +699,7 @@ ParticleList:
 
   Delta(1232)0:
     PID: 2114
-    Mass: { Value: 1.232 }
+    Mass: 1.232
     QuantumNumbers:
       Spin: 1.5
       Charge: 0
@@ -711,7 +711,7 @@ ParticleList:
 
   Delta(1232)-:
     PID: 1114
-    Mass: { Value: 1.232 }
+    Mass: 1.232
     QuantumNumbers:
       Spin: 1.5
       Charge: -1
@@ -723,7 +723,7 @@ ParticleList:
 
   lambda:
     PID: 3122
-    Mass: { Value: 1.115683 }
+    Mass: 1.115683
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -735,7 +735,7 @@ ParticleList:
 
   lambdabar:
     PID: -3122
-    Mass: { Value: 1.115683 }
+    Mass: 1.115683
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -747,8 +747,8 @@ ParticleList:
 
   sigma0:
     PID: 3212
-    Mass: { Value: 1.192642 }
-    Width: { Value: 0.0000089 }
+    Mass: 1.192642
+    Width: 0.0000089
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -760,7 +760,7 @@ ParticleList:
 
   sigma+:
     PID: 3222
-    Mass: { Value: 1.18937 }
+    Mass: 1.18937
     QuantumNumbers:
       Spin: 0.5
       Charge: 1
@@ -772,7 +772,7 @@ ParticleList:
 
   sigma-:
     PID: 3112
-    Mass: { Value: 1.197449 }
+    Mass: 1.197449
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
@@ -784,7 +784,7 @@ ParticleList:
 
   Xi0:
     PID: 3322
-    Mass: { Value: 1.31486 }
+    Mass: 1.31486
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -796,7 +796,7 @@ ParticleList:
 
   Xi-:
     PID: 3312
-    Mass: { Value: 1.32171 }
+    Mass: 1.32171
     QuantumNumbers:
       Spin: 0.5
       Charge: -1
@@ -808,7 +808,7 @@ ParticleList:
 
   EpEm (4300 MeV):
     PID: 2299
-    Mass: { Value: 4.300 }
+    Mass: 4.300
     QuantumNumbers:
       Spin: 1
       Charge: 0
