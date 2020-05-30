@@ -177,7 +177,70 @@ class ParticleDatabase:
         raise NotImplementedError
 
     def load_yaml(self, file_path: str) -> None:
-        raise NotImplementedError
+        with open(file_path, "rb") as input_file:
+            full_dict = yaml.load(input_file, Loader=yaml.FullLoader)
+        particle_definitions = full_dict["ParticleList"]
+        for name, definition in particle_definitions.items():
+            particle = self.__particle_from_dict({"Name": name, **definition})
+            self.add_particle(particle)
+
+    def __particle_from_dict(
+        self, definition: dict, name: str = ""
+    ) -> Particle:
+        required_keys = {"PID", "Mass", "QuantumNumbers"}
+        if not name:  # got XML structure
+            required_keys.add("Name")
+        if not required_keys <= set(definition):
+            raise ValueError(
+                f"Incomplete definition:\n  {definition}"
+                f"Required keys:\n  {required_keys}"
+            )
+        if not name:
+            name = str(definition["Name"])
+        pid = int(definition["PID"])
+        mass = self.__value_from_dict(definition["Mass"])
+        quantum_numbers = self.__quantum_numbers_from_dict(
+            definition["QuantumNumbers"]
+        )
+        return Particle(
+            name=name, pid=pid, mass=mass, quantum_numbers=quantum_numbers
+        )
+
+    @staticmethod
+    def __value_from_dict(
+        definition: Union[dict, float, int]
+    ) -> ValueWithUncertainty:
+        if isinstance(definition, (float, int)):
+            return ValueWithUncertainty(definition)
+        value = definition["Value"]
+        uncertainty = definition.get("Error", 0.0)
+        return ValueWithUncertainty(value, uncertainty)
+
+    def __quantum_numbers_from_dict(self, definition: dict) -> QuantumNumbers:
+        return QuantumNumbers(
+            charge=definition["Charge"],
+            spin=self.__spin_from_dict(definition["Spin"]),
+            parity=definition.get("Parity", 0),
+            parity_c=definition.get("Cparity", 0),
+            parity_g=definition.get("Gparity", 0),
+            isospin=self.__spin_from_dict(definition.get("IsoSpin", 0)),
+            strangeness=definition.get("Strangeness", int()),
+            charmness=definition.get("Charm", int()),
+            bottomness=definition.get("Bottomness", int()),
+            topness=definition.get("Topness", int()),
+            baryon_number=definition.get("BaryonNumber", int()),
+            ln_electron=definition.get("ElectronLN", int()),
+            ln_muon=definition.get("MuonLN", int()),
+            ln_tau=definition.get("TauLN", int()),
+        )
+
+    @staticmethod
+    def __spin_from_dict(definition: Union[dict, float, int]) -> Spin:
+        if isinstance(definition, (float, int)):
+            return Spin(definition)
+        magnitude = definition.get("Value", 0.0)
+        projection = definition.get("Projection", 0.0)
+        return Spin(magnitude, projection)
 
     def write(self, file_path: str) -> None:
         file_path = file_path.lower()
