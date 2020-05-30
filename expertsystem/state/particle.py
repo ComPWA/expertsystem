@@ -131,21 +131,36 @@ class ValueWithUncertainty(NamedTuple):  # noqa: D101
         return self.value
 
 
+class QuantumNumbers(NamedTuple):  # noqa: D101
+    charge: int  # required
+    spin: Spin  # required
+    isospin: Spin = Spin()
+    parity: Parity = Parity()
+    parity_c: Parity = Parity()
+    parity_g: Parity = Parity()
+    strangeness: int = 0
+    charmness: int = 0
+    bottomness: int = 0
+    topness: int = 0
+    baryon_number: int = 0
+    ln_electron: int = 0
+    ln_muon: int = 0
+    ln_tau: int = 0
+
+
+class Particle(NamedTuple):  # noqa: D101
+    name: str
+    pid: int
+    mass: ValueWithUncertainty
+    quantum_numbers: QuantumNumbers
+    width: Union[ValueWithUncertainty, None] = None
+
+    @property
+    def has_width(self) -> bool:
+        return self.width is not None
+
+
 # TODO: all the following should be handled by the classes above
-
-
-def create_spin_domain(
-    list_of_magnitudes: List[Union[float, int]],
-    set_projection_zero: bool = False,
-) -> List[Spin]:
-    domain_list = []
-    for mag in list_of_magnitudes:
-        if set_projection_zero:
-            domain_list.append(Spin(mag, 0.0))
-        else:
-            for proj in arange(-mag, mag + 1, 1.0):
-                domain_list.append(Spin(mag, proj))
-    return domain_list
 
 
 def create_spin_domain(
