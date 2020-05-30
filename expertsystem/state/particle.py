@@ -7,7 +7,7 @@ from copy import deepcopy
 from enum import Enum
 from itertools import permutations
 from json import dumps, loads
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union
 from typing import NamedTuple
 
 from numpy import arange
@@ -158,6 +158,65 @@ class Particle(NamedTuple):  # noqa: D101
     @property
     def has_width(self) -> bool:
         return self.width is not None
+
+
+class ParticleDatabase:
+    """Database of particles.
+
+    Args:
+        definition_file (optional):
+            Construct the database from a definition file, like XML or YAML.
+    """
+
+    def __init__(self, definition_file: str = None):
+        self.__particles: Dict[str, Particle] = dict()
+        if definition_file:
+            self.load(definition_file)
+
+    def __len__(self) -> int:
+        return len(self.__particles)
+
+    def __getitem__(self, name: str) -> Particle:
+        return self.__particles[name]
+
+    def add_particle(self, particle: Particle) -> None:
+        self.__particles[particle.name] = particle
+
+    def get_by_pid(self, pid: int) -> Particle:
+        for particle in self.__particles.values():
+            if particle.pid == pid:
+                return particle
+        raise LookupError(f"Could not find particle with PID {pid}")
+
+    def load(self, file_path: str) -> None:
+        file_path = file_path.lower()
+        if file_path.endswith("xml"):
+            self.load_xml(file_path)
+        elif file_path.endswith("yaml") or file_path.endswith("yml"):
+            self.load_yaml(file_path)
+        else:
+            raise NotImplementedError(f"Cannot load file {file_path}")
+
+    def load_xml(self, file_path: str) -> None:
+        raise NotImplementedError
+
+    def load_yaml(self, file_path: str) -> None:
+        raise NotImplementedError
+
+    def write(self, file_path: str) -> None:
+        file_path = file_path.lower()
+        if file_path.endswith("xml"):
+            self.write_xml(file_path)
+        elif file_path.endswith("yaml") or file_path.endswith("yml"):
+            self.write_yaml(file_path)
+        else:
+            raise NotImplementedError(f"Cannot write file {file_path}")
+
+    def write_xml(self, file_path: str) -> None:
+        raise NotImplementedError
+
+    def write_yaml(self, file_path: str) -> None:
+        raise NotImplementedError
 
 
 # TODO: all the following should be handled by the classes above
