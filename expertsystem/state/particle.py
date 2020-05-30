@@ -8,6 +8,7 @@ from enum import Enum
 from itertools import permutations
 from json import dumps, loads
 from typing import Any, List, Union
+from typing import NamedTuple
 
 from numpy import arange
 
@@ -100,6 +101,34 @@ class Parity:
     @property
     def value(self) -> int:
         return self.__value
+
+
+class ValueWithUncertainty(NamedTuple):  # noqa: D101
+    value: float = 0.0
+    uncertainty: float = 0.0
+
+    @staticmethod
+    def from_dict(definition: dict, key: str = "") -> "ValueWithUncertainty":
+        if key:
+            definition = definition[key]
+        if isinstance(definition, (float, int)):
+            return ValueWithUncertainty(definition)
+        if "Value" not in definition:
+            return ValueWithUncertainty()
+        value = definition["Value"]
+        uncertainty = definition.get("Error", 0.0)
+        return ValueWithUncertainty(value, uncertainty)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ValueWithUncertainty):
+            return (
+                self.value == other.value
+                and self.uncertainty == other.uncertainty
+            )
+        return float(self) == other
+
+    def __float__(self) -> float:
+        return self.value
 
 
 # TODO: all the following should be handled by the classes above
