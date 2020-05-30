@@ -44,5 +44,8 @@ class TestParticleDatabase:
             self.database.write("particle_list.csv")
         with pytest.raises(NotImplementedError):
             self.database.write("particle_list.xml")
-        with pytest.raises(NotImplementedError):
-            self.database.write("particle_list.yml")
+
+    def test_write_yaml(self):
+        self.database.write("test_particle_list.yml")
+        imported_database = ParticleDatabase("test_particle_list.yml")
+        assert imported_database == self.database

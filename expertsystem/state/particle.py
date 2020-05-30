@@ -165,6 +165,18 @@ class ParticleDatabase:
     def __len__(self) -> int:
         return len(self.__particles)
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ParticleDatabase):
+            return self.__particles == other.particles
+        raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return f"ParticleDatabase: {len(self)} particles\n{self.__particles}"
+
+    @property
+    def particles(self) -> Dict[str, Particle]:
+        return self.__particles
+
     def __getitem__(self, name: str) -> Particle:
         return self.__particles[name]
 
@@ -357,7 +369,77 @@ class ParticleDatabase:
         raise NotImplementedError
 
     def write_yaml(self, file_path: str) -> None:
-        raise NotImplementedError
+        particle_dict = {
+            particle.name: self.__particle_to_dict(particle, embed_name=False)
+            for particle in self.__particles.values()
+        }
+        particle_dict = {"ParticleList": particle_dict}
+        with open(file_path, "w") as output_file:
+            yaml.dump(particle_dict, output_file, sort_keys=False)
+
+    def __particle_to_dict(
+        self, particle: Particle, embed_name: bool = True
+    ) -> dict:
+        output_dict: Dict[str, Any] = dict()
+        if embed_name:
+            output_dict["Name"] = particle.name
+        output_dict["PID"] = particle.pid
+        output_dict["Mass"] = self.__value_to_dict(particle.mass)
+        if particle.has_width:
+            output_dict["Width"] = self.__value_to_dict(particle.width)
+        output_dict["QuantumNumbers"] = self.__quantum_numbers_to_dict(
+            particle.quantum_numbers
+        )
+        return output_dict
+
+    def __value_to_dict(
+        self, value: ValueWithUncertainty
+    ) -> Union[dict, float]:
+        if value.uncertainty == 0.0:
+            return self.__to_real(value.value)
+        return {"Value": value.value, "Error": value.uncertainty}
+
+    def __quantum_numbers_to_dict(self, value: QuantumNumbers) -> dict:
+
+        output_dict = {
+            "Spin": self.__spin_to_dict(value.spin, simplify=True),
+            "Charge": self.__to_real(value.charge),
+        }
+        optional_values = {
+            "Parity": (value.parity, int),
+            "Cparity": (value.parity_c, int),
+            "Gparity": (value.parity_g, int),
+            "IsoSpin": (value.isospin, self.__spin_to_dict),
+            "BaryonNumber": (value.baryon_number, int),
+            "Strangeness": (value.strangeness, int),
+            "Charm": (value.charmness, int),
+            "Bottomness": (value.bottomness, int),
+            "Topness": (value.topness, int),
+            "ElectronLN": (value.ln_electron, int),
+            "MuonLN": (value.ln_muon, int),
+            "TauLN": (value.ln_tau, int),
+        }
+        for key, (quantum_number, converter) in optional_values.items():
+            if quantum_number:
+                output_dict[key] = converter(quantum_number)  # type: ignore
+        return output_dict
+
+    def __spin_to_dict(
+        self, value: Spin, simplify: bool = False
+    ) -> Union[dict, float, int]:
+        if simplify and float(value.projection) == 0.0:
+            return self.__to_real(value.magnitude)
+        return {
+            "Value": self.__to_real(value.magnitude),
+            "Projection": self.__to_real(value.projection),
+        }
+
+    @staticmethod
+    def __to_real(value: Union[float, int]) -> Union[float, int]:
+        value = float(value)
+        if value.is_integer():
+            return int(value)
+        return value
 
 
 # TODO: all the following should be handled by the classes above
