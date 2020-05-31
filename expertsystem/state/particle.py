@@ -96,12 +96,8 @@ class Parity:
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Parity):
-            return self.__value == other.value
+            return self.__value == int(other)
         return int(self) == other
-
-    @property
-    def value(self) -> int:
-        return self.__value
 
 
 class ValueWithUncertainty(NamedTuple):  # noqa: D101
