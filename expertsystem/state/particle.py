@@ -118,7 +118,7 @@ class ValueWithUncertainty(NamedTuple):  # noqa: D101
 
 
 class QuantumNumbers(NamedTuple):  # noqa: D101
-    charge: int  # required
+    charge: float  # required
     spin: Spin  # required
     isospin: Spin = Spin()
     parity: Parity = Parity()
@@ -273,7 +273,7 @@ class ParticleDatabase:
             definition: Dict[str, Union[float, int, str]]
         ) -> QuantumNumbers:
             return QuantumNumbers(
-                charge=definition["Charge"],
+                charge=float(definition["Charge"]),
                 spin=self.__spin_from_dict(definition["Spin"]),
                 parity=Parity(definition.get("Parity", 0)),
                 parity_c=Parity(definition.get("Cparity", 0)),
