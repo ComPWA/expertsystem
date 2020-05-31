@@ -229,9 +229,7 @@ class ParticleDatabase:
                 parity=Parity(scalar_from_dict(definition, "Parity")),
                 parity_c=Parity(scalar_from_dict(definition, "Cparity")),
                 parity_g=Parity(scalar_from_dict(definition, "Gparity")),
-                isospin=self.__spin_from_dict(
-                    scalar_from_dict(definition, "IsoSpin")
-                ),
+                isospin=self.__spin_from_dict(definition.get("IsoSpin", 0)),
                 strangeness=int(scalar_from_dict(definition, "Strangeness")),
                 charmness=int(scalar_from_dict(definition, "Charm")),
                 bottomness=int(scalar_from_dict(definition, "Bottomness")),
