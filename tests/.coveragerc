@@ -1,2 +1,3 @@
 [run]
 omit = */expertsystem/solvers/constraint/*
+branch = True
