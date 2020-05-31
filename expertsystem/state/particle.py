@@ -70,10 +70,20 @@ class Spin:
 class Parity:
     """Restrict values to 𝕫₂."""
 
-    def __init__(self, parity: int = 0) -> None:
+    def __init__(self, parity: Union[float, int, str] = 0) -> None:
+        if isinstance(parity, str):
+            if parity in ["odd", "-1"]:
+                parity = -1
+            elif parity in ["even", "1", "+1"]:
+                parity = +1
+            else:
+                parity = 0
+        if isinstance(parity, float):
+            if parity.is_integer():
+                parity = int(parity)
         if parity not in [-1, +1, 0]:
             raise ValueError("Parity can only be -1 or +1")
-        self.__value: int = parity
+        self.__value = int(parity)
 
     def __int__(self) -> int:
         return self.__value
@@ -197,9 +207,9 @@ class ParticleDatabase:
             return QuantumNumbers(
                 charge=float(scalar_from_dict(definition["Charge"])),
                 spin=self.__spin_from_dict(definition["Spin"]),
-                parity=Parity(int(scalar_from_dict(definition, "Parity"))),
-                parity_c=Parity(int(scalar_from_dict(definition, "Cparity"))),
-                parity_g=Parity(int(scalar_from_dict(definition, "Gparity"))),
+                parity=Parity(scalar_from_dict(definition, "Parity")),
+                parity_c=Parity(scalar_from_dict(definition, "Cparity")),
+                parity_g=Parity(scalar_from_dict(definition, "Gparity")),
                 isospin=self.__spin_from_dict(
                     scalar_from_dict(definition, "IsoSpin")
                 ),
@@ -259,13 +269,15 @@ class ParticleDatabase:
             self.add_particle(particle)
 
     def load_yaml(self, file_path: str) -> None:
-        def quantum_numbers_from_dict(definition: dict) -> QuantumNumbers:
+        def quantum_numbers_from_dict(
+            definition: Dict[str, Union[float, int, str]]
+        ) -> QuantumNumbers:
             return QuantumNumbers(
                 charge=definition["Charge"],
                 spin=self.__spin_from_dict(definition["Spin"]),
-                parity=definition.get("Parity", 0),
-                parity_c=definition.get("Cparity", 0),
-                parity_g=definition.get("Gparity", 0),
+                parity=Parity(definition.get("Parity", 0)),
+                parity_c=Parity(definition.get("Cparity", 0)),
+                parity_g=Parity(definition.get("Gparity", 0)),
                 isospin=self.__spin_from_dict(definition.get("IsoSpin", 0)),
                 strangeness=definition.get("Strangeness", int()),
                 charmness=definition.get("Charm", int()),
