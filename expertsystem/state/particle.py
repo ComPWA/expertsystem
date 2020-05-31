@@ -261,6 +261,9 @@ class ParticleDatabase:
             parameters = parameters_from_list(definition["Parameter"])
             mass = self.__value_from_dict(parameters["Mass"])
             width = None
+            decay_info = definition.get("DecayInfo", {})
+            if "Parameter" in decay_info:
+                parameters = parameters_from_list(decay_info["Parameter"])
             if "Width" in parameters:
                 width = self.__value_from_dict(parameters["Width"])
             quantum_numbers = quantum_numbers_from_list(
