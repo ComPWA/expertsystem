@@ -99,6 +99,14 @@ class Parity:
             return self.__value == int(other)
         return int(self) == other
 
+    def __repr__(self) -> str:
+        output = "Parity: "
+        if self.__value == +1:
+            return output + "+1"
+        if self.__value == 0:
+            return output + "UNDEFINED"
+        return output + str(self.__value)
+
 
 class ValueWithUncertainty(NamedTuple):  # noqa: D101
     value: float = 0.0
