@@ -171,7 +171,11 @@ class ParticleDatabase:
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, ParticleDatabase):
-            return self.__particles == other.particles
+            if len(self) != len(other):
+                return False
+            ordered_self = OrderedDict(sorted(self.particles.items()))
+            ordered_other = OrderedDict(sorted(other.particles.items()))
+            return ordered_self == ordered_other
         raise NotImplementedError
 
     def __repr__(self) -> str:
@@ -264,8 +268,8 @@ class ParticleDatabase:
             decay_info = definition.get("DecayInfo", {})
             if "Parameter" in decay_info:
                 parameters = parameters_from_list(decay_info["Parameter"])
-            if "Width" in parameters:
-                width = self.__value_from_dict(parameters["Width"])
+                if "Width" in parameters:
+                    width = self.__value_from_dict(parameters["Width"])
             quantum_numbers = quantum_numbers_from_list(
                 definition["QuantumNumber"]
             )

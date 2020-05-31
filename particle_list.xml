@@ -88,12 +88,12 @@
     </QuantumNumber>
   </Particle>
   <Particle>
-    <Name>EpEm</Name>
+    <Name>EpEm (4300 MeV)</Name>
     <Pid>2299</Pid>
     <Parameter>
       <Type>Mass</Type>
       <Name>Mass_epem</Name>
-      <Value>4.230</Value>
+      <Value>4.300</Value>
       <Fix>true</Fix>
     </Parameter>
     <QuantumNumber>

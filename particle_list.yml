@@ -777,4 +777,4 @@ ParticleList:
       Charge: 0
       Parity: -1
       Cparity: -1
-      Gparity: -1
+      # Gparity: -1
