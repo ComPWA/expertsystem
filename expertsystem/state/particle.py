@@ -108,12 +108,12 @@ class Parity:
         return output + str(self.__value)
 
 
-class ValueWithUncertainty(NamedTuple):  # noqa: D101
+class Parameter(NamedTuple):  # noqa: D101
     value: float = 0.0
     uncertainty: float = 0.0
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, ValueWithUncertainty):
+        if isinstance(other, Parameter):
             return (
                 self.value == other.value
                 and self.uncertainty == other.uncertainty
@@ -144,9 +144,9 @@ class QuantumNumbers(NamedTuple):  # noqa: D101
 class Particle(NamedTuple):  # noqa: D101
     name: str
     pid: int
-    mass: ValueWithUncertainty
+    mass: Parameter
     quantum_numbers: QuantumNumbers
-    width: Union[ValueWithUncertainty, None] = None
+    width: Union[Parameter, None] = None
 
     @property
     def has_width(self) -> bool:
@@ -263,13 +263,13 @@ class ParticleDatabase:
             name = str(definition["Name"])
             pid = int(definition["Pid"])
             parameters = parameters_from_list(definition["Parameter"])
-            mass = self.__value_from_dict(parameters["Mass"])
+            mass = self.__parameter_from_dict(parameters["Mass"])
             width = None
             decay_info = definition.get("DecayInfo", {})
             if "Parameter" in decay_info:
                 parameters = parameters_from_list(decay_info["Parameter"])
                 if "Width" in parameters:
-                    width = self.__value_from_dict(parameters["Width"])
+                    width = self.__parameter_from_dict(parameters["Width"])
             quantum_numbers = quantum_numbers_from_list(
                 definition["QuantumNumber"]
             )
@@ -325,10 +325,10 @@ class ParticleDatabase:
             if not name:
                 name = str(definition["Name"])
             pid = int(definition["PID"])
-            mass = self.__value_from_dict(definition["Mass"])
+            mass = self.__parameter_from_dict(definition["Mass"])
             width = None
             if "Width" in definition:
-                width = self.__value_from_dict(definition["Width"])
+                width = self.__parameter_from_dict(definition["Width"])
             quantum_numbers = quantum_numbers_from_dict(
                 definition["QuantumNumbers"]
             )
@@ -348,14 +348,14 @@ class ParticleDatabase:
             self.add_particle(particle)
 
     @staticmethod
-    def __value_from_dict(
+    def __parameter_from_dict(
         definition: Union[dict, float, int, str]
-    ) -> ValueWithUncertainty:
+    ) -> Parameter:
         if isinstance(definition, (float, int, str)):
-            return ValueWithUncertainty(float(definition))
+            return Parameter(float(definition))
         value = float(definition["Value"])
         uncertainty = float(definition.get("Error", 0.0))
-        return ValueWithUncertainty(value, uncertainty)
+        return Parameter(value, uncertainty)
 
     @staticmethod
     def __spin_from_dict(definition: Union[dict, float, int, str]) -> Spin:
@@ -393,41 +393,39 @@ class ParticleDatabase:
         if embed_name:
             output_dict["Name"] = particle.name
         output_dict["PID"] = particle.pid
-        output_dict["Mass"] = self.__value_to_dict(particle.mass)
+        output_dict["Mass"] = self.__parameter_to_dict(particle.mass)
         if particle.width is not None:
-            output_dict["Width"] = self.__value_to_dict(particle.width)
+            output_dict["Width"] = self.__parameter_to_dict(particle.width)
         output_dict["QuantumNumbers"] = self.__quantum_numbers_to_dict(
             particle.quantum_numbers
         )
         return output_dict
 
-    def __value_to_dict(
-        self, value: ValueWithUncertainty
-    ) -> Union[dict, float]:
-        if value.uncertainty == 0.0:
-            return self.__to_real(value.value)
-        return {"Value": value.value, "Error": value.uncertainty}
+    def __parameter_to_dict(self, parameter: Parameter) -> Union[dict, float]:
+        if parameter.uncertainty == 0.0:
+            return self.__to_real(parameter.value)
+        return {"Value": parameter.value, "Error": parameter.uncertainty}
 
     def __quantum_numbers_to_dict(
-        self, value: QuantumNumbers
+        self, quantum_numbers: QuantumNumbers
     ) -> Dict[str, Any]:
         output_dict: Dict[str, Any] = {
-            "Spin": self.__spin_to_dict(value.spin, simplify=True),
-            "Charge": self.__to_real(value.charge),
+            "Spin": self.__spin_to_dict(quantum_numbers.spin, simplify=True),
+            "Charge": self.__to_real(quantum_numbers.charge),
         }
         optional_values = {
-            "Parity": (value.parity, int),
-            "Cparity": (value.parity_c, int),
-            "Gparity": (value.parity_g, int),
-            "IsoSpin": (value.isospin, self.__spin_to_dict),
-            "BaryonNumber": (value.baryon_number, int),
-            "Strangeness": (value.strangeness, int),
-            "Charm": (value.charmness, int),
-            "Bottomness": (value.bottomness, int),
-            "Topness": (value.topness, int),
-            "ElectronLN": (value.ln_electron, int),
-            "MuonLN": (value.ln_muon, int),
-            "TauLN": (value.ln_tau, int),
+            "Parity": (quantum_numbers.parity, int),
+            "Cparity": (quantum_numbers.parity_c, int),
+            "Gparity": (quantum_numbers.parity_g, int),
+            "IsoSpin": (quantum_numbers.isospin, self.__spin_to_dict),
+            "BaryonNumber": (quantum_numbers.baryon_number, int),
+            "Strangeness": (quantum_numbers.strangeness, int),
+            "Charm": (quantum_numbers.charmness, int),
+            "Bottomness": (quantum_numbers.bottomness, int),
+            "Topness": (quantum_numbers.topness, int),
+            "ElectronLN": (quantum_numbers.ln_electron, int),
+            "MuonLN": (quantum_numbers.ln_muon, int),
+            "TauLN": (quantum_numbers.ln_tau, int),
         }
         for key, (quantum_number, converter) in optional_values.items():
             if quantum_number:
@@ -435,13 +433,13 @@ class ParticleDatabase:
         return output_dict
 
     def __spin_to_dict(
-        self, value: Spin, simplify: bool = False
+        self, spin: Spin, simplify: bool = False
     ) -> Union[dict, float, int]:
-        if simplify and float(value.projection) == 0.0:
-            return self.__to_real(value.magnitude)
+        if simplify and float(spin.projection) == 0.0:
+            return self.__to_real(spin.magnitude)
         return {
-            "Value": self.__to_real(value.magnitude),
-            "Projection": self.__to_real(value.projection),
+            "Value": self.__to_real(spin.magnitude),
+            "Projection": self.__to_real(spin.projection),
         }
 
     @staticmethod

@@ -3,11 +3,11 @@ from copy import deepcopy
 import pytest
 
 from expertsystem.state.particle import (
+    Parameter,
     Parity,
     Particle,
     QuantumNumbers,
     Spin,
-    ValueWithUncertainty,
 )
 
 
@@ -113,10 +113,10 @@ class TestParticle:
 class TestValueWithUncertainty:
     @staticmethod
     def test_equality():
-        value = ValueWithUncertainty(1.2, 0.15)
+        value = Parameter(1.2, 0.15)
         value_copy = deepcopy(value)
-        value_different_value = ValueWithUncertainty(-5.3, 0.15)
-        value_different_uncertainty = ValueWithUncertainty(1.2, 0.12)
+        value_different_value = Parameter(-5.3, 0.15)
+        value_different_uncertainty = Parameter(1.2, 0.12)
         assert value == 1.2
         assert float(value) == 1.2
         assert value == value_copy
