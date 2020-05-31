@@ -14,6 +14,8 @@ class TestParticleDatabase:
         assert len(database) == 69
         database = ParticleDatabase("particle_list.yml")
         assert len(database) == 69
+        database = ParticleDatabase()
+        assert len(database) == 0
 
     @staticmethod
     @pytest.mark.parametrize(
