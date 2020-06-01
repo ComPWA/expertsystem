@@ -1,9 +1,9 @@
 from copy import deepcopy
 import sys
 
-from ..state.particle import (
-    StateQuantumNumberNames,
+from expertsystem.state.particle.deprecated import (
     InteractionQuantumNumberNames,
+    StateQuantumNumberNames,
     create_spin_domain,
 )
 

@@ -1,7 +1,7 @@
 from itertools import product
 
 from expertsystem.state.conservationrules import CParityConservation
-from expertsystem.state.particle import (
+from expertsystem.state.particle.deprecated import (
     InteractionQuantumNumberNames,
     ParticlePropertyNames,
     Spin,

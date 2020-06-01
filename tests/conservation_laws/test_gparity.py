@@ -1,5 +1,5 @@
 from expertsystem.state.conservationrules import GParityConservation
-from expertsystem.state.particle import (
+from expertsystem.state.particle.deprecated import (
     InteractionQuantumNumberNames,
     ParticlePropertyNames,
     Spin,

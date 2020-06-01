@@ -5,15 +5,15 @@ from copy import deepcopy
 from numpy import arange
 import logging
 
-from .particle import (
-    StateQuantumNumberNames,
+from expertsystem.state.particle.deprecated import (
     InteractionQuantumNumberNames,
-    ParticlePropertyNames,
     ParticleDecayPropertyNames,
+    ParticlePropertyNames,
     QNNameClassMapping,
     QuantumNumberClasses,
-    is_boson,
     Spin,
+    StateQuantumNumberNames,
+    is_boson,
 )
 
 

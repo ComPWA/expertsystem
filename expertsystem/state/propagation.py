@@ -27,18 +27,18 @@ from expertsystem.topology.graph import (
 )
 from expertsystem.state.conservationrules import AbstractRule
 from expertsystem.state import particle
-from expertsystem.state.particle import (
-    StateQuantumNumberNames,
+from expertsystem.state.particle.deprecated import (
     InteractionQuantumNumberNames,
-    ParticlePropertyNames,
     ParticleDecayPropertyNames,
-    get_particle_property,
-    get_interaction_property,
-    QNNameClassMapping,
+    ParticlePropertyNames,
     QNClassConverterMapping,
-    initialize_graphs_with_particles,
+    QNNameClassMapping,
+    StateQuantumNumberNames,
+    get_interaction_property,
     get_particle_candidates_for_state,
+    get_particle_property,
     initialize_allowed_particle_list,
+    initialize_graphs_with_particles,
 )
 
 
@@ -268,9 +268,9 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
         Creates variables for the quantum numbers of the specified node.
         """
         variables = {}
-        type_label = particle.LABELS.Type.name
+        type_label = particle.deprecated.LABELS.Type.name
         if node_id in self.graph.node_props:
-            qns_label = particle.LABELS.QuantumNumber.name
+            qns_label = particle.deprecated.LABELS.QuantumNumber.name
             for qn_name in qn_list:
                 converter = QNClassConverterMapping[
                     QNNameClassMapping[qn_name]
@@ -626,7 +626,7 @@ class CSPPropagator(AbstractPropagator):
 def add_qn_to_graph_element(graph, var_info, value):
     if value is None:
         return
-    qns_label = particle.LABELS.QuantumNumber.name
+    qns_label = particle.deprecated.LABELS.QuantumNumber.name
 
     element_id = var_info.element_id
     qn_name = var_info.qn_name

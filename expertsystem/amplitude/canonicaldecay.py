@@ -5,11 +5,11 @@ from ..topology.graph import (
     get_edges_outgoing_to_node,
 )
 
-from ..state.particle import (
-    StateQuantumNumberNames,
+from expertsystem.state.particle.deprecated import (
     InteractionQuantumNumberNames,
-    get_particle_property,
+    StateQuantumNumberNames,
     get_interaction_property,
+    get_particle_property,
 )
 
 from .helicitydecay import (
