@@ -61,8 +61,10 @@ class TestParticleDatabase:
     def test_equality():
         database_xml = ParticleDatabase("particle_list.xml")
         database_yml = ParticleDatabase("particle_list.yml")
+        empty_database = ParticleDatabase()
         with pytest.raises(NotImplementedError):
             assert database_xml == 0
+        assert database_xml != empty_database
         assert database_xml == database_yml
 
         particle = database_xml["gamma"]
