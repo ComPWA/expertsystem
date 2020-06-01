@@ -198,6 +198,7 @@ class ParticleDatabase:
         raise LookupError(f"Could not find particle with PID {pid}")
 
     def load(self, file_path: str) -> None:
+        old_number_of_particles = len(self)
         extension = file_path.split(".")[-1]
         extension = extension.lower()
         if extension == "xml":
@@ -206,6 +207,11 @@ class ParticleDatabase:
             self.load_yaml(file_path)
         else:
             raise NotImplementedError(f"Cannot load file {file_path}")
+        new_number_of_particles = len(self)
+        logging.info(
+            "Loaded %d particles from {file_path}",
+            new_number_of_particles - old_number_of_particles,
+        )
 
     def load_xml(self, file_path: str) -> None:
         def scalar_from_dict(
