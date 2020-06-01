@@ -130,9 +130,13 @@ class Parameter(NamedTuple):  # noqa: D101
         return self.value
 
 
-class QuantumNumbers(NamedTuple):  # noqa: D101
-    charge: float  # required
-    spin: Spin  # required
+class Particle(NamedTuple):  # noqa: D101
+    name: str
+    pid: int
+    mass: Parameter
+    charge: float
+    spin: Spin
+    width: Union[Parameter, None] = None
     isospin: Spin = Spin()
     parity: Parity = Parity()
     parity_c: Parity = Parity()
@@ -145,14 +149,6 @@ class QuantumNumbers(NamedTuple):  # noqa: D101
     ln_electron: int = 0
     ln_muon: int = 0
     ln_tau: int = 0
-
-
-class Particle(NamedTuple):  # noqa: D101
-    name: str
-    pid: int
-    mass: Parameter
-    quantum_numbers: QuantumNumbers
-    width: Union[Parameter, None] = None
 
     @property
     def has_width(self) -> bool:
@@ -233,38 +229,6 @@ class ParticleDatabase:
                 definition = definition.get(key, {"Value": 0})
             return definition["Value"]
 
-        def quantum_numbers_from_list(
-            definition_list: List[Dict[str, dict]]
-        ) -> QuantumNumbers:
-            definition: Dict[str, dict] = {
-                str(item["Type"]): item for item in definition_list
-            }
-            types = set(definition.keys())
-            required_types = {"Charge", "Spin"}
-            if not required_types <= types:
-                raise ValueError(
-                    f"Incomplete definition:\n  {definition_list}"
-                    f"All QuantumNumbers require:\n  {required_types}"
-                )
-            return QuantumNumbers(
-                charge=float(scalar_from_dict(definition["Charge"])),
-                spin=self.__spin_from_dict(definition["Spin"]),
-                parity=Parity(scalar_from_dict(definition, "Parity")),
-                parity_c=Parity(scalar_from_dict(definition, "Cparity")),
-                parity_g=Parity(scalar_from_dict(definition, "Gparity")),
-                isospin=self.__spin_from_dict(definition.get("IsoSpin", 0)),
-                strangeness=int(scalar_from_dict(definition, "Strangeness")),
-                charmness=int(scalar_from_dict(definition, "Charm")),
-                bottomness=int(scalar_from_dict(definition, "Bottomness")),
-                topness=int(scalar_from_dict(definition, "Topness")),
-                baryon_number=int(
-                    scalar_from_dict(definition, "BaryonNumber")
-                ),
-                ln_electron=int(scalar_from_dict(definition, "ElectronLN")),
-                ln_muon=int(scalar_from_dict(definition, "MuonLN")),
-                ln_tau=int(scalar_from_dict(definition, "TauLN")),
-            )
-
         def parameters_from_list(
             definition: Union[Dict[str, str], List[Dict[str, str]]]
         ) -> Dict[str, Dict[str, str]]:
@@ -289,15 +253,34 @@ class ParticleDatabase:
                 parameters = parameters_from_list(decay_info["Parameter"])
                 if "Width" in parameters:
                     width = self.__parameter_from_dict(parameters["Width"])
-            quantum_numbers = quantum_numbers_from_list(
-                definition["QuantumNumber"]
-            )
+            q_number_list = list(definition["QuantumNumber"])
+            q_numbers = {str(item["Type"]): item for item in q_number_list}
+            available_types = set(q_numbers.keys())
+            required_types = {"Charge", "Spin"}
+            if not required_types <= available_types:
+                raise ValueError(
+                    f"Incomplete definition:\n  {q_number_list}"
+                    f"All QuantumNumbers require:\n  {required_types}"
+                )
             return Particle(
                 name=name,
                 pid=pid,
                 mass=mass,
+                charge=float(scalar_from_dict(q_numbers["Charge"])),
                 width=width,
-                quantum_numbers=quantum_numbers,
+                spin=self.__spin_from_dict(q_numbers["Spin"]),
+                parity=Parity(scalar_from_dict(q_numbers, "Parity")),
+                parity_c=Parity(scalar_from_dict(q_numbers, "Cparity")),
+                parity_g=Parity(scalar_from_dict(q_numbers, "Gparity")),
+                isospin=self.__spin_from_dict(q_numbers.get("IsoSpin", 0)),
+                strangeness=int(scalar_from_dict(q_numbers, "Strangeness")),
+                charmness=int(scalar_from_dict(q_numbers, "Charm")),
+                bottomness=int(scalar_from_dict(q_numbers, "Bottomness")),
+                topness=int(scalar_from_dict(q_numbers, "Topness")),
+                baryon_number=int(scalar_from_dict(q_numbers, "BaryonNumber")),
+                ln_electron=int(scalar_from_dict(q_numbers, "ElectronLN")),
+                ln_muon=int(scalar_from_dict(q_numbers, "MuonLN")),
+                ln_tau=int(scalar_from_dict(q_numbers, "TauLN")),
             )
 
         def to_dict(input_ordered_dict: OrderedDict) -> dict:
@@ -312,26 +295,6 @@ class ParticleDatabase:
             self.add_particle(particle)
 
     def load_yaml(self, file_path: str) -> None:
-        def quantum_numbers_from_dict(
-            definition: Dict[str, Union[float, int, str]]
-        ) -> QuantumNumbers:
-            return QuantumNumbers(
-                charge=float(definition["Charge"]),
-                spin=self.__spin_from_dict(definition["Spin"]),
-                parity=Parity(definition.get("Parity", 0)),
-                parity_c=Parity(definition.get("Cparity", 0)),
-                parity_g=Parity(definition.get("Gparity", 0)),
-                isospin=self.__spin_from_dict(definition.get("IsoSpin", 0)),
-                strangeness=int(definition.get("Strangeness", 0)),
-                charmness=int(definition.get("Charm", 0)),
-                bottomness=int(definition.get("Bottomness", 0)),
-                topness=int(definition.get("Topness", 0)),
-                baryon_number=int(definition.get("BaryonNumber", 0)),
-                ln_electron=int(definition.get("ElectronLN", 0)),
-                ln_muon=int(definition.get("MuonLN", 0)),
-                ln_tau=int(definition.get("TauLN", 0)),
-            )
-
         def particle_from_dict(definition: dict, name: str = "") -> Particle:
             required_keys = {"PID", "Mass", "QuantumNumbers"}
             if not name:  # got XML structure
@@ -348,15 +311,33 @@ class ParticleDatabase:
             width = None
             if "Width" in definition:
                 width = self.__parameter_from_dict(definition["Width"])
-            quantum_numbers = quantum_numbers_from_dict(
-                definition["QuantumNumbers"]
-            )
+            q_numbers = definition["QuantumNumbers"]
+            available_types = set(q_numbers.keys())
+            required_types = {"Charge", "Spin"}
+            if not required_types <= available_types:
+                raise ValueError(
+                    f"Incomplete definition:\n  {q_numbers}"
+                    f"All QuantumNumbers require:\n  {required_types}"
+                )
             return Particle(
                 name=name,
                 pid=pid,
                 mass=mass,
                 width=width,
-                quantum_numbers=quantum_numbers,
+                charge=float(q_numbers["Charge"]),
+                spin=self.__spin_from_dict(q_numbers["Spin"]),
+                parity=Parity(q_numbers.get("Parity", 0)),
+                parity_c=Parity(q_numbers.get("Cparity", 0)),
+                parity_g=Parity(q_numbers.get("Gparity", 0)),
+                isospin=self.__spin_from_dict(q_numbers.get("IsoSpin", 0)),
+                strangeness=int(q_numbers.get("Strangeness", 0)),
+                charmness=int(q_numbers.get("Charm", 0)),
+                bottomness=int(q_numbers.get("Bottomness", 0)),
+                topness=int(q_numbers.get("Topness", 0)),
+                baryon_number=int(q_numbers.get("BaryonNumber", 0)),
+                ln_electron=int(q_numbers.get("ElectronLN", 0)),
+                ln_muon=int(q_numbers.get("MuonLN", 0)),
+                ln_tau=int(q_numbers.get("TauLN", 0)),
             )
 
         with open(file_path, "rb") as input_file:
@@ -416,41 +397,34 @@ class ParticleDatabase:
         output_dict["Mass"] = self.__parameter_to_dict(particle.mass)
         if particle.width is not None:
             output_dict["Width"] = self.__parameter_to_dict(particle.width)
-        output_dict["QuantumNumbers"] = self.__quantum_numbers_to_dict(
-            particle.quantum_numbers
-        )
+        q_number_dict = {
+            "Spin": self.__spin_to_dict(particle.spin, simplify=True),
+            "Charge": self.__to_real(particle.charge),
+        }
+        optional_values = {
+            "Parity": (particle.parity, int),
+            "Cparity": (particle.parity_c, int),
+            "Gparity": (particle.parity_g, int),
+            "IsoSpin": (particle.isospin, self.__spin_to_dict),
+            "BaryonNumber": (particle.baryon_number, int),
+            "Strangeness": (particle.strangeness, int),
+            "Charm": (particle.charmness, int),
+            "Bottomness": (particle.bottomness, int),
+            "Topness": (particle.topness, int),
+            "ElectronLN": (particle.ln_electron, int),
+            "MuonLN": (particle.ln_muon, int),
+            "TauLN": (particle.ln_tau, int),
+        }
+        for key, (quantum_number, converter) in optional_values.items():
+            if quantum_number:
+                q_number_dict[key] = converter(quantum_number)  # type: ignore
+        output_dict["QuantumNumbers"] = q_number_dict
         return output_dict
 
     def __parameter_to_dict(self, parameter: Parameter) -> Union[dict, float]:
         if parameter.uncertainty == 0.0:
             return self.__to_real(parameter.value)
         return {"Value": parameter.value, "Error": parameter.uncertainty}
-
-    def __quantum_numbers_to_dict(
-        self, quantum_numbers: QuantumNumbers
-    ) -> Dict[str, Any]:
-        output_dict: Dict[str, Any] = {
-            "Spin": self.__spin_to_dict(quantum_numbers.spin, simplify=True),
-            "Charge": self.__to_real(quantum_numbers.charge),
-        }
-        optional_values = {
-            "Parity": (quantum_numbers.parity, int),
-            "Cparity": (quantum_numbers.parity_c, int),
-            "Gparity": (quantum_numbers.parity_g, int),
-            "IsoSpin": (quantum_numbers.isospin, self.__spin_to_dict),
-            "BaryonNumber": (quantum_numbers.baryon_number, int),
-            "Strangeness": (quantum_numbers.strangeness, int),
-            "Charm": (quantum_numbers.charmness, int),
-            "Bottomness": (quantum_numbers.bottomness, int),
-            "Topness": (quantum_numbers.topness, int),
-            "ElectronLN": (quantum_numbers.ln_electron, int),
-            "MuonLN": (quantum_numbers.ln_muon, int),
-            "TauLN": (quantum_numbers.ln_tau, int),
-        }
-        for key, (quantum_number, converter) in optional_values.items():
-            if quantum_number:
-                output_dict[key] = converter(quantum_number)  # type: ignore
-        return output_dict
 
     def __spin_to_dict(
         self, spin: Spin, simplify: bool = False
