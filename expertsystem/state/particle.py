@@ -2,7 +2,7 @@
 
 import logging
 from abc import ABC, abstractmethod
-from collections import OrderedDict
+from collections import OrderedDict, abc
 from copy import deepcopy
 from enum import Enum
 from itertools import permutations
@@ -25,7 +25,7 @@ from expertsystem.topology.graph import (
 )
 
 
-class Spin:
+class Spin(abc.Hashable):
     """Struct-like class defining spin as a magnitude plus projection."""
 
     def __init__(
