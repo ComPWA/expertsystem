@@ -198,10 +198,11 @@ class ParticleDatabase:
         raise LookupError(f"Could not find particle with PID {pid}")
 
     def load(self, file_path: str) -> None:
-        file_path = file_path.lower()
-        if file_path.endswith("xml"):
+        extension = file_path.split(".")[-1]
+        extension = extension.lower()
+        if extension == "xml":
             self.load_xml(file_path)
-        elif file_path.endswith("yaml") or file_path.endswith("yml"):
+        elif extension in ["yaml", "yml"]:
             self.load_yaml(file_path)
         else:
             raise NotImplementedError(f"Cannot load file {file_path}")
@@ -366,10 +367,11 @@ class ParticleDatabase:
         return Spin(magnitude, projection)
 
     def write(self, file_path: str) -> None:
-        file_path = file_path.lower()
-        if file_path.endswith("xml"):
+        extension = file_path.split(".")[-1]
+        extension = extension.lower()
+        if extension == "xml":
             self.write_xml(file_path)
-        elif file_path.endswith("yaml") or file_path.endswith("yml"):
+        elif extension in ["yaml", "yml"]:
             self.write_yaml(file_path)
         else:
             raise NotImplementedError(f"Cannot write file {file_path}")
