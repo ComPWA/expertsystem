@@ -12,6 +12,7 @@ from typing import (
     Dict,
     Iterator,
     List,
+    Optional,
     Union,
 )
 from typing import NamedTuple
@@ -136,7 +137,7 @@ class Particle(NamedTuple):  # noqa: D101
     mass: Parameter
     charge: float
     spin: Spin
-    width: Union[Parameter, None] = None
+    width: Optional[Parameter] = None
     isospin: Spin = Spin()
     parity: Parity = Parity()
     parity_c: Parity = Parity()
