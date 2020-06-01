@@ -7,7 +7,13 @@ from copy import deepcopy
 from enum import Enum
 from itertools import permutations
 from json import dumps, loads
-from typing import Any, Dict, List, Union
+from typing import (
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Union,
+)
 from typing import NamedTuple
 
 from numpy import arange
@@ -180,6 +186,12 @@ class ParticleDatabase:
 
     def __repr__(self) -> str:
         return f"ParticleDatabase: {len(self)} particles\n{self.__particles}"
+
+    def __contains__(self, name: str) -> bool:
+        return name in self.__particles
+
+    def __iter__(self) -> Iterator[Particle]:
+        return self.__particles.values().__iter__()
 
     @property
     def particles(self) -> Dict[str, Particle]:

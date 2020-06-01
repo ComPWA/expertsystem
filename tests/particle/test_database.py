@@ -46,6 +46,11 @@ class TestParticleDatabase:
         assert gamma.quantum_numbers.charmness == 0
         assert gamma.quantum_numbers.strangeness == 0
 
+    def test_dict_methods(self):
+        assert "gamma" in self.database
+        for particle in self.database:
+            assert isinstance(particle, Particle)
+
     def test_write(self):
         with pytest.raises(NotImplementedError):
             self.database.write("particle_list.csv")
