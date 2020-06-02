@@ -22,10 +22,6 @@
   "python.testing.pytestArgs": [ // https://github.com/microsoft/vscode-python/issues/693
     "tests",
     "--no-cov",
-    // "--cov-config=tests/.coveragerc",
-    // "--cov-report=html",
-    // "--cov-report=xml",
-    // "--cov=expertsystem",
   ],
   "python.testing.pytestEnabled": true,
   "restructuredtext.builtDocumentationPath": "${workspaceFolder}/doc/_build/html",
