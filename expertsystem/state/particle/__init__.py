@@ -149,14 +149,9 @@ class Particle(NamedTuple):  # noqa: D101
 
 
 class ParticleDatabase:
-    """Database of particles.
+    """Database of particles."""
 
-    Args:
-        definition_file (optional):
-            Construct the database from a definition file, like XML or YAML.
-    """
-
-    def __init__(self, definition_file: str = None):
+    def __init__(self, definition_file: Optional[str] = None):
         self.__particles: Dict[str, Particle] = dict()
         if definition_file:
             self.load(definition_file)
