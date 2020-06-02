@@ -88,6 +88,11 @@ class TestSpin:
         with pytest.raises(NotImplementedError):
             assert spin_half == "string"
 
+    @staticmethod
+    def test_float():
+        spin = Spin(0.5, -0.5)
+        assert float(spin) == 0.5
+
 
 class TestParticle:
     @staticmethod

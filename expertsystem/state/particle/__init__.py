@@ -41,6 +41,9 @@ class Spin(abc.Hashable):
     def __bool__(self) -> bool:
         return self.__magnitude != 0.0
 
+    def __float__(self) -> float:
+        return self.__magnitude
+
     @property
     def magnitude(self) -> float:
         return self.__magnitude
