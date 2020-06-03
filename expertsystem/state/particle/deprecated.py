@@ -1,7 +1,9 @@
 # flake8: noqa
 # pylint: skip-file
 
-# TODO: This module should be merged into the main particle module
+# TODO: This module should be merged into particle/recipe
+# TODO: #22
+# TODO: #44
 
 """Collection of tools for quantum numbers and things related to this."""
 
