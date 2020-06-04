@@ -655,4 +655,3 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
                 "</root>", "", 1
             )
             xmlfile.write(xmlstring)
-            xmlfile.close()

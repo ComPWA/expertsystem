@@ -7,8 +7,8 @@ from expertsystem.ui.system_control import load_default_particle_list
 def test_import_xml():
     load_default_particle_list()
     assert len(particle.deprecated.DATABASE) == 69
-    assert "sigma+" in particle.deprecated.DATABASE.keys()
-    assert "mu+" in particle.deprecated.DATABASE.keys()
+    assert "sigma+" in particle.deprecated.DATABASE
+    assert "mu+" in particle.deprecated.DATABASE
 
     some_particle = particle.deprecated.DATABASE["gamma"]
     quantum_numbers = some_particle[
