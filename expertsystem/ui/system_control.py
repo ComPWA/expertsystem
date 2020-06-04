@@ -22,7 +22,7 @@ from ..topology.graph import (
 from ..topology.topologybuilder import SimpleStateTransitionTopologyBuilder
 
 from ..state import particle
-from expertsystem.state.particle.deprecated import (
+from expertsystem.state.particle import (
     initialize_graph,
     get_particle_property,
     get_interaction_property,
@@ -91,7 +91,7 @@ class InteractionDeterminationFunctorInterface(ABC):
 
 
 class GammaCheck(InteractionDeterminationFunctorInterface):
-    name_label = particle.deprecated.LABELS.Name.name
+    name_label = particle.LABELS.Name.name
 
     def check(self, in_edge_props, out_edge_props, node_props):
         int_types = [x for x in InteractionTypes]
@@ -109,8 +109,8 @@ class LeptonCheck(InteractionDeterminationFunctorInterface):
         StateQuantumNumberNames.MuonLN,
         StateQuantumNumberNames.TauLN,
     ]
-    name_label = particle.deprecated.LABELS.Name.name
-    qns_label = particle.deprecated.LABELS.QuantumNumber.name
+    name_label = particle.LABELS.Name.name
+    qns_label = particle.LABELS.QuantumNumber.name
 
     def check(self, in_edge_props, out_edge_props, node_props):
         node_interaction_types = [x for x in InteractionTypes]
@@ -177,8 +177,8 @@ def remove_duplicate_solutions(
 
 
 def remove_qns_from_graph(graph, qn_list):
-    qns_label = particle.deprecated.LABELS.QuantumNumber.name
-    type_label = particle.deprecated.LABELS.Type.name
+    qns_label = particle.LABELS.QuantumNumber.name
+    type_label = particle.LABELS.Type.name
 
     int_qns = [
         x for x in qn_list if isinstance(x, InteractionQuantumNumberNames)
@@ -326,7 +326,7 @@ def require_interaction_property(
 
 
 def _find_node_ids_with_ingoing_particle_name(graph, ingoing_particle_name):
-    name_label = particle.deprecated.LABELS.Name.name
+    name_label = particle.LABELS.Name.name
     found_node_ids = []
     for node_id in graph.nodes:
         edge_ids = get_edges_ingoing_to_node(graph, node_id)
@@ -443,7 +443,7 @@ def calculate_swappings(id_mapping):
 
 
 def create_edge_id_particle_mapping(graph, external_edge_getter_function):
-    name_label = particle.deprecated.LABELS.Name.name
+    name_label = particle.LABELS.Name.name
     return {
         i: graph.edge_props[i][name_label]
         for i in external_edge_getter_function(graph)
@@ -801,10 +801,10 @@ class StateTransitionManager:
 
 
 def load_default_particle_list(
-    method: Callable = particle.deprecated.load_particle_list_from_xml,
+    method: Callable = particle.load_particle_list_from_xml,
 ) -> None:
     """Load the default particle list that comes with the expertsystem."""
-    if len(particle.deprecated.DATABASE) == 0:
+    if len(particle.DATABASE) == 0:
         for search_path in default_particle_list_search_paths:
             if search_path.startswith("/"):  # absolute path
                 file_path = search_path
@@ -817,11 +817,11 @@ def load_default_particle_list(
                 method(file_path)
                 logging.info(
                     "loaded "
-                    + str(len(particle.deprecated.DATABASE))
+                    + str(len(particle.DATABASE))
                     + " particles from particle_list file!"
                 )
                 break
-    if len(particle.deprecated.DATABASE) == 0:
+    if len(particle.DATABASE) == 0:
         raise FileNotFoundError(
             "\n  Failed to load particle_list file from search paths!"
             "\n  Please contact the developers: https://github.com/ComPWA"

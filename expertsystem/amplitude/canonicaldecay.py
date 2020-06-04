@@ -5,7 +5,7 @@ from ..topology.graph import (
     get_edges_outgoing_to_node,
 )
 
-from expertsystem.state.particle.deprecated import (
+from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     StateQuantumNumberNames,
     get_interaction_property,

@@ -1,5 +1,5 @@
 from expertsystem.state.conservationrules import SpinConservation
-from expertsystem.state.particle.deprecated import (
+from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     Spin,
     StateQuantumNumberNames,

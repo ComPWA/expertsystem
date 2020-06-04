@@ -5,7 +5,7 @@ from copy import deepcopy
 from numpy import arange
 import logging
 
-from expertsystem.state.particle.deprecated import (
+from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     ParticleDecayPropertyNames,
     ParticlePropertyNames,

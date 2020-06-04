@@ -10,7 +10,7 @@ from expertsystem.amplitude.canonicaldecay import (
     CanonicalAmplitudeGeneratorXML,
 )
 from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGeneratorXML
-from expertsystem.state.particle.deprecated import (
+from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     create_spin_domain,
 )

@@ -2,13 +2,13 @@ from copy import deepcopy
 
 import pytest
 
-from expertsystem.state.particle import (
+from expertsystem.particle import (
     Parameter,
     Parity,
     Particle,
     Spin,
 )
-from expertsystem.state.particle import ParticleDatabase
+from expertsystem.particle import ParticleDatabase
 
 
 class TestParticleDatabase:

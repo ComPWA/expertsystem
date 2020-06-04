@@ -18,6 +18,7 @@ parameters so that they resemble the data set as good as possible.
 
 __all__ = [
     "amplitude",
+    "particle",
     "state",
     "topology",
     "ui",
@@ -27,6 +28,7 @@ __all__ = [
 import sys
 
 from . import amplitude
+from . import particle
 from . import state
 from . import topology
 from . import ui

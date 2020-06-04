@@ -33,7 +33,7 @@ print("found " + str(len(solutions)) + " solutions!")
 
 print("intermediate states:")
 for g in solutions:
-    print(g.edge_props[1][particle.deprecated.LABELS.Name.name])
+    print(g.edge_props[1][particle.LABELS.Name.name])
 
 xml_generator = HelicityDecayAmplitudeGeneratorXML()
 xml_generator.generate(solutions)

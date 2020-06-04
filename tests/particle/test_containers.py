@@ -2,7 +2,7 @@ from copy import deepcopy
 
 import pytest
 
-from expertsystem.state.particle import (
+from expertsystem.particle import (
     Parameter,
     Parity,
     Particle,

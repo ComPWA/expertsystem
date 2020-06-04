@@ -1,7 +1,7 @@
 from copy import deepcopy
 import sys
 
-from expertsystem.state.particle.deprecated import (
+from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     StateQuantumNumberNames,
     create_spin_domain,

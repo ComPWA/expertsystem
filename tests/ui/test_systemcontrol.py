@@ -1,7 +1,7 @@
 import pytest
 
 from expertsystem.state import particle
-from expertsystem.state.particle.deprecated import (
+from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     create_spin_domain,
 )
@@ -229,8 +229,8 @@ class TestSolutionFilter:  # pylint: disable=no-self-use
         self, input_values, filter_parameters, result
     ):
         graphs = []
-        name_label = particle.deprecated.LABELS.Name.name
-        value_label = particle.deprecated.LABELS.Value.name
+        name_label = particle.LABELS.Name.name
+        value_label = particle.LABELS.Value.name
         for value in input_values:
             tempgraph = make_ls_test_graph(value[1][0], value[1][1])
             tempgraph.add_edges([0])

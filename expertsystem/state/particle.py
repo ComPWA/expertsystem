@@ -34,7 +34,7 @@ from expertsystem.topology.graph import (
 )
 
 
-from . import Spin
+from expertsystem.particle import Spin
 
 
 def create_spin_domain(

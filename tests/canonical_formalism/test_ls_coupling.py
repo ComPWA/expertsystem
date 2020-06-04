@@ -2,7 +2,7 @@ import pytest
 
 from expertsystem.state import particle
 from expertsystem.state.conservationrules import ParityConservationHelicity
-from expertsystem.state.particle.deprecated import (
+from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     Spin,
     SpinQNConverter,
@@ -131,7 +131,7 @@ def test_canonical_clebsch_gordan_ls_coupling(
 
     l_label = InteractionQuantumNumberNames.L
     s_label = InteractionQuantumNumberNames.S
-    qn_label = particle.deprecated.LABELS.QuantumNumber
+    qn_label = particle.LABELS.QuantumNumber
 
     spin_converter = SpinQNConverter()
     node_props = {
