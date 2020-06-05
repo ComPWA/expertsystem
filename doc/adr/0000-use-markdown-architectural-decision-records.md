@@ -2,6 +2,9 @@
 
 Status: **accepted**
 
+Technical story:
+A large number of issues in the expertsystem are to be correlated (e.g. [#40](https://github.com/ComPWA/expertsystem/issues/40), [#44](https://github.com/ComPWA/expertsystem/issues/44), [#22](https://github.com/ComPWA/expertsystem/issues/22)) so that resulting PRs (in this case, [#42](https://github.com/ComPWA/expertsystem/pull/42)) lacked direction. This led us to consider ADRs.
+
 ## Context and Problem Statement
 
 We want to record architectural decisions made in this project.
