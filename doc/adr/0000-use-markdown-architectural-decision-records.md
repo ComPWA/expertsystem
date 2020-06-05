@@ -1,6 +1,7 @@
 # [ADR-0000] Use Markdown Architectural Decision Records
 
 Status: **accepted**
+
 Deciders: @redeboer, @spflueger
 
 Technical story:

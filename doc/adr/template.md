@@ -1,6 +1,7 @@
 # [ADR-xxxx] <!-- short title of solved problem and solution -->
 
 Status: **[proposed | rejected | accepted | deprecated | … | superseded by [ADR-xxxx](xxxx-example.md)]**
+
 Deciders: [list everyone involved in the decision] <!-- optional -->
 
 Technical Story: [description | ticket/issue URL] <!-- optional -->
