@@ -7,7 +7,6 @@ This log lists the architectural decisions for `ComPWA/expertsystem
 .. toctree::
   :glob:
   :maxdepth: 1
-  :numbered:
 
   *
 
