@@ -65,6 +65,7 @@ master_doc = "index"
 
 extensions = [
     "nbsphinx",
+    "recommonmark",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.autosummary",
@@ -76,7 +77,6 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
-    "recommonmark",
 ]
 exclude_patterns = [
     "**.ipynb_checkpoints",
