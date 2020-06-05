@@ -57,15 +57,6 @@ Chosen option: "[option 1]", because [justification. e.g., only option, which me
 * Bad, because [argument c]
 * … <!-- numbers of pros and cons can vary -->
 
-### [option 3]
-
-[example | description | pointer to more information | …] <!-- optional -->
-
-* Good, because [argument a]
-* Good, because [argument b]
-* Bad, because [argument c]
-* … <!-- numbers of pros and cons can vary -->
-
 ## Links <!-- optional -->
 
 * [Link type] [Link to ADR] <!-- example: Refined by [ADR-0005](0005-example.md) -->
