@@ -1,6 +1,7 @@
 # [ADR-0000] Use Markdown Architectural Decision Records
 
 Status: **accepted**
+Deciders: @redeboer, @spflueger
 
 Technical story:
 A large number of issues in the expertsystem are to be correlated (e.g. [#40](https://github.com/ComPWA/expertsystem/issues/40), [#44](https://github.com/ComPWA/expertsystem/issues/44), [#22](https://github.com/ComPWA/expertsystem/issues/22)) so that resulting PRs (in this case, [#42](https://github.com/ComPWA/expertsystem/pull/42)) lacked direction. This led us to consider ADRs.
