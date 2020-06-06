@@ -3,7 +3,7 @@ import json
 import logging
 from copy import deepcopy
 
-import xmltodict
+import xmltodict  # type: ignore
 
 from .abstractgenerator import (
     AbstractAmplitudeNameGenerator,

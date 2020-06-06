@@ -10,9 +10,9 @@ from enum import Enum
 from itertools import permutations
 from json import loads, dumps
 
-from numpy import arange
+from numpy import arange  # type: ignore
 
-import xmltodict
+import xmltodict  # type: ignore
 
 import yaml
 

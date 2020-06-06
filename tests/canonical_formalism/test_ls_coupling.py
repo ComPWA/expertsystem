@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore
 
 from expertsystem.state import particle
 from expertsystem.state.conservationrules import ParityConservationHelicity

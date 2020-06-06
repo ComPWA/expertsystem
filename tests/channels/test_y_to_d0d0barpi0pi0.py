@@ -4,7 +4,7 @@
 
 import logging
 
-import pytest
+import pytest  # type: ignore
 
 from expertsystem.amplitude.canonicaldecay import (
     CanonicalAmplitudeGeneratorXML,

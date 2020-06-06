@@ -1,3 +1,5 @@
+# type: ignore
+
 """
 A setuptools based setup module.
 

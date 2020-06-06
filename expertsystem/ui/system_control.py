@@ -8,7 +8,7 @@ import inspect
 from os import path
 from typing import Callable
 
-from progress.bar import IncrementalBar
+from progress.bar import IncrementalBar  # type: ignore
 
 import expertsystem
 

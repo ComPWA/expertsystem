@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore
 
 from expertsystem.ui.system_control import (
     InteractionTypes,

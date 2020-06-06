@@ -153,6 +153,6 @@ class CanonicalAmplitudeGeneratorXML(HelicityAmplitudeGeneratorXML):
 
         return wrapper
 
-    @_clebsch_gordan_decorator
+    @_clebsch_gordan_decorator  # type: ignore
     def generate_partial_decay(self, graph, node_id):
         return super().generate_partial_decay(graph, node_id)

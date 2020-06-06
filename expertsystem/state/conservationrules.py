@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from functools import reduce
 from copy import deepcopy
 
-from numpy import arange
+from numpy import arange  # type: ignore
 import logging
 
 from .particle import (
