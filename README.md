@@ -8,9 +8,22 @@
 
 # PWA Expert System
 
-The goal is to build state transition graphs, going from an initial state to a
-final state. A state transition graph consists of nodes and edges/lines (in
-correspondence to Feynman graphs):
+The PWA Expert System is a tool for:
+
+1. evaluating the validity of a particle reaction;
+2. creating amplitude models that can be used by partial wave analysis
+   frameworks.
+
+As a user, you give the system an initial state and a final state, optionally
+with certain rules you want to apply. The expert system then constructs several
+hypotheses for what happens during the transition from initial to final state.
+
+## How it works
+
+The expert system works with **state transition graphs** that represent the
+allowed transitions from an initial state to a final state. A state transition
+graph consists of **nodes** and **edges** (in correspondence to Feynman
+graphs):
 
 - We call the connection lines **particle lines**. These are basically a list
   of quantum numbers (QN) that define the particle state. (This list can be
@@ -19,21 +32,25 @@ correspondence to Feynman graphs):
   transition of this specific step. An interaction node has 𝑀 ingoing lines
   and 𝑁 outgoing lines (𝑀, 𝑁 ∈ 𝕫, 𝑀 > 0, 𝑁 > 0).
 
-## Concept of building graphs
+## Workflow for building a graph
 
 ### Step 1
+
 Building of all possible topologies. A **topology** is a graph, in which the
 edges and nodes are empty (no QN information). See the topology sub-modules.
 
 ### Step 2
+
 Filling the topology graphs with QN information. This means initializing the
 topology graphs with the initial and final state QNs and *propagating* these
 numbers through the complete graph. Here, the combinatorics of the initial and
 final state should also be taken into account.
 
 ### Step 3
+
 Duplicate the graphs and insert concrete particles for the edges (inserting the
 mass variable).
 
 ### Step 4
+
 Write output to XML model file.
