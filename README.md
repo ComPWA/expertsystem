@@ -54,3 +54,19 @@ mass variable).
 ### Step 4
 
 Write output to XML model file.
+
+## Design and available features
+
+- [ ] **Input**: Particle database
+  - [ ] Source of truth: PDG
+  - [x] Option to overwrite and append with custom particle definitions
+- [ ] **State transition graph**
+  - [ ] ...
+- [ ] **Conservation rules**
+  - [ ] Easily extendable
+    - [ ] User input
+    - [ ] Open-closed design
+  - [ ] ...
+- [ ] **I/O**: Write transition graph to human-readable recipe file
+  - [x] XML (*old ComPWA format*)
+  - [ ] YAML
