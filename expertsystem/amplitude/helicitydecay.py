@@ -10,6 +10,9 @@ from typing import (
 
 import xmltodict
 
+import yaml
+
+from . import _yaml_adapter
 from .abstractgenerator import (
     AbstractAmplitudeNameGenerator,
     AbstractAmplitudeGenerator,
@@ -654,6 +657,8 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
         recipe_dict = self._create_recipe_dict()
         if file_extension in ["xml"]:
             self._write_recipe_to_xml(recipe_dict, filename)
+        elif file_extension in ["yaml", "yml"]:
+            self._write_recipe_to_yml(recipe_dict, filename)
         else:
             raise NotImplementedError(
                 f'Cannot write to file type "{file_extension}"'
@@ -679,3 +684,11 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
                 "</root>", "", 1
             )
             xmlfile.write(xmlstring)
+
+    def _write_recipe_to_yml(
+        self, recipe_dict: Dict[str, Any], filename: str
+    ) -> None:
+        particle_dict = _yaml_adapter.to_particle_list_dict(recipe_dict)
+        with open(filename, "w") as output_file:
+            output_dict = {"ParticleList": particle_dict}
+            yaml.dump(output_dict, output_file, sort_keys=False)

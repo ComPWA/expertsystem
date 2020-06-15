@@ -2,6 +2,8 @@ import logging
 
 import pytest
 
+import yaml
+
 from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGeneratorXML
 from expertsystem.ui.system_control import (
     InteractionTypes,
@@ -41,3 +43,23 @@ class TestHelicityAmplitudeGenerator:
     def test_create_recipe_dict(self):
         recipe = self.amplitude_generator._create_recipe_dict()
         assert len(recipe) == 3
+
+    def test_yaml(self):
+        output_filename = "JPsiToGammaPi0Pi0.yml"
+        self.amplitude_generator.write_to_file(output_filename)
+        with open(output_filename, "rb") as input_file:
+            imported_dict = yaml.load(input_file, Loader=yaml.FullLoader)
+        particle_list = imported_dict["ParticleList"]
+        gamma = particle_list["gamma"]
+        assert gamma["PID"] == 22
+        assert gamma["Mass"]["Value"] == 0.0
+        gamma_qns = gamma["QuantumNumbers"]
+        assert gamma_qns["Spin"]["Value"] == 1
+        assert gamma_qns["Charge"] == 0
+        assert gamma_qns["Parity"] == -1
+        assert gamma_qns["Cparity"] == -1
+        assert gamma_qns["IsoSpin"]["Value"] == 0
+        assert gamma_qns["IsoSpin"]["Projection"] == 0
+        assert gamma_qns["BaryonNumber"] == 0
+        assert gamma_qns["Charm"] == 0
+        assert gamma_qns["Strangeness"] == 0
