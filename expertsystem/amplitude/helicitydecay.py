@@ -700,6 +700,12 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
                     flow, False
                 )
 
+            def write_line_break(self, data=None):  # type: ignore
+                """See https://stackoverflow.com/a/44284819"""
+                super().write_line_break(data)
+                if len(self.indents) == 1:
+                    super().write_line_break()
+
         with open(filename, "w") as output_file:
             output_dict = {
                 "Kinematics": kinematics,
