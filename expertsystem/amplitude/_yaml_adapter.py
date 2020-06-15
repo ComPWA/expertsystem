@@ -17,9 +17,9 @@ def to_particle_list_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
         name = str(xml_particle["Name"])
         pid = int(xml_particle["Pid"])
         parameters = xml_particle["Parameter"]
-        mass_value = float(parameters["Value"])
-        mass_error = float(parameters.get("Error", 0.0))
+        mass = to_parameter(parameters)
         quantum_numbers = list(xml_particle["QuantumNumber"])
+        decay_info = xml_particle.get("DecayInfo", None)
 
         qn_key_map: Dict[str, Tuple[str, Callable]] = {
             "Charge": ("Charge", to_scalar),
@@ -43,11 +43,15 @@ def to_particle_list_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
             for xml_key, (yaml_key, converter) in qn_key_map.items():
                 if qn_type == xml_key:
                     yaml_qn_dict[yaml_key] = converter(quantum_number)
-        particle_yml = {
-            "PID": pid,
-            "Mass": {"Value": mass_value, "Error": mass_error},
-            "QuantumNumbers": yaml_qn_dict,
-        }
+        particle_yml: Dict[str, Any] = dict()
+        particle_yml["PID"] = pid
+        particle_yml["Mass"] = mass
+        if decay_info:
+            parameters = decay_info.get("Parameter", list())
+            for parameter in parameters:
+                if parameter["Type"] == "Width":
+                    particle_yml["Width"] = to_parameter(parameter)
+        particle_yml["QuantumNumbers"] = yaml_qn_dict
         particle_list_yml[name] = particle_yml
     return particle_list_yml
 
@@ -59,6 +63,15 @@ def to_scalar(
     if value.is_integer():
         return int(value)
     return value
+
+
+def to_parameter(definition: Dict[str, Any]) -> Union[float, Dict[str, float]]:
+    """Used for extracting Mass and Width keys."""
+    value = float(definition["Value"])
+    error = float(definition.get("Error", 0.0))
+    if error == 0.0:
+        return value
+    return {"Value": value, "Error": error}
 
 
 def to_spin(definition: Dict[str, Any]) -> Union[float, Dict[str, float]]:
