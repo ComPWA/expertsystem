@@ -670,8 +670,9 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
         recipe_dict.update(self.helicity_amplitudes)
         return recipe_dict
 
+    @staticmethod
     def _write_recipe_to_xml(
-        self, recipe_dict: Dict[str, Any], filename: str
+        recipe_dict: Dict[str, Any], filename: str
     ) -> None:
         with open(filename, mode="w") as xmlfile:
             # xmltodict only allows a single xml root
@@ -685,8 +686,9 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
             )
             xmlfile.write(xmlstring)
 
+    @staticmethod
     def _write_recipe_to_yml(
-        self, recipe_dict: Dict[str, Any], filename: str
+        recipe_dict: Dict[str, Any], filename: str
     ) -> None:
         particle_dict = _yaml_adapter.to_particle_list_dict(recipe_dict)
         kinematics = _yaml_adapter.to_kinematics_dict(recipe_dict)
