@@ -17,9 +17,7 @@ def create_amplitude_generator():
     initial_state = [("J/psi", [-1, 1])]
     final_state = [("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])]
 
-    tbd_manager = StateTransitionManager(
-        initial_state, final_state, ["f0", "omega"]
-    )
+    tbd_manager = StateTransitionManager(initial_state, final_state, ["f"])
     tbd_manager.set_allowed_interaction_types(
         [InteractionTypes.Strong, InteractionTypes.EM]
     )
