@@ -3,6 +3,11 @@ import json
 import logging
 from copy import deepcopy
 
+from typing import (
+    Any,
+    Dict,
+)
+
 import xmltodict
 
 from .abstractgenerator import (
@@ -644,14 +649,29 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
         )
         return self.fit_parameter_names
 
-    def write_to_file(self, filename):
+    def write_to_file(self, filename: str) -> None:
+        file_extension = filename.lower().split(".")[-1]
+        recipe_dict = self._create_recipe_dict()
+        if file_extension in ["xml"]:
+            self._write_recipe_to_xml(recipe_dict, filename)
+        else:
+            raise NotImplementedError(
+                f'Cannot write to file type "{file_extension}"'
+            )
+
+    def _create_recipe_dict(self) -> Dict[str, Any]:
+        recipe_dict = self.particle_list
+        recipe_dict.update(self.kinematics)
+        recipe_dict.update(self.helicity_amplitudes)
+        return recipe_dict
+
+    def _write_recipe_to_xml(
+        self, recipe_dict: Dict[str, Any], filename: str
+    ) -> None:
         with open(filename, mode="w") as xmlfile:
-            full_dict = self.particle_list
-            full_dict.update(self.kinematics)
-            full_dict.update(self.helicity_amplitudes)
             # xmltodict only allows a single xml root
             xmlstring = xmltodict.unparse(
-                OrderedDict({"root": full_dict}), pretty=True
+                OrderedDict({"root": recipe_dict}), pretty=True
             )
             # before writing it to file we remove the root tag again
             xmlstring = xmlstring.replace("<root>", "", 1)
@@ -659,4 +679,3 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
                 "</root>", "", 1
             )
             xmlfile.write(xmlstring)
-            xmlfile.close()
