@@ -693,6 +693,7 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
         particle_dict = _yaml_adapter.to_particle_dict(recipe_dict)
         parameter_list = _yaml_adapter.to_parameter_list(recipe_dict)
         kinematics = _yaml_adapter.to_kinematics_dict(recipe_dict)
+        dynamics = _yaml_adapter.to_dynamics(recipe_dict)
 
         class IncreasedIndent(yaml.Dumper):
             def increase_indent(self, flow=False, indentless=False):  # type: ignore
@@ -711,6 +712,7 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
                 "Kinematics": kinematics,
                 "Parameters": parameter_list,
                 "ParticleList": particle_dict,
+                "Dynamics": dynamics,
             }
             yaml.dump(
                 output_dict,

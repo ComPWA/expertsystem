@@ -11,6 +11,64 @@ from typing import (
 )
 
 
+def to_dynamics(recipe: Dict[str, Any]) -> Dict[str, Any]:
+    def determine_type(definition: Dict[str, Any]) -> str:
+        decay_type = definition["Type"]
+        decay_type_xml_to_yaml = {
+            "relativisticBreitWigner": "RelativisticBreitWigner",
+            "nonResonant": "NonDynamic",
+        }
+        for xml_type, yaml_type in decay_type_xml_to_yaml.items():
+            decay_type = decay_type.replace(xml_type, yaml_type)
+        return decay_type
+
+    def determine_form_factor(
+        definition: Dict[str, Any],
+        particle_xml: Dict[str, Any],
+        decay_type: str,
+    ) -> Dict[str, Any]:
+        form_factor = definition.get("FormFactor", None)
+        if form_factor is None:
+            if decay_type == "NonDynamic":
+                form_factor = {
+                    "Type": "BlattWeisskopf",
+                    "MesonRadius": {"Value": 1.0},
+                }
+        else:
+            parameters = particle_xml["Parameter"]
+            meson_radius_xml = None
+            if isinstance(parameters, list):
+                for parameter in parameters:
+                    if parameter["Type"] == "MesonRadius":
+                        meson_radius_xml = parameter
+                        break
+            elif isinstance(parameters, dict):
+                meson_radius_xml = parameters
+            if meson_radius_xml is not None:
+                meson_radius_yml = dict()
+                meson_radius_yml["Value"] = float(meson_radius_xml["Value"])
+                optional_keys = ["Min", "Max", "Fix"]
+                for key in optional_keys:
+                    if key in meson_radius_yml:
+                        meson_radius_yml[key] = meson_radius_xml[key]
+                form_factor["MesonRadius"] = meson_radius_yml
+        return form_factor
+
+    particle_list_xml = recipe["ParticleList"]["Particle"]
+    dynamics_yml: Dict[str, Any] = dict()
+    for particle_xml in particle_list_xml:
+        name = particle_xml["Name"]
+        decay_info_xml = particle_xml.get("DecayInfo", None)
+        if decay_info_xml:
+            decay_type = determine_type(decay_info_xml)
+            form_factor = determine_form_factor(
+                decay_info_xml, particle_xml, decay_type
+            )
+            decay_info_yml = {"Type": decay_type, "FormFactor": form_factor}
+            dynamics_yml[name] = decay_info_yml
+    return dynamics_yml
+
+
 def to_kinematics_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
     kinematics_xml = recipe["HelicityKinematics"]
     initialstate_xml = kinematics_xml["InitialState"]["Particle"]

@@ -85,3 +85,18 @@ class TestHelicityAmplitudeGeneratorYAML:
         for parameter in parameter_list:
             assert "Name" in parameter
             assert "Value" in parameter
+
+    def test_dynamics_section(self):
+        imported_dict = self.write_load_yaml()
+        dynamics = imported_dict["Dynamics"]
+        assert len(dynamics) == 5
+
+        jpsi = dynamics["J/psi"]
+        assert jpsi["Type"] == "NonDynamic"
+        assert jpsi["FormFactor"]["Type"] == "BlattWeisskopf"
+        assert jpsi["FormFactor"]["MesonRadius"]["Value"] == 1.0
+
+        f0_980 = dynamics["f0(980)"]
+        assert f0_980["Type"] == "RelativisticBreitWigner"
+        assert f0_980["FormFactor"]["Type"] == "BlattWeisskopf"
+        assert f0_980["FormFactor"]["MesonRadius"]["Value"] == 0.994
