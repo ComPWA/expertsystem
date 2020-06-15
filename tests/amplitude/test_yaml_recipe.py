@@ -67,3 +67,13 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert gamma_qns["BaryonNumber"] == 0
         assert gamma_qns["Charm"] == 0
         assert gamma_qns["Strangeness"] == 0
+
+    def test_kinematics_section(self):
+        imported_dict = self.write_load_yaml()
+        kinematics = imported_dict["Kinematics"]
+        initial_state = kinematics["InitialState"]
+        final_state = kinematics["FinalState"]
+        assert kinematics["Type"] == "Helicity"
+        assert len(initial_state) == 1
+        assert initial_state[0]["Particle"] == "J/psi"
+        assert len(final_state) == 3

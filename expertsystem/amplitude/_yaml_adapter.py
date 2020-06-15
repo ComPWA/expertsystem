@@ -4,6 +4,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    List,
     Tuple,
     Union,
 )
@@ -68,3 +69,35 @@ def to_spin(definition: Dict[str, Any]) -> Union[float, Dict[str, float]]:
             "Projection": to_scalar(definition, "Projection"),
         }
     return value
+
+
+def to_kinematics_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
+    kinematics_xml = recipe["HelicityKinematics"]
+    initialstate_xml = kinematics_xml["InitialState"]["Particle"]
+    initial_state_yml = list()
+    for state_def_xml in initialstate_xml:
+        state_def_yml = {
+            "Particle": state_def_xml["Name"],
+            "ID": int(state_def_xml["Id"]),
+        }
+        initial_state_yml.append(state_def_yml)
+    kinematics_yaml = {
+        "Type": "Helicity",
+        "InitialState": to_state_list(kinematics_xml, "InitialState"),
+        "FinalState": to_state_list(kinematics_xml, "FinalState"),
+    }
+    return kinematics_yaml
+
+
+def to_state_list(
+    definition: Dict[str, Any], key: str
+) -> List[Dict[str, Union[str, int]]]:
+    state_list_xml = definition[key]["Particle"]
+    state_list_yml = list()
+    for state_def_xml in state_list_xml:
+        state_def_yml = {
+            "Particle": state_def_xml["Name"],
+            "ID": int(state_def_xml["Id"]),
+        }
+        state_list_yml.append(state_def_yml)
+    return state_list_yml
