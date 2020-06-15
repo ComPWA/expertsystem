@@ -4,6 +4,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generator,
     List,
     Tuple,
     Union,
@@ -26,6 +27,27 @@ def to_kinematics_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
         "FinalState": _to_state_list(kinematics_xml, "FinalState"),
     }
     return kinematics_yaml
+
+
+def to_parameter_list(recipe: Dict[str, Any]) -> List[Dict[str, Any]]:
+    intensity_dict = recipe["Intensity"]
+    xml_parameter_defs = _extract_parameter_definitions_from_intensity(
+        intensity_dict
+    )
+    parameter_dict: Dict[str, Dict[str, Any]] = dict()
+    for parameter_xml in xml_parameter_defs:
+        name = parameter_xml["Name"]
+        if name not in parameter_dict:
+            parameter_yml = dict()
+            parameter_yml["Type"] = parameter_xml["Type"]
+            parameter_yml["Value"] = parameter_xml["Value"]
+            if "Fix" in parameter_xml:
+                parameter_yml["Fix"] = parameter_xml["Fix"]
+            parameter_dict[name] = parameter_yml
+    parameter_list = [
+        {"Name": name, **value} for name, value in parameter_dict.items()
+    ]
+    return parameter_list
 
 
 def to_particle_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
@@ -72,6 +94,35 @@ def to_particle_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
         particle_yml["QuantumNumbers"] = yaml_qn_dict
         particle_list_yml[name] = particle_yml
     return particle_list_yml
+
+
+def _extract_parameter_definitions_from_intensity(
+    definition: dict,
+) -> List[Dict[str, Any]]:
+    search_results = gen_dict_extract("Parameter", definition)
+    parameter_defs = list()
+    for item in search_results:
+        if isinstance(item, list):
+            parameter_defs.extend(item)
+        else:
+            parameter_defs.append(item)
+    return parameter_defs
+
+
+def gen_dict_extract(
+    search_term: str, dictionary: Dict[str, Any]
+) -> Generator:
+    """See https://stackoverflow.com/a/29652561"""
+    for key, value in dictionary.items():
+        if key == search_term:
+            yield value
+        if isinstance(value, dict):
+            for result in gen_dict_extract(search_term, value):
+                yield result
+        elif isinstance(value, list):
+            for d in value:
+                for result in gen_dict_extract(search_term, d):
+                    yield result
 
 
 def _to_scalar(

@@ -691,10 +691,12 @@ class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
         recipe_dict: Dict[str, Any], filename: str
     ) -> None:
         particle_dict = _yaml_adapter.to_particle_dict(recipe_dict)
+        parameter_list = _yaml_adapter.to_parameter_list(recipe_dict)
         kinematics = _yaml_adapter.to_kinematics_dict(recipe_dict)
         with open(filename, "w") as output_file:
             output_dict = {
                 "Kinematics": kinematics,
+                "Parameters": parameter_list,
                 "ParticleList": particle_dict,
             }
             yaml.dump(output_dict, output_file, sort_keys=False)

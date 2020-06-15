@@ -79,3 +79,11 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert len(initial_state) == 1
         assert initial_state[0]["Particle"] == "J/psi"
         assert len(final_state) == 3
+
+    def test_parameter_section(self):
+        imported_dict = self.write_load_yaml()
+        parameter_list = imported_dict["Parameters"]
+        assert len(parameter_list) == 17
+        for parameter in parameter_list:
+            assert "Name" in parameter
+            assert "Value" in parameter
