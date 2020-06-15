@@ -28,7 +28,7 @@ def to_kinematics_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
     return kinematics_yaml
 
 
-def to_particle_list_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
+def to_particle_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
     particle_list_xml = recipe["ParticleList"]["Particle"]
     particle_list_yml = dict()
     for xml_particle in particle_list_xml:
