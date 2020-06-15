@@ -33,8 +33,15 @@ def create_amplitude_generator():
     return amplitude_generator
 
 
-class TestHelicityAmplitudeGenerator:
+class TestHelicityAmplitudeGeneratorYAML:
     amplitude_generator = create_amplitude_generator()
+
+    def write_load_yaml(self) -> dict:
+        output_filename = "JPsiToGammaPi0Pi0.yml"
+        self.amplitude_generator.write_to_file(output_filename)
+        with open(output_filename, "rb") as input_file:
+            imported_dict = yaml.load(input_file, Loader=yaml.FullLoader)
+        return imported_dict
 
     def test_not_implemented_writer(self):
         with pytest.raises(NotImplementedError):
@@ -44,11 +51,8 @@ class TestHelicityAmplitudeGenerator:
         recipe = self.amplitude_generator._create_recipe_dict()
         assert len(recipe) == 3
 
-    def test_yaml(self):
-        output_filename = "JPsiToGammaPi0Pi0.yml"
-        self.amplitude_generator.write_to_file(output_filename)
-        with open(output_filename, "rb") as input_file:
-            imported_dict = yaml.load(input_file, Loader=yaml.FullLoader)
+    def test_particle_section(self):
+        imported_dict = self.write_load_yaml()
         particle_list = imported_dict["ParticleList"]
         gamma = particle_list["gamma"]
         assert gamma["PID"] == 22
