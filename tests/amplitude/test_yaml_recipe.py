@@ -1,0 +1,43 @@
+import logging
+
+import pytest
+
+from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGeneratorXML
+from expertsystem.ui.system_control import (
+    InteractionTypes,
+    StateTransitionManager,
+)
+
+logging.basicConfig(level=logging.ERROR)
+
+
+def create_amplitude_generator():
+    initial_state = [("J/psi", [-1, 1])]
+    final_state = [("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])]
+
+    tbd_manager = StateTransitionManager(
+        initial_state, final_state, ["f0", "omega"]
+    )
+    tbd_manager.set_allowed_interaction_types(
+        [InteractionTypes.Strong, InteractionTypes.EM]
+    )
+    graph_interaction_settings_groups = tbd_manager.prepare_graphs()
+    solutions, _ = tbd_manager.find_solutions(
+        graph_interaction_settings_groups
+    )
+
+    amplitude_generator = HelicityAmplitudeGeneratorXML()
+    amplitude_generator.generate(solutions)
+    return amplitude_generator
+
+
+class TestHelicityAmplitudeGenerator:
+    amplitude_generator = create_amplitude_generator()
+
+    def test_not_implemented_writer(self):
+        with pytest.raises(NotImplementedError):
+            self.amplitude_generator.write_to_file("JPsiToGammaPi0Pi0.csv")
+
+    def test_create_recipe_dict(self):
+        recipe = self.amplitude_generator._create_recipe_dict()
+        assert len(recipe) == 3
