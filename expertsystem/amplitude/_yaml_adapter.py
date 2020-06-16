@@ -116,6 +116,7 @@ def to_parameter_list(recipe: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 def to_particle_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
     particle_list_xml = recipe["ParticleList"]["Particle"]
+    particle_list_xml = sorted(particle_list_xml, key=lambda i: i["Name"])
     particle_list_yml = dict()
     for xml_particle in particle_list_xml:
         name = str(xml_particle["Name"])
