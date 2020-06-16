@@ -100,3 +100,12 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert f0_980["Type"] == "RelativisticBreitWigner"
         assert f0_980["FormFactor"]["Type"] == "BlattWeisskopf"
         assert f0_980["FormFactor"]["MesonRadius"]["Value"] == 0.994
+
+    def test_intensity_section(self):
+        imported_dict = self.write_load_yaml()
+        intensity = imported_dict["Intensity"]
+        assert intensity["Class"] == "NormalizedIntensity"
+
+        intensity = intensity["Intensity"]
+        assert intensity["Class"] == "IncoherentIntensity"
+        assert len(intensity["Intensities"]) == 4

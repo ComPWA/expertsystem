@@ -69,6 +69,12 @@ def to_dynamics(recipe: Dict[str, Any]) -> Dict[str, Any]:
     return dynamics_yml
 
 
+def to_intensity(recipe: Dict[str, Any]) -> Dict[str, Any]:
+    intensity_xml = recipe["Intensity"]
+    intensity_yml = _extract_intensity_component(intensity_xml)
+    return intensity_yml
+
+
 def to_kinematics_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
     kinematics_xml = recipe["HelicityKinematics"]
     initialstate_xml = kinematics_xml["InitialState"]["Particle"]
@@ -225,3 +231,81 @@ def _to_state_list(
         }
         state_list_yml.append(state_def_yml)
     return state_list_yml
+
+
+def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
+    output_dict = dict()
+    class_name = definition["Class"]
+    if class_name == "StrengthIntensity":
+        output_dict = _extract_intensity_component(definition["Intensity"])
+    elif class_name == "NormalizedIntensity":
+        output_dict["Class"] = class_name
+        output_dict["Intensity"] = _extract_intensity_component(
+            definition["Intensity"]
+        )
+    elif class_name == "IncoherentIntensity":
+        output_dict["Class"] = class_name
+        intensities_yml = list()
+        for intensity in definition["Intensity"]:
+            intensities_yml.append(_extract_intensity_component(intensity))
+        output_dict["Intensities"] = intensities_yml
+    elif class_name == "CoherentIntensity":
+        output_dict["Class"] = class_name
+        output_dict["Component"] = definition["Component"]
+        amplitudes_xml = _safe_wrap_in_list(definition["Amplitude"])
+        amplitudes_yml = [
+            _extract_intensity_component(amplitude)
+            for amplitude in amplitudes_xml
+        ]
+        output_dict["Amplitudes"] = amplitudes_yml
+    elif class_name == "CoefficientAmplitude":
+        output_dict["Class"] = class_name
+        output_dict["Component"] = definition["Component"]
+        parameters_xml = _safe_wrap_in_list(definition["Parameter"])
+        parameter_names = [par["Name"] for par in parameters_xml]
+        parameters_yml = dict()
+        for name in parameter_names:
+            type_name = name.split("_")[0]
+            parameters_yml[type_name] = name
+        output_dict["Parameters"] = parameters_yml
+        amplitudes_xml = _safe_wrap_in_list(definition["Amplitude"])
+        amplitudes_yml = [
+            _extract_intensity_component(amplitude)
+            for amplitude in amplitudes_xml
+        ]
+        output_dict["Amplitudes"] = amplitudes_yml
+    elif class_name == "SequentialAmplitude":
+        output_dict["Class"] = class_name
+        amplitudes_xml = _safe_wrap_in_list(definition["Amplitude"])
+        amplitudes_yml = [
+            _extract_intensity_component(amplitude)
+            for amplitude in amplitudes_xml
+        ]
+        output_dict["Amplitudes"] = amplitudes_yml
+    elif class_name == "HelicityDecay":
+        output_dict["Class"] = class_name
+        decay_particle = definition["DecayParticle"]
+        decay_particle["Helicity"] = float(decay_particle["Helicity"])
+        output_dict["DecayParticle"] = decay_particle
+        decay_products = definition["DecayProducts"]["Particle"]
+        decay_products = _safe_wrap_in_list(decay_products)
+        for decay_product in decay_products:
+            final_states = decay_product["FinalState"].split(" ")
+            final_states = [int(state_id) for state_id in final_states]
+            decay_product["FinalState"] = final_states
+            decay_product["Helicity"] = float(decay_product["Helicity"])
+        if "RecoilSystem" in definition:
+            recoil_system = definition["RecoilSystem"]
+            recoil_system["RecoilFinalState"] = int(
+                recoil_system["RecoilFinalState"]
+            )
+            output_dict["RecoilSystem"] = recoil_system
+
+        output_dict["DecayProducts"] = decay_products
+    return output_dict
+
+
+def _safe_wrap_in_list(input_object: Any) -> List[Any]:
+    if isinstance(input_object, list):
+        return input_object
+    return [input_object]
