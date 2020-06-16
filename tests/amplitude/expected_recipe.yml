@@ -12,53 +12,52 @@ Kinematics:
       ID: 4
 
 Parameters:
-  - Name: &par1 Magnitude_J/psi_to_f2(1270)_0+gamma_-1;f2(1270)_to_pi0_0+pi0_0;
+  - Name: &par1 Magnitude_J/psi_to_f2(1270)_0+gamma_1;f2(1270)_to_pi0_0+pi0_0;
     Type: Magnitude
     Value: 1.0
-    Fix: true
-  - Name: &par2 Phase_J/psi_to_f2(1270)_0+gamma_-1;f2(1270)_to_pi0_0+pi0_0;
+  - Name: &par2 Phase_J/psi_to_f2(1270)_0+gamma_1;f2(1270)_to_pi0_0+pi0_0;
     Type: Phase
     Value: 0.0
-  - Name: &par3 Magnitude_J/psi_to_f2(1950)_0+gamma_-1;f2(1950)_to_pi0_0+pi0_0;
+  - Name: &par3 Magnitude_J/psi_to_f2(1950)_0+gamma_1;f2(1950)_to_pi0_0+pi0_0;
     Type: Magnitude
     Value: 1.0
-  - Name: &par4 Phase_J/psi_to_f2(1950)_0+gamma_-1;f2(1950)_to_pi0_0+pi0_0;
+  - Name: &par4 Phase_J/psi_to_f2(1950)_0+gamma_1;f2(1950)_to_pi0_0+pi0_0;
     Type: Phase
     Value: 0.0
-  - Name: &par5 Magnitude_J/psi_to_f2(1270)_-1+gamma_-1;f2(1270)_to_pi0_0+pi0_0;
+  - Name: &par5 Magnitude_J/psi_to_f2(1270)_1+gamma_1;f2(1270)_to_pi0_0+pi0_0;
     Type: Magnitude
     Value: 1.0
-  - Name: &par6 Phase_J/psi_to_f2(1270)_-1+gamma_-1;f2(1270)_to_pi0_0+pi0_0;
+  - Name: &par6 Phase_J/psi_to_f2(1270)_1+gamma_1;f2(1270)_to_pi0_0+pi0_0;
     Type: Phase
     Value: 0.0
-  - Name: &par7 Magnitude_J/psi_to_f2(1950)_-1+gamma_-1;f2(1950)_to_pi0_0+pi0_0;
+  - Name: &par7 Magnitude_J/psi_to_f2(1950)_1+gamma_1;f2(1950)_to_pi0_0+pi0_0;
     Type: Magnitude
     Value: 1.0
-  - Name: &par8 Phase_J/psi_to_f2(1950)_-1+gamma_-1;f2(1950)_to_pi0_0+pi0_0;
+  - Name: &par8 Phase_J/psi_to_f2(1950)_1+gamma_1;f2(1950)_to_pi0_0+pi0_0;
     Type: Phase
     Value: 0.0
-  - Name: &par9 Magnitude_J/psi_to_f2(1270)_-2+gamma_-1;f2(1270)_to_pi0_0+pi0_0;
+  - Name: &par9 Magnitude_J/psi_to_f2(1270)_-2+gamma_1;f2(1270)_to_pi0_0+pi0_0;
     Type: Magnitude
     Value: 1.0
-  - Name: &par10 Phase_J/psi_to_f2(1270)_-2+gamma_-1;f2(1270)_to_pi0_0+pi0_0;
+  - Name: &par10 Phase_J/psi_to_f2(1270)_-2+gamma_1;f2(1270)_to_pi0_0+pi0_0;
     Type: Phase
     Value: 0.0
-  - Name: &par11 Magnitude_J/psi_to_f2(1950)_-2+gamma_-1;f2(1950)_to_pi0_0+pi0_0;
+  - Name: &par11 Magnitude_J/psi_to_f2(1950)_-2+gamma_1;f2(1950)_to_pi0_0+pi0_0;
     Type: Magnitude
     Value: 1.0
-  - Name: &par12 Phase_J/psi_to_f2(1950)_-2+gamma_-1;f2(1950)_to_pi0_0+pi0_0;
+  - Name: &par12 Phase_J/psi_to_f2(1950)_-2+gamma_1;f2(1950)_to_pi0_0+pi0_0;
     Type: Phase
     Value: 0.0
-  - Name: &par13 Magnitude_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+  - Name: &par13 Magnitude_J/psi_to_f0(980)_0+gamma_1;f0(980)_to_pi0_0+pi0_0;
     Type: Magnitude
     Value: 1.0
-  - Name: &par14 Phase_J/psi_to_f0(980)_0+gamma_-1;f0(980)_to_pi0_0+pi0_0;
+  - Name: &par14 Phase_J/psi_to_f0(980)_0+gamma_1;f0(980)_to_pi0_0+pi0_0;
     Type: Phase
     Value: 0.0
-  - Name: &par15 Magnitude_J/psi_to_f0(1500)_0+gamma_-1;f0(1500)_to_pi0_0+pi0_0;
+  - Name: &par15 Magnitude_J/psi_to_f0(1500)_0+gamma_1;f0(1500)_to_pi0_0+pi0_0;
     Type: Magnitude
     Value: 1.0
-  - Name: &par16 Phase_J/psi_to_f0(1500)_0+gamma_-1;f0(1500)_to_pi0_0+pi0_0;
+  - Name: &par16 Phase_J/psi_to_f0(1500)_0+gamma_1;f0(1500)_to_pi0_0+pi0_0;
     Type: Phase
     Value: 0.0
 

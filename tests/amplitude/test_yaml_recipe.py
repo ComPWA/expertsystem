@@ -131,13 +131,24 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert len(intensity["Intensities"]) == 4
 
     @pytest.mark.parametrize(
-        "section", ["ParticleList", "Dynamics"],
+        "section", ["ParticleList", "Dynamics", "Parameters"],
     )
     def test_expected_recipe_shape(self, section):
-        expected_items = equalize_dict(self.imported_dict[section])
-        imported_items = equalize_dict(self.expected_dict[section])
-        assert expected_items.keys() == imported_items.keys()
-        for imported, expected in zip(
-            imported_items.values(), expected_items.values()
-        ):
+        expected_section = equalize_dict(self.expected_dict[section])
+        imported_section = equalize_dict(self.imported_dict[section])
+        if isinstance(expected_section, dict):
+            assert expected_section.keys() == imported_section.keys()
+            imported_items = list(imported_section.values())
+            expected_items = list(expected_section.values())
+        else:
+            expected_items = list(expected_section)
+            imported_items = list(imported_section)
+        is_parameter_section = False
+        if section == "Parameters":
+            is_parameter_section = True
+            imported_items = imported_items[1:]
+        assert len(imported_items) == len(expected_items)
+        for imported, expected in zip(imported_items, expected_items):
+            if is_parameter_section:
+                imported["Name"] = imported["Name"].replace("_-1", "_1")
             assert imported == expected
