@@ -313,14 +313,13 @@ def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
             final_states = [int(state_id) for state_id in final_states]
             decay_product["FinalState"] = final_states
             decay_product["Helicity"] = float(decay_product["Helicity"])
+        output_dict["DecayProducts"] = decay_products
         if "RecoilSystem" in definition:
             recoil_system = definition["RecoilSystem"]
             recoil_system["RecoilFinalState"] = int(
                 recoil_system["RecoilFinalState"]
             )
             output_dict["RecoilSystem"] = recoil_system
-
-        output_dict["DecayProducts"] = decay_products
     return output_dict
 
 
