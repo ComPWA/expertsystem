@@ -169,6 +169,8 @@ def to_particle_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
 def _extract_parameter_definitions_from_intensity(
     definition: dict,
 ) -> List[Dict[str, Any]]:
+    if not isinstance(definition, dict):
+        return list()
     search_results = gen_dict_extract("Parameter", definition)
     parameter_defs = list()
     for item in search_results:
