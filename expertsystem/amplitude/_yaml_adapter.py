@@ -113,7 +113,9 @@ def to_parameter_list(recipe: Dict[str, Any]) -> List[Dict[str, Any]]:
             parameter_yml["Type"] = parameter_xml["Type"]
             parameter_yml["Value"] = parameter_xml["Value"]
             if "Fix" in parameter_xml:
-                parameter_yml["Fix"] = parameter_xml["Fix"]
+                is_fix = bool(parameter_xml["Fix"])
+                if is_fix:
+                    parameter_yml["Fix"] = is_fix
             parameter_dict[name] = parameter_yml
     parameter_list = [
         {"Name": name, **value} for name, value in parameter_dict.items()
