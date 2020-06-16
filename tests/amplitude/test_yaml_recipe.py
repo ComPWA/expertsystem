@@ -35,6 +35,15 @@ def create_amplitude_generator():
     return amplitude_generator
 
 
+def write_load_yaml() -> dict:
+    amplitude_generator = create_amplitude_generator()
+    output_filename = "JPsiToGammaPi0Pi0.yml"
+    amplitude_generator.write_to_file(output_filename)
+    with open(output_filename, "rb") as input_file:
+        imported_dict = yaml.load(input_file, Loader=yaml.FullLoader)
+    return imported_dict
+
+
 def equalize_dict(input_dict):
     output_dict = json.loads(json.dumps(input_dict, sort_keys=True))
     return output_dict
@@ -42,13 +51,7 @@ def equalize_dict(input_dict):
 
 class TestHelicityAmplitudeGeneratorYAML:
     amplitude_generator = create_amplitude_generator()
-
-    def write_load_yaml(self) -> dict:
-        output_filename = "JPsiToGammaPi0Pi0.yml"
-        self.amplitude_generator.write_to_file(output_filename)
-        with open(output_filename, "rb") as input_file:
-            imported_dict = yaml.load(input_file, Loader=yaml.FullLoader)
-        return imported_dict
+    imported_dict = write_load_yaml()
 
     def test_not_implemented_writer(self):
         with pytest.raises(NotImplementedError):
@@ -59,8 +62,7 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert len(recipe) == 3
 
     def test_particle_section(self):
-        imported_dict = self.write_load_yaml()
-        particle_list = imported_dict["ParticleList"]
+        particle_list = self.imported_dict["ParticleList"]
         gamma = particle_list["gamma"]
         assert gamma["PID"] == 22
         assert gamma["Mass"] == 0.0
@@ -78,8 +80,7 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert pi0_qns["IsoSpin"]["Projection"] == 0
 
     def test_kinematics_section(self):
-        imported_dict = self.write_load_yaml()
-        kinematics = imported_dict["Kinematics"]
+        kinematics = self.imported_dict["Kinematics"]
         initial_state = kinematics["InitialState"]
         final_state = kinematics["FinalState"]
         assert kinematics["Type"] == "Helicity"
@@ -88,16 +89,14 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert len(final_state) == 3
 
     def test_parameter_section(self):
-        imported_dict = self.write_load_yaml()
-        parameter_list = imported_dict["Parameters"]
+        parameter_list = self.imported_dict["Parameters"]
         assert len(parameter_list) == 17
         for parameter in parameter_list:
             assert "Name" in parameter
             assert "Value" in parameter
 
     def test_dynamics_section(self):
-        imported_dict = self.write_load_yaml()
-        dynamics = imported_dict["Dynamics"]
+        dynamics = self.imported_dict["Dynamics"]
         assert len(dynamics) == 5
 
         jpsi = dynamics["J/psi"]
@@ -111,8 +110,7 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert f0_980["FormFactor"]["MesonRadius"]["Value"] == 0.994
 
     def test_intensity_section(self):
-        imported_dict = self.write_load_yaml()
-        intensity = imported_dict["Intensity"]
+        intensity = self.imported_dict["Intensity"]
         assert intensity["Class"] == "NormalizedIntensity"
 
         intensity = intensity["Intensity"]
@@ -120,7 +118,7 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert len(intensity["Intensities"]) == 4
 
     def test_expected_recipe_shape(self):
-        produced_dict = self.write_load_yaml()
+        produced_dict = self.imported_dict
         expected_recipe_file = f"{SCRIPT_PATH}/expected_recipe.yml"
         with open(expected_recipe_file, "rb") as input_file:
             expected_dict = yaml.load(input_file, Loader=yaml.FullLoader)
