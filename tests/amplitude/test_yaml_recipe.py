@@ -44,6 +44,13 @@ def write_load_yaml() -> dict:
     return imported_dict
 
 
+def load_expected_recipe() -> dict:
+    expected_recipe_file = f"{SCRIPT_PATH}/expected_recipe.yml"
+    with open(expected_recipe_file, "rb") as input_file:
+        expected_dict = yaml.load(input_file, Loader=yaml.FullLoader)
+    return expected_dict
+
+
 def equalize_dict(input_dict):
     output_dict = json.loads(json.dumps(input_dict, sort_keys=True))
     return output_dict
@@ -52,6 +59,7 @@ def equalize_dict(input_dict):
 class TestHelicityAmplitudeGeneratorYAML:
     amplitude_generator = create_amplitude_generator()
     imported_dict = write_load_yaml()
+    expected_dict = load_expected_recipe()
 
     def test_not_implemented_writer(self):
         with pytest.raises(NotImplementedError):
@@ -122,16 +130,14 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert intensity["Class"] == "IncoherentIntensity"
         assert len(intensity["Intensities"]) == 4
 
-    def test_expected_recipe_shape(self):
-        produced_dict = self.imported_dict
-        expected_recipe_file = f"{SCRIPT_PATH}/expected_recipe.yml"
-        with open(expected_recipe_file, "rb") as input_file:
-            expected_dict = yaml.load(input_file, Loader=yaml.FullLoader)
-
-        particles_expected = equalize_dict(produced_dict["ParticleList"])
-        particles_produced = equalize_dict(expected_dict["ParticleList"])
-        assert particles_expected.keys() == particles_produced.keys()
-        for produced, expected in zip(
-            particles_produced.values(), particles_expected.values()
+    @pytest.mark.parametrize(
+        "section", ["ParticleList", "Dynamics"],
+    )
+    def test_expected_recipe_shape(self, section):
+        expected_items = equalize_dict(self.imported_dict[section])
+        imported_items = equalize_dict(self.expected_dict[section])
+        assert expected_items.keys() == imported_items.keys()
+        for imported, expected in zip(
+            imported_items.values(), expected_items.values()
         ):
-            assert produced == expected
+            assert imported == expected
