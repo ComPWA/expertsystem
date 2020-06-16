@@ -17,10 +17,10 @@ before_script:
   - pip3 install -r tests/requirements.txt
 
 script:
-  - cd tests
   - pytest
+    tests
     --cov=expertsystem
-    --cov-config=.coveragerc
+    --cov-config=tests/.coveragerc
 
 jobs:
   include:
