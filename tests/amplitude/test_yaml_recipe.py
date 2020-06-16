@@ -56,7 +56,7 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert gamma["PID"] == 22
         assert gamma["Mass"] == 0.0
         gamma_qns = gamma["QuantumNumbers"]
-        assert gamma_qns["Spin"]["Value"] == 1
+        assert gamma_qns["Spin"] == 1
         assert gamma_qns["Charge"] == 0
         assert gamma_qns["Parity"] == -1
         assert gamma_qns["Cparity"] == -1

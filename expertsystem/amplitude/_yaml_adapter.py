@@ -128,8 +128,8 @@ def to_particle_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
 
         qn_key_map: Dict[str, Tuple[str, Callable]] = {
             "Charge": ("Charge", _to_scalar),
-            "Spin": ("Spin", _to_spin),
-            "IsoSpin": ("IsoSpin", _to_spin),
+            "Spin": ("Spin", _to_scalar),
+            "IsoSpin": ("IsoSpin", _to_isospin),
             "Parity": ("Parity", _to_scalar),
             "Cparity": ("Cparity", _to_scalar),
             "Gparity": ("Gparity", _to_scalar),
@@ -210,14 +210,15 @@ def _to_parameter(
     return {"Value": value, "Error": error}
 
 
-def _to_spin(definition: Dict[str, Any]) -> Union[float, Dict[str, float]]:
-    value = _to_scalar(definition)
-    if "Projection" in definition:
+def _to_isospin(definition: Dict[str, Any]) -> Union[float, Dict[str, float]]:
+    """Isospin is 'stable', so always needs a projection."""
+    value = _to_scalar(definition, "Value")
+    if value == 0:
+        return value
         return {
             "Value": value,
             "Projection": _to_scalar(definition, "Projection"),
         }
-    return value
 
 
 def _to_state_list(
