@@ -102,12 +102,17 @@ class TestHelicityAmplitudeGeneratorYAML:
         jpsi = dynamics["J/psi"]
         assert jpsi["Type"] == "NonDynamic"
         assert jpsi["FormFactor"]["Type"] == "BlattWeisskopf"
-        assert jpsi["FormFactor"]["MesonRadius"]["Value"] == 1.0
+        assert jpsi["FormFactor"]["MesonRadius"] == 1.0
 
         f0_980 = dynamics["f0(980)"]
         assert f0_980["Type"] == "RelativisticBreitWigner"
         assert f0_980["FormFactor"]["Type"] == "BlattWeisskopf"
-        assert f0_980["FormFactor"]["MesonRadius"]["Value"] == 0.994
+        assert f0_980["FormFactor"]["MesonRadius"] == {
+            "Fix": True,
+            "Max": 2.0,
+            "Min": 0.0,
+            "Value": 1.0,
+        }
 
     def test_intensity_section(self):
         intensity = self.imported_dict["Intensity"]

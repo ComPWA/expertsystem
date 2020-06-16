@@ -32,26 +32,33 @@ def to_dynamics(recipe: Dict[str, Any]) -> Dict[str, Any]:
             if decay_type == "NonDynamic":
                 form_factor = {
                     "Type": "BlattWeisskopf",
-                    "MesonRadius": {"Value": 1.0},
+                    "MesonRadius": 1.0,
                 }
         else:
-            parameters = particle_xml["Parameter"]
-            meson_radius_xml = None
-            if isinstance(parameters, list):
-                for parameter in parameters:
-                    if parameter["Type"] == "MesonRadius":
-                        meson_radius_xml = parameter
-                        break
-            elif isinstance(parameters, dict):
-                meson_radius_xml = parameters
-            if meson_radius_xml is not None:
-                meson_radius_yml = dict()
-                meson_radius_yml["Value"] = float(meson_radius_xml["Value"])
-                optional_keys = ["Min", "Max", "Fix"]
-                for key in optional_keys:
-                    if key in meson_radius_yml:
-                        meson_radius_yml[key] = meson_radius_xml[key]
-                form_factor["MesonRadius"] = meson_radius_yml
+            parameters = _safe_wrap_in_list(
+                particle_xml["DecayInfo"]["Parameter"]
+            )
+            meson_radius_candidates = [
+                par for par in parameters if par["Type"] == "MesonRadius"
+            ]
+            if meson_radius_candidates:
+                meson_radius_xml = meson_radius_candidates[0]
+                meson_radius_value = float(meson_radius_xml["Value"])
+                if len(meson_radius_xml) == 1:
+                    form_factor["MesonRadius"] = meson_radius_value
+                else:
+                    meson_radius_yml = {"Value": meson_radius_value}
+                    optional_keys = [
+                        ("Min", float),
+                        ("Max", float),
+                        ("Fix", bool),
+                    ]
+                    for key, converter in optional_keys:
+                        if key in meson_radius_xml:
+                            meson_radius_yml[key] = converter(
+                                meson_radius_xml[key]
+                            )
+                    form_factor["MesonRadius"] = meson_radius_yml
         return form_factor
 
     particle_list_xml = recipe["ParticleList"]["Particle"]
