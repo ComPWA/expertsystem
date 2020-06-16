@@ -290,12 +290,9 @@ def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
             type_name = name.split("_")[0]
             parameters_yml[type_name] = name
         output_dict["Parameters"] = parameters_yml
-        amplitudes_xml = _safe_wrap_in_list(definition["Amplitude"])
-        amplitudes_yml = [
-            _extract_intensity_component(amplitude)
-            for amplitude in amplitudes_xml
-        ]
-        output_dict["Amplitudes"] = amplitudes_yml
+        amplitudes_xml = definition["Amplitude"]
+        amplitudes_yml = _extract_intensity_component(amplitudes_xml)  # type: ignore
+        output_dict["Amplitude"] = amplitudes_yml
     elif class_name == "SequentialAmplitude":
         output_dict["Class"] = class_name
         amplitudes_xml = _safe_wrap_in_list(definition["Amplitude"])
