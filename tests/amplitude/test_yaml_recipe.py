@@ -1,4 +1,6 @@
+import json
 import logging
+from os.path import dirname, realpath
 
 import pytest
 
@@ -11,6 +13,8 @@ from expertsystem.ui.system_control import (
 )
 
 logging.basicConfig(level=logging.ERROR)
+
+SCRIPT_PATH = dirname(realpath(__file__))
 
 
 def create_amplitude_generator():
@@ -29,6 +33,11 @@ def create_amplitude_generator():
     amplitude_generator = HelicityAmplitudeGeneratorXML()
     amplitude_generator.generate(solutions)
     return amplitude_generator
+
+
+def equalize_dict(input_dict):
+    output_dict = json.loads(json.dumps(input_dict, sort_keys=True))
+    return output_dict
 
 
 class TestHelicityAmplitudeGeneratorYAML:
@@ -109,3 +118,17 @@ class TestHelicityAmplitudeGeneratorYAML:
         intensity = intensity["Intensity"]
         assert intensity["Class"] == "IncoherentIntensity"
         assert len(intensity["Intensities"]) == 4
+
+    def test_expected_recipe_shape(self):
+        produced_dict = self.write_load_yaml()
+        expected_recipe_file = f"{SCRIPT_PATH}/expected_recipe.yml"
+        with open(expected_recipe_file, "rb") as input_file:
+            expected_dict = yaml.load(input_file, Loader=yaml.FullLoader)
+
+        particles_expected = equalize_dict(produced_dict["ParticleList"])
+        particles_produced = equalize_dict(expected_dict["ParticleList"])
+        assert particles_expected.keys() == particles_produced.keys()
+        for produced, expected in zip(
+            particles_produced.values(), particles_expected.values()
+        ):
+            assert produced == expected
