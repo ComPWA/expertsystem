@@ -142,7 +142,7 @@ def to_particle_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
             "TauLN": ("TauLN", _to_scalar),
             "BaryonNumber": ("BaryonNumber", _to_scalar),
         }
-        yaml_qn_dict = {"Spin": 0.0, "Charge": 0.0}
+        yaml_qn_dict = {"Spin": 0, "Charge": 0}
         for quantum_number in quantum_numbers:
             qn_type = quantum_number["Type"]
             for xml_key, (yaml_key, converter) in qn_key_map.items():
@@ -193,7 +193,11 @@ def gen_dict_extract(
 def _to_scalar(
     definition: Dict[str, str], key: str = "Value"
 ) -> Union[float, int]:
-    value = float(definition[key])
+    value = _downgrade_float(float(definition[key]))
+    return value
+
+
+def _downgrade_float(value: float) -> Union[float, int]:
     if value.is_integer():
         return int(value)
     return value
