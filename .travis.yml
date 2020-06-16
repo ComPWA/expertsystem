@@ -21,6 +21,7 @@ script:
   - pytest
     --cov=expertsystem
     --cov-config=.coveragerc
+    -v
 
 jobs:
   include:
