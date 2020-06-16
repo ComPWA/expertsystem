@@ -8,54 +8,24 @@
 
 # PWA Expert System
 
-The PWA Expert System is a tool for:
+## About
 
-1. evaluating the validity of a particle reaction;
-2. creating amplitude models that can be used by partial wave analysis
-   frameworks.
+The two purposes of the Partial Wave Analysis Expert System are to:
 
-As a user, you give the system an initial state and a final state, optionally
-with certain rules you want to apply. The expert system then constructs several
-hypotheses for what happens during the transition from initial to final state.
+1. validate a particle reaction, based on given information. E.g.: Can a
+𝜋<sup>0</sup> decay into 1, 2, 3 𝛾 particles?
+2. create partial wave analysis amplitude models, based on basic information of
+a reaction. E.g.: Create an amplitude for J/𝜓 → 𝛾𝜋<sup>0</sup>𝜋<sup>0</sup> in
+the helicity or canonical formalism.
 
-## How it works
+The user only provides basic information, such as an initial state and a final
+state. Helper functions provide easy ways to configure the system, but the user
+still has full control. The expert system then constructs several hypotheses for
+what happens during the transition from initial to final state. Read more in the
+[Design section](#Design)
 
-The expert system works with **state transition graphs** that represent the
-allowed transitions from an initial state to a final state. A state transition
-graph consists of **nodes** and **edges** (in correspondence to Feynman
-graphs):
 
-- We call the connection lines **particle lines**. These are basically a list
-  of quantum numbers (QN) that define the particle state. (This list can be
-  empty at first).
-- The nodes are of type `InteractionNode` and contain all information for the
-  transition of this specific step. An interaction node has 𝑀 ingoing lines
-  and 𝑁 outgoing lines (𝑀, 𝑁 ∈ 𝕫, 𝑀 > 0, 𝑁 > 0).
-
-## Workflow for building a graph
-
-### Step 1
-
-Building of all possible topologies. A **topology** is a graph, in which the
-edges and nodes are empty (no QN information). See the topology sub-modules.
-
-### Step 2
-
-Filling the topology graphs with QN information. This means initializing the
-topology graphs with the initial and final state QNs and *propagating* these
-numbers through the complete graph. Here, the combinatorics of the initial and
-final state should also be taken into account.
-
-### Step 3
-
-Duplicate the graphs and insert concrete particles for the edges (inserting the
-mass variable).
-
-### Step 4
-
-Write output to XML model file.
-
-## Design and available features
+## Available features
 
 - [ ] **Input**: Particle database
   - [ ] Source of truth: PDG
@@ -70,3 +40,63 @@ Write output to XML model file.
 - [ ] **I/O**: Write transition graph to human-readable recipe file
   - [x] XML (*old ComPWA format*)
   - [ ] YAML
+
+
+## Design
+
+The three main components are the
+
+### State Transition Graphs
+A `StateTransitionGraph` is a directed graph that consists of **nodes** and
+**edges**, in which each edge must be connected to at least one node (in
+correspondence to Feynman graphs). It describes the transition from one state to
+another.
+- The edges correspond to particles/states, in other words a collection of
+  properties such as the quantum numbers (QN) that define the particle state.
+- Each node represent an interaction and contains all information for the
+  transition of this specific step. Most importantly a node contains a
+  collection of conservation rules, that have to be satisfied. An interaction
+  node has 𝑀 ingoing lines and 𝑁 outgoing lines (𝑀, 𝑁 ∈ 𝕫, 𝑀 > 0, 𝑁 > 0).
+
+### Conservation Rules
+A central piece of the expert system are the conservation rules. They belong to
+individual nodes and receive properties about the node itself, as well as
+properties of the ingoing and outgoing edges of that node. Based on those
+properties they calculate if they pass or not.
+
+### Solvers
+The propagation of the correct state properties through the graph is done by
+solvers. New properties are set for intermediate edges and interaction nodes and
+their validity is check with the conservation rules.
+
+### Workflow of the Expert System
+
+1. Preparation
+
+   1.1. Build all possible topologies. A **topology** is a graph, in which the
+   edges and nodes are empty (no particle information).
+
+   1.2. Fill the topology graphs with the user provided information. Typically
+   these are the graph's ingoing edges (initial state) and outgoing edges (final
+   state).
+
+2. Solving
+
+   2.1. *Propagate* quantum number information through the complete graph while
+   respecting the specified conservation laws. Information like mass is not used
+   in this first solving step.
+
+   2.2. Clone graphs while inserting concrete matching particles for the
+   intermediate edges (mainly adds the mass variable).
+
+   2.3. Validate the complete graphs, so run all conservation law check that
+   were postponed from the first step.
+
+3. Generate an amplitude model, e.g. helicity or canonical amplitude
+
+
+## Usage
+
+Check out the jupyter [Quickstart](
+  https://github.com/ComPWA/expertsystem/blob/master/examples/jupyter/QuickStart.ipynb)
+notebook!
