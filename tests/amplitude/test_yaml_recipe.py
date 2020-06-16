@@ -60,13 +60,13 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert gamma_qns["Charge"] == 0
         assert gamma_qns["Parity"] == -1
         assert gamma_qns["Cparity"] == -1
-        assert gamma_qns["IsoSpin"]["Value"] == 0
-        assert gamma_qns["IsoSpin"]["Projection"] == 0
-        assert gamma_qns["BaryonNumber"] == 0
-        assert gamma_qns["Charm"] == 0
-        assert gamma_qns["Strangeness"] == 0
+
         f0_980 = particle_list["f0(980)"]
         assert f0_980["Width"] == 0.07
+
+        pi0_qns = particle_list["pi0"]["QuantumNumbers"]
+        assert pi0_qns["IsoSpin"]["Value"] == 1
+        assert pi0_qns["IsoSpin"]["Projection"] == 0
 
     def test_kinematics_section(self):
         imported_dict = self.write_load_yaml()

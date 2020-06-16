@@ -147,7 +147,12 @@ def to_particle_dict(recipe: Dict[str, Any]) -> Dict[str, Any]:
             qn_type = quantum_number["Type"]
             for xml_key, (yaml_key, converter) in qn_key_map.items():
                 if qn_type == xml_key:
-                    yaml_qn_dict[yaml_key] = converter(quantum_number)
+                    value = converter(quantum_number)
+                    if isinstance(value, (float, int)) and value == 0:
+                        continue
+                    if isinstance(value, dict) and value["Value"] == 0:
+                        continue
+                    yaml_qn_dict[yaml_key] = value
         particle_yml: Dict[str, Any] = dict()
         particle_yml["PID"] = pid
         particle_yml["Mass"] = mass
@@ -219,10 +224,10 @@ def _to_isospin(definition: Dict[str, Any]) -> Union[float, Dict[str, float]]:
     value = _to_scalar(definition, "Value")
     if value == 0:
         return value
-        return {
-            "Value": value,
-            "Projection": _to_scalar(definition, "Projection"),
-        }
+    return {
+        "Value": value,
+        "Projection": _to_scalar(definition, "Projection"),
+    }
 
 
 def _to_state_list(
