@@ -12,17 +12,17 @@
 
 The two purposes of the Partial Wave Analysis Expert System are to:
 
-1. validate a particle reaction, based on given information. E.g.: Can a
-𝜋<sup>0</sup> decay into 1, 2, 3 𝛾 particles?
+1. validate a particle reaction, based on given information. E.g.: Can a 𝜋⁰
+   decay into 1, 2, 3 𝛾 particles?
 2. create partial wave analysis amplitude models, based on basic information of
-a reaction. E.g.: Create an amplitude for J/𝜓 → 𝛾𝜋<sup>0</sup>𝜋<sup>0</sup> in
-the helicity or canonical formalism.
+   a reaction. E.g.: Create an amplitude for J/𝜓 → 𝛾𝜋⁰𝜋⁰ in the helicity or
+   canonical formalism.
 
 The user only provides basic information, such as an initial state and a final
 state. Helper functions provide easy ways to configure the system, but the user
-still has full control. The expert system then constructs several hypotheses for
-what happens during the transition from initial to final state. Read more in the
-[Design section](#Design)
+still has full control. The expert system then constructs several hypotheses
+for what happens during the transition from initial to final state. Read more
+in the [Design section](#Design)
 
 ## Available features
 
@@ -47,8 +47,8 @@ The three main components are the
 ### State Transition Graphs
 A `StateTransitionGraph` is a directed graph that consists of **nodes** and
 **edges**, in which each edge must be connected to at least one node (in
-correspondence to Feynman graphs). It describes the transition from one state to
-another.
+correspondence to Feynman graphs). It describes the transition from one state
+to another.
 - The edges correspond to particles/states, in other words a collection of
   properties such as the quantum numbers (QN) that define the particle state.
 - Each node represent an interaction and contains all information for the
@@ -64,8 +64,8 @@ properties they calculate if they pass or not.
 
 ### Solvers
 The propagation of the correct state properties through the graph is done by
-solvers. New properties are set for intermediate edges and interaction nodes and
-their validity is check with the conservation rules.
+solvers. New properties are set for intermediate edges and interaction nodes
+and their validity is check with the conservation rules.
 
 ### Workflow of the Expert System
 
@@ -75,14 +75,14 @@ their validity is check with the conservation rules.
    edges and nodes are empty (no particle information).
 
    1.2. Fill the topology graphs with the user provided information. Typically
-   these are the graph's ingoing edges (initial state) and outgoing edges (final
-   state).
+   these are the graph's ingoing edges (initial state) and outgoing edges
+   (final state).
 
 2. Solving
 
    2.1. *Propagate* quantum number information through the complete graph while
-   respecting the specified conservation laws. Information like mass is not used
-   in this first solving step.
+   respecting the specified conservation laws. Information like mass is not
+   used in this first solving step.
 
    2.2. Clone graphs while inserting concrete matching particles for the
    intermediate edges (mainly adds the mass variable).
