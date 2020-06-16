@@ -24,7 +24,6 @@ still has full control. The expert system then constructs several hypotheses for
 what happens during the transition from initial to final state. Read more in the
 [Design section](#Design)
 
-
 ## Available features
 
 - [ ] **Input**: Particle database
@@ -40,7 +39,6 @@ what happens during the transition from initial to final state. Read more in the
 - [ ] **I/O**: Write transition graph to human-readable recipe file
   - [x] XML (*old ComPWA format*)
   - [ ] YAML
-
 
 ## Design
 
@@ -93,7 +91,6 @@ their validity is check with the conservation rules.
    were postponed from the first step.
 
 3. Generate an amplitude model, e.g. helicity or canonical amplitude
-
 
 ## Usage
 
