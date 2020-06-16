@@ -131,7 +131,7 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert len(intensity["Intensities"]) == 4
 
     @pytest.mark.parametrize(
-        "section", ["ParticleList", "Dynamics", "Parameters"],
+        "section", ["ParticleList", "Dynamics", "Parameters", "Kinematics"],
     )
     def test_expected_recipe_shape(self, section):
         expected_section = equalize_dict(self.expected_dict[section])
