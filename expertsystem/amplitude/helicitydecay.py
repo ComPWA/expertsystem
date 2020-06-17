@@ -416,7 +416,7 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
         return (par_name_suffix, pp_par_name_suffix)
 
 
-class HelicityAmplitudeGeneratorXML(AbstractAmplitudeGenerator):
+class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
     def __init__(
         self,
         top_node_no_dynamics=True,

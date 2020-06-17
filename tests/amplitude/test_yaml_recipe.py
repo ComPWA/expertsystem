@@ -6,7 +6,7 @@ import pytest
 
 import yaml
 
-from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGeneratorXML
+from expertsystem.amplitude.helicitydecay import HelicityAmplitudeGenerator
 from expertsystem.ui.system_control import (
     InteractionTypes,
     StateTransitionManager,
@@ -30,7 +30,7 @@ def create_amplitude_generator():
         graph_interaction_settings_groups
     )
 
-    amplitude_generator = HelicityAmplitudeGeneratorXML()
+    amplitude_generator = HelicityAmplitudeGenerator()
     amplitude_generator.generate(solutions)
     return amplitude_generator
 
