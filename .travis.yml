@@ -17,10 +17,11 @@ before_script:
   - pip3 install -r tests/requirements.txt
 
 script:
-  - cd tests
   - pytest
+    tests
     --cov=expertsystem
-    --cov-config=.coveragerc
+    --cov-config=tests/.coveragerc
+    -v
 
 jobs:
   include:
@@ -39,6 +40,7 @@ jobs:
       script:
         - pip3 install -r requirements-dev.txt
         - black . --check
+        - pre-commit run nbstripout -a
 
     - name: "Python 3.6 on Ubuntu 18.04"
       python: 3.6
@@ -48,6 +50,9 @@ jobs:
       after_success:
         - pip3 install codecov
         - codecov
+
+    - name: "Python 3.8 on Ubuntu 18.04"
+      python: 3.8
 
     - name: "Python 3.7 on macOS (xcode11.2)"
       os: osx
