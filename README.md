@@ -14,21 +14,31 @@ for an introduction to the Particle Wave Analysis Expert System!
 
 ## Available features
 
-- [ ] **Input**: Particle database
+- **Input**: Particle database
   - [ ] Source of truth: PDG
+  - [x] Predefined particle list file
   - [x] Option to overwrite and append with custom particle definitions
-- [ ] **State transition graph**
-  - [ ] ...
-- [ ] **Conservation rules**
+- **State transition graph**
+  - [x] Feynman graph like description of the reactions
+- **Conservation rules**
   - [ ] Easily extendable
     - [ ] User input
     - [ ] Open-closed design
-  - [ ] ...
-- [ ] **Generate amplitude models for PWA formalisms**
+  - [x] Large set of predefined rules
+    - [x] Spin/Angular momentum conservation
+    - [x] Quark and Lepton flavour conservation (incl. isospin)
+    - [x] Baryon number conservation
+    - [x] EM-charge conservation
+    - [x] Parity, C-Parity, G-Parity conservation
+    - [ ] CP-Parity conservation
+    - [x] Mass conservation
+  - [x] Predefined conservation rule sets representing Strong, EM, Weak
+        interactions
+- **PWA formalisms (for amplitude model generation)**
   - [x] Helicity formalism
   - [x] Canonical formalism
-  - [ ] Spin formalisms
-- [ ] **I/O**: Write transition graph to human-readable recipe file
+  - [ ] Tensor formalisms
+- **Output**: Write transition graph to human-readable recipe file
   - [x] XML (*old format for [ComPWA](https://compwa.github.io/)*)
   - [ ] YAML (*new format for
     [tensorwaves](https://pwa.readthedocs.io/projects/tensorwaves/en/latest)*)
