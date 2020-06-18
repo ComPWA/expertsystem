@@ -36,6 +36,11 @@ initial to final state. Read more on this in the [Design section](#Design).
     - [ ] User input
     - [ ] Open-closed design
   - [ ] ...
+- [ ] **Generate amplitude models for PWA formalisms**
+  - [x] Helicity formalism
+  - [x] Canonical formalism
+  - [ ] Spin projection formalisms
+  - [ ] Tensor formalisms
 - [ ] **I/O**: Write transition graph to human-readable recipe file
   - [x] XML (*old format for [ComPWA](https://compwa.github.io/)*)
   - [x] YAML (*new format for
