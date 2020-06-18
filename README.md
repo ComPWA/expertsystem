@@ -21,9 +21,7 @@ for an introduction to the Particle Wave Analysis Expert System!
 - **State transition graph**
   - [x] Feynman graph like description of the reactions
 - **Conservation rules**
-  - [ ] Easily extendable
-    - [ ] User input
-    - [ ] Open-closed design
+  - [x] Open-closed design
   - [x] Large set of predefined rules
     - [x] Spin/Angular momentum conservation
     - [x] Quark and Lepton flavour conservation (incl. isospin)
@@ -32,7 +30,7 @@ for an introduction to the Particle Wave Analysis Expert System!
     - [x] Parity, C-Parity, G-Parity conservation
     - [ ] CP-Parity conservation
     - [x] Mass conservation
-  - [x] Predefined conservation rule sets representing Strong, EM, Weak
+  - [x] Predefined sets of conservation rules representing Strong, EM, Weak
         interactions
 - **PWA formalisms (for amplitude model generation)**
   - [x] Helicity formalism
