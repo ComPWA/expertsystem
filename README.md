@@ -43,7 +43,7 @@ initial to final state. Read more on this in the [Design section](#Design).
   - [ ] Tensor formalisms
 - [ ] **I/O**: Write transition graph to human-readable recipe file
   - [x] XML (*old format for [ComPWA](https://compwa.github.io/)*)
-  - [x] YAML (*new format for
+  - [ ] YAML (*new format for
     [tensorwaves](https://pwa.readthedocs.io/projects/tensorwaves/en/latest)*)
 
 ## Design
