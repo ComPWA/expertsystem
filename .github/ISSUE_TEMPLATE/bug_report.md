@@ -24,7 +24,6 @@ If applicable, add an error log or screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
  - Version [e.g. 22]
 
 **Additional context**
