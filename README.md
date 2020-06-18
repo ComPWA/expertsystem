@@ -8,8 +8,6 @@
 
 # PWA Expert System
 
-## About
-
 The two purposes of the Partial Wave Analysis Expert System are to:
 
 1. validate a particle reaction, based on given information. E.g.: Can a 𝜋⁰
