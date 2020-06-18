@@ -37,8 +37,9 @@ in the [Design section](#Design)
     - [ ] Open-closed design
   - [ ] ...
 - [ ] **I/O**: Write transition graph to human-readable recipe file
-  - [x] XML (*old ComPWA format*)
-  - [ ] YAML
+  - [x] XML (*old format for [ComPWA](https://compwa.github.io/)*)
+  - [x] YAML (*new format for
+    [tensorwaves](https://pwa.readthedocs.io/projects/tensorwaves/en/latest)*)
 
 ## Design
 
