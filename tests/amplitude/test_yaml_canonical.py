@@ -71,6 +71,13 @@ class TestCanonicalAmplitudeGeneratorYAML:
         pi0_qns = particle_list["pi0"]["QuantumNumbers"]
         assert pi0_qns["IsoSpin"]["Value"] == 1
 
+    def test_parameter_section(self):
+        parameter_list = self.imported_dict["Parameters"]
+        assert len(parameter_list) == 9
+        for parameter in parameter_list:
+            assert "Name" in parameter
+            assert "Value" in parameter
+
 
 if __name__ == "__main__":
     create_amplitude_generator()
