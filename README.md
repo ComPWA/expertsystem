@@ -27,8 +27,7 @@ for an introduction to the Particle Wave Analysis Expert System!
 - [ ] **Generate amplitude models for PWA formalisms**
   - [x] Helicity formalism
   - [x] Canonical formalism
-  - [ ] Spin projection formalisms
-  - [ ] Tensor formalisms
+  - [ ] Spin formalisms
 - [ ] **I/O**: Write transition graph to human-readable recipe file
   - [x] XML (*old format for [ComPWA](https://compwa.github.io/)*)
   - [ ] YAML (*new format for
