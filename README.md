@@ -61,7 +61,8 @@ transition from one state to another.
 - Each node represents an interaction and contains all information for the
   transition of this specific step. Most importantly, a node contains a
   collection of conservation rules that have to be satisfied. An interaction
-  node has 𝑀 ingoing lines and 𝑁 outgoing lines, where 𝑀, 𝑁 ∈ 𝕫, 𝑀 > 0, 𝑁 > 0.
+  node has 𝑀 ingoing lines and 𝑁 outgoing lines, where 𝑀, 𝑁 ∈ 𝕫, 𝑀 > 0,
+  𝑁 > 0.
 
 ### 2. Conservation Rules
 The central component of the expert system are the conservation rules. They
