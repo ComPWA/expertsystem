@@ -10,18 +10,18 @@ Technical Story: Specification of [#68](https://github.com/ComPWA/expertsystem/i
 
 To create a release on PyPI, we currently tag a commit and Travis will automatically publish the package to PyPI. However, PyPI extracts the version number of the release from `setup.py`, not from the tag on GitHub. You therefore first have to create a PR that modifies `setup.py` and only then one can add tag it, see e.g. [#69](https://github.com/ComPWA/expertsystem/pull/69). This is not only bothersome, but also prone to errors.
 
-*Note: this ADR also touches on our packaging system -- we currently only work with a `setup.py` file.
+*Note: this ADR also touches on our packaging system -- we currently only work with a `setup.py` file.*
 
 ## Considered Options
 
-* [option 1]
-* [option 2]
-* [option 3]
-* … <!-- numbers of options can vary -->
+For an overview of common Python packaging techniques to maintain a single source of truth for the version number, see [here](https://packaging.python.org/guides/single-sourcing-package-version/).
+
+* Option 1: [`[setuptools-scm]`](https://pypi.org/project/setuptools-scm/)
+*
 
 ## Decision Outcome
 
-Chosen option: "[option 1]", because [justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force force | … | comes out best (see below)].
+Chosen option: Option 1, because [justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force force | … | comes out best (see below)].
 
 ### Positive Consequences <!-- optional -->
 
