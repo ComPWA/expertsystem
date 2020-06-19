@@ -323,13 +323,9 @@ def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
         if "CanonicalSum" in definition:
             cano_sum_old = definition["CanonicalSum"]
             cano_sum_new = dict()
-            cano_sum_new["L"] = cano_sum_old["L"]
-            cano_sum_new["S"] = cano_sum_old["S"]
-            clebsch_gordan_list = [
-                dict(item)  # conversion from OrderedDict
-                for item in _safe_wrap_in_list(cano_sum_old["ClebschGordan"])
-            ]
-            clebsch_gordan_dict = dict()
+            clebsch_gordan_list = _safe_wrap_in_list(
+                cano_sum_old["ClebschGordan"]
+            )
             for clebsch_gordan_old in clebsch_gordan_list:
                 type_name = clebsch_gordan_old["Type"]
                 clebsch_gordan_new = {
@@ -342,9 +338,8 @@ def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
                     if key.startswith("@")
                 }
                 clebsch_gordan_new.update(attributes)
-                clebsch_gordan_dict[type_name] = clebsch_gordan_new
-            cano_sum_new["ClebschGordan"] = clebsch_gordan_dict
-            output_dict["CanonicalSum"] = cano_sum_new
+                cano_sum_new[type_name] = clebsch_gordan_new
+            output_dict["Canonical"] = cano_sum_new
     return output_dict
 
 
