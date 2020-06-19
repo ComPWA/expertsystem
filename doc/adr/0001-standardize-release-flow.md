@@ -21,7 +21,7 @@ The following versioning schema were considered
 * [semantic versioning](https://semver.org/)
 * [romantic versioning](https://github.com/romversioning/romver)
 
-For an overview of common Python packaging techniques to maintain a single source of truth for the version number, see [here](https://packaging.python.org/guides/single-sourcing-package-version/).
+Besides that, we considered the following packaging workflows.
 
 * Option 1: [`pip`](https://pypi.org/project/pip/) +
             [`setuptools`](https://pypi.org/project/setuptools/) +
@@ -33,27 +33,18 @@ For an overview of common Python packaging techniques to maintain a single sourc
             [`poetry-dynamic-versioning`](https://pypi.org/project/poetry-dynamic-versioning) +
             [`semantic versioning`](https://semver.org/)
 
+For an overview of common Python packaging techniques to maintain a single source of truth for the version number, see [here](https://packaging.python.org/guides/single-sourcing-package-version/).
+
 ## Decision Outcome
 
 Semantic versioning.
 
-Chosen option: Option 1, because [justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force force | … | comes out best (see below)].
+Chosen option: Option 1, because this seems to be most widely used. Note that the Python community seems not to have settled on a fixed solution, so we can just have to choose one option for now.
 
-### Positive Consequences <!-- optional -->
 
-* [e.g., improvement of quality attribute satisfaction, follow-up decisions required, …]
-* …
+## Pros and Cons of the Options
 
-### Negative Consequences <!-- optional -->
-
-* [e.g., compromising quality attribute, follow-up decisions required, …]
-* …
-
-## Pros and Cons of the Options <!-- optional -->
-
-### [option 1]
-
-[example | description | pointer to more information | …] <!-- optional -->
+### Option 1: `setuptools`
 
 * Good, because current "standard" packaging tool
 * Good, because current codebase is based on pip and setuptools
@@ -61,9 +52,7 @@ Chosen option: Option 1, because [justification. e.g., only option, which meets 
   (pip freeze, etc)
 * Bad, because requires several tools to publish a package
 
-### [option 2]
-
-[example | description | pointer to more information | …] <!-- optional -->
+### Option 2: `poetry`
 
 * Good, because single tool which provides all functionality to build and
   publish a package
