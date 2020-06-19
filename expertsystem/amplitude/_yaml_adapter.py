@@ -1,6 +1,5 @@
 """Temporary helper functions to convert from XML to a YAML structure."""
 
-from copy import deepcopy
 from typing import (
     Any,
     Callable,
