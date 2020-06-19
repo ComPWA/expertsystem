@@ -6,9 +6,7 @@ import pytest
 
 import yaml
 
-from expertsystem.amplitude.canonicaldecay import (
-    CanonicalAmplitudeGeneratorXML,
-)
+from expertsystem.amplitude.canonicaldecay import CanonicalAmplitudeGenerator
 from expertsystem.ui.system_control import (
     InteractionTypes,
     StateTransitionManager,
@@ -32,7 +30,7 @@ def create_amplitude_generator():
         graph_interaction_settings_groups
     )
 
-    amplitude_generator = CanonicalAmplitudeGeneratorXML()
+    amplitude_generator = CanonicalAmplitudeGenerator()
     amplitude_generator.generate(solutions)
     return amplitude_generator
 
