@@ -8,9 +8,9 @@ Technical Story: Specification of [#68](https://github.com/ComPWA/expertsystem/i
 
 ## Context and Problem Statement
 
-To create a release on PyPI, we currently tag a commit and Travis will automatically publish the package to PyPI. However, PyPI extracts the version number of the release from `setup.py`, not from the tag on GitHub. You therefore first have to create a PR that modifies `setup.py` and only then one can add tag it, see e.g. [#69](https://github.com/ComPWA/expertsystem/pull/69). This is not only bothersome, but also prone to errors.
+To create a release on PyPI, we currently tag a commit and Travis will automatically deploy the package to PyPI. However, PyPI extracts the version number from `setup.py`, not from the tag on GitHub. You therefore first have to create a PR that modifies `setup.py` and only then one can add tag it, see e.g. [#69](https://github.com/ComPWA/expertsystem/pull/69). This is not only bothersome, but also prone to errors.
 
-Also, semantic version is currently used. Is this the best choice for the project?
+Also, we currently use semantic version. Is this the best choice for this project?
 
 *Note: this ADR also touches on our packaging system -- we currently only work with a `setup.py` file.*
 
@@ -18,8 +18,8 @@ Also, semantic version is currently used. Is this the best choice for the projec
 
 The following versioning schema were considered
 
-* semantic versioning
-* romantic versioning
+* [semantic versioning](https://semver.org/)
+* [romantic versioning](https://github.com/romversioning/romver)
 
 For an overview of common Python packaging techniques to maintain a single source of truth for the version number, see [here](https://packaging.python.org/guides/single-sourcing-package-version/).
 
