@@ -1,5 +1,6 @@
 """Temporary helper functions to convert from XML to a YAML structure."""
 
+from copy import deepcopy
 from typing import (
     Any,
     Callable,
@@ -320,6 +321,31 @@ def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
                 recoil_system["RecoilFinalState"]
             )
             output_dict["RecoilSystem"] = recoil_system
+        if "CanonicalSum" in definition:
+            cano_sum_old = definition["CanonicalSum"]
+            cano_sum_new = dict()
+            cano_sum_new["L"] = cano_sum_old["L"]
+            cano_sum_new["S"] = cano_sum_old["S"]
+            clebsch_gordan_list = [
+                dict(item)  # conversion from OrderedDict
+                for item in _safe_wrap_in_list(cano_sum_old["ClebschGordan"])
+            ]
+            clebsch_gordan_dict = dict()
+            for clebsch_gordan_old in clebsch_gordan_list:
+                type_name = clebsch_gordan_old["Type"]
+                clebsch_gordan_new = {
+                    "J": clebsch_gordan_old["J"],
+                    "M": clebsch_gordan_old["M"],
+                }
+                attributes = {
+                    key[1:]: value
+                    for key, value in clebsch_gordan_old.items()
+                    if key.startswith("@")
+                }
+                clebsch_gordan_new.update(attributes)
+                clebsch_gordan_dict[type_name] = clebsch_gordan_new
+            cano_sum_new["ClebschGordan"] = clebsch_gordan_dict
+            output_dict["CanonicalSum"] = cano_sum_new
     return output_dict
 
 

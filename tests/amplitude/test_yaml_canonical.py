@@ -78,6 +78,20 @@ class TestCanonicalAmplitudeGeneratorYAML:
             assert "Name" in parameter
             assert "Value" in parameter
 
+    def test_clebsch_gordan(self):
+        normalized_intensity = self.imported_dict["Intensity"]
+        incoherent_intensity = normalized_intensity["Intensity"]
+        coherent_intensity = incoherent_intensity["Intensities"][0]
+        coefficient_amplitude = coherent_intensity["Amplitudes"][0]
+        sequential_amplitude = coefficient_amplitude["Amplitude"]
+        helicity_decay = sequential_amplitude["Amplitudes"][0]
+        canonical_sum = helicity_decay["CanonicalSum"]
+        assert list(canonical_sum) == ["L", "S", "ClebschGordan"]
+        clebsch_gordan = canonical_sum["ClebschGordan"]
+        assert list(clebsch_gordan) == ["LS", "s2s3"]
+        s2s3 = clebsch_gordan["s2s3"]
+        assert s2s3["J"] == 1.0
+
 
 if __name__ == "__main__":
     create_amplitude_generator()
