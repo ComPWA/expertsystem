@@ -1,4 +1,4 @@
-# [ADR-0001] Standardize and automatize release flow
+# [ADR-0001] Choose packaging system and versioning scheme
 
 Status: **proposed**
 
