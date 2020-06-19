@@ -338,7 +338,8 @@ def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
                     if key.startswith("@")
                 }
                 clebsch_gordan_new.update(attributes)
-                cano_sum_new[type_name] = clebsch_gordan_new
+                embed_clebsch_gordan = {"ClebschGordan": clebsch_gordan_new}
+                cano_sum_new[type_name] = embed_clebsch_gordan
             output_dict["Canonical"] = cano_sum_new
     return output_dict
 

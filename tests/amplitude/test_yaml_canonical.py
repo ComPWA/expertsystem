@@ -85,7 +85,7 @@ class TestCanonicalAmplitudeGeneratorYAML:
         helicity_decay = sequential_amplitude["Amplitudes"][0]
         canonical_sum = helicity_decay["Canonical"]
         assert list(canonical_sum) == ["LS", "s2s3"]
-        s2s3 = canonical_sum["s2s3"]
+        s2s3 = canonical_sum["s2s3"]["ClebschGordan"]
         assert list(s2s3) == ["J", "M", "j1", "m1", "j2", "m2"]
         assert s2s3["J"] == 1.0
 
