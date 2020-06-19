@@ -39,7 +39,9 @@ For an overview of common Python packaging techniques to maintain a single sourc
 
 Semantic versioning.
 
-Chosen option: Option 1, because this seems to be most widely used. Note that the Python community seems not to have settled on a fixed solution, so we can just have to choose one option for now.
+Chosen option: **Option 1**, because this seems to be most widely used. Note that the Python community seems not to have settled on a fixed solution, so we can just have to choose one option for now.
+
+A decision on the automatization of the release flow has not been made in this ADR, because we need to experiment more with this.
 
 
 ## Pros and Cons of the Options
