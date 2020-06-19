@@ -71,8 +71,3 @@ Chosen option: Option 1, because [justification. e.g., only option, which meets 
 * Bad, because `poetry-dynamic-versioning` is a non stable package atm
 * Bad, requires to switch from existing Option 1
 * Bad, because quality & stability?
-
-## Links <!-- optional -->
-
-* [Link type] [Link to ADR] <!-- example: Refined by [ADR-0005](0005-example.md) -->
-* … <!-- numbers of links can vary -->
