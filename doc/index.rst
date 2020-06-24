@@ -126,7 +126,7 @@ Workflow of the Expert System
    :hidden:
 
    api
-   adr/index
+   adr
 
 
 expertsystem API
