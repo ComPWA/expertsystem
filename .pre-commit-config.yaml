@@ -45,7 +45,7 @@ repos:
 
       - id: pylint
         name: pylint
-        entry: pylint
+        entry: pylint --rcfile=.pylintrc --score=no
         language: system
         types:
           - python
