@@ -38,5 +38,5 @@ for an introduction to the Particle Wave Analysis Expert System!
   - [ ] Tensor formalisms
 - **Output**: Write transition graph to human-readable recipe file
   - [x] XML (_old format for [ComPWA](https://compwa.github.io/)_)
-  - [ ] YAML (_new format for
+  - [x] YAML (_new format for
         [tensorwaves](https://pwa.readthedocs.io/projects/tensorwaves/en/latest)_)
