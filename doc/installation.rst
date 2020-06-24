@@ -9,11 +9,6 @@ installation <installation:Interactive installation>` procedure.
 Installation through PyPI
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. attention::
-
-  `expertsystem` is currently under development, so there currently exists no
-  PyPI package!
-
 `expertsystem` is `available as a PyPI package <https://pypi.org/>`_ so
 installation is super easy:
 
