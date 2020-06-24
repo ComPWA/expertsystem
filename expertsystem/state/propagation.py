@@ -42,7 +42,9 @@ from ..state.particle import (
 )
 
 
-graph_element_types = Enum("GraphElementTypes", "node edge")
+class GraphElementTypes(Enum):
+    node = "node"
+    edge = "edge"
 
 
 InteractionTypes = Enum("InteractionTypes", "Strong EM Weak")
@@ -325,12 +327,12 @@ def decode_variable_name(variable_name, delimiter):
     qn_name = None
     graph_element_type = None
     element_id = int(split_name[1])
-    if split_name[0] in graph_element_types.node.name:
+    if split_name[0] in GraphElementTypes.node.name:
         qn_name = InteractionQuantumNumberNames[split_name[2]]
-        graph_element_type = graph_element_types.node
+        graph_element_type = GraphElementTypes.node
     else:
         qn_name = StateQuantumNumberNames[split_name[2]]
-        graph_element_type = graph_element_types.edge
+        graph_element_type = GraphElementTypes.edge
 
     return VariableInfo(graph_element_type, element_id, qn_name)
 
@@ -498,7 +500,7 @@ class CSPPropagator(AbstractPropagator):
         else:
             for qn_name, qn_domain in qn_dict.items():
                 var_info = VariableInfo(
-                    graph_element_types.node, node_id, qn_name
+                    GraphElementTypes.node, node_id, qn_name
                 )
                 # domain_values = self.determine_domain(var_info, [], )
                 if qn_domain:
@@ -528,7 +530,7 @@ class CSPPropagator(AbstractPropagator):
             else:
                 for qn_name, qn_domain in qn_dict.items():
                     var_info = VariableInfo(
-                        graph_element_types.edge, edge_id, qn_name
+                        GraphElementTypes.edge, edge_id, qn_name
                     )
                     if qn_domain:
                         key = self.add_variable(var_info, qn_domain)
@@ -578,7 +580,7 @@ class CSPPropagator(AbstractPropagator):
                 )
                 ele_id = var_info.element_id
 
-                if var_info.graph_element_type is graph_element_types.edge:
+                if var_info.graph_element_type is GraphElementTypes.edge:
                     if ele_id in initial_edges or ele_id in final_edges:
                         # skip if its an initial or final state edge
                         continue
@@ -631,7 +633,7 @@ def add_qn_to_graph_element(graph, var_info, value):
     element_id = var_info.element_id
     qn_name = var_info.qn_name
     graph_prop_dict = graph.edge_props
-    if var_info.graph_element_type is graph_element_types.node:
+    if var_info.graph_element_type is GraphElementTypes.node:
         graph_prop_dict = graph.node_props
 
     converter = QNClassConverterMapping[QNNameClassMapping[qn_name]]
