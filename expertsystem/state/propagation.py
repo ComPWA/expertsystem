@@ -47,7 +47,10 @@ class GraphElementTypes(Enum):
     edge = "edge"
 
 
-InteractionTypes = Enum("InteractionTypes", "Strong EM Weak")
+class InteractionTypes(Enum):
+    Strong = "Strong"
+    EM = "EM"
+    Weak = "Weak"
 
 
 class InteractionNodeSettings:

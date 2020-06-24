@@ -108,39 +108,51 @@ def create_spin_domain(list_of_magnitudes, set_projection_zero=False):
     return domain_list
 
 
-QuantumNumberClasses = Enum("QuantumNumberClasses", ["Int", "Float", "Spin"])
+class QuantumNumberClasses(Enum):
+    Int = "Int"
+    Float = "Float"
+    Spin = "Spin"
 
-"""Definition of quantum number names for states."""
-StateQuantumNumberNames = Enum(
-    "StateQuantumNumberNames",
-    [
-        "BaryonNumber",
-        "Bottomness",
-        "Charge",
-        "Charm",
-        "Cparity",
-        "ElectronLN",
-        "Gparity",
-        "IsoSpin",
-        "MuonLN",
-        "Parity",
-        "Spin",
-        "Strangeness",
-        "TauLN",
-        "Topness",
-    ],
-)
 
-"""definition of properties names of particles"""
-ParticlePropertyNames = Enum("ParticlePropertyNames", ["Pid", "Mass"])
+class StateQuantumNumberNames(Enum):
+    """Definition of quantum number names for states."""
 
-"""definition of decay properties names of particles"""
-ParticleDecayPropertyNames = Enum("ParticleDecayPropertyNames", ["Width"])
+    BaryonNumber = "BaryonNumber"
+    Bottomness = "Bottomness"
+    Charge = "Charge"
+    Charm = "Charm"
+    Cparity = "Cparity"
+    ElectronLN = "ElectronLN"
+    Gparity = "Gparity"
+    IsoSpin = "IsoSpin"
+    MuonLN = "MuonLN"
+    Parity = "Parity"
+    Spin = "Spin"
+    Strangeness = "Strangeness"
+    TauLN = "TauLN"
+    Topness = "Topness"
 
-"""definition of quantum number names for interaction nodes"""
-InteractionQuantumNumberNames = Enum(
-    "InteractionQuantumNumberNames", ["L", "S", "ParityPrefactor",]
-)
+
+class ParticlePropertyNames(Enum):
+    """Definition of properties names of particles"""
+
+    Pid = "Pid"
+    Mass = "Mass"
+
+
+class ParticleDecayPropertyNames(Enum):
+    """Definition of decay properties names of particles."""
+
+    Width = "Width"
+
+
+class InteractionQuantumNumberNames(Enum):
+    """Definition of quantum number names for interaction nodes."""
+
+    L = "L"
+    S = "S"
+    ParityPrefactor = "ParityPrefactor"
+
 
 QNDefaultValues = {
     StateQuantumNumberNames.Charge: 0,
