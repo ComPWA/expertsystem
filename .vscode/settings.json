@@ -12,7 +12,7 @@
   "editor.rulers": [80],
   "git.rebaseWhenSync": true,
   "python.formatting.provider": "black",
-  "python.jediEnabled": true,
+  "python.languageServer": "Jedi",
   "python.linting.flake8Enabled": true,
   "python.linting.mypyArgs": ["--config-file=tox.ini", "--follow-imports=skip"],
   "python.linting.mypyEnabled": true,
