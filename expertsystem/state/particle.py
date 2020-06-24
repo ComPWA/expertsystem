@@ -6,7 +6,7 @@ import logging
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from copy import deepcopy
-from enum import Enum
+from enum import Enum, auto
 from itertools import permutations
 from json import loads, dumps
 
@@ -26,17 +26,17 @@ from ..topology.graph import (
 
 
 class Labels(Enum):
-    Class: str = "Class"
-    Component: str = "Component"
-    DecayInfo: str = "DecayInfo"
-    Name: str = "Name"
-    Parameter: str = "Parameter"
-    Pid: str = "Pid"
-    PreFactor: str = "PreFactor"
-    Projection: str = "Projection"
-    QuantumNumber: str = "QuantumNumber"
-    Type: str = "Type"
-    Value: str = "Value"
+    Class = auto()
+    Component = auto()
+    DecayInfo = auto()
+    Name = auto()
+    Parameter = auto()
+    Pid = auto()
+    PreFactor = auto()
+    Projection = auto()
+    QuantumNumber = auto()
+    Type = auto()
+    Value = auto()
 
 
 class Spin:
@@ -109,49 +109,49 @@ def create_spin_domain(list_of_magnitudes, set_projection_zero=False):
 
 
 class QuantumNumberClasses(Enum):
-    Int = "Int"
-    Float = "Float"
-    Spin = "Spin"
+    Int = auto()
+    Float = auto()
+    Spin = auto()
 
 
 class StateQuantumNumberNames(Enum):
     """Definition of quantum number names for states."""
 
-    BaryonNumber = "BaryonNumber"
-    Bottomness = "Bottomness"
-    Charge = "Charge"
-    Charm = "Charm"
-    Cparity = "Cparity"
-    ElectronLN = "ElectronLN"
-    Gparity = "Gparity"
-    IsoSpin = "IsoSpin"
-    MuonLN = "MuonLN"
-    Parity = "Parity"
-    Spin = "Spin"
-    Strangeness = "Strangeness"
-    TauLN = "TauLN"
-    Topness = "Topness"
+    BaryonNumber = auto()
+    Bottomness = auto()
+    Charge = auto()
+    Charm = auto()
+    Cparity = auto()
+    ElectronLN = auto()
+    Gparity = auto()
+    IsoSpin = auto()
+    MuonLN = auto()
+    Parity = auto()
+    Spin = auto()
+    Strangeness = auto()
+    TauLN = auto()
+    Topness = auto()
 
 
 class ParticlePropertyNames(Enum):
     """Definition of properties names of particles"""
 
-    Pid = "Pid"
-    Mass = "Mass"
+    Pid = auto()
+    Mass = auto()
 
 
 class ParticleDecayPropertyNames(Enum):
     """Definition of decay properties names of particles."""
 
-    Width = "Width"
+    Width = auto()
 
 
 class InteractionQuantumNumberNames(Enum):
     """Definition of quantum number names for interaction nodes."""
 
-    L = "L"
-    S = "S"
-    ParityPrefactor = "ParityPrefactor"
+    L = auto()
+    S = auto()
+    ParityPrefactor = auto()
 
 
 QNDefaultValues = {

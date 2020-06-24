@@ -7,7 +7,7 @@ conservation rules of :mod:`.conservationrules`.
 """
 from copy import deepcopy
 from collections import defaultdict
-from enum import Enum
+from enum import Enum, auto
 from abc import ABC, abstractmethod
 import logging
 
@@ -43,14 +43,14 @@ from ..state.particle import (
 
 
 class GraphElementTypes(Enum):
-    node = "node"
-    edge = "edge"
+    node = auto()
+    edge = auto()
 
 
 class InteractionTypes(Enum):
-    Strong = "Strong"
-    EM = "EM"
-    Weak = "Weak"
+    Strong = auto()
+    EM = auto()
+    Weak = auto()
 
 
 class InteractionNodeSettings:
