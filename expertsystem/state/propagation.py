@@ -583,7 +583,7 @@ class CSPPropagator(AbstractPropagator):
         #             " create a copy graph")
         # bar = IncrementalBar('Filtering solutions', max=len(solutions))
 
-        found_JPs = set()
+        found_jps = set()
 
         for solution in solutions:
             graph_copy = deepcopy(self.graph)
@@ -612,7 +612,7 @@ class CSPPropagator(AbstractPropagator):
                         graph_copy.edge_props[int_edge_id],
                         StateQuantumNumberNames.Parity,
                     )
-                    found_JPs.add(
+                    found_jps.add(
                         str(spin.magnitude())
                         + ("-" if parity == -1 or parity == -1.0 else "+")
                     )
@@ -634,7 +634,7 @@ class CSPPropagator(AbstractPropagator):
                 + str(len(solutions))
                 + " solutions!"
             )
-            logging.warning("solution inter. state J^P: " + str(found_JPs))
+            logging.warning("solution inter. state J^P: " + str(found_jps))
         return solution_graphs
 
 
