@@ -22,3 +22,6 @@ ignore=conf.py
 # We decrease this to 1, since some interface classes just have a single
 # (public) method
 min-public-methods=1
+
+[SIMILARITIES]
+ignore-imports=yes # https://stackoverflow.com/a/30007053
