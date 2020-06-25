@@ -120,7 +120,7 @@ Workflow of the Expert System
    :maxdepth: 2
    :caption: Table of Contents
 
-   installation
+   install
    usage
    contribute
 
