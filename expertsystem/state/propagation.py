@@ -7,40 +7,39 @@ the allowed quantum numbers of the intermediate states. The propagator classes
 :mod:`.conservationrules`.
 """
 
-from copy import deepcopy
-from collections import defaultdict
-from enum import Enum, auto
-from abc import ABC, abstractmethod
 import logging
+from abc import ABC, abstractmethod
+from collections import defaultdict
+from copy import deepcopy
+from enum import Enum, auto
 
-from ..solvers.constraint import (
-    Problem,
-    Constraint,
-    Unassigned,
+from expertsystem.solvers.constraint import (
     BacktrackingSolver,
+    Constraint,
+    Problem,
+    Unassigned,
 )
-
-from ..topology.graph import (
-    get_initial_state_edges,
-    get_final_state_edges,
+from expertsystem.state import particle
+from expertsystem.state.conservationrules import AbstractRule
+from expertsystem.state.particle import (
+    InteractionQuantumNumberNames,
+    ParticleDecayPropertyNames,
+    ParticlePropertyNames,
+    QNClassConverterMapping,
+    QNNameClassMapping,
+    StateQuantumNumberNames,
+    get_interaction_property,
+    get_particle_candidates_for_state,
+    get_particle_property,
+    initialize_allowed_particle_list,
+    initialize_graphs_with_particles,
+)
+from expertsystem.topology.graph import (
     get_edges_ingoing_to_node,
     get_edges_outgoing_to_node,
+    get_final_state_edges,
+    get_initial_state_edges,
     get_intermediate_state_edges,
-)
-from ..state.conservationrules import AbstractRule
-from ..state import particle
-from ..state.particle import (
-    StateQuantumNumberNames,
-    InteractionQuantumNumberNames,
-    ParticlePropertyNames,
-    ParticleDecayPropertyNames,
-    get_particle_property,
-    get_interaction_property,
-    QNNameClassMapping,
-    QNClassConverterMapping,
-    initialize_graphs_with_particles,
-    get_particle_candidates_for_state,
-    initialize_allowed_particle_list,
 )
 
 

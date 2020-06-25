@@ -4,22 +4,22 @@ Contains:
 - Functors for quantum number condition checks.
 """
 
+import logging
 from abc import ABC, abstractmethod
-from functools import reduce
 from copy import deepcopy
+from functools import reduce
 
 from numpy import arange
-import logging
 
 from .particle import (
-    StateQuantumNumberNames,
     InteractionQuantumNumberNames,
-    ParticlePropertyNames,
     ParticleDecayPropertyNames,
+    ParticlePropertyNames,
     QNNameClassMapping,
     QuantumNumberClasses,
-    is_boson,
     Spin,
+    StateQuantumNumberNames,
+    is_boson,
 )
 
 

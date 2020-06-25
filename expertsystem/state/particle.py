@@ -9,8 +9,8 @@ from abc import ABC, abstractmethod
 from collections import OrderedDict
 from copy import deepcopy
 from enum import Enum, auto
+from json import dumps, loads
 from itertools import permutations
-from json import loads, dumps
 
 from numpy import arange
 
@@ -18,12 +18,12 @@ import xmltodict
 
 import yaml
 
-from ..topology.graph import (
-    get_initial_state_edges,
+from expertsystem.topology.graph import (
     get_final_state_edges,
+    get_initial_state_edges,
     get_intermediate_state_edges,
-    get_originating_initial_state_edges,
     get_originating_final_state_edges,
+    get_originating_initial_state_edges,
 )
 
 

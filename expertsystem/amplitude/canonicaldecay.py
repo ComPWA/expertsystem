@@ -2,16 +2,15 @@
 
 from collections import OrderedDict
 
-from ..topology.graph import (
+from expertsystem.state.particle import (
+    InteractionQuantumNumberNames,
+    StateQuantumNumberNames,
+    get_interaction_property,
+    get_particle_property,
+)
+from expertsystem.topology.graph import (
     get_edges_ingoing_to_node,
     get_edges_outgoing_to_node,
-)
-
-from ..state.particle import (
-    StateQuantumNumberNames,
-    InteractionQuantumNumberNames,
-    get_particle_property,
-    get_interaction_property,
 )
 
 from .helicitydecay import (
