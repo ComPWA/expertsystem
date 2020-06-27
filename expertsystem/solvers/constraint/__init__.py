@@ -23,6 +23,9 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# pylint: disable=all
+
 """
 :var Unassigned: Helper object instance representing unassigned values
 
@@ -883,8 +886,7 @@ class Constraint(object):
         return True
 
     def preProcess(self, variables, domains, constraints, vconstraints):
-        """
-        Preprocess variable domains
+        """Preprocess variable domains.
 
         This method is called before starting to look for solutions,
         and is used to prune domains with specific constraint logic

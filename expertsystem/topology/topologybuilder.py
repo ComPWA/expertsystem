@@ -1,6 +1,6 @@
-"""
-module topologybuilder
-responsible for building all possible topologies base on basic user input
+"""Module topologybuilder.
+
+Responsible for building all possible topologies base on basic user input:
 
   - number of initial state particles
   - number of final state particles
@@ -10,14 +10,18 @@ import copy
 import itertools
 import logging
 
-from .graph import StateTransitionGraph, InteractionNode, are_graphs_isomorphic
+from .graph import (
+    StateTransitionGraph,
+    are_graphs_isomorphic,
+)
 
 
 class SimpleStateTransitionTopologyBuilder:
-    """
-    Simple topology builder. Recursively tries to add the interaction nodes
-    to available open end edges/lines in all combinations until the number of
-    open end lines matches the final state lines
+    """Simple topology builder.
+
+    Recursively tries to add the interaction nodes to available open end
+    edges/lines in all combinations until the number of open end lines matches
+    the final state lines.
     """
 
     def __init__(self, interaction_node_set):

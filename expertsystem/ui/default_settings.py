@@ -1,27 +1,31 @@
-from copy import deepcopy
+"""Default configuration for the `expertsystem`."""
+
 import sys
+from copy import deepcopy
 
-from ..state.particle import (
-    StateQuantumNumberNames,
-    InteractionQuantumNumberNames,
-    create_spin_domain,
-)
-
-from ..state.propagation import InteractionNodeSettings, InteractionTypes
-
-from ..state.conservationrules import (
+from expertsystem.state.conservationrules import (
     AdditiveQuantumNumberConservation,
-    ParityConservation,
-    ParityConservationHelicity,
-    IdenticalParticleSymmetrization,
-    SpinConservation,
-    ClebschGordanCheckHelicityToCanonical,
-    HelicityConservation,
     CParityConservation,
+    ClebschGordanCheckHelicityToCanonical,
     GParityConservation,
     GellMannNishijimaRule,
+    HelicityConservation,
+    IdenticalParticleSymmetrization,
     MassConservation,
+    ParityConservation,
+    ParityConservationHelicity,
+    SpinConservation,
 )
+from expertsystem.state.particle import (
+    InteractionQuantumNumberNames,
+    StateQuantumNumberNames,
+    create_spin_domain,
+)
+from expertsystem.state.propagation import (
+    InteractionNodeSettings,
+    InteractionTypes,
+)
+
 
 default_particle_list_search_paths = [
     ".",
@@ -59,14 +63,13 @@ default_conservation_law_priorities = {
 def create_default_interaction_settings(
     formalism_type, use_mass_conservation=True
 ):
-    """
-    Create a container, which holds the settings for the various interactions
-    (e.g.: strong, em and weak interaction).
+    """Create a container that holds the settings for the various interactions.
+
+    E.g.: strong, em and weak interaction.
     """
     interaction_type_settings = {}
     formalism_conservation_laws = []
     formalism_qn_domains = {}
-    formalism_type = formalism_type
     if "helicity" in formalism_type:
         formalism_conservation_laws = [
             SpinConservation(StateQuantumNumberNames.Spin, False),

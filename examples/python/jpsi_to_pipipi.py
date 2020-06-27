@@ -1,17 +1,19 @@
-""" sample script for the testing purposes using the decay
-    JPsi -> pi0 pi+ pi-
-"""
-import logging
+r"""Sample script for the testing purposes.
 
-from expertsystem.ui.system_control import (
-    StateTransitionManager,
-    InteractionTypes,
-)
+Analyses the decay :math:`J/\psi \to \pi^0 \pi^+ \pi^-`.
+"""
+
+import logging
 
 from expertsystem.amplitude.helicitydecay import (
     HelicityDecayAmplitudeGeneratorXML,
 )
 from expertsystem.state import particle
+from expertsystem.ui.system_control import (
+    InteractionTypes,
+    StateTransitionManager,
+)
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -33,7 +35,7 @@ print("found " + str(len(solutions)) + " solutions!")
 
 print("intermediate states:")
 for g in solutions:
-    print(g.edge_props[1][particle.LABELS.Name.name])
+    print(g.edge_props[1][particle.Labels.Name.name])
 
 xml_generator = HelicityDecayAmplitudeGeneratorXML()
 xml_generator.generate(solutions)

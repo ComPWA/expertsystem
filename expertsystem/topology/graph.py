@@ -1,11 +1,16 @@
-"""graph module - some description here."""
+"""Graph module."""
 
 from collections import OrderedDict
 
 
-def are_graphs_isomorphic(graph1, graph2):
-    """Returns True if the two graphs have a one-to-one mapping
-    of the node IDs and edge IDs"""
+def are_graphs_isomorphic(graph1, graph2):  # pylint: disable=unused-argument
+    """Check if two graphs are isomorphic.
+
+    Returns:
+        bool:
+            True if the two graphs have a one-to-one mapping of the node IDs
+            and edge IDs.
+    """
     # EdgeIndexMapping = {}
     # NodeIndexMapping = {}
 
@@ -116,13 +121,13 @@ def dicts_unequal(dict1, dict2):
 
 
 class StateTransitionGraph:
-    """
-        Graph class which contains edges and nodes, similar to feynman graphs.
-        The graphs are directed, meaning the edges are ingoing and outgoing
-        to specific nodes (since feynman graphs also have a time axis)
-        This class can contain the full information of a state transition from
-        a initial state to a final state. This information can be attached to
-        the nodes and edges via properties.
+    """Graph class that contains edges and nodes.
+
+    Similar to feynman graphs. The graphs are directed, meaning the edges are
+    ingoing and outgoing to specific nodes (since feynman graphs also have a
+    time axis) This class can contain the full information of a state
+    transition from a initial state to a final state. This information can be
+    attached to the nodes and edges via properties.
     """
 
     def __init__(self):
@@ -144,12 +149,12 @@ class StateTransitionGraph:
             + "\n"
         )
         return_string = return_string + "node props: {\n"
-        for x, y in self.node_props.items():
-            return_string = return_string + str(x) + ": " + str(y) + "\n"
+        for key, value in self.node_props.items():
+            return_string = return_string + str(key) + ": " + str(value) + "\n"
         return_string = return_string + "}\n"
         return_string = return_string + "edge props: {\n"
-        for x, y in self.edge_props.items():
-            return_string = return_string + str(x) + ": " + str(y) + "\n"
+        for key, value in self.edge_props.items():
+            return_string = return_string + str(key) + ": " + str(value) + "\n"
         return_string = return_string + "}\n"
         return return_string
 
@@ -158,19 +163,16 @@ class StateTransitionGraph:
             "\nnodes: " + str(self.nodes) + "\nedges: " + str(self.edges)
         )
         return_string = return_string + "\nnode props: {\n"
-        for x, y in self.node_props.items():
-            return_string = return_string + str(x) + ": " + str(y) + "\n"
+        for key, value in self.node_props.items():
+            return_string = return_string + str(key) + ": " + str(value) + "\n"
         return_string = return_string + "}\n"
         return_string = return_string + "\nedge props: {\n"
-        for x, y in self.edge_props.items():
-            return_string = return_string + str(x) + ": " + str(y) + "\n"
+        for key, value in self.edge_props.items():
+            return_string = return_string + str(key) + ": " + str(value) + "\n"
         return_string = return_string + "}\n"
         return return_string
 
     def __eq__(self, other):
-        """
-        defines the equal operator for the graph class
-        """
         if isinstance(other, StateTransitionGraph):
             if set(self.nodes) != set(other.nodes):
                 return False
@@ -184,17 +186,17 @@ class StateTransitionGraph:
                 return self.graph_element_properties_comparator(
                     self.edge_props, other.edge_props
                 )
-            else:
-                raise NotImplementedError(
-                    "Graph element properties comparator is not set!"
-                )
-            return True
-        else:
-            return NotImplemented
+            raise NotImplementedError(
+                "Graph element properties comparator is not set!"
+            )
+        return NotImplemented
 
     def add_node(self, node_id):
-        """Adds a node with id node_id. Raises an value error,
-        if node_id already exists"""
+        """Adds a node with id node_id.
+
+        Raises:
+            ValueError: if node_id already exists
+        """
         if node_id in self.nodes:
             raise ValueError(
                 "Node with id " + str(node_id) + " already exists!"
@@ -202,7 +204,7 @@ class StateTransitionGraph:
         self.nodes.append(node_id)
 
     def add_edges(self, edge_ids):
-        """Adds edges with the ids in the edge_ids list"""
+        """Add edges with the ids in the edge_ids list."""
         for edge_id in edge_ids:
             if edge_id in self.edges:
                 raise ValueError(
@@ -211,15 +213,17 @@ class StateTransitionGraph:
             self.edges[edge_id] = Edge()
 
     def attach_edges_to_node_ingoing(self, ingoing_edge_ids, node_id):
-        """Attaches existing edges to nodes, so that the are ingoing to these
-        nodes
+        """Attach existing edges to nodes.
+
+        So that the are ingoing to these nodes.
 
         Args:
             ingoing_edge_ids ([int]): list of edge ids, that will be attached
             node_id (int): id of the node to which the edges will be attached
 
         Raises:
-            ValueError
+            ValueError: if an edge not doesn't exist.
+            ValueError: if an edge ID is already an ingoing node.
         """
         # first check if the ingoing edges are all available
         for edge_id in ingoing_edge_ids:
@@ -259,11 +263,11 @@ class StateTransitionGraph:
             self.edges[edge_id].originating_node_id = node_id
 
     def get_originating_node_list(self, edge_ids):
-        """ Get list of node ids from which the supplied edges originate from
+        """Get list of node ids from which the supplied edges originate from.
 
         Args:
-            edge_ids ([int]): list of edge ids for which the origin node is \
-            searched for
+            edge_ids ([int]): list of edge ids for which the origin node is
+                searched for
 
         Returns:
             [int]: a list of node ids
@@ -291,15 +295,16 @@ class StateTransitionGraph:
         if val2:
             self.edge_props[edge_id1] = val2
 
-    def verify(self):
-        """ Verify the graph is connected,
-        so no dangling parts which are not connected"""
+    def verify(self):  # pylint: disable=no-self-use
+        """Verify if the graph is connected.
 
+        So that no dangling parts which are not connected.
+        """
         return True
 
 
-class InteractionNode:
-    """struct-like definition of an interaction node"""
+class InteractionNode:  # pylint: disable=too-few-public-methods
+    """Struct-like definition of an interaction node."""
 
     def __init__(
         self, type_name, number_of_ingoing_edges, number_of_outgoing_edges
@@ -318,7 +323,7 @@ class InteractionNode:
 
 
 class Edge:
-    """struct-like definition of an edge"""
+    """Struct-like definition of an edge."""
 
     def __init__(self):
         self.ending_node_id = None
@@ -331,13 +336,9 @@ class Edge:
         return str((self.ending_node_id, self.originating_node_id))
 
     def __eq__(self, other):
-        """
-        defines the equal operator for the graph class
-        """
         if isinstance(other, Edge):
             return (
                 self.ending_node_id == other.ending_node_id
                 and self.originating_node_id == other.originating_node_id
             )
-        else:
-            return NotImplemented
+        return NotImplemented

@@ -20,8 +20,6 @@ things out. When using the first option, you would have to run :ref:`setuptools
 <setuptools>` again to make the changes known to the system.
 
 
-.. _setuptools:
-
 Using `setuptools <https://setuptools.readthedocs.io/>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -82,6 +80,5 @@ For more thorough testing you can run the unit tests:
 
 .. code-block:: shell
 
-  cd tests
-  pip install -r requirements.txt
+  pip install -r tests/requirements.txt
   pytest -m "not slow"

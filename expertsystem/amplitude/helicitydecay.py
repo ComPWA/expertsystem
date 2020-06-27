@@ -1,8 +1,9 @@
-from collections import OrderedDict
+"""Implementation of the helicity formalism for amplitude model generation."""
+
 import json
 import logging
+from collections import OrderedDict
 from copy import deepcopy
-
 from typing import (
     Any,
     Dict,
@@ -12,29 +13,30 @@ import xmltodict
 
 import yaml
 
-from . import _yaml_adapter
-from .abstractgenerator import (
-    AbstractAmplitudeNameGenerator,
-    AbstractAmplitudeGenerator,
-)
-
-from ..topology.graph import (
-    get_initial_state_edges,
-    get_final_state_edges,
-    get_edges_ingoing_to_node,
-    get_edges_outgoing_to_node,
-)
-from ..state import particle
-from ..state.particle import (
-    StateQuantumNumberNames,
+from expertsystem.state import particle
+from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
+    StateQuantumNumberNames,
     get_interaction_property,
     get_particle_property,
+)
+from expertsystem.topology.graph import (
+    get_edges_ingoing_to_node,
+    get_edges_outgoing_to_node,
+    get_final_state_edges,
+    get_initial_state_edges,
+)
+
+from . import _yaml_adapter
+from .abstractgenerator import (
+    AbstractAmplitudeGenerator,
+    AbstractAmplitudeNameGenerator,
 )
 
 
 def group_graphs_same_initial_and_final(graphs):
-    """
+    """Match final and initial states in groups.
+
     Each graph corresponds to a specific state transition amplitude.
     This function groups together graphs, which have the same initial and
     final state (including spin). This is needed to determine the coherency of
@@ -42,6 +44,7 @@ def group_graphs_same_initial_and_final(graphs):
 
     Args:
         graphs ([:class:`.StateTransitionGraph`])
+
     Returns:
         graph groups ([[:class:`.StateTransitionGraph`]])
     """
@@ -57,7 +60,7 @@ def group_graphs_same_initial_and_final(graphs):
             graph_groups[ifsg] = []
         graph_groups[ifsg].append(graph)
 
-    graph_group_list = [graph_groups[x] for x in graph_groups.keys()]
+    graph_group_list = list(graph_groups.values())
     return graph_group_list
 
 
@@ -77,13 +80,13 @@ def get_graph_group_unique_label(graph_group):
 
 
 def get_helicity_from_edge_props(edge_props):
-    qns_label = particle.LABELS.QuantumNumber.name
-    type_label = particle.LABELS.Type.name
+    qns_label = particle.Labels.QuantumNumber.name
+    type_label = particle.Labels.Type.name
     spin_label = StateQuantumNumberNames.Spin.name
-    proj_label = particle.LABELS.Projection.name
-    for qn in edge_props[qns_label]:
-        if qn[type_label] == spin_label:
-            return qn[proj_label]
+    proj_label = particle.Labels.Projection.name
+    for quantum_number in edge_props[qns_label]:
+        if quantum_number[type_label] == spin_label:
+            return quantum_number[proj_label]
     logging.error(edge_props[qns_label])
     raise ValueError("Could not find spin projection quantum number!")
 
@@ -97,15 +100,14 @@ def determine_attached_final_state_string(graph, edge_id):
 
 
 def determine_attached_final_state(graph, edge_id):
-    """
-    Determines all final state particles of a graph, which are attached
-    downward (forward in time) for a given edge (resembling the root)
+    """Determine all final state particles of a graph.
 
-    Args:
-        graph (:class:`.StateTransitionGraph`)
-        edge_id (int): id of the edge, which is taken as the root
-    Returns:
-        list of final state edge ids ([int])
+    These are attached downward (forward in time) for a given edge (resembling
+    the root).
+
+    Args: graph (:class:`.StateTransitionGraph`) edge_id (int): id of the edge,
+        which is taken as the root Returns: list of final state edge ids
+        ([int])
     """
     final_state_edge_ids = []
     all_final_state_edges = get_final_state_edges(graph)
@@ -125,8 +127,7 @@ def determine_attached_final_state(graph, edge_id):
 
 
 def get_recoil_edge(graph, edge_id):
-    """
-    Determines the id of the recoil edge for the specified edge of a graph.
+    """Determine the id of the recoil edge for the specified edge of a graph.
 
     Args:
         graph (:class:`.StateTransitionGraph`)
@@ -151,16 +152,13 @@ def get_recoil_edge(graph, edge_id):
 
 
 def get_parent_recoil_edge(graph, edge_id):
-    """
-    Determines the id of the recoil edge of the parent edge for the specified
-    edge of a graph.
+    """Determine the id of the recoil edge of the parent edge.
 
-    Args:
-        graph (:class:`.StateTransitionGraph`)
-        edge_id (int): id of the edge, for which the parents recoil partner is
-            determined
-    Returns:
-        parent recoil edge id (int)
+    For the specified edge of a graph.
+
+    Args: graph (:class:`.StateTransitionGraph`) edge_id (int): id of the edge,
+        for which the parents recoil partner is determined Returns: parent
+        recoil edge id (int)
     """
     node_id = graph.edges[edge_id].originating_node_id
     if node_id is None:
@@ -177,9 +175,7 @@ def get_parent_recoil_edge(graph, edge_id):
 
 
 def get_prefactor(graph):
-    """
-    calculates the product of all prefactors defined in this graph as a double
-    """
+    """Calculate the product of all prefactors defined in this graph."""
     prefactor_label = InteractionQuantumNumberNames.ParityPrefactor
     prefactor = None
     for node_id in graph.nodes:
@@ -206,22 +202,22 @@ def generate_kinematics(graphs):
     }
     is_edge_ids = get_initial_state_edges(graphs[0])
     counter = 0
-    for x in is_edge_ids:
+    for edge_id in is_edge_ids:
         tempdict["InitialState"]["Particle"].append(
             {
-                "Name": graphs[0].edge_props[x]["Name"],
-                "Id": x,
+                "Name": graphs[0].edge_props[edge_id]["Name"],
+                "Id": edge_id,
                 "PositionIndex": counter,
             }
         )
         counter += 1
     fs_edge_ids = get_final_state_edges(graphs[0])
     counter = 0
-    for x in fs_edge_ids:
+    for edge_id in fs_edge_ids:
         tempdict["FinalState"]["Particle"].append(
             {
-                "Name": graphs[0].edge_props[x]["Name"],
-                "Id": x,
+                "Name": graphs[0].edge_props[edge_id]["Name"],
+                "Id": edge_id,
                 "PositionIndex": counter,
             }
         )
@@ -233,10 +229,10 @@ def generate_particle_list(graphs):
     # create particle entries
     temp_particle_names = []
     particles = []
-    for g in graphs:
-        for edge_props in g.edge_props.values():
+    for graph in graphs:
+        for edge_props in graph.edge_props.values():
             new_edge_props = remove_spin_projection(edge_props)
-            par_name = new_edge_props[particle.LABELS.Name.name]
+            par_name = new_edge_props[particle.Labels.Name.name]
             if par_name not in temp_particle_names:
                 particles.append(new_edge_props)
                 temp_particle_names.append(par_name)
@@ -244,10 +240,10 @@ def generate_particle_list(graphs):
 
 
 def remove_spin_projection(edge_props):
-    qns_label = particle.LABELS.QuantumNumber.name
-    type_label = particle.LABELS.Type.name
+    qns_label = particle.Labels.QuantumNumber.name
+    type_label = particle.Labels.Type.name
     spin_label = StateQuantumNumberNames.Spin.name
-    proj_label = particle.LABELS.Projection.name
+    proj_label = particle.Labels.Projection.name
 
     new_edge_props = deepcopy(edge_props)
 
@@ -274,7 +270,7 @@ def generate_particles_string(
 
 
 def _get_name_hel_list(graph, edge_ids):
-    name_label = particle.LABELS.Name.name
+    name_label = particle.Labels.Name.name
     name_hel_list = []
     for i in edge_ids:
         temp_hel = float(get_helicity_from_edge_props(graph.edge_props[i]))
@@ -286,6 +282,8 @@ def _get_name_hel_list(graph, edge_ids):
 
 
 class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
+    """Parameter name generator for the helicity formalism."""
+
     def __init__(self, use_parity_conservation=False):
         self.partial_amp_coefficient_infos = set()
         self.use_parity_conservation = use_parity_conservation
@@ -299,14 +297,12 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
             )
 
     def generate_amplitude_coefficient_infos(self, graph):
-        """
-        Generates coefficient info for a sequential amplitude graph.
+        """Generate coefficient info for a sequential amplitude graph.
 
         Generally, each partial amplitude of a sequential amplitude graph
         should check itself if it or a parity partner is already defined. If so
         a coupled coefficient is introduced.
         """
-
         seq_par_suffix = ""
         use_prefactor = False
         # loop over decay nodes in time order
@@ -329,7 +325,7 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
                     seq_par_suffix += coeff_suffix + ";"
                     self.partial_amp_coefficient_infos.add(coeff_suffix)
 
-        par_label = particle.LABELS.Parameter.name
+        par_label = particle.Labels.Parameter.name
         amplitude_coefficient_infos = {
             par_label: [
                 {
@@ -353,27 +349,28 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
         if self.use_parity_conservation and use_prefactor:
             prefactor = get_prefactor(graph)
             if prefactor != 1.0 and prefactor is not None:
-                prefactor_label = particle.LABELS.PreFactor.name
+                prefactor_label = particle.Labels.PreFactor.name
                 amplitude_coefficient_infos[prefactor_label] = {
                     "Real": prefactor
                 }
         return amplitude_coefficient_infos
 
     def generate_unique_amplitude_name(self, graph, node_id=None):
-        """
-        Generates a unique name for the amplitude corresponding to the given
-        :py:class:`StateTransitionGraph`. If ``node_id`` is given, it
-        generates a unique name for the partial amplitude corresponding to the
-        interaction node of the given :py:class:`StateTransitionGraph`.
+        """Generates a unique name for the amplitude corresponding.
+
+        That is, corresponging to the given :class:`StateTransitionGraph`. If
+        ``node_id`` is given, it generates a unique name for the partial
+        amplitude corresponding to the interaction node of the given
+        :class:`StateTransitionGraph`.
         """
         name = ""
         if isinstance(node_id, int):
             nodelist = [node_id]
         else:
             nodelist = graph.nodes
-        for node_id in nodelist:
+        for node in nodelist:
             (in_hel_info, out_hel_info) = self._retrieve_helicity_info(
-                graph, node_id
+                graph, node
             )
 
             name += (
@@ -384,9 +381,8 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
             )
         return name
 
-    def _retrieve_helicity_info(self, graph, node_id):
-        # get ending node of the edge
-        # then make name for
+    @staticmethod
+    def _retrieve_helicity_info(graph, node_id):
         in_edges = get_edges_ingoing_to_node(graph, node_id)
         out_edges = get_edges_outgoing_to_node(graph, node_id)
 
@@ -396,9 +392,7 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
         return (in_names_hel_list, out_names_hel_list)
 
     def _generate_amplitude_coefficient_names(self, graph, node_id):
-        """
-        Generates partial amplitude coefficient name suffixes.
-        """
+        """Generate partial amplitude coefficient name suffixes."""
         (in_hel_info, out_hel_info) = self._retrieve_helicity_info(
             graph, node_id
         )
@@ -417,6 +411,8 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
 
 
 class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
+    """Amplitude model generator for the helicity formalism."""
+
     def __init__(
         self,
         top_node_no_dynamics=True,
@@ -435,42 +431,42 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
                 "Number of solution graphs is not larger than zero!"
             )
 
-        decay_info = {particle.LABELS.Type.name: "nonResonant"}
-        decay_info_label = particle.LABELS.DecayInfo.name
-        for g in graphs:
+        decay_info = {particle.Labels.Type.name: "nonResonant"}
+        decay_info_label = particle.Labels.DecayInfo.name
+        for graph in graphs:
             if self.top_node_no_dynamics:
-                init_edges = get_initial_state_edges(g)
+                init_edges = get_initial_state_edges(graph)
                 if len(init_edges) > 1:
                     raise ValueError(
                         "Only a single initial state particle allowed"
                     )
-                eprops = g.edge_props[init_edges[0]]
+                eprops = graph.edge_props[init_edges[0]]
                 eprops[decay_info_label] = decay_info
 
         self.particle_list = generate_particle_list(graphs)
         self.kinematics = generate_kinematics(graphs)
 
         graph_groups = group_graphs_same_initial_and_final(graphs)
-        logging.debug("There are " + str(len(graph_groups)) + " graph groups")
+        logging.debug("There are %d graph groups", len(graph_groups))
 
         self.fix_parameters_unambiguously()
 
         self.generate_amplitude_info(graph_groups)
 
     def fix_parameters_unambiguously(self):
+        """Fix parameters, so that the total amplitude is unambiguous.
+
+        Ambiguous means with regard to the fit parameters. In other words: all
+        fit parameters per graph, except one, will all be fixed. It's fine if
+        they are all already fixed.
         """
-        Fix parameters, so that the total amplitude is unambiguous, with regard
-        to the fit parameters. In other words: all fit parameters per graph,
-        except one, will all be fixed. It's fine if they are all already fixed.
-        """
-        pass
 
     def generate_amplitude_info(self, graph_groups):
-        class_label = particle.LABELS.Class.name
-        name_label = particle.LABELS.Name.name
-        component_label = particle.LABELS.Component.name
-        type_label = particle.LABELS.Type.name
-        parameter_label = particle.LABELS.Parameter.name
+        class_label = particle.Labels.Class.name
+        name_label = particle.Labels.Name.name
+        component_label = particle.Labels.Component.name
+        type_label = particle.Labels.Type.name
+        parameter_label = particle.Labels.Parameter.name
 
         # for each graph group we create a coherent amplitude
         coherent_intensites = []
@@ -523,13 +519,15 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
             }
         }
 
-    def generate_sequential_decay(self, graph):
-        class_label = particle.LABELS.Class.name
-        name_label = particle.LABELS.Name.name
-        component_label = particle.LABELS.Component.name
+    def generate_sequential_decay(
+        self, graph
+    ):  # pylint: disable=too-many-locals
+        class_label = particle.Labels.Class.name
+        name_label = particle.Labels.Name.name
+        component_label = particle.Labels.Component.name
         spin_label = StateQuantumNumberNames.Spin
-        decay_info_label = particle.LABELS.DecayInfo.name
-        type_label = particle.LABELS.Type.name
+        decay_info_label = particle.Labels.DecayInfo.name
+        type_label = particle.Labels.Type.name
         partial_decays = []
         for node_id in graph.nodes:
             # in case a scalar without dynamics decays into daughters with no
@@ -556,10 +554,10 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
                 ):
                     # check if dynamics is non-resonant (constant)
                     if (
-                        "NonResonant"
-                        == graph.edge_props[in_edges[0]][decay_info_label][
+                        graph.edge_props[in_edges[0]][decay_info_label][
                             type_label
                         ]
+                        == "NonResonant"
                     ):
                         continue
 
@@ -573,7 +571,7 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
             "Amplitude": partial_decays,
         }
 
-        par_label = particle.LABELS.Parameter.name
+        par_label = particle.Labels.Parameter.name
         coefficient_amplitude_dict = {
             class_label: "CoefficientAmplitude",
             component_label: amp_name,
@@ -581,7 +579,7 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
             "Amplitude": sequential_amplitude_dict,
         }
 
-        prefactor_label = particle.LABELS.PreFactor.name
+        prefactor_label = particle.Labels.PreFactor.name
         if prefactor_label in amp_coeff_infos:
             coefficient_amplitude_dict.update(
                 {prefactor_label: amp_coeff_infos[prefactor_label]}
@@ -592,9 +590,10 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
 
         return coefficient_amplitude_dict
 
-    def generate_partial_decay(self, graph, node_id):
-        class_label = particle.LABELS.Class.name
-        name_label = particle.LABELS.Name.name
+    @staticmethod
+    def generate_partial_decay(graph, node_id):
+        class_label = particle.Labels.Class.name
+        name_label = particle.Labels.Name.name
         decay_products = []
         for out_edge_id in get_edges_outgoing_to_node(graph, node_id):
             decay_products.append(
@@ -647,9 +646,7 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
         return partial_decay_dict
 
     def get_fit_parameters(self):
-        logging.info(
-            "Number of parameters:" + str(len(self.fit_parameter_names))
-        )
+        logging.info("Number of parameters: %d", len(self.fit_parameter_names))
         return self.fit_parameter_names
 
     def write_to_file(self, filename: str) -> None:
@@ -697,13 +694,14 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
         intensity = _yaml_adapter.to_intensity(recipe_dict)
 
         class IncreasedIndent(yaml.Dumper):
+            # pylint: disable=too-many-ancestors
             def increase_indent(self, flow=False, indentless=False):  # type: ignore
                 return super(IncreasedIndent, self).increase_indent(
                     flow, False
                 )
 
             def write_line_break(self, data=None):  # type: ignore
-                """See https://stackoverflow.com/a/44284819"""
+                """See https://stackoverflow.com/a/44284819."""
                 super().write_line_break(data)
                 if len(self.indents) == 1:
                     super().write_line_break()
