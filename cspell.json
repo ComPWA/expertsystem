@@ -11,6 +11,7 @@
         "optimise"
     ],
     "ignorePaths": [
+        ".vscode/extensions.json",
         "cspell.json"
     ],
     "language": "en-US",
