@@ -13,5 +13,33 @@
     "ignorePaths": [
         "cspell.json"
     ],
-    "language": "en-US"
+    "language": "en-US",
+    "words": [
+        "docstrings",
+        "expertsystem",
+        "jupyter",
+        "mypy",
+        "numpy",
+        "permalinks",
+        "pydocstyle",
+        "pylint",
+        "pytest",
+        "repos",
+        "rstcheck",
+        "xmltodict"
+    ],
+    "ignoreWords": [
+        "commit's",
+        "envlist",
+        "esbenp",
+        "htmlcov",
+        "ipynb",
+        "nbsphinx",
+        "nbstripout",
+        "oneline",
+        "pylintrc",
+        "pyproject",
+        "rcfile",
+        "rtfd"
+    ]
 }
