@@ -10,6 +10,7 @@
     ],
     "ignorePaths": [
         ".pre-commit-config.yaml",
+        ".pylintrc",
         ".travis.yml",
         ".vscode/*",
         "cspell.json",
