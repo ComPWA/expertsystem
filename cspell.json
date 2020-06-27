@@ -1,0 +1,17 @@
+{
+    "version": "0.1",
+    "enableFiletypes": [
+        "git-rebase",
+        "ini",
+        "pip-requirements"
+    ],
+    "flagWords": [
+        "colour",
+        "hte",
+        "optimise"
+    ],
+    "ignorePaths": [
+        "cspell.json"
+    ],
+    "language": "en-US"
+}
