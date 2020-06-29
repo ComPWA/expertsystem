@@ -16,6 +16,7 @@
     ],
     "language": "en-US",
     "words": [
+        "conda",
         "docstrings",
         "expertsystem",
         "jupyter",
@@ -28,6 +29,7 @@
         "pytest",
         "repos",
         "rstcheck",
+        "venv",
         "xcode",
         "xmltodict"
     ],
