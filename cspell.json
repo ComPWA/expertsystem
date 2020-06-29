@@ -23,23 +23,29 @@
         "permalinks",
         "pydocstyle",
         "pylint",
+        "pypi",
         "pytest",
         "repos",
         "rstcheck",
+        "xcode",
         "xmltodict"
     ],
     "ignoreWords": [
+        "codecov",
         "commit's",
         "envlist",
         "esbenp",
         "htmlcov",
         "ipynb",
+        "linkcheck",
         "nbsphinx",
         "nbstripout",
         "oneline",
+        "pandoc",
         "pylintrc",
         "pyproject",
         "rcfile",
-        "rtfd"
+        "rtfd",
+        "sdist"
     ]
 }
