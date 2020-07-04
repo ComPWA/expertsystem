@@ -1,3 +1,5 @@
+.. cSpell:ignore envlist, htmlcov, pylintrc
+
 How to contribute?
 ==================
 
