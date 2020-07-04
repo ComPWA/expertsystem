@@ -150,6 +150,9 @@ class Particle(NamedTuple):
     bottom: int = 0
     top: int = 0
     baryon: int = 0
+    ln_e: int = 0
+    ln_mu: int = 0
+    ln_tau: int = 0
     width: Optional[MeasuredValue] = None
     isospin: Optional[Spin] = None
     parity: Optional[Parity] = None
