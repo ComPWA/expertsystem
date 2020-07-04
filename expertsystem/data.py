@@ -1,10 +1,11 @@
 """A collection of data containers."""
 
-from typing import NamedTuple
 from typing import (
+    Dict,
     Optional,
     Union,
 )
+from typing import NamedTuple
 
 
 class Parameter:  # pylint: disable=too-many-instance-attributes
@@ -151,3 +152,22 @@ class Particle(NamedTuple):
     parity: Optional[Parity] = None
     cparity: Optional[Parity] = None
     gparity: Optional[Parity] = None
+
+
+class ParticleCollection:
+    """Safe, `dict`-like collection of `.Particle` instances."""
+
+    def __init__(self) -> None:
+        self.__particles: Dict[str, Particle] = dict()
+
+    def __getitem__(self, particle_name: str) -> Particle:
+        return self.__particles[particle_name]
+
+    def __contains__(self, particle_name: str) -> bool:
+        return particle_name in self.__particles
+
+    def __len__(self) -> int:
+        return len(self.__particles)
+
+    def add(self, particle: Particle) -> None:
+        self.__particles[particle.name] = particle

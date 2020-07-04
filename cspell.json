@@ -94,6 +94,7 @@
         "nbformat",
         "nbody",
         "nbsphinx",
+        "noqa",
         "phsp",
         "pids",
         "pygments",

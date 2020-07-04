@@ -80,7 +80,7 @@ ParticleList:
 
   ve:
     PID: 12
-    Mass: { Value: 1e-9 }
+    Mass: { Value: 1.0e-09 }
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -89,7 +89,7 @@ ParticleList:
 
   vebar:
     PID: -12
-    Mass: { Value: 1e-9 }
+    Mass: { Value: 1.0e-09 }
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -98,7 +98,7 @@ ParticleList:
 
   vmu:
     PID: 14
-    Mass: { Value: 1e-9 }
+    Mass: { Value: 1.0e-09 }
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -107,7 +107,7 @@ ParticleList:
 
   vmubar:
     PID: -14
-    Mass: { Value: 1e-9 }
+    Mass: { Value: 1.0e-09 }
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -116,7 +116,7 @@ ParticleList:
 
   vtau:
     PID: 16
-    Mass: { Value: 1e-9 }
+    Mass: { Value: 1.0e-09 }
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -125,7 +125,7 @@ ParticleList:
 
   vtaubar:
     PID: -16
-    Mass: { Value: 1e-9 }
+    Mass: { Value: 1.0e-09 }
     QuantumNumbers:
       Spin: 0.5
       Charge: 0

@@ -43,7 +43,7 @@
         "TauLN": { "type": "integer" },
         "IsoSpin": {
           "anyOf": [
-            { "type": "number" },
+            { "type": "number", "minimum": 0, "maximum": 0 },
             {
               "type": "object",
               "required": ["Value"],
@@ -60,15 +60,24 @@
     },
     "MeasuredValue": {
       "anyOf": [
-        { "type": "number" },
+        { "$ref": "#/definitions/Scalar" },
         {
           "type": "object",
-          "properties": {
-            "Value": { "type": "number" },
-            "Error": { "type": "number" }
-          },
           "required": ["Value"],
+          "properties": {
+            "Value": { "$ref": "#/definitions/Scalar" },
+            "Error": { "$ref": "#/definitions/Scalar" }
+          },
           "additionalProperties": false
+        }
+      ]
+    },
+    "Scalar": {
+      "anyOf": [
+        { "type": "number" },
+        {
+          "type": "string",
+          "regex": "[-+]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][-+]?[0-9]+)?"
         }
       ]
     }
