@@ -2,8 +2,11 @@
 
 from typing import (
     Dict,
+    ItemsView,
+    KeysView,
     Optional,
     Union,
+    ValuesView,
 )
 from typing import NamedTuple
 
@@ -169,5 +172,17 @@ class ParticleCollection:
     def __len__(self) -> int:
         return len(self.__particles)
 
+    def __repr__(self) -> str:
+        return str(self.__particles)
+
     def add(self, particle: Particle) -> None:
         self.__particles[particle.name] = particle
+
+    def items(self) -> ItemsView[str, Particle]:
+        return self.__particles.items()
+
+    def keys(self) -> KeysView[str]:
+        return self.__particles.keys()
+
+    def values(self) -> ValuesView[Particle]:
+        return self.__particles.values()
