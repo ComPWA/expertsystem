@@ -12,8 +12,8 @@
           "required": ["PID", "Mass", "QuantumNumbers"],
           "properties": {
             "PID": { "type": "integer" },
-            "Mass": { "$ref": "#/definitions/ValueWithError" },
-            "Width": { "$ref": "#/definitions/ValueWithError" },
+            "Mass": { "$ref": "#/definitions/MeasuredValue" },
+            "Width": { "$ref": "#/definitions/MeasuredValue" },
             "QuantumNumbers": { "$ref": "#/definitions/QuantumNumbers" }
           },
           "additionalProperties": false
@@ -58,7 +58,7 @@
       },
       "additionalProperties": false
     },
-    "ValueWithError": {
+    "MeasuredValue": {
       "anyOf": [
         { "type": "number" },
         {

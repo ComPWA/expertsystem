@@ -15,14 +15,14 @@ class Parameter:  # pylint: disable=too-many-instance-attributes
         name: str,
         value: float,
         is_fixed: bool = False,
-        uncertainty: Optional[float] = None,
+        error: Optional[float] = None,
         min_value: Optional[float] = None,
         max_value: Optional[float] = None,
     ):
         self.__name: str = name
         self.value: float = float(value)
         self.is_fixed: bool = is_fixed
-        self.uncertainty: Optional[float] = uncertainty
+        self.error: Optional[float] = error
         self.__min: Optional[float] = None
         self.__max: Optional[float] = None
         if min_value is not None:
@@ -115,6 +115,24 @@ class Spin:
         return self.__projection
 
 
+class MeasuredValue(NamedTuple):
+    """Value with (optional) uncertainty, as reported by a measurement."""
+
+    value: float
+    uncertainty: Optional[float] = None
+
+    def __eq__(self, other: object) -> bool:
+        return self.value == other
+
+    def __float__(self) -> float:
+        return self.value
+
+    def __repr__(self) -> str:
+        if self.uncertainty is None:
+            return str(self.value)
+        return f"{self.value} ± {self.uncertainty}"
+
+
 class Particle(NamedTuple):
     """Immutable data container for particle info."""
 
@@ -122,13 +140,13 @@ class Particle(NamedTuple):
     pid: int
     charge: float
     spin: float
-    mass: Parameter
+    mass: MeasuredValue
     strange: int = 0
     charm: int = 0
     bottom: int = 0
     top: int = 0
     baryon: int = 0
-    width: Optional[Parameter] = None
+    width: Optional[MeasuredValue] = None
     isospin: Optional[Spin] = None
     parity: Optional[Parity] = None
     cparity: Optional[Parity] = None

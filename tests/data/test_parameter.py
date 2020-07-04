@@ -19,6 +19,7 @@ def test_getters():
     assert par.min_value is None
     assert par.max_value is None
     assert par.name == "some_parameter"
+    assert par.error is None
     par.min_value = -1
     par.max_value = 3.1
     assert par.min_value == -1
