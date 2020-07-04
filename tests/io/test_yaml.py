@@ -3,7 +3,10 @@ from os.path import dirname, realpath
 import pytest
 
 import expertsystem
-from expertsystem.io import load_particle_collection
+from expertsystem.io import (
+    load_particle_collection,
+    write,
+)
 from expertsystem.io._yaml._build import _build_spin  # noqa: I202
 
 _PACKAGE_PATH = dirname(realpath(expertsystem.__file__))
@@ -38,3 +41,16 @@ def test_particle_collection():
 def test_build_spin_exceptions(definition):
     with pytest.raises(ValueError):
         _build_spin(definition)
+
+
+def test_write_particle_collection():
+    particles_imported = load_particle_collection(
+        f"{_PACKAGE_PATH}/../particle_list.yml"
+    )
+    write(particles_imported, "test_particle_list.yml")
+    particles_exported = load_particle_collection("test_particle_list.yml")
+    assert len(particles_imported) == len(particles_exported)
+    for imported, exported in zip(
+        particles_imported.values(), particles_exported.values()
+    ):
+        assert imported == exported
