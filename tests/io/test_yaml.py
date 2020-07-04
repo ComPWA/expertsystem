@@ -29,7 +29,7 @@ def test_particle_collection():
     assert j_psi.parity == -1
     assert j_psi.cparity == -1
     assert j_psi.gparity == -1
-    assert j_psi.isospin == 0
+    assert j_psi.isospin is None
 
 
 @pytest.mark.parametrize(

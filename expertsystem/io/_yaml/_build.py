@@ -100,4 +100,6 @@ def _build_spin(
         if "Projection" not in definition:
             check_missing_projection(magnitude)
         projection = definition.get("Projection", 0.0)
+    if magnitude == 0:
+        return None
     return Spin(magnitude, projection)
