@@ -1,7 +1,8 @@
 {
     "version": "0.1",
     "enableFiletypes": [
-        "git-commit"
+        "git-commit",
+        "xml"
     ],
     "flagWords": [
         "colour",
@@ -9,12 +10,22 @@
         "optimise"
     ],
     "ignorePaths": [
+        "*.rst_t",
+        ".gitignore",
         ".pre-commit-config.yaml",
         ".pylintrc",
+        ".readthedocs.yml",
         ".travis.yml",
         ".vscode/*",
+        ".vscode/.gitignore",
+        "Makefile",
+        "codecov.yml",
         "cspell.json",
+        "doc/_templates/*",
         "doc/conf.py",
+        "expertsystem/solvers/constraint/*",
+        "pyproject.toml",
+        "requirements*.txt",
         "setup.py",
         "tox.ini"
     ],
@@ -29,6 +40,7 @@
         "determinators",
         "docstrings",
         "expertsystem",
+        "flatté",
         "functors",
         "gell",
         "gordan",
@@ -50,7 +62,9 @@
         "pylint",
         "pytest",
         "redeboer",
+        "setuptools",
         "spflueger",
+        "struct",
         "tensorwaves",
         "toctree",
         "venv",
@@ -58,27 +72,36 @@
         "xmltodict"
     ],
     "ignoreWords": [
+        "adrs",
+        "arange",
         "cano",
         "celltoolbar",
         "codacy",
         "codemirror",
         "cparity",
+        "flatte",
         "genindex",
         "gparity",
         "kernelspec",
         "maxdepth",
         "mimetype",
         "modindex",
+        "nbar",
         "nbconvert",
         "nbformat",
+        "nbody",
         "nbsphinx",
         "phsp",
+        "pids",
         "pygments",
         "pyproject",
         "rightarrow",
         "rtfd",
         "stm's",
+        "tolist",
         "unparse",
-        "untracked"
+        "untracked",
+        "virtualenv",
+        "virtualenvwrapper"
     ]
 }
