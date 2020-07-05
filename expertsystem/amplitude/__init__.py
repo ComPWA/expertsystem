@@ -3,9 +3,9 @@
 __all__ = [
     "abstractgenerator",
     "canonicaldecay",
-    "helicitydecay",
+    "helicity_decay",
 ]
 
 from . import abstractgenerator
 from . import canonicaldecay
-from . import helicitydecay
+from . import helicity_decay
