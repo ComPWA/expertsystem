@@ -3,7 +3,7 @@
 import sys
 from copy import deepcopy
 
-from expertsystem.state.conservationrules import (
+from expertsystem.state.conservation_rules import (
     AdditiveQuantumNumberConservation,
     CParityConservation,
     ClebschGordanCheckHelicityToCanonical,

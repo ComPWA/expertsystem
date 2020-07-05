@@ -1,6 +1,6 @@
 from itertools import product
 
-from expertsystem.state.conservationrules import CParityConservation
+from expertsystem.state.conservation_rules import CParityConservation
 from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     ParticlePropertyNames,
