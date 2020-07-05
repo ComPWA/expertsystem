@@ -39,7 +39,7 @@ from expertsystem.topology.graph import (
     get_final_state_edges,
     get_initial_state_edges,
 )
-from expertsystem.topology.topologybuilder import (
+from expertsystem.topology.topology_builder import (
     SimpleStateTransitionTopologyBuilder,
 )
 
