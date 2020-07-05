@@ -7,16 +7,38 @@ from typing import (
     List,
     Optional,
     Tuple,
+    Union,
+    ValuesView,
 )
 
 from expertsystem.data import (
     MeasuredValue,
     Parity,
     Particle,
+    ParticleCollection,
     Spin,
 )
 
 from .validation import validate_particle
+
+
+def _build_particle_collection(definition: dict) -> ParticleCollection:
+    definition = definition.get("root", definition)
+    definition = definition.get("ParticleList", definition)
+    definition = definition.get("Particle", definition)
+    if isinstance(definition, list):
+        particle_list: Union[List[dict], ValuesView] = definition
+    elif isinstance(definition, dict):
+        particle_list = definition.values()
+    else:
+        raise ValueError(
+            "The following definition cannot be converted to a ParticleCollection\n"
+            f"{definition}"
+        )
+    collection = ParticleCollection()
+    for particle_def in particle_list:
+        collection.add(_build_particle(particle_def))
+    return collection
 
 
 def _build_particle(definition: dict) -> Particle:

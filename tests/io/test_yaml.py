@@ -9,6 +9,7 @@ from expertsystem.io import (
 )
 from expertsystem.io._yaml._build import _build_spin  # noqa: I202
 
+
 _PACKAGE_PATH = dirname(realpath(expertsystem.__file__))
 _YAML_FILE = f"{_PACKAGE_PATH}/particle_list.yml"
 
