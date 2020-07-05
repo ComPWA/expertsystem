@@ -45,8 +45,8 @@ from expertsystem.topology.topology_builder import (
 )
 
 from .default_settings import (
+    SYSTEM_SEARCH_PATHS,
     create_default_interaction_settings,
-    default_particle_list_search_paths,
 )
 
 
@@ -822,7 +822,7 @@ def load_default_particle_list(
 ) -> None:
     """Load the default particle list that comes with the expertsystem."""
     if len(particle.DATABASE) == 0:
-        for search_path in default_particle_list_search_paths:
+        for search_path in SYSTEM_SEARCH_PATHS:
             if search_path.startswith("/"):  # absolute path
                 file_path = search_path
             else:  # relative path

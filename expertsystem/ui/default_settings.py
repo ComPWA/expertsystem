@@ -27,15 +27,15 @@ from expertsystem.state.propagation import (
 )
 
 
-default_particle_list_search_paths = [
+SYSTEM_SEARCH_PATHS = [
     ".",
     "..",
 ]
-default_particle_list_search_paths += sys.path
+SYSTEM_SEARCH_PATHS += sys.path
 
 # If a conservation law is not listed here, a default priority of 1 is assumed.
 # Higher number means higher priority
-default_conservation_law_priorities = {
+CONSERVATION_LAW_PRIORITIES = {
     "SpinConservation": 8,
     "HelicityConservation": 7,
     "MassConservation": 10,
@@ -164,13 +164,13 @@ def create_default_interaction_settings(
 
     # reorder conservation laws according to priority
     weak_settings.conservation_laws = reorder_list_by_priority(
-        weak_settings.conservation_laws, default_conservation_law_priorities
+        weak_settings.conservation_laws, CONSERVATION_LAW_PRIORITIES
     )
     em_settings.conservation_laws = reorder_list_by_priority(
-        em_settings.conservation_laws, default_conservation_law_priorities
+        em_settings.conservation_laws, CONSERVATION_LAW_PRIORITIES
     )
     strong_settings.conservation_laws = reorder_list_by_priority(
-        strong_settings.conservation_laws, default_conservation_law_priorities
+        strong_settings.conservation_laws, CONSERVATION_LAW_PRIORITIES
     )
 
     return interaction_type_settings
