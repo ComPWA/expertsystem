@@ -2,6 +2,11 @@
 
 import sys
 from copy import deepcopy
+from typing import (
+    Any,
+    Dict,
+    List,
+)
 
 from expertsystem.state.conservation_rules import (
     AdditiveQuantumNumberConservation,
@@ -57,8 +62,8 @@ CONSERVATION_LAW_PRIORITIES = {
 
 
 def create_default_interaction_settings(
-    formalism_type, use_mass_conservation=True
-):
+    formalism_type: str, use_mass_conservation: bool = True
+) -> Dict[InteractionTypes, InteractionNodeSettings]:
     """Create a container that holds the settings for the various interactions.
 
     E.g.: strong, em and weak interaction.
@@ -176,7 +181,9 @@ def create_default_interaction_settings(
     return interaction_type_settings
 
 
-def reorder_list_by_priority(some_list, priority_mapping):
+def reorder_list_by_priority(
+    some_list: List[Any], priority_mapping: Dict[str, Any]
+) -> List[Any]:
     # first add priorities to the entries
     priority_list = [
         (x, priority_mapping[str(x)]) if str(x) in priority_mapping else (x, 1)
