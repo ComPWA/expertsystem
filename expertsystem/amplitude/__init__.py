@@ -2,10 +2,10 @@
 
 __all__ = [
     "abstractgenerator",
-    "canonicaldecay",
+    "canonical_decay",
     "helicity_decay",
 ]
 
 from . import abstractgenerator
-from . import canonicaldecay
+from . import canonical_decay
 from . import helicity_decay

@@ -48,6 +48,7 @@
         "xmltodict"
     ],
     "ignoreWords": [
+        "cano",
         "celltoolbar",
         "codacy",
         "codemirror",
