@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- cspell:ignore antilambda, epem, jpsi, lambdabar, vebar, vmubar, vtau, vtaubar, Patric -->
+<!-- cspell:ignore antilambda, epem, jpsi, lambdabar, vebar, vmubar, vtau, vtaubar -->
 <root>
   <ParticleList>
     <Particle>
@@ -2789,62 +2789,6 @@
           <Max>3.0</Max>
         </Parameter>
       </DecayInfo>
-    </Particle>
-    <Particle>
-      <Name>PatricParticle</Name>
-      <Pid>1234</Pid>
-      <Parameter>
-        <Type>Mass</Type>
-        <Name>Mass_PatricParticle</Name>
-        <Value>4.050</Value>
-        <Fix>true</Fix>
-      </Parameter>
-      <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>Spin</Type>
-        <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charge</Type>
-        <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Parity</Type>
-        <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Cparity</Type>
-        <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Gparity</Type>
-        <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1</Value>
-        <Projection>1</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
 
 
