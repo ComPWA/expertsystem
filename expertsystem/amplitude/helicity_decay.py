@@ -28,7 +28,7 @@ from expertsystem.topology.graph import (
 )
 
 from . import _yaml_adapter
-from .abstractgenerator import (
+from .abstract_generator import (
     AbstractAmplitudeGenerator,
     AbstractAmplitudeNameGenerator,
 )
