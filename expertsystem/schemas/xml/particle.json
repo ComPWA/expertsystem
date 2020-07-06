@@ -63,7 +63,7 @@
       "required": ["Class", "Type", "Value"],
       "additionalProperties": false,
       "properties": {
-        "Class": { "enum": ["Float", "Int", "Spin"] },
+        "Class": { "enum": ["Int", "Spin"] },
         "Type": {
           "enum": [
             "Spin",
