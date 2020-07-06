@@ -1,7 +1,10 @@
 from os.path import dirname, realpath
 
 import expertsystem
-from expertsystem.io import load_particle_collection
+from expertsystem.io import (
+    load_particle_collection,
+    write,
+)
 from expertsystem.io._xml._build import _build_particle  # noqa: I202
 from expertsystem.io._xml.validation import validate_particle
 from expertsystem.state import particle
@@ -47,3 +50,15 @@ def test_particle_collection():
     assert j_psi.c_parity == -1
     assert j_psi.g_parity == -1
     assert j_psi.isospin is None
+
+
+def test_write_particle_collection():
+    particles_imported = load_particle_collection(_XML_FILE)
+    output_xml_file = "particle_list_test.xml"
+    write(particles_imported, output_xml_file)
+    particles_exported = load_particle_collection(output_xml_file)
+    assert len(particles_imported) == len(particles_exported)
+    for imported, exported in zip(
+        particles_imported.values(), particles_exported.values()
+    ):
+        assert imported == exported

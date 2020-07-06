@@ -9,12 +9,17 @@
       "additionalProperties": false,
       "properties": {
         "Name": { "type": "string" },
-        "Pid": { "type": "string", "pattern": "^([+-]?[0-9]+)$" },
+        "Pid": {
+          "anyOf": [
+            { "type": "string", "pattern": "^([+-]?[0-9]+)$" },
+            { "type": "integer" }
+          ]
+        },
         "Parameter": { "$ref": "#/definitions/Parameter" },
         "QuantumNumber": { "$ref": "#/definitions/QuantumNumbers" },
         "DecayInfo": {
           "type": "object",
-          "required": ["Type", "FormFactor", "Parameter"],
+          "required": ["Parameter"],
           "additionalProperties": false,
           "properties": {
             "Type": { "enum": ["relativisticBreitWigner", "flatte"] },
@@ -80,8 +85,8 @@
             "TauLN"
           ]
         },
-        "Value": { "type": "string" },
-        "Projection": { "type": "string" }
+        "Value": { "$ref": "#definitions/XmlScalar" },
+        "Projection": { "$ref": "#definitions/XmlScalar" }
       }
     },
     "QuantumNumbers": {

@@ -28,8 +28,10 @@ def write(instance: object, filename: str) -> None:
     file_extension = _get_file_extension(filename)
     if file_extension in ["yaml", "yml"]:
         return _yaml.write(instance, filename)
+    if file_extension == "xml":
+        return _xml.write(instance, filename)
     raise NotImplementedError(
-        f'No parser writer defined for file type "{file_extension}"'
+        f'No writer defined for file type "{file_extension}"'
     )
 
 
