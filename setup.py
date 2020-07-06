@@ -11,9 +11,10 @@ DATA_FILES = [
 ]
 
 INSTALL_REQUIRES = [
-    "numpy",
-    "progress",
-    "xmltodict",
+    "numpy==1.19.0",
+    "progress==1.5",
+    "PyYAML==5.3.1",
+    "xmltodict==0.12.0",
 ]
 
 
