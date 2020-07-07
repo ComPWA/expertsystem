@@ -2,6 +2,10 @@
 *.xml
 *.yaml
 *.yml
+!.readthedocs.yml
+!.travis.yml
+!codecov.yml
+!environment.yml
 !expertsystem/particle_list.*
 
 # Build output
