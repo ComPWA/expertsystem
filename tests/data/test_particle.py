@@ -43,6 +43,6 @@ def test_particle():
     )
     assert particle.mass == 3.0969
     assert particle.mass.uncertainty is None
-    assert particle.bottom == 0
+    assert particle.bottomness == 0
     with pytest.raises(AttributeError):
-        particle.baryon = -1
+        particle.baryon_number = -1

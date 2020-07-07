@@ -99,14 +99,14 @@ class Particle(NamedTuple):
     charge: float
     spin: float
     mass: MeasuredValue
-    strange: int = 0
-    charm: int = 0
-    bottom: int = 0
-    top: int = 0
-    baryon: int = 0
-    ln_e: int = 0
-    ln_mu: int = 0
-    ln_tau: int = 0
+    strangeness: int = 0
+    charmness: int = 0
+    bottomness: int = 0
+    topness: int = 0
+    baryon_number: int = 0
+    electron_number: int = 0
+    muon_number: int = 0
+    tau_number: int = 0
     width: Optional[MeasuredValue] = None
     isospin: Optional[Spin] = None
     parity: Optional[Parity] = None
