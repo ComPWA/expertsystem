@@ -1,8 +1,10 @@
 """A collection of data containers."""
 
+from collections import abc
 from typing import (
     Dict,
     ItemsView,
+    Iterator,
     KeysView,
     Optional,
     Union,
@@ -112,7 +114,7 @@ class Particle(NamedTuple):
     gparity: Optional[Parity] = None
 
 
-class ParticleCollection:
+class ParticleCollection(abc.Mapping):
     """Safe, `dict`-like collection of `.Particle` instances."""
 
     def __init__(self) -> None:
@@ -121,8 +123,11 @@ class ParticleCollection:
     def __getitem__(self, particle_name: str) -> Particle:
         return self.__particles[particle_name]
 
-    def __contains__(self, particle_name: str) -> bool:
+    def __contains__(self, particle_name: object) -> bool:
         return particle_name in self.__particles
+
+    def __iter__(self) -> Iterator[str]:
+        return self.__particles.__iter__()
 
     def __len__(self) -> int:
         return len(self.__particles)

@@ -32,6 +32,9 @@ def test_particle_collection():
     assert j_psi.cparity == -1
     assert j_psi.gparity == -1
     assert j_psi.isospin is None
+    particle_names = list(particles.keys())
+    for name, particle_name in zip(particle_names, particles):
+        assert name == particle_name
 
 
 @pytest.mark.parametrize(
