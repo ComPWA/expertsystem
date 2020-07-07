@@ -8,7 +8,7 @@ from jsonschema import validate
 import expertsystem
 
 _PACKAGE_PATH = dirname(realpath(expertsystem.__file__))
-_SCHEMA_PATH_PARTICLES = f"{_PACKAGE_PATH}/../schemas/yaml-particle-list.json"
+_SCHEMA_PATH_PARTICLES = f"{_PACKAGE_PATH}/schemas/yaml-particle-list.json"
 
 if not isfile(_SCHEMA_PATH_PARTICLES):
     raise FileNotFoundError(

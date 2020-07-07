@@ -10,6 +10,7 @@ from expertsystem.io import (
 from expertsystem.io._yaml._build import _build_spin  # noqa: I202
 
 _PACKAGE_PATH = dirname(realpath(expertsystem.__file__))
+_YAML_FILE = f"{_PACKAGE_PATH}/particle_list.yml"
 
 
 def test_not_implemented():
@@ -18,9 +19,7 @@ def test_not_implemented():
 
 
 def test_particle_collection():
-    particles = load_particle_collection(
-        f"{_PACKAGE_PATH}/../particle_list.yml"
-    )
+    particles = load_particle_collection(_YAML_FILE)
     assert len(particles) == 69
     assert "J/psi" in particles
     j_psi = particles["J/psi"]
@@ -44,9 +43,7 @@ def test_build_spin_exceptions(definition):
 
 
 def test_write_particle_collection():
-    particles_imported = load_particle_collection(
-        f"{_PACKAGE_PATH}/../particle_list.yml"
-    )
+    particles_imported = load_particle_collection(_YAML_FILE)
     write(particles_imported, "test_particle_list.yml")
     particles_exported = load_particle_collection("test_particle_list.yml")
     assert len(particles_imported) == len(particles_exported)
