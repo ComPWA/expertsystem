@@ -21,7 +21,13 @@ class Parity:
         self.__value: int = int(value)
 
     def __eq__(self, other: object) -> bool:
-        return self.__value == other
+        if isinstance(other, Parity):
+            return self.__value == other.value
+        if isinstance(other, (int, float)):
+            return self.__value == other
+        raise NotImplementedError(
+            f"Cannot compare {self.__class__.__name__} to {other.__class__.__name__}"
+        )
 
     def __int__(self) -> int:
         return self.value
@@ -48,7 +54,13 @@ class Spin:
         self.__projection = float(projection)
 
     def __eq__(self, other: object) -> bool:
-        return self.__magnitude == other
+        if isinstance(other, Spin):
+            return self.__magnitude == other.magnitude
+        if isinstance(other, (int, float)):
+            return self.__magnitude == other
+        raise NotImplementedError(
+            f"Cannot compare {self.__class__.__name__} to {other.__class__.__name__}"
+        )
 
     def __float__(self) -> float:
         return self.__magnitude
@@ -72,7 +84,13 @@ class MeasuredValue(NamedTuple):
     uncertainty: Optional[float] = None
 
     def __eq__(self, other: object) -> bool:
-        return self.value == other
+        if isinstance(other, MeasuredValue):
+            return self.value == other.value
+        if isinstance(other, (int, float)):
+            return self.value == other
+        raise NotImplementedError(
+            f"Cannot compare {self.__class__.__name__} to {other.__class__.__name__}"
+        )
 
     def __float__(self) -> float:
         return self.value
