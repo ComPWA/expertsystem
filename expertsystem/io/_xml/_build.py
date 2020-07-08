@@ -23,9 +23,12 @@ from .validation import validate_particle
 
 
 def _build_particle_collection(definition: dict) -> ParticleCollection:
-    definition = definition.get("root", definition)
-    definition = definition.get("ParticleList", definition)
-    definition = definition.get("Particle", definition)
+    if isinstance(definition, dict):
+        definition = definition.get("root", definition)
+    if isinstance(definition, dict):
+        definition = definition.get("ParticleList", definition)
+    if isinstance(definition, dict):
+        definition = definition.get("Particle", definition)
     if isinstance(definition, list):
         particle_list: Union[List[dict], ValuesView] = definition
     elif isinstance(definition, dict):
