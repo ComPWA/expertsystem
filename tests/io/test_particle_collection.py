@@ -65,26 +65,15 @@ def test_write_particle_collection(input_file):
     output_file = f"exported_particle_list.{file_extension}"
     write(particles_imported, output_file)
     particles_exported = load_particle_collection(output_file)
-    assert len(particles_imported) == len(particles_exported)
-    for imported, exported in zip(
-        particles_imported.values(), particles_exported.values()
-    ):
-        assert imported == exported
+    assert particles_imported == particles_exported
 
 
 def test_yaml_to_xml():
-    # Load default particle list from YAML into a ParticleCollection instance
     yaml_particle_collection = load_particle_collection(_YAML_FILE)
     xml_file = "particle_list_test.xml"
-    # Dump that ParticleCollection to XML
     write(yaml_particle_collection, xml_file)
-    # Load the XML output back into another ParticleCollection instance
     xml_particle_collection = load_particle_collection(xml_file)
-    # Check equivalence of the two instances
-    for xml_particle, yaml_particle in zip(
-        xml_particle_collection.values(), yaml_particle_collection.values()
-    ):
-        assert xml_particle == yaml_particle
+    assert xml_particle_collection == yaml_particle_collection
 
 
 class TestInternalParticleDict:
