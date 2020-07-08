@@ -7,6 +7,21 @@ If you have installed the `expertsystem` in :ref:`install:Development mode`, it
 is easy to tweak the source code and try out new ideas immediately, because the
 source code is considered the 'installation'.
 
+.. note::
+
+  The easiest way to contribute, is by using :ref:`Conda <install:Conda
+  environment>` and :ref:`contribute:Visual Studio code`. In that case, the
+  complete developer install procedure becomes:
+
+  .. code-block:: shell
+
+    git clone git@github.com:ComPWA/tensorwaves.git
+    code tensorwaves
+    conda env create
+    pip install -e .[dev]
+
+  For more info, see :ref:`contribute:Visual Studio code`.
+
 When working on the source code of the `expertsystem`, it is highly recommended
 to install certain additional Python tools. Assuming you installed the
 `expertsystem` in :ref:`development mode <install:Development mode>`, these
