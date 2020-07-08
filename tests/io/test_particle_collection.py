@@ -94,7 +94,5 @@ class TestInternalParticleDict:
     @staticmethod
     def test_build_particle_from_internal_database():
         definition = particle.DATABASE["J/psi"]
-        j_psi = xml._build._build_particle(  # pylint: disable=protected-access
-            definition
-        )
+        j_psi = xml.dict_to_particle(definition)
         assert j_psi == J_PSI

@@ -26,14 +26,14 @@ from expertsystem.data import (
 from .validation import validate_particle
 
 
-def _from_particle_collection(particles: ParticleCollection) -> dict:
+def from_particle_collection(particles: ParticleCollection) -> dict:
     output = dict()
     for name, particle in particles.items():
-        output[name] = _from_particle(particle)
+        output[name] = from_particle(particle)
     return output
 
 
-def _from_particle(particle: Particle) -> dict:
+def from_particle(particle: Particle) -> dict:
     output_dict = {
         "Name": particle.name,
         "Pid": particle.pid,

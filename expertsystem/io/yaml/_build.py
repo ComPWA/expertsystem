@@ -16,16 +16,16 @@ from expertsystem.data import (
 from .validation import validate_particle_list
 
 
-def _build_particle_collection(definition: dict) -> ParticleCollection:
+def build_particle_collection(definition: dict) -> ParticleCollection:
     validate_particle_list(definition)
     definition = definition["ParticleList"]
     particles = ParticleCollection()
     for name, particle_def in definition.items():
-        particles.add(_build_particle(name, particle_def))
+        particles.add(build_particle(name, particle_def))
     return particles
 
 
-def _build_particle(name: str, definition: dict) -> Particle:
+def build_particle(name: str, definition: dict) -> Particle:
     qn_def = definition["QuantumNumbers"]
     return Particle(
         name=name,
