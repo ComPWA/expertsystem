@@ -82,10 +82,9 @@ command
 
   tox
 
-This command will run :code:`pytest`, check for :ref:`test coverage
-<contribute:Test coverage>`, build the documentation, and verify
-cross-references in the documentation and the API. It's especially recommended
-to *run tox before submitting a pull request!*
+This command will run :code:`pytest`, check for test coverage, build the
+documentation, and verify cross-references in the documentation and the API.
+It's especially recommended to *run tox before submitting a pull request!*
 
 More specialized :code:`tox` tests are defined in the `tox.ini
 <https://github.com/ComPWA/expertsystem/blob/master/tox.ini>`__ file, under
