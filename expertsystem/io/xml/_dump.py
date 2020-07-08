@@ -1,7 +1,7 @@
 """Dump recipe objects to `dict` instances for an XML file.
 
-At the time of writing (`63c816b
-<https://github.com/ComPWA/expertsystem/tree/63c816bf13275ab5e6413d85ee144996ebfc0c41>`_),
+At the time of writing (`a104dd5
+<https://github.com/ComPWA/expertsystem/tree/a104dd5148b599f41dfdddf4935e2c5adc02baa6>`_),
 the `expertsystem` assumes nested `dict` structures of this 'XML format'. This
 module therefore serves as a bridge between `.ParticleCollection` and the
 `.state.particle` module.

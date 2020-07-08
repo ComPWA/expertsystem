@@ -16,12 +16,16 @@ from expertsystem.data import (
     Spin,
 )
 
+from .validation import validate_particle_list
+
 
 def from_particle_collection(particles: ParticleCollection) -> dict:
     output = dict()
     for name, particle in particles.items():
         output[name] = from_particle(particle)
-    return {"ParticleList": output}
+    output = {"ParticleList": output}
+    validate_particle_list(output)
+    return output
 
 
 def from_particle(particle: Particle) -> dict:

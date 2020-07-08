@@ -1,4 +1,4 @@
-"""Read recipeobjects from a YAML file."""
+"""Read recipe objects from a YAML file."""
 
 from typing import (
     Optional,
@@ -30,8 +30,8 @@ def build_particle(name: str, definition: dict) -> Particle:
     return Particle(
         name=name,
         pid=int(definition["PID"]),
-        mass=_build_measured_value(definition["Mass"]),
-        width=_build_measured_value_optional(definition.get("Width", None)),
+        mass=_yaml_to_measured_value(definition["Mass"]),
+        width=_yaml_to_measured_value_optional(definition.get("Width", None)),
         charge=float(qn_def["Charge"]),
         spin=float(qn_def["Spin"]),
         strangeness=int(qn_def.get("Strangeness", 0)),
@@ -42,14 +42,14 @@ def build_particle(name: str, definition: dict) -> Particle:
         electron_number=int(qn_def.get("ElectronLN", 0)),
         muon_number=int(qn_def.get("MuonLN", 0)),
         tau_number=int(qn_def.get("TauLN", 0)),
-        isospin=_build_spin(qn_def.get("IsoSpin", None)),
-        parity=_build_parity(qn_def.get("Parity", None)),
-        c_parity=_build_parity(qn_def.get("CParity", None)),
-        g_parity=_build_parity(qn_def.get("GParity", None)),
+        isospin=_yaml_to_spin(qn_def.get("IsoSpin", None)),
+        parity=_yaml_to_parity(qn_def.get("Parity", None)),
+        c_parity=_yaml_to_parity(qn_def.get("CParity", None)),
+        g_parity=_yaml_to_parity(qn_def.get("GParity", None)),
     )
 
 
-def _build_measured_value(
+def _yaml_to_measured_value(
     definition: Union[dict, float, int, str]
 ) -> MeasuredValue:
     if isinstance(definition, (float, int, str)):
@@ -61,15 +61,15 @@ def _build_measured_value(
     )
 
 
-def _build_measured_value_optional(
+def _yaml_to_measured_value_optional(
     definition: Optional[Union[dict, float, int, str]]
 ) -> Optional[MeasuredValue]:
     if definition is None:
         return None
-    return _build_measured_value(definition)
+    return _yaml_to_measured_value(definition)
 
 
-def _build_parity(
+def _yaml_to_parity(
     definition: Optional[Union[float, int, str]]
 ) -> Optional[Parity]:
     if definition is None:
@@ -77,7 +77,7 @@ def _build_parity(
     return Parity(definition)
 
 
-def _build_spin(
+def _yaml_to_spin(
     definition: Optional[Union[dict, float, int, str]]
 ) -> Optional[Spin]:
     if definition is None:
