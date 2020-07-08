@@ -44,8 +44,8 @@ def _build_particle(name: str, definition: dict) -> Particle:
         tau_number=int(qn_def.get("TauLN", 0)),
         isospin=_build_spin(qn_def.get("IsoSpin", None)),
         parity=_build_parity(qn_def.get("Parity", None)),
-        cparity=_build_parity(qn_def.get("Cparity", None)),
-        gparity=_build_parity(qn_def.get("Gparity", None)),
+        c_parity=_build_parity(qn_def.get("CParity", None)),
+        g_parity=_build_parity(qn_def.get("GParity", None)),
     )
 
 

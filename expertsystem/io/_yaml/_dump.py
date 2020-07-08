@@ -44,8 +44,8 @@ def _to_quantum_number_dict(particle: Particle) -> dict:
         Tuple[str, Union[Optional[Parity], Spin, int], Union[Callable, int]]
     ] = [
         ("Parity", particle.parity, int),
-        ("Cparity", particle.cparity, int),
-        ("Gparity", particle.gparity, int),
+        ("CParity", particle.c_parity, int),
+        ("GParity", particle.g_parity, int),
         ("Strangeness", particle.strangeness, int),
         ("Charmness", particle.charmness, int),
         ("Bottomness", particle.bottomness, int),

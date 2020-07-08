@@ -7,7 +7,7 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      Cparity: -1
+      CParity: -1
       IsoSpin: 0
 
   W-:
@@ -139,8 +139,8 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: -1
-      Cparity: 1
-      Gparity: -1
+      CParity: 1
+      GParity: -1
       IsoSpin: { Value: 1, Projection: 0 }
 
   pi+:
@@ -150,7 +150,7 @@ ParticleList:
       Spin: 0
       Charge: +1
       Parity: -1
-      Gparity: -1
+      GParity: -1
       IsoSpin: { Value: 1, Projection: 1 }
 
   pi-:
@@ -160,7 +160,7 @@ ParticleList:
       Spin: 0
       Charge: -1
       Parity: -1
-      Gparity: -1
+      GParity: -1
       IsoSpin: { Value: 1, Projection: -1 }
 
   eta:
@@ -171,7 +171,7 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: -1
-      Cparity: 1
+      CParity: 1
       IsoSpin: { Value: 0 }
 
   rho(770)0:
@@ -182,8 +182,8 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      Cparity: -1
-      Gparity: 1
+      CParity: -1
+      GParity: 1
       IsoSpin: { Value: 1, Projection: 0 }
 
   rho(770)+:
@@ -194,7 +194,7 @@ ParticleList:
       Spin: 1
       Charge: +1
       Parity: -1
-      Cparity: -1
+      CParity: -1
       IsoSpin: { Value: 1, Projection: +1 }
 
   rho(770)-:
@@ -205,7 +205,7 @@ ParticleList:
       Spin: 1
       Charge: -1
       Parity: -1
-      Cparity: -1
+      CParity: -1
       IsoSpin: { Value: 1, Projection: -1 }
 
   omega(782):
@@ -216,9 +216,9 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      Cparity: -1
+      CParity: -1
       IsoSpin: { Value: 0 }
-      Gparity: -1
+      GParity: -1
 
   f0(980):
     PID: 9010221
@@ -228,9 +228,9 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: 1
-      Cparity: 1
+      CParity: 1
       IsoSpin: { Value: 0 }
-      Gparity: 1
+      GParity: 1
 
   f0(1500):
     PID: 9030221
@@ -240,8 +240,8 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: 1
-      Cparity: 1
-      Gparity: 1
+      CParity: 1
+      GParity: 1
 
   f2(1270):
     PID: 225
@@ -251,8 +251,8 @@ ParticleList:
       Spin: 2
       Charge: 0
       Parity: 1
-      Cparity: 1
-      Gparity: 1
+      CParity: 1
+      GParity: 1
 
   f2(1950):
     PID: 9050225
@@ -262,8 +262,8 @@ ParticleList:
       Spin: 2
       Charge: 0
       Parity: 1
-      Cparity: 1
-      Gparity: 1
+      CParity: 1
+      GParity: 1
 
   a0(980)0:
     PID: 9000111
@@ -272,9 +272,9 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: 1
-      Cparity: 1
+      CParity: 1
       IsoSpin: { Value: 1, Projection: 0 }
-      Gparity: -1
+      GParity: -1
 
   a0(980)+:
     PID: 9000211
@@ -284,7 +284,7 @@ ParticleList:
       Charge: 1
       Parity: +1
       IsoSpin: { Value: 1, Projection: 1 }
-      Gparity: -1
+      GParity: -1
 
   a0(980)-:
     PID: 9000211
@@ -294,7 +294,7 @@ ParticleList:
       Charge: -1
       Parity: +1
       IsoSpin: { Value: 1, Projection: -1 }
-      Gparity: -1
+      GParity: -1
 
   a2(1320)0:
     PID: 115
@@ -304,9 +304,9 @@ ParticleList:
       Spin: 2
       Charge: 0
       Parity: 1
-      Cparity: 1
+      CParity: 1
       IsoSpin: { Value: 1, Projection: 0 }
-      Gparity: -1
+      GParity: -1
 
   a2(1320)+:
     PID: 215
@@ -316,9 +316,9 @@ ParticleList:
       Spin: 2
       Charge: 1
       Parity: 1
-      Cparity: 1
+      CParity: 1
       IsoSpin: { Value: 1, Projection: 1 }
-      Gparity: -1
+      GParity: -1
 
   a2(1320)-:
     PID: -215
@@ -328,9 +328,9 @@ ParticleList:
       Spin: 2
       Charge: -1
       Parity: 1
-      Cparity: 1
+      CParity: 1
       IsoSpin: { Value: 1, Projection: -1 }
-      Gparity: -1
+      GParity: -1
 
   phi(1020):
     PID: 333
@@ -340,7 +340,7 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      Gparity: -1
+      GParity: -1
 
   K-:
     PID: -321
@@ -496,8 +496,8 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      Cparity: -1
-      Gparity: -1
+      CParity: -1
+      GParity: -1
       IsoSpin: { Value: 0, Projection: 0 }
 
   Y:
@@ -508,7 +508,7 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      Cparity: -1
+      CParity: -1
 
   Chic1:
     PID: 1234
@@ -518,8 +518,8 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: 1
-      Cparity: 1
-      Gparity: 1
+      CParity: 1
+      GParity: 1
       IsoSpin: { Value: 0 }
 
   p:
@@ -709,6 +709,6 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
-      Cparity: -1
-      Gparity: -1
+      CParity: -1
+      GParity: -1
       IsoSpin: { Value: 0, Projection: 0 }

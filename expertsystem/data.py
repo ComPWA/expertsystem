@@ -110,8 +110,8 @@ class Particle(NamedTuple):
     width: Optional[MeasuredValue] = None
     isospin: Optional[Spin] = None
     parity: Optional[Parity] = None
-    cparity: Optional[Parity] = None
-    gparity: Optional[Parity] = None
+    c_parity: Optional[Parity] = None
+    g_parity: Optional[Parity] = None
 
 
 class ParticleCollection(abc.Mapping):

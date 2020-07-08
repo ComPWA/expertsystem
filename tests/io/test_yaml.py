@@ -29,8 +29,8 @@ def test_particle_collection():
     assert j_psi.spin == 1
     assert j_psi.charge == 0
     assert j_psi.parity == -1
-    assert j_psi.cparity == -1
-    assert j_psi.gparity == -1
+    assert j_psi.c_parity == -1
+    assert j_psi.g_parity == -1
     assert j_psi.isospin is None
     particle_names = list(particles.keys())
     for name, particle_name in zip(particle_names, particles):
