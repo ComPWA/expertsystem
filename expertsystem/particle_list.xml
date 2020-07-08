@@ -1988,7 +1988,7 @@
       </QuantumNumber>
     </Particle>
 
-    <!-- Heavy flavour mesons -->
+    <!-- Heavy flavor mesons -->
     <Particle>
       <Name>D+</Name>
       <Pid>411</Pid>
