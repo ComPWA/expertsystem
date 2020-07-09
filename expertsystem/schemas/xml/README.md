@@ -9,6 +9,6 @@ factored out.
 While JSON Schema is not suitable for validating XML files, it can be used to
 validate the structure of a nested `dict` (as `xmltodict` produces it when
 parsing an XML file). The JSON Schema files in this folder are used for that
-purpose. These `dict`s will slowly be phased out in favor flavor of class
-structures. A guarantee is therefore needed that the `dict` structures passed to
-the system have the correct format.
+purpose. These `dict`s will slowly be phased out in favor of class structures. A
+guarantee is therefore needed that the `dict` structures passed to the system
+have the correct format.
