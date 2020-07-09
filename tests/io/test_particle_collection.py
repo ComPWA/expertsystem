@@ -76,6 +76,7 @@ def test_yaml_to_xml():
     assert xml_particle_collection == yaml_particle_collection
     dummy_particle = Particle(name="0", pid=0, charge=0, spin=0, mass=0)
     yaml_particle_collection.add(dummy_particle)
+    assert xml_particle_collection != yaml_particle_collection
 
 
 def test_equivalence_xml_yaml_particle_list():
