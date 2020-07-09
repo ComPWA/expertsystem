@@ -273,9 +273,18 @@ def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
         output_dict["DecayProducts"] = decay_products
         if "RecoilSystem" in definition:
             recoil_system = definition["RecoilSystem"]
-            recoil_system["RecoilFinalState"] = int(
-                recoil_system["RecoilFinalState"]
-            )
+            recoil_final_states = recoil_system["RecoilFinalState"].split(" ")
+            recoil_system["RecoilFinalState"] = [
+                int(state_id) for state_id in recoil_final_states
+            ]
+            if "ParentRecoilFinalState" in recoil_system:
+                parent_recoil_final_states = recoil_system[
+                    "ParentRecoilFinalState"
+                ].split(" ")
+                recoil_system["ParentRecoilFinalState"] = [
+                    int(state_id) for state_id in parent_recoil_final_states
+                ]
+
             output_dict["RecoilSystem"] = recoil_system
         if "CanonicalSum" in definition:
             cano_sum_old = definition["CanonicalSum"]
