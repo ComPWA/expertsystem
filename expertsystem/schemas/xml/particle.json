@@ -1,7 +1,7 @@
 {
   "$id": "https://github.com/ComPWA/expertsystem/blob/master/schemas/xml/particle.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#definitions/Particle",
+  "$ref": "#/definitions/Particle",
   "definitions": {
     "Particle": {
       "type": "object",
@@ -86,8 +86,8 @@
             "TauLN"
           ]
         },
-        "Value": { "$ref": "#definitions/XmlScalar" },
-        "Projection": { "$ref": "#definitions/XmlScalar" }
+        "Value": { "$ref": "#/definitions/XmlScalar" },
+        "Projection": { "$ref": "#/definitions/XmlScalar" }
       }
     },
     "QuantumNumbers": {

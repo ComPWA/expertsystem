@@ -14,7 +14,7 @@
       "properties": {
         "Particle": {
           "type": "array",
-          "items": { "$ref": "particle.json#definitions/Particle" }
+          "items": { "$ref": "particle.json#/definitions/Particle" }
         }
       }
     }
