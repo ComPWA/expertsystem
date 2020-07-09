@@ -19,7 +19,6 @@
         "QuantumNumber": { "$ref": "#/definitions/QuantumNumbers" },
         "DecayInfo": {
           "type": "object",
-          "required": ["Parameter"],
           "additionalProperties": false,
           "properties": {
             "Type": { "enum": ["relativisticBreitWigner", "flatte"] },
