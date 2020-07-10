@@ -29,6 +29,7 @@
         "doc/_templates/*",
         "doc/conf.py",
         "expertsystem/solvers/constraint/*",
+        "particle_list.xml.y*ml",
         "pyproject.toml",
         "setup.cfg",
         "setup.py",
