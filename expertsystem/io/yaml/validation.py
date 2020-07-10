@@ -15,10 +15,16 @@ with open(f"{_EXPERTSYSTEM_PATH}/schemas/yaml/particle-list.json") as stream:
 with open(f"{_EXPERTSYSTEM_PATH}/schemas/yaml/amplitude-model.json") as stream:
     _SCHEMA_AMPLITUDE = json.load(stream)
 
+_RESOLVER_PARTICLES = jsonschema.RefResolver.from_schema(_SCHEMA_PARTICLES)
+
 
 def particle_list(instance: dict) -> None:
     jsonschema.validate(instance=instance, schema=_SCHEMA_PARTICLES)
 
 
 def amplitude_model(instance: dict) -> None:
-    jsonschema.validate(instance=instance, schema=_SCHEMA_PARTICLES)
+    jsonschema.validate(
+        instance=instance,
+        schema=_SCHEMA_AMPLITUDE,
+        resolver=_RESOLVER_PARTICLES,
+    )

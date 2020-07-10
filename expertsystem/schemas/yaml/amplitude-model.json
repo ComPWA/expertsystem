@@ -124,51 +124,6 @@
     "ParticleList": { "$ref": "particle-list.json#/definitions/ParticleList" }
   },
   "definitions": {
-    "QuantumNumbers": {
-      "type": "object",
-      "required": ["Spin", "Charge", "Parity"],
-      "additionalProperties": false,
-      "properties": {
-        "Spin": { "type": "number" },
-        "Charge": { "type": "number" },
-        "Parity": { "type": "integer" },
-        "BaryonNumber": { "type": "integer" },
-        "Strangeness": { "type": "integer" },
-        "Charmness": { "type": "integer" },
-        "Bottomness": { "type": "integer" },
-        "Topness": { "type": "integer" },
-        "CParity": { "type": "number" },
-        "GParity": { "type": "number" },
-        "IsoSpin": {
-          "anyOf": [
-            { "type": "number" },
-            {
-              "type": "object",
-              "required": ["Value"],
-              "additionalProperties": false,
-              "properties": {
-                "Value": { "type": "number" },
-                "Projection": { "type": "number" }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "ValueWithError": {
-      "anyOf": [
-        { "type": "number" },
-        {
-          "type": "object",
-          "required": ["Value"],
-          "additionalProperties": false,
-          "properties": {
-            "Value": { "type": "number" },
-            "Error": { "type": "number" }
-          }
-        }
-      ]
-    },
     "Intensity": {
       "_types": {
         "title": "Intensity node type in the function tree",

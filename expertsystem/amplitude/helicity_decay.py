@@ -12,6 +12,7 @@ import xmltodict
 
 import yaml
 
+from expertsystem import io
 from expertsystem.state import particle
 from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
@@ -755,6 +756,7 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
             "ParticleList": particle_dict,
             "Dynamics": dynamics,
         }
+        io.yaml.validation.amplitude_model(output_dict)
 
         with open(filename, "w") as output_stream:
             yaml.dump(

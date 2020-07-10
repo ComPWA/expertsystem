@@ -3,10 +3,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "required": ["ParticleList"],
+  "additionalProperties": false,
   "properties": {
     "ParticleList": { "$ref": "#/definitions/ParticleList" }
   },
-  "additionalProperties": false,
   "definitions": {
     "Particle": {
       "type": "object",
