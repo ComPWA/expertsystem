@@ -1,0 +1,365 @@
+{
+  "$id": "https://github.com/ComPWA/expertsystem/blob/master/expertsystem/schemas/yaml/amplitude-model.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "Kinematics",
+    "Parameters",
+    "Dynamics",
+    "Intensity",
+    "ParticleList"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "Kinematics": {
+      "title": "Kinematical description of the particle reaction",
+      "type": "object",
+      "required": ["Type", "InitialState", "FinalState"],
+      "additionalProperties": false,
+      "properties": {
+        "Type": {
+          "enum": ["Helicity"],
+          "title": "Formalism with which the reaction is studied"
+        },
+        "InitialState": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["Particle", "ID"],
+            "additionalProperties": false,
+            "properties": {
+              "Particle": { "type": "string" },
+              "ID": { "$ref": "#/definitions/StateID" }
+            }
+          }
+        },
+        "FinalState": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["Particle", "ID"],
+            "additionalProperties": false,
+            "properties": {
+              "Particle": { "type": "string" },
+              "ID": { "$ref": "#/definitions/StateID" }
+            }
+          }
+        }
+      }
+    },
+    "Parameters": {
+      "title": "Parameter list",
+      "description": "An array of parameters used throughout the amplitude model",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["Name", "Value"],
+        "additionalProperties": false,
+        "properties": {
+          "Name": {
+            "type": "string",
+            "title": "Parameter name",
+            "description": "Has to be a unique string that is used to identify where the parameter is used in the rest of the model"
+          },
+          "Type": { "type": "string" },
+          "Value": {
+            "type": "number",
+            "title": "Starting value of the fit parameter"
+          },
+          "Fix": { "type": "boolean" },
+          "Min": {
+            "type": "number",
+            "title": "Lower boundary of the fit range"
+          },
+          "Max": {
+            "type": "number",
+            "title": "Upper boundary of the fit range"
+          }
+        }
+      }
+    },
+    "Dynamics": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "required": ["Type", "FormFactor"],
+          "additionalProperties": false,
+          "properties": {
+            "Type": {
+              "enum": ["NonDynamic", "Flatté", "RelativisticBreitWigner"]
+            },
+            "FormFactor": {
+              "type": "object",
+              "required": ["Type", "MesonRadius"],
+              "additionalProperties": false,
+              "properties": {
+                "Type": {
+                  "const": "BlattWeisskopf"
+                },
+                "MesonRadius": {
+                  "anyOf": [
+                    { "type": "number" },
+                    {
+                      "type": "object",
+                      "required": ["Value"],
+                      "additionalProperties": false,
+                      "properties": {
+                        "Value": { "type": "number" },
+                        "Min": { "type": "number" },
+                        "Max": { "type": "number" },
+                        "Fix": { "type": "boolean" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Intensity": { "$ref": "#/definitions/Intensity/_recursion" },
+    "ParticleList": { "$ref": "particle-list.json#/definitions/ParticleList" }
+  },
+  "definitions": {
+    "QuantumNumbers": {
+      "type": "object",
+      "required": ["Spin", "Charge", "Parity"],
+      "additionalProperties": false,
+      "properties": {
+        "Spin": { "type": "number" },
+        "Charge": { "type": "number" },
+        "Parity": { "type": "integer" },
+        "BaryonNumber": { "type": "integer" },
+        "Strangeness": { "type": "integer" },
+        "Charmness": { "type": "integer" },
+        "Bottomness": { "type": "integer" },
+        "Topness": { "type": "integer" },
+        "CParity": { "type": "number" },
+        "GParity": { "type": "number" },
+        "IsoSpin": {
+          "anyOf": [
+            { "type": "number" },
+            {
+              "type": "object",
+              "required": ["Value"],
+              "additionalProperties": false,
+              "properties": {
+                "Value": { "type": "number" },
+                "Projection": { "type": "number" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ValueWithError": {
+      "anyOf": [
+        { "type": "number" },
+        {
+          "type": "object",
+          "required": ["Value"],
+          "additionalProperties": false,
+          "properties": {
+            "Value": { "type": "number" },
+            "Error": { "type": "number" }
+          }
+        }
+      ]
+    },
+    "Intensity": {
+      "_types": {
+        "title": "Intensity node type in the function tree",
+        "enum": [
+          "NormalizedIntensity",
+          "IncoherentIntensity",
+          "CoherentIntensity"
+        ]
+      },
+      "_recursion": {
+        "type": "object",
+        "properties": {
+          "Class": { "$ref": "#/definitions/Intensity/_types" }
+        },
+        "if": {
+          "properties": { "Class": { "const": "NormalizedIntensity" } }
+        },
+        "then": { "$ref": "#/definitions/Intensity/Normalized" },
+        "else": {
+          "if": {
+            "properties": { "Class": { "const": "IncoherentIntensity" } }
+          },
+          "then": { "$ref": "#/definitions/Intensity/Incoherent" },
+          "else": {
+            "if": {
+              "properties": { "Class": { "const": "CoherentIntensity" } }
+            },
+            "then": { "$ref": "#/definitions/Intensity/Coherent" }
+          }
+        }
+      },
+      "Normalized": {
+        "type": "object",
+        "required": ["Class", "Intensity"],
+        "additionalProperties": false,
+        "properties": {
+          "Class": { "$ref": "#/definitions/Intensity/_types" },
+          "Strength": {
+            "type": "string",
+            "title": "Optional coefficient when working with multiple terms",
+            "description": "Should be the unique name of a parameter that is further specified in the Parameter section"
+          },
+          "Intensity": {
+            "$ref": "#/definitions/Intensity/_recursion",
+            "title": "The intensity with which to multiply the (optional) strength coefficient"
+          }
+        }
+      },
+      "Incoherent": {
+        "type": "object",
+        "required": ["Class", "Intensities"],
+        "additionalProperties": false,
+        "properties": {
+          "Class": { "$ref": "#/definitions/Intensity/_types" },
+          "Intensities": {
+            "type": "array",
+            "title": "List of intensities that will be added up incoherently",
+            "items": { "$ref": "#/definitions/Intensity/_recursion" }
+          }
+        }
+      },
+      "Coherent": {
+        "type": "object",
+        "required": ["Class", "Amplitudes"],
+        "additionalProperties": false,
+        "properties": {
+          "Class": { "$ref": "#/definitions/Intensity/_types" },
+          "Component": { "type": "string" },
+          "Amplitudes": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/Amplitude/_recursion" }
+          }
+        }
+      }
+    },
+    "Amplitude": {
+      "_types": {
+        "title": "Amplitude node type in the function tree",
+        "enum": [
+          "CoefficientAmplitude",
+          "SequentialAmplitude",
+          "HelicityDecay"
+        ]
+      },
+      "_recursion": {
+        "type": "object",
+        "properties": {
+          "Class": { "$ref": "#/definitions/Amplitude/_types" }
+        },
+        "if": {
+          "properties": { "Class": { "const": "CoefficientAmplitude" } }
+        },
+        "then": { "$ref": "#/definitions/Amplitude/Coefficient" },
+        "else": {
+          "if": {
+            "properties": { "Class": { "const": "SequentialAmplitude" } }
+          },
+          "then": { "$ref": "#/definitions/Amplitude/Sequential" },
+          "else": {
+            "if": {
+              "properties": { "Class": { "const": "HelicityDecay" } }
+            },
+            "then": { "$ref": "#/definitions/Amplitude/HelicityDecay" }
+          }
+        }
+      },
+      "Coefficient": {
+        "type": "object",
+        "required": ["Class", "Parameters", "Amplitude"],
+        "additionalProperties": false,
+        "properties": {
+          "Class": { "$ref": "#/definitions/Amplitude/_types" },
+          "Component": { "type": "string" },
+          "Parameters": {
+            "type": "object",
+            "required": ["Magnitude", "Phase"],
+            "additionalProperties": false,
+            "properties": {
+              "Magnitude": { "type": "string" },
+              "Phase": { "type": "string" }
+            }
+          },
+          "Amplitude": { "$ref": "#/definitions/Amplitude/_recursion" }
+        }
+      },
+      "Sequential": {
+        "type": "object",
+        "required": ["Class", "Amplitudes"],
+        "additionalProperties": false,
+        "properties": {
+          "Class": { "$ref": "#/definitions/Amplitude/_types" },
+          "Amplitudes": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/Amplitude/_recursion" }
+          }
+        }
+      },
+      "HelicityDecay": {
+        "type": "object",
+        "required": ["Class", "DecayParticle", "DecayProducts"],
+        "additionalProperties": false,
+        "properties": {
+          "Class": { "$ref": "#/definitions/Amplitude/_types" },
+          "DecayParticle": {
+            "type": "object",
+            "required": ["Name", "Helicity"],
+            "additionalProperties": false,
+            "properties": {
+              "Name": { "type": "string" },
+              "Helicity": { "type": "number" }
+            }
+          },
+          "DecayProducts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["Name", "FinalState", "Helicity"],
+              "additionalProperties": false,
+              "properties": {
+                "Name": { "type": "string" },
+                "Helicity": { "type": "number" },
+                "FinalState": {
+                  "type": "array",
+                  "items": { "$ref": "#/definitions/StateID" }
+                }
+              }
+            }
+          },
+          "RecoilSystem": {
+            "type": "object",
+            "required": ["RecoilFinalState"],
+            "additionalProperties": false,
+            "properties": {
+              "RecoilFinalState": {
+                "anyOf": [
+                  { "$ref": "#/definitions/StateID" },
+                  {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/StateID" }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "StateID": {
+      "title": "Unique identifier for the particle in the final or initial state",
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}
