@@ -8,11 +8,11 @@ import jsonschema
 import expertsystem
 
 
-_PACKAGE_PATH = dirname(realpath(expertsystem.__file__))
+_EXPERTSYSTEM_PATH = dirname(realpath(expertsystem.__file__))
 
-with open(f"{_PACKAGE_PATH}/schemas/yaml/particle-list.json") as stream:
+with open(f"{_EXPERTSYSTEM_PATH}/schemas/yaml/particle-list.json") as stream:
     _SCHEMA_PARTICLES = json.load(stream)
-with open(f"{_PACKAGE_PATH}/schemas/yaml/amplitude-model.json") as stream:
+with open(f"{_EXPERTSYSTEM_PATH}/schemas/yaml/amplitude-model.json") as stream:
     _SCHEMA_AMPLITUDE = json.load(stream)
 
 

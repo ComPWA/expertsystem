@@ -15,11 +15,23 @@ import jsonschema
 import expertsystem
 
 
-_PACKAGE_PATH = dirname(realpath(expertsystem.__file__))
+_EXPERTSYSTEM_PATH = dirname(realpath(expertsystem.__file__))
 
-with open(f"{_PACKAGE_PATH}/schemas/xml/particle.json") as stream:
+with open(f"{_EXPERTSYSTEM_PATH}/schemas/xml/particle.json") as stream:
     _SCHEMA_PARTICLE = json.load(stream)
+with open(f"{_EXPERTSYSTEM_PATH}/schemas/xml/particle-list.json") as stream:
+    _SCHEMA_PARTICLES = json.load(stream)
+
+_RESOLVER_PARTICLE = jsonschema.RefResolver.from_schema(_SCHEMA_PARTICLE)
 
 
 def particle(instance: dict) -> None:
     jsonschema.validate(instance=instance, schema=_SCHEMA_PARTICLE)
+
+
+def particle_list(instance: dict) -> None:
+    jsonschema.validate(
+        instance=instance,
+        schema=_SCHEMA_PARTICLES,
+        resolver=_RESOLVER_PARTICLE,
+    )
