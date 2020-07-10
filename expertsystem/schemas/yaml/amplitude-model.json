@@ -352,8 +352,44 @@
                 ]
               }
             }
+          },
+          "Canonical": {
+            "type": "object",
+            "required": ["LS", "s2s3"],
+            "additionalProperties": false,
+            "properties": {
+              "LS": {
+                "type": "object",
+                "required": ["ClebschGordan"],
+                "additionalProperties": false,
+                "properties": {
+                  "ClebschGordan": { "$ref": "#/definitions/ClebschGordan" }
+                }
+              },
+              "s2s3": {
+                "type": "object",
+                "required": ["ClebschGordan"],
+                "additionalProperties": false,
+                "properties": {
+                  "ClebschGordan": { "$ref": "#/definitions/ClebschGordan" }
+                }
+              }
+            }
           }
         }
+      }
+    },
+    "ClebschGordan": {
+      "type": "object",
+      "required": ["J", "M", "j1", "m1", "j2", "m2"],
+      "additionalProperties": false,
+      "properties": {
+        "J": { "type": "number" },
+        "M": { "type": "number" },
+        "j1": { "type": "number" },
+        "m1": { "type": "number" },
+        "j2": { "type": "number" },
+        "m2": { "type": "number" }
       }
     },
     "StateID": {
