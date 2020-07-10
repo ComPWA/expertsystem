@@ -748,17 +748,18 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
                 if len(self.indents) == 1:
                     super().write_line_break()
 
-        with open(filename, "w") as output_file:
-            output_dict = {
-                "Kinematics": kinematics,
-                "Parameters": parameter_list,
-                "Intensity": intensity,
-                "ParticleList": particle_dict,
-                "Dynamics": dynamics,
-            }
+        output_dict = {
+            "Kinematics": kinematics,
+            "Parameters": parameter_list,
+            "Intensity": intensity,
+            "ParticleList": particle_dict,
+            "Dynamics": dynamics,
+        }
+
+        with open(filename, "w") as output_stream:
             yaml.dump(
                 output_dict,
-                output_file,
+                output_stream,
                 sort_keys=False,
                 Dumper=IncreasedIndent,
                 default_flow_style=False,

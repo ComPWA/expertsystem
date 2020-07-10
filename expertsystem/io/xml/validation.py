@@ -14,13 +14,12 @@ import jsonschema
 
 import expertsystem
 
+
 _PACKAGE_PATH = dirname(realpath(expertsystem.__file__))
-_SCHEMA_PATH_PARTICLE = f"{_PACKAGE_PATH}/schemas/xml/particle.json"
+
+with open(f"{_PACKAGE_PATH}/schemas/xml/particle.json") as stream:
+    _SCHEMA_PARTICLE = json.load(stream)
 
 
-with open(_SCHEMA_PATH_PARTICLE) as json_file:
-    _SCHEMA_PARTICLE = json.load(json_file)
-
-
-def validate_particle(definition: dict) -> None:
-    jsonschema.validate(instance=definition, schema=_SCHEMA_PARTICLE)
+def particle(instance: dict) -> None:
+    jsonschema.validate(instance=instance, schema=_SCHEMA_PARTICLE)
