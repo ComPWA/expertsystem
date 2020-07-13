@@ -240,6 +240,8 @@ def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
     elif class_name == "CoefficientAmplitude":
         output_dict["Class"] = class_name
         output_dict["Component"] = definition["Component"]
+        if "PreFactor" in definition:
+            output_dict["PreFactor"] = definition["PreFactor"]
         parameters_xml = _safe_wrap_in_list(definition["Parameter"])
         parameter_names = [par["Name"] for par in parameters_xml]
         parameters_yml = dict()
