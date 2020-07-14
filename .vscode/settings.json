@@ -32,7 +32,9 @@
   "restructuredtext.confPath": "${workspaceFolder}/doc",
   "rewrap.wrappingColumn": 79,
   "yaml.schemas": {
-    "./expertsystem/schemas/xml/particle-list.json": ["particle_list*xml.y*ml"],
+    "./expertsystem/schemas/xml/particle-list.json": [
+      "particle_list*xml.y*ml"
+    ],
     "./expertsystem/schemas/yaml/amplitude-model.json": ["*recipe.y*ml"],
     "./expertsystem/schemas/yaml/particle-list.json": ["particle_list.yml"],
     "https://raw.githubusercontent.com/readthedocs/readthedocs.org/master/readthedocs/rtd_tests/fixtures/spec/v2/schema.yml": ".readthedocs.yml",
