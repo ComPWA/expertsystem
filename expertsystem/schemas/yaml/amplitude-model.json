@@ -1,5 +1,5 @@
 {
-  "$id": "https://github.com/ComPWA/expertsystem/blob/master/expertsystem/schemas/yaml/amplitude-model.json",
+  "$id": "amplitude-model.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "required": [

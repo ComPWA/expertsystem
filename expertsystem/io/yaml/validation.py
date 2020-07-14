@@ -4,6 +4,7 @@ import json
 from os.path import dirname, realpath
 
 import jsonschema
+from jsonschema import RefResolver
 
 import expertsystem
 
@@ -15,16 +16,20 @@ with open(f"{_EXPERTSYSTEM_PATH}/schemas/yaml/particle-list.json") as stream:
 with open(f"{_EXPERTSYSTEM_PATH}/schemas/yaml/amplitude-model.json") as stream:
     _SCHEMA_AMPLITUDE = json.load(stream)
 
-_RESOLVER_PARTICLES = jsonschema.RefResolver.from_schema(_SCHEMA_PARTICLES)
-
 
 def particle_list(instance: dict) -> None:
     jsonschema.validate(instance=instance, schema=_SCHEMA_PARTICLES)
 
 
 def amplitude_model(instance: dict) -> None:
+    resolver = RefResolver(
+        # The key part is here where we build a custom RefResolver
+        # and tell it where *this* schema lives in the filesystem
+        # Note that `file:` is for unix systems
+        f"file://{_EXPERTSYSTEM_PATH}/schemas/yaml/",
+        "amplitude-model.json",
+    )
+
     jsonschema.validate(
-        instance=instance,
-        schema=_SCHEMA_AMPLITUDE,
-        resolver=_RESOLVER_PARTICLES,
+        instance=instance, schema=_SCHEMA_AMPLITUDE, resolver=resolver,
     )
