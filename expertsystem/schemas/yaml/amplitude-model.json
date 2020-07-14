@@ -235,8 +235,31 @@
         "required": ["Class", "Parameters", "Amplitude"],
         "additionalProperties": false,
         "properties": {
-          "Class": { "$ref": "#/definitions/Amplitude/_types" },
-          "Component": { "type": "string" },
+          "Class": {
+            "$ref": "#/definitions/Amplitude/_types"
+          },
+          "Component": {
+            "type": "string"
+          },
+          "PreFactor": {
+            "type": "object",
+            "properties": {
+              "Real": {
+                "type": "number"
+              },
+              "Imaginary": {
+                "type": "number"
+              }
+            },
+            "anyOf": [
+              {
+                "required": ["Real"]
+              },
+              {
+                "required": ["Imaginary"]
+              }
+            ]
+          },
           "Parameters": {
             "type": "object",
             "required": ["Magnitude", "Phase"],
@@ -299,10 +322,27 @@
             "properties": {
               "RecoilFinalState": {
                 "anyOf": [
-                  { "$ref": "#/definitions/StateID" },
+                  {
+                    "$ref": "#/definitions/StateID"
+                  },
                   {
                     "type": "array",
-                    "items": { "$ref": "#/definitions/StateID" }
+                    "items": {
+                      "$ref": "#/definitions/StateID"
+                    }
+                  }
+                ]
+              },
+              "ParentRecoilFinalState": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/StateID"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/StateID"
+                    }
                   }
                 ]
               }
