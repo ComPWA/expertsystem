@@ -216,7 +216,14 @@ def _extract_intensity_component(definition: Dict[str, Any]) -> Dict[str, Any]:
     output_dict = dict()
     class_name = definition["Class"]
     if class_name == "StrengthIntensity":
-        output_dict = _extract_intensity_component(definition["Intensity"])
+        output_dict["Class"] = class_name
+        output_dict["Component"] = definition["Component"]
+        parameters_xml = _safe_wrap_in_list(definition["Parameter"])
+        parameter_names = [par["Name"] for par in parameters_xml]
+        output_dict["Strength"] = parameter_names[0]
+        output_dict["Intensity"] = _extract_intensity_component(
+            definition["Intensity"]
+        )
     elif class_name == "NormalizedIntensity":
         output_dict["Class"] = class_name
         output_dict["Intensity"] = _extract_intensity_component(

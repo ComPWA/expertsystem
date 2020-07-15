@@ -154,6 +154,7 @@
       "_types": {
         "title": "Intensity node type in the function tree",
         "enum": [
+          "StrengthIntensity",
           "NormalizedIntensity",
           "IncoherentIntensity",
           "CoherentIntensity"
@@ -169,35 +170,69 @@
         "if": {
           "properties": {
             "Class": {
-              "const": "NormalizedIntensity"
+              "const": "StrengthIntensity"
             }
           }
         },
         "then": {
-          "$ref": "#/definitions/Intensity/Normalized"
+          "$ref": "#/definitions/Intensity/Strength"
         },
         "else": {
           "if": {
             "properties": {
               "Class": {
-                "const": "IncoherentIntensity"
+                "const": "NormalizedIntensity"
               }
             }
           },
           "then": {
-            "$ref": "#/definitions/Intensity/Incoherent"
+            "$ref": "#/definitions/Intensity/Normalized"
           },
           "else": {
             "if": {
               "properties": {
                 "Class": {
-                  "const": "CoherentIntensity"
+                  "const": "IncoherentIntensity"
                 }
               }
             },
             "then": {
-              "$ref": "#/definitions/Intensity/Coherent"
+              "$ref": "#/definitions/Intensity/Incoherent"
+            },
+            "else": {
+              "if": {
+                "properties": {
+                  "Class": {
+                    "const": "CoherentIntensity"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "#/definitions/Intensity/Coherent"
+              }
             }
+          }
+        }
+      },
+      "Strength": {
+        "type": "object",
+        "required": ["Class", "Intensity", "Strength"],
+        "additionalProperties": false,
+        "properties": {
+          "Class": {
+            "$ref": "#/definitions/Intensity/_types"
+          },
+          "Component": {
+            "type": "string"
+          },
+          "Strength": {
+            "type": "string",
+            "title": "Coefficient when working with multiple terms",
+            "description": "Should be the unique name of a parameter that is further specified in the Parameter section"
+          },
+          "Intensity": {
+            "$ref": "#/definitions/Intensity/_recursion",
+            "title": "The intensity with which to multiply the (optional) strength coefficient"
           }
         }
       },
@@ -208,11 +243,6 @@
         "properties": {
           "Class": {
             "$ref": "#/definitions/Intensity/_types"
-          },
-          "Strength": {
-            "type": "string",
-            "title": "Optional coefficient when working with multiple terms",
-            "description": "Should be the unique name of a parameter that is further specified in the Parameter section"
           },
           "Intensity": {
             "$ref": "#/definitions/Intensity/_recursion",
