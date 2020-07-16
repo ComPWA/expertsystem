@@ -77,7 +77,8 @@ class TestCanonicalAmplitudeGeneratorYAML:
             assert "Value" in parameter
 
     def test_clebsch_gordan(self):
-        normalized_intensity = self.imported_dict["Intensity"]
+        strength_intensity = self.imported_dict["Intensity"]
+        normalized_intensity = strength_intensity["Intensity"]
         incoherent_intensity = normalized_intensity["Intensity"]
         coherent_intensity = incoherent_intensity["Intensities"][0]
         coefficient_amplitude = coherent_intensity["Amplitudes"][0]

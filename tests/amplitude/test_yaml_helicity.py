@@ -126,6 +126,8 @@ class TestHelicityAmplitudeGeneratorYAML:
 
     def test_intensity_section(self):
         intensity = self.imported_dict["Intensity"]
+        assert intensity["Class"] == "StrengthIntensity"
+        intensity = intensity["Intensity"]
         assert intensity["Class"] == "NormalizedIntensity"
 
         intensity = intensity["Intensity"]
