@@ -1,5 +1,5 @@
 .. image:: https://mybinder.org/badge_logo.svg
-  :target: https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples%2Fjupyter%2FQuickStart.ipynb
+  :target: https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples%2Fquick_start.ipynb
 
 .. image:: https://badge.fury.io/py/expertsystem.svg
   :alt: PyPI
