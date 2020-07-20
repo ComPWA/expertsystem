@@ -28,12 +28,8 @@
             "required": ["Particle", "ID"],
             "additionalProperties": false,
             "properties": {
-              "Particle": {
-                "type": "string"
-              },
-              "ID": {
-                "$ref": "#/definitions/StateID"
-              }
+              "Particle": { "type": "string" },
+              "ID": { "$ref": "#/definitions/StateID" }
             }
           }
         },
@@ -44,12 +40,8 @@
             "required": ["Particle", "ID"],
             "additionalProperties": false,
             "properties": {
-              "Particle": {
-                "type": "string"
-              },
-              "ID": {
-                "$ref": "#/definitions/StateID"
-              }
+              "Particle": { "type": "string" },
+              "ID": { "$ref": "#/definitions/StateID" }
             }
           }
         }
@@ -69,16 +61,12 @@
             "title": "Parameter name",
             "description": "Has to be a unique string that is used to identify where the parameter is used in the rest of the model"
           },
-          "Type": {
-            "type": "string"
-          },
+          "Type": { "type": "string" },
           "Value": {
             "type": "number",
             "title": "Starting value of the fit parameter"
           },
-          "Fix": {
-            "type": "boolean"
-          },
+          "Fix": { "type": "boolean" },
           "Min": {
             "type": "number",
             "title": "Lower boundary of the fit range"
@@ -107,31 +95,19 @@
               "required": ["Type", "MesonRadius"],
               "additionalProperties": false,
               "properties": {
-                "Type": {
-                  "const": "BlattWeisskopf"
-                },
+                "Type": { "const": "BlattWeisskopf" },
                 "MesonRadius": {
                   "anyOf": [
-                    {
-                      "type": "number"
-                    },
+                    { "type": "number" },
                     {
                       "type": "object",
                       "required": ["Value"],
                       "additionalProperties": false,
                       "properties": {
-                        "Value": {
-                          "type": "number"
-                        },
-                        "Min": {
-                          "type": "number"
-                        },
-                        "Max": {
-                          "type": "number"
-                        },
-                        "Fix": {
-                          "type": "boolean"
-                        }
+                        "Value": { "type": "number" },
+                        "Min": { "type": "number" },
+                        "Max": { "type": "number" },
+                        "Fix": { "type": "boolean" }
                       }
                     }
                   ]
@@ -142,12 +118,8 @@
         }
       }
     },
-    "Intensity": {
-      "$ref": "#/definitions/Intensity/_recursion"
-    },
-    "ParticleList": {
-      "$ref": "particle-list.json#/definitions/ParticleList"
-    }
+    "Intensity": { "$ref": "#/definitions/Intensity/_recursion" },
+    "ParticleList": { "$ref": "particle-list.json#/definitions/ParticleList" }
   },
   "definitions": {
     "Intensity": {
@@ -163,53 +135,25 @@
       "_recursion": {
         "type": "object",
         "properties": {
-          "Class": {
-            "$ref": "#/definitions/Intensity/_types"
-          }
+          "Class": { "$ref": "#/definitions/Intensity/_types" }
         },
-        "if": {
-          "properties": {
-            "Class": {
-              "const": "StrengthIntensity"
-            }
-          }
-        },
-        "then": {
-          "$ref": "#/definitions/Intensity/Strength"
-        },
+        "if": { "properties": { "Class": { "const": "StrengthIntensity" } } },
+        "then": { "$ref": "#/definitions/Intensity/Strength" },
         "else": {
           "if": {
-            "properties": {
-              "Class": {
-                "const": "NormalizedIntensity"
-              }
-            }
+            "properties": { "Class": { "const": "NormalizedIntensity" } }
           },
-          "then": {
-            "$ref": "#/definitions/Intensity/Normalized"
-          },
+          "then": { "$ref": "#/definitions/Intensity/Normalized" },
           "else": {
             "if": {
-              "properties": {
-                "Class": {
-                  "const": "IncoherentIntensity"
-                }
-              }
+              "properties": { "Class": { "const": "IncoherentIntensity" } }
             },
-            "then": {
-              "$ref": "#/definitions/Intensity/Incoherent"
-            },
+            "then": { "$ref": "#/definitions/Intensity/Incoherent" },
             "else": {
               "if": {
-                "properties": {
-                  "Class": {
-                    "const": "CoherentIntensity"
-                  }
-                }
+                "properties": { "Class": { "const": "CoherentIntensity" } }
               },
-              "then": {
-                "$ref": "#/definitions/Intensity/Coherent"
-              }
+              "then": { "$ref": "#/definitions/Intensity/Coherent" }
             }
           }
         }
@@ -219,12 +163,8 @@
         "required": ["Class", "Intensity", "Strength"],
         "additionalProperties": false,
         "properties": {
-          "Class": {
-            "$ref": "#/definitions/Intensity/_types"
-          },
-          "Component": {
-            "type": "string"
-          },
+          "Class": { "$ref": "#/definitions/Intensity/_types" },
+          "Component": { "type": "string" },
           "Strength": {
             "type": "string",
             "title": "Coefficient when working with multiple terms",
@@ -241,9 +181,7 @@
         "required": ["Class", "Intensity"],
         "additionalProperties": false,
         "properties": {
-          "Class": {
-            "$ref": "#/definitions/Intensity/_types"
-          },
+          "Class": { "$ref": "#/definitions/Intensity/_types" },
           "Intensity": {
             "$ref": "#/definitions/Intensity/_recursion",
             "title": "The intensity with which to multiply the (optional) strength coefficient"
@@ -255,15 +193,11 @@
         "required": ["Class", "Intensities"],
         "additionalProperties": false,
         "properties": {
-          "Class": {
-            "$ref": "#/definitions/Intensity/_types"
-          },
+          "Class": { "$ref": "#/definitions/Intensity/_types" },
           "Intensities": {
             "type": "array",
             "title": "List of intensities that will be added up incoherently",
-            "items": {
-              "$ref": "#/definitions/Intensity/_recursion"
-            }
+            "items": { "$ref": "#/definitions/Intensity/_recursion" }
           }
         }
       },
@@ -272,17 +206,11 @@
         "required": ["Class", "Amplitudes"],
         "additionalProperties": false,
         "properties": {
-          "Class": {
-            "$ref": "#/definitions/Intensity/_types"
-          },
-          "Component": {
-            "type": "string"
-          },
+          "Class": { "$ref": "#/definitions/Intensity/_types" },
+          "Component": { "type": "string" },
           "Amplitudes": {
             "type": "array",
-            "items": {
-              "$ref": "#/definitions/Amplitude/_recursion"
-            }
+            "items": { "$ref": "#/definitions/Amplitude/_recursion" }
           }
         }
       }
@@ -299,42 +227,20 @@
       "_recursion": {
         "type": "object",
         "properties": {
-          "Class": {
-            "$ref": "#/definitions/Amplitude/_types"
-          }
+          "Class": { "$ref": "#/definitions/Amplitude/_types" }
         },
         "if": {
-          "properties": {
-            "Class": {
-              "const": "CoefficientAmplitude"
-            }
-          }
+          "properties": { "Class": { "const": "CoefficientAmplitude" } }
         },
-        "then": {
-          "$ref": "#/definitions/Amplitude/Coefficient"
-        },
+        "then": { "$ref": "#/definitions/Amplitude/Coefficient" },
         "else": {
           "if": {
-            "properties": {
-              "Class": {
-                "const": "SequentialAmplitude"
-              }
-            }
+            "properties": { "Class": { "const": "SequentialAmplitude" } }
           },
-          "then": {
-            "$ref": "#/definitions/Amplitude/Sequential"
-          },
+          "then": { "$ref": "#/definitions/Amplitude/Sequential" },
           "else": {
-            "if": {
-              "properties": {
-                "Class": {
-                  "const": "HelicityDecay"
-                }
-              }
-            },
-            "then": {
-              "$ref": "#/definitions/Amplitude/HelicityDecay"
-            }
+            "if": { "properties": { "Class": { "const": "HelicityDecay" } } },
+            "then": { "$ref": "#/definitions/Amplitude/HelicityDecay" }
           }
         }
       },
@@ -343,47 +249,26 @@
         "required": ["Class", "Parameters", "Amplitude"],
         "additionalProperties": false,
         "properties": {
-          "Class": {
-            "$ref": "#/definitions/Amplitude/_types"
-          },
-          "Component": {
-            "type": "string"
-          },
+          "Class": { "$ref": "#/definitions/Amplitude/_types" },
+          "Component": { "type": "string" },
           "PreFactor": {
             "type": "object",
             "properties": {
-              "Real": {
-                "type": "number"
-              },
-              "Imaginary": {
-                "type": "number"
-              }
+              "Real": { "type": "number" },
+              "Imaginary": { "type": "number" }
             },
-            "anyOf": [
-              {
-                "required": ["Real"]
-              },
-              {
-                "required": ["Imaginary"]
-              }
-            ]
+            "anyOf": [{ "required": ["Real"] }, { "required": ["Imaginary"] }]
           },
           "Parameters": {
             "type": "object",
             "required": ["Magnitude", "Phase"],
             "additionalProperties": false,
             "properties": {
-              "Magnitude": {
-                "type": "string"
-              },
-              "Phase": {
-                "type": "string"
-              }
+              "Magnitude": { "type": "string" },
+              "Phase": { "type": "string" }
             }
           },
-          "Amplitude": {
-            "$ref": "#/definitions/Amplitude/_recursion"
-          }
+          "Amplitude": { "$ref": "#/definitions/Amplitude/_recursion" }
         }
       },
       "Sequential": {
@@ -391,14 +276,10 @@
         "required": ["Class", "Amplitudes"],
         "additionalProperties": false,
         "properties": {
-          "Class": {
-            "$ref": "#/definitions/Amplitude/_types"
-          },
+          "Class": { "$ref": "#/definitions/Amplitude/_types" },
           "Amplitudes": {
             "type": "array",
-            "items": {
-              "$ref": "#/definitions/Amplitude/_recursion"
-            }
+            "items": { "$ref": "#/definitions/Amplitude/_recursion" }
           }
         }
       },
@@ -407,20 +288,14 @@
         "required": ["Class", "DecayParticle", "DecayProducts"],
         "additionalProperties": false,
         "properties": {
-          "Class": {
-            "$ref": "#/definitions/Amplitude/_types"
-          },
+          "Class": { "$ref": "#/definitions/Amplitude/_types" },
           "DecayParticle": {
             "type": "object",
             "required": ["Name", "Helicity"],
             "additionalProperties": false,
             "properties": {
-              "Name": {
-                "type": "string"
-              },
-              "Helicity": {
-                "type": "number"
-              }
+              "Name": { "type": "string" },
+              "Helicity": { "type": "number" }
             }
           },
           "DecayProducts": {
@@ -430,17 +305,11 @@
               "required": ["Name", "FinalState", "Helicity"],
               "additionalProperties": false,
               "properties": {
-                "Name": {
-                  "type": "string"
-                },
-                "Helicity": {
-                  "type": "number"
-                },
+                "Name": { "type": "string" },
+                "Helicity": { "type": "number" },
                 "FinalState": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/StateID"
-                  }
+                  "items": { "$ref": "#/definitions/StateID" }
                 }
               }
             }
@@ -452,27 +321,19 @@
             "properties": {
               "RecoilFinalState": {
                 "anyOf": [
-                  {
-                    "$ref": "#/definitions/StateID"
-                  },
+                  { "$ref": "#/definitions/StateID" },
                   {
                     "type": "array",
-                    "items": {
-                      "$ref": "#/definitions/StateID"
-                    }
+                    "items": { "$ref": "#/definitions/StateID" }
                   }
                 ]
               },
               "ParentRecoilFinalState": {
                 "anyOf": [
-                  {
-                    "$ref": "#/definitions/StateID"
-                  },
+                  { "$ref": "#/definitions/StateID" },
                   {
                     "type": "array",
-                    "items": {
-                      "$ref": "#/definitions/StateID"
-                    }
+                    "items": { "$ref": "#/definitions/StateID" }
                   }
                 ]
               }
@@ -488,9 +349,7 @@
                 "required": ["ClebschGordan"],
                 "additionalProperties": false,
                 "properties": {
-                  "ClebschGordan": {
-                    "$ref": "#/definitions/ClebschGordan"
-                  }
+                  "ClebschGordan": { "$ref": "#/definitions/ClebschGordan" }
                 }
               },
               "s2s3": {
@@ -498,9 +357,7 @@
                 "required": ["ClebschGordan"],
                 "additionalProperties": false,
                 "properties": {
-                  "ClebschGordan": {
-                    "$ref": "#/definitions/ClebschGordan"
-                  }
+                  "ClebschGordan": { "$ref": "#/definitions/ClebschGordan" }
                 }
               }
             }
@@ -513,24 +370,12 @@
       "required": ["J", "M", "j1", "m1", "j2", "m2"],
       "additionalProperties": false,
       "properties": {
-        "J": {
-          "type": "number"
-        },
-        "M": {
-          "type": "number"
-        },
-        "j1": {
-          "type": "number"
-        },
-        "m1": {
-          "type": "number"
-        },
-        "j2": {
-          "type": "number"
-        },
-        "m2": {
-          "type": "number"
-        }
+        "J": { "type": "number" },
+        "M": { "type": "number" },
+        "j1": { "type": "number" },
+        "m1": { "type": "number" },
+        "j2": { "type": "number" },
+        "m2": { "type": "number" }
       }
     },
     "StateID": {

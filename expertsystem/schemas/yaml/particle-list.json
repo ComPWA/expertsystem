@@ -4,100 +4,50 @@
   "type": "object",
   "required": ["ParticleList"],
   "additionalProperties": false,
-  "properties": {
-    "ParticleList": {
-      "$ref": "#/definitions/ParticleList"
-    }
-  },
+  "properties": { "ParticleList": { "$ref": "#/definitions/ParticleList" } },
   "definitions": {
     "Particle": {
       "type": "object",
       "required": ["PID", "Mass", "QuantumNumbers"],
       "properties": {
-        "PID": {
-          "type": "integer"
-        },
-        "Mass": {
-          "$ref": "#/definitions/MeasuredValue"
-        },
-        "Width": {
-          "$ref": "#/definitions/MeasuredValue"
-        },
-        "QuantumNumbers": {
-          "$ref": "#/definitions/QuantumNumbers"
-        }
+        "PID": { "type": "integer" },
+        "Mass": { "$ref": "#/definitions/MeasuredValue" },
+        "Width": { "$ref": "#/definitions/MeasuredValue" },
+        "QuantumNumbers": { "$ref": "#/definitions/QuantumNumbers" }
       },
       "additionalProperties": false
     },
     "ParticleList": {
       "type": "object",
-      "patternProperties": {
-        "^.*$": {
-          "$ref": "#/definitions/Particle"
-        }
-      },
+      "patternProperties": { "^.*$": { "$ref": "#/definitions/Particle" } },
       "additionalProperties": false
     },
     "QuantumNumbers": {
       "type": "object",
       "required": ["Charge", "Spin"],
       "properties": {
-        "Charge": {
-          "type": "number"
-        },
-        "Spin": {
-          "type": "number"
-        },
-        "Parity": {
-          "enum": [-1, 1]
-        },
-        "CParity": {
-          "enum": [-1, 1]
-        },
-        "GParity": {
-          "enum": [-1, 1]
-        },
-        "Strangeness": {
-          "type": "integer"
-        },
-        "Charmness": {
-          "type": "integer"
-        },
-        "Bottomness": {
-          "type": "integer"
-        },
-        "Topness": {
-          "type": "integer"
-        },
-        "BaryonNumber": {
-          "type": "integer"
-        },
-        "ElectronLN": {
-          "type": "integer"
-        },
-        "MuonLN": {
-          "type": "integer"
-        },
-        "TauLN": {
-          "type": "integer"
-        },
+        "Charge": { "type": "number" },
+        "Spin": { "type": "number" },
+        "Parity": { "enum": [-1, 1] },
+        "CParity": { "enum": [-1, 1] },
+        "GParity": { "enum": [-1, 1] },
+        "Strangeness": { "type": "integer" },
+        "Charmness": { "type": "integer" },
+        "Bottomness": { "type": "integer" },
+        "Topness": { "type": "integer" },
+        "BaryonNumber": { "type": "integer" },
+        "ElectronLN": { "type": "integer" },
+        "MuonLN": { "type": "integer" },
+        "TauLN": { "type": "integer" },
         "IsoSpin": {
           "anyOf": [
-            {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 0
-            },
+            { "type": "number", "minimum": 0, "maximum": 0 },
             {
               "type": "object",
               "required": ["Value"],
               "properties": {
-                "Value": {
-                  "type": "number"
-                },
-                "Projection": {
-                  "type": "number"
-                }
+                "Value": { "type": "number" },
+                "Projection": { "type": "number" }
               },
               "additionalProperties": false
             }
@@ -108,19 +58,13 @@
     },
     "MeasuredValue": {
       "anyOf": [
-        {
-          "$ref": "#/definitions/Scalar"
-        },
+        { "$ref": "#/definitions/Scalar" },
         {
           "type": "object",
           "required": ["Value"],
           "properties": {
-            "Value": {
-              "$ref": "#/definitions/Scalar"
-            },
-            "Error": {
-              "$ref": "#/definitions/Scalar"
-            }
+            "Value": { "$ref": "#/definitions/Scalar" },
+            "Error": { "$ref": "#/definitions/Scalar" }
           },
           "additionalProperties": false
         }
@@ -128,9 +72,7 @@
     },
     "Scalar": {
       "anyOf": [
-        {
-          "type": "number"
-        },
+        { "type": "number" },
         {
           "type": "string",
           "regex": "[-+]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][-+]?[0-9]+)?"

@@ -34,9 +34,7 @@
       "type": "object",
       "required": ["Type"],
       "additionalProperties": false,
-      "properties": {
-        "Type": { "enum": ["BlattWeisskopf", "1"] }
-      }
+      "properties": { "Type": { "enum": ["BlattWeisskopf", "1"] } }
     },
     "Parameter": {
       "type": "object",
