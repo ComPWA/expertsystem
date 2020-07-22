@@ -826,9 +826,12 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
 
 def load_default_particle_list() -> None:
-    """Load the default particle list that comes with the expertsystem."""
-    if len(particle.DATABASE) != 0:
-        return
+    """Load the default particle list that comes with the expertsystem.
+
+    .. warning::
+        This resets all particle definitions and the removes particles that
+        don't exist in the particle list that ships with the `expertsystem`!
+    """
     particle_list_file = "particle_list.xml"
     particle_list_path = path.join(_EXPERT_SYSTEM_PATH, particle_list_file)
     if not path.exists(particle_list_path):
@@ -836,6 +839,7 @@ def load_default_particle_list() -> None:
             f"\n  Failed to load {particle_list_file}!"
             "\n  Please contact the developers: https://github.com/ComPWA"
         )
+    particle.DATABASE = dict()
     particle.load_particle_database(particle_list_path)
     logging.info(
         f"Loaded {len(particle.DATABASE)} particles from {particle_list_file}!"
