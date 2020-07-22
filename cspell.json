@@ -59,6 +59,7 @@
         "ipython",
         "isospin",
         "itertools",
+        "jsonschema",
         "jupyter",
         "mathbb",
         "mypy",

@@ -14,7 +14,8 @@ import subprocess
 print("Copy example notebook files")
 # Remove old notebooks
 PATH_TARGET = "usage"
-os.makedirs(PATH_TARGET, exist_ok=True)
+shutil.rmtree(PATH_TARGET)
+os.makedirs(PATH_TARGET)
 for root, _, files in os.walk(PATH_TARGET):
     for notebook in files:
         if notebook.endswith(".ipynb"):
@@ -33,6 +34,15 @@ for root, _, files in os.walk(PATH_SOURCE):
         path_to = os.path.join(PATH_TARGET, notebook)
         print("  copy", path_from, "to", path_to)
         shutil.copyfile(path_from, path_to, follow_symlinks=True)
+# Copy additional data files from example directory
+DATA_FILES = [
+    "additional_particles.yml",
+]
+for data_file in DATA_FILES:
+    path_from = os.path.join(PATH_SOURCE, data_file)
+    path_to = os.path.join(PATH_TARGET, data_file)
+    print("  copy", path_from, "to", path_to)
+    shutil.copyfile(path_from, path_to, follow_symlinks=True)
 
 # -- Generate API skeleton ----------------------------------------------------
 shutil.rmtree("api", ignore_errors=True)
@@ -117,6 +127,10 @@ nitpick_ignore = [
 
 # Intersphinx settings
 intersphinx_mapping = {
+    "jsonschema": (
+        "https://python-jsonschema.readthedocs.io/en/latest/",
+        None,
+    ),
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
     "pycompwa": ("https://compwa.github.io/", None),
     "python": ("https://docs.python.org/3", None),
