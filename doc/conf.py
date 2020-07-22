@@ -11,36 +11,19 @@ import subprocess
 
 
 # -- Copy example notebooks ---------------------------------------------------
-print("Copy example notebook files")
-# Remove old notebooks
+print("Copy example notebook and data files")
+PATH_SOURCE = "../examples"
 PATH_TARGET = "usage"
+FILES_TO_COPY = [
+    "additional_particles.yml",
+    "particles.ipynb",
+    "quick_start.ipynb",
+]
 shutil.rmtree(PATH_TARGET)
 os.makedirs(PATH_TARGET)
-for root, _, files in os.walk(PATH_TARGET):
-    for notebook in files:
-        if notebook.endswith(".ipynb"):
-            full_path = os.path.join(root, notebook)
-            print("  removing notebook", full_path)
-            os.remove(full_path)
-# Copy notebooks from example directory
-PATH_SOURCE = "../examples"
-for root, _, files in os.walk(PATH_SOURCE):
-    for notebook in files:
-        if ".ipynb_checkpoints" in root:
-            continue
-        if not notebook.endswith(".ipynb"):
-            continue
-        path_from = os.path.join(root, notebook)
-        path_to = os.path.join(PATH_TARGET, notebook)
-        print("  copy", path_from, "to", path_to)
-        shutil.copyfile(path_from, path_to, follow_symlinks=True)
-# Copy additional data files from example directory
-DATA_FILES = [
-    "additional_particles.yml",
-]
-for data_file in DATA_FILES:
-    path_from = os.path.join(PATH_SOURCE, data_file)
-    path_to = os.path.join(PATH_TARGET, data_file)
+for file_to_copy in FILES_TO_COPY:
+    path_from = os.path.join(PATH_SOURCE, file_to_copy)
+    path_to = os.path.join(PATH_TARGET, file_to_copy)
     print("  copy", path_from, "to", path_to)
     shutil.copyfile(path_from, path_to, follow_symlinks=True)
 
