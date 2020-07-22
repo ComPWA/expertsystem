@@ -840,7 +840,7 @@ def load_default_particle_list() -> None:
             "\n  Please contact the developers: https://github.com/ComPWA"
         )
     particle.DATABASE = dict()
-    particle.load_particle_database(particle_list_path)
+    particle.load_particles(particle_list_path)
     logging.info(
         f"Loaded {len(particle.DATABASE)} particles from {particle_list_file}!"
     )

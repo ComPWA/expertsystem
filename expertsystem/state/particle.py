@@ -16,8 +16,7 @@ from numpy import arange
 
 import xmltodict
 
-import yaml
-
+from expertsystem import io
 from expertsystem.io import (
     _get_file_extension,
 )  # pylint: disable=protected-access
@@ -289,7 +288,7 @@ def is_boson(qn_dict):
 DATABASE = dict()
 
 
-def load_particle_database(filename: str) -> None:
+def load_particles(filename: str) -> None:
     """Add entries to the particle database from a custom config file.
 
     By default, the expert system loads the particle database from the XML file
@@ -303,9 +302,9 @@ def load_particle_database(filename: str) -> None:
     """
     file_extension = _get_file_extension(filename)
     if file_extension == "xml":
-        _load_particle_database_from_xml(filename)
+        _load_particles_from_xml(filename)
     if file_extension in ["yaml", "yml"]:
-        _load_particle_database_from_yaml(filename)
+        _load_particles_from_yaml(filename)
 
 
 def write_particle_database(filename: str) -> None:
@@ -317,7 +316,7 @@ def write_particle_database(filename: str) -> None:
         _write_particle_database_to_yaml(filename)
 
 
-def _load_particle_database_from_xml(file_path: str) -> None:
+def _load_particles_from_xml(file_path: str) -> None:
     def to_dict(input_ordered_dict: OrderedDict) -> dict:
         """Convert nested `OrderedDict` to a nested `dict`."""
         return json.loads(json.dumps(input_ordered_dict))
@@ -341,20 +340,15 @@ def _write_particle_database_to_xml(file_path: str) -> None:
         output_file.write(xmlstring)
 
 
-def _load_particle_database_from_yaml(file_path: str) -> None:
-    name_label = Labels.Name.name
-    with open(file_path, "rb") as input_file:
-        full_dict = yaml.load(input_file, Loader=yaml.FullLoader)
-        for particle_definition in full_dict["ParticleList"]:
-            particle_name = particle_definition[name_label]
-            DATABASE[particle_name] = particle_definition
+def _load_particles_from_yaml(filename: str) -> None:
+    particle_collection = io.load_particle_collection(filename)
+    particle_list_xml = io.xml.object_to_dict(particle_collection)
+    DATABASE.update(particle_list_xml)
 
 
-def _write_particle_database_to_yaml(file_path: str) -> None:
-    entries = list(DATABASE.values())
-    particle_dict = {"ParticleList": entries}
-    with open(file_path, "w") as output_file:
-        yaml.dump(particle_dict, output_file)
+def _write_particle_database_to_yaml(filename: str) -> None:
+    particle_collection = io.xml.dict_to_particle_collection(DATABASE)
+    io.write(particle_collection, filename)
 
 
 def add_to_particle_list(particle):
