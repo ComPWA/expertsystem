@@ -17,7 +17,7 @@ PATH_TARGET = "usage"
 FILES_TO_COPY = [
     "additional_particles.yml",
     "particles.ipynb",
-    "quick_start.ipynb",
+    "quickstart.ipynb",
 ]
 shutil.rmtree(PATH_TARGET)
 os.makedirs(PATH_TARGET)
