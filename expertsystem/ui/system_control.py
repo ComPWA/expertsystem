@@ -12,7 +12,6 @@ from itertools import (
 )
 from multiprocessing import Pool
 from os import path
-from typing import Callable
 
 from progress.bar import IncrementalBar
 
@@ -826,25 +825,18 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         return propagator
 
 
-def load_default_particle_list(
-    method: Callable = particle.load_particle_list_from_xml,
-) -> None:
+def load_default_particle_list() -> None:
     """Load the default particle list that comes with the expertsystem."""
     if len(particle.DATABASE) != 0:
         return
-    if method is particle.load_particle_list_from_xml:
-        particle_list_file = "particle_list.xml"
-    elif method is particle.load_particle_list_from_yaml:
-        particle_list_file = "particle_list.yml"
-    else:
-        raise NotImplementedError
+    particle_list_file = "particle_list.xml"
     particle_list_path = path.join(_EXPERT_SYSTEM_PATH, particle_list_file)
     if not path.exists(particle_list_path):
         raise FileNotFoundError(
-            "\n  Failed to load {particle_list_file}!"
+            f"\n  Failed to load {particle_list_file}!"
             "\n  Please contact the developers: https://github.com/ComPWA"
         )
-    method(particle_list_path)
+    particle.load_particle_database(particle_list_path)
     logging.info(
         f"Loaded {len(particle.DATABASE)} particles from {particle_list_file}!"
     )

@@ -18,6 +18,9 @@ import xmltodict
 
 import yaml
 
+from expertsystem.io import (
+    _get_file_extension,
+)  # pylint: disable=protected-access
 from expertsystem.topology.graph import (
     get_final_state_edges,
     get_initial_state_edges,
@@ -286,19 +289,35 @@ def is_boson(qn_dict):
 DATABASE = dict()
 
 
-def load_particle_list_from_xml(file_path: str) -> None:
-    """Add entries to the particle database from definitions in an XML file.
+def load_particle_database(filename: str) -> None:
+    """Add entries to the particle database from a custom config file.
 
     By default, the expert system loads the particle database from the XML file
-    :file:`particle_list.xml` located in the ComPWA module. Use
-    `.load_particle_list_from_xml` to append to the particle database.
+    :file:`particle_list.xml` that comes with the `expertsystem`. Use
+    this function to append or overwrite definitions in the particle database.
 
     .. note::
         If a particle name in the loaded XML file already exists in the
         particle database, the one in the particle database will be
         overwritten.
     """
+    file_extension = _get_file_extension(filename)
+    if file_extension == "xml":
+        _load_particle_database_from_xml(filename)
+    if file_extension in ["yaml", "yml"]:
+        _load_particle_database_from_yaml(filename)
 
+
+def write_particle_database(filename: str) -> None:
+    """Write particle database instance to human readable format."""
+    file_extension = _get_file_extension(filename)
+    if file_extension == "xml":
+        _write_particle_database_to_xml(filename)
+    if file_extension in ["yaml", "yml"]:
+        _write_particle_database_to_yaml(filename)
+
+
+def _load_particle_database_from_xml(file_path: str) -> None:
     def to_dict(input_ordered_dict: OrderedDict) -> dict:
         """Convert nested `OrderedDict` to a nested `dict`."""
         return json.loads(json.dumps(input_ordered_dict))
@@ -312,8 +331,7 @@ def load_particle_list_from_xml(file_path: str) -> None:
         DATABASE[particle_name] = to_dict(particle_definition)
 
 
-def write_particle_list_to_xml(file_path: str) -> None:
-    """Write particle database instance to XML file."""
+def _write_particle_database_to_xml(file_path: str) -> None:
     entries = list(DATABASE.values())
     particle_dict = {"ParticleList": {"Particle": entries}}
     xmlstring = xmltodict.unparse(
@@ -323,14 +341,7 @@ def write_particle_list_to_xml(file_path: str) -> None:
         output_file.write(xmlstring)
 
 
-def load_particle_list_from_yaml(file_path: str) -> None:
-    """Use `.load_particle_list_from_yaml` to append to the particle database.
-
-    .. note::
-        If a particle name in the YAML file already exists in the
-        particle database instance, the one in particle database will be
-        overwritten.
-    """
+def _load_particle_database_from_yaml(file_path: str) -> None:
     name_label = Labels.Name.name
     with open(file_path, "rb") as input_file:
         full_dict = yaml.load(input_file, Loader=yaml.FullLoader)
@@ -339,8 +350,7 @@ def load_particle_list_from_yaml(file_path: str) -> None:
             DATABASE[particle_name] = particle_definition
 
 
-def write_particle_list_to_yaml(file_path: str) -> None:
-    """Write particle database instance to a YAML file."""
+def _write_particle_database_to_yaml(file_path: str) -> None:
     entries = list(DATABASE.values())
     particle_dict = {"ParticleList": entries}
     with open(file_path, "w") as output_file:
