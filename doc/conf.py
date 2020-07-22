@@ -19,8 +19,8 @@ FILES_TO_COPY = [
     "particles.ipynb",
     "quickstart.ipynb",
 ]
-shutil.rmtree(PATH_TARGET)
-os.makedirs(PATH_TARGET)
+shutil.rmtree(PATH_TARGET, ignore_errors=True)
+os.makedirs(PATH_TARGET, exist_ok=True)
 for file_to_copy in FILES_TO_COPY:
     path_from = os.path.join(PATH_SOURCE, file_to_copy)
     path_to = os.path.join(PATH_TARGET, file_to_copy)
