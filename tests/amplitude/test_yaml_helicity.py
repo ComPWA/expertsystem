@@ -116,7 +116,6 @@ class TestHelicityAmplitudeGeneratorYAML:
         assert f0_980["Type"] == "RelativisticBreitWigner"
         assert f0_980["FormFactor"]["Type"] == "BlattWeisskopf"
         assert f0_980["FormFactor"]["MesonRadius"] == {
-            "Fix": True,
             "Max": 2.0,
             "Min": 0.0,
             "Value": 1.0,
