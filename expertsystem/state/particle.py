@@ -365,16 +365,6 @@ def add_to_particle_list(particle):
     DATABASE[particle_name] = particle
 
 
-def get_particle_with_name(particle_name):
-    """Get particle from the particle database by name.
-
-    .. deprecated:: 0.2.0
-        particle database has become a dictionary, so you can already access
-        its entries with a string index.
-    """
-    return DATABASE[particle_name]
-
-
 def get_particle_copy_by_name(particle_name):
     """Get a `~copy.deepcopy` of a particle from the particle database.
 
@@ -606,7 +596,7 @@ def check_if_spin_projections_set(state):
     spin_label = StateQuantumNumberNames.Spin
     mass_label = ParticlePropertyNames.Mass
     if isinstance(state, str):
-        particle = get_particle_with_name(state)
+        particle = DATABASE[state]
         spin = get_particle_property(
             particle, spin_label, SpinQNConverter(False)
         )
@@ -702,7 +692,7 @@ def initialize_external_edge_lists(
 def initialize_edges(graph, edge_particle_dict):
     for edge, particle in edge_particle_dict.items():
         # lookup the particle in the list
-        found_particle = get_particle_with_name(particle[0])
+        found_particle = DATABASE[particle[0]]
         graph.edge_props[edge] = deepcopy(found_particle)
 
     # now add more quantum numbers given by user (spin_projection)
