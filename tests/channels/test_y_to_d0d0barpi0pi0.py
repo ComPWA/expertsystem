@@ -12,7 +12,7 @@ from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     create_spin_domain,
 )
-from expertsystem.ui.default_settings import (
+from expertsystem.ui._default_settings import (
     create_default_interaction_settings,
 )
 from expertsystem.ui.system_control import (

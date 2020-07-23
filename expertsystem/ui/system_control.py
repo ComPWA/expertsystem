@@ -43,7 +43,7 @@ from expertsystem.topology.topology_builder import (
     SimpleStateTransitionTopologyBuilder,
 )
 
-from .default_settings import create_default_interaction_settings
+from ._default_settings import create_default_interaction_settings
 
 
 _EXPERT_SYSTEM_PATH = path.dirname(path.realpath(expertsystem.__file__))
