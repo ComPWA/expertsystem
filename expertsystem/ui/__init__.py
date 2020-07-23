@@ -165,99 +165,6 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         )
         return graph_settings_groups
 
-    def find_solutions(
-        self, graph_setting_groups
-    ):  # pylint: disable=too-many-locals
-        """Check for solutions for a specific set of interaction settings."""
-        results = {}
-        logging.info(
-            "Number of interaction settings groups being processed: %d",
-            len(graph_setting_groups),
-        )
-        for strength, graph_setting_group in sorted(
-            graph_setting_groups.items(), reverse=True
-        ):
-            logging.info(
-                "processing interaction settings group with "
-                f"strength {strength}",
-            )
-            logging.info(f"{graph_setting_group} entries in this group")
-            logging.info(f"running with {self.number_of_threads} threads...")
-
-            temp_results = []
-            progress_bar = IncrementalBar(
-                "Propagating quantum numbers...", max=len(graph_setting_group)
-            )
-            progress_bar.update()
-            if self.number_of_threads > 1:
-                with Pool(self.number_of_threads) as pool:
-                    for result in pool.imap_unordered(
-                        self._propagate_quantum_numbers, graph_setting_group, 1
-                    ):
-                        temp_results.append(result)
-                        progress_bar.next()
-            else:
-                for graph_setting_pair in graph_setting_group:
-                    temp_results.append(
-                        self._propagate_quantum_numbers(graph_setting_pair)
-                    )
-                    progress_bar.next()
-            progress_bar.finish()
-            logging.info("Finished!")
-            if strength not in results:
-                results[strength] = []
-            results[strength].extend(temp_results)
-
-        for key, value in results.items():
-            logging.info(
-                f"number of solutions for strength ({key}) "
-                f"after qn propagation: {sum([len(x[0]) for x in value])}",
-            )
-
-        # remove duplicate solutions, which only differ in the interaction qn S
-        results = remove_duplicate_solutions(
-            results, self.filter_remove_qns, self.filter_ignore_qns
-        )
-
-        node_non_satisfied_rules = []
-        solutions = []
-        for result in results.values():
-            for (tempsolutions, non_satisfied_laws) in result:
-                solutions.extend(tempsolutions)
-                node_non_satisfied_rules.append(non_satisfied_laws)
-        logging.info(f"total number of found solutions: {len(solutions)}")
-        violated_laws = []
-        if len(solutions) == 0:
-            violated_laws = analyse_solution_failure(node_non_satisfied_rules)
-            logging.info(f"violated rules: {violated_laws}")
-
-        # finally perform combinatorics of identical external edges
-        # (initial or final state edges) and prepare graphs for
-        # amplitude generation
-        match_external_edges(solutions)
-        final_solutions = []
-        for sol in solutions:
-            final_solutions.extend(
-                perform_external_edge_identical_particle_combinatorics(sol)
-            )
-
-        return (final_solutions, violated_laws)
-
-    def write_amplitude_model(self, solutions: list, output_file: str) -> None:
-        """Generate an amplitude model from the solutions.
-
-        The type of amplitude model (`.HelicityAmplitudeGenerator` or
-        `.CanonicalAmplitudeGenerator`) is determined from the
-        :code:`formalism_type` that was chosen when constructing the
-        `.StateTransitionManager`.
-        """
-        if self.formalism_type == "helicity":
-            amplitude_generator = HelicityAmplitudeGenerator()
-        elif self.formalism_type in ["canonical-helicity", "canonical"]:
-            amplitude_generator = CanonicalAmplitudeGenerator()
-        amplitude_generator.generate(solutions)
-        amplitude_generator.write_to_file(output_file)
-
     def _build_topologies(self):
         all_graphs = self.topology_builder.build_graphs(
             len(self.initial_state), len(self.final_state)
@@ -339,6 +246,84 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             graph_node_setting_pairs.append((instance, node_settings))
         return graph_node_setting_pairs
 
+    def find_solutions(
+        self, graph_setting_groups
+    ):  # pylint: disable=too-many-locals
+        """Check for solutions for a specific set of interaction settings."""
+        results = {}
+        logging.info(
+            "Number of interaction settings groups being processed: %d",
+            len(graph_setting_groups),
+        )
+        for strength, graph_setting_group in sorted(
+            graph_setting_groups.items(), reverse=True
+        ):
+            logging.info(
+                "processing interaction settings group with "
+                f"strength {strength}",
+            )
+            logging.info(f"{graph_setting_group} entries in this group")
+            logging.info(f"running with {self.number_of_threads} threads...")
+
+            temp_results = []
+            progress_bar = IncrementalBar(
+                "Propagating quantum numbers...", max=len(graph_setting_group)
+            )
+            progress_bar.update()
+            if self.number_of_threads > 1:
+                with Pool(self.number_of_threads) as pool:
+                    for result in pool.imap_unordered(
+                        self._propagate_quantum_numbers, graph_setting_group, 1
+                    ):
+                        temp_results.append(result)
+                        progress_bar.next()
+            else:
+                for graph_setting_pair in graph_setting_group:
+                    temp_results.append(
+                        self._propagate_quantum_numbers(graph_setting_pair)
+                    )
+                    progress_bar.next()
+            progress_bar.finish()
+            logging.info("Finished!")
+            if strength not in results:
+                results[strength] = []
+            results[strength].extend(temp_results)
+
+        for key, value in results.items():
+            logging.info(
+                f"number of solutions for strength ({key}) "
+                f"after qn propagation: {sum([len(x[0]) for x in value])}",
+            )
+
+        # remove duplicate solutions, which only differ in the interaction qn S
+        results = remove_duplicate_solutions(
+            results, self.filter_remove_qns, self.filter_ignore_qns
+        )
+
+        node_non_satisfied_rules = []
+        solutions = []
+        for result in results.values():
+            for (tempsolutions, non_satisfied_laws) in result:
+                solutions.extend(tempsolutions)
+                node_non_satisfied_rules.append(non_satisfied_laws)
+        logging.info(f"total number of found solutions: {len(solutions)}")
+        violated_laws = []
+        if len(solutions) == 0:
+            violated_laws = analyse_solution_failure(node_non_satisfied_rules)
+            logging.info(f"violated rules: {violated_laws}")
+
+        # finally perform combinatorics of identical external edges
+        # (initial or final state edges) and prepare graphs for
+        # amplitude generation
+        match_external_edges(solutions)
+        final_solutions = []
+        for sol in solutions:
+            final_solutions.extend(
+                perform_external_edge_identical_particle_combinatorics(sol)
+            )
+
+        return (final_solutions, violated_laws)
+
     def _propagate_quantum_numbers(self, state_graph_node_settings_pair):
         propagator = self._initialize_qn_propagator(
             state_graph_node_settings_pair[0],
@@ -359,6 +344,21 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         )
 
         return propagator
+
+    def write_amplitude_model(self, solutions: list, output_file: str) -> None:
+        """Generate an amplitude model from the solutions.
+
+        The type of amplitude model (`.HelicityAmplitudeGenerator` or
+        `.CanonicalAmplitudeGenerator`) is determined from the
+        :code:`formalism_type` that was chosen when constructing the
+        `.StateTransitionManager`.
+        """
+        if self.formalism_type == "helicity":
+            amplitude_generator = HelicityAmplitudeGenerator()
+        elif self.formalism_type in ["canonical-helicity", "canonical"]:
+            amplitude_generator = CanonicalAmplitudeGenerator()
+        amplitude_generator.generate(solutions)
+        amplitude_generator.write_to_file(output_file)
 
 
 def load_default_particle_list() -> None:
