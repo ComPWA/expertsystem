@@ -87,7 +87,7 @@ def filter_interaction_types(
     return valid_determined_interaction_types
 
 
-class InteractionDeterminationFunctorInterface(ABC):
+class _InteractionDeterminationFunctorInterface(ABC):
     """Interface for interaction determination."""
 
     @abstractmethod
@@ -95,7 +95,7 @@ class InteractionDeterminationFunctorInterface(ABC):
         pass
 
 
-class GammaCheck(InteractionDeterminationFunctorInterface):
+class _GammaCheck(_InteractionDeterminationFunctorInterface):
     """Conservation check for photons."""
 
     name_label = particle.Labels.Name.name
@@ -110,7 +110,7 @@ class GammaCheck(InteractionDeterminationFunctorInterface):
         return int_types
 
 
-class LeptonCheck(InteractionDeterminationFunctorInterface):
+class _LeptonCheck(_InteractionDeterminationFunctorInterface):
     """Conservation check lepton numbers."""
 
     lepton_flavor_labels = [
@@ -559,7 +559,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             self.interaction_type_settings = create_default_interaction_settings(
                 formalism_type
             )
-        self.interaction_determinators = [LeptonCheck(), GammaCheck()]
+        self.interaction_determinators = [_LeptonCheck(), _GammaCheck()]
         self.allowed_intermediate_particles = allowed_intermediate_particles
         self.final_state_groupings = []
         self.allowed_interaction_types = [
