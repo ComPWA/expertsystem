@@ -351,12 +351,12 @@ def _write_particle_database_to_yaml(filename: str) -> None:
     io.write(particle_collection, filename)
 
 
-def add_to_particle_list(particle):
-    """Add a particle dictionary object to the particle database dictionary.
+def add_to_particle_database(particle):
+    """Add a particle dictionary object to the particle database `dict`.
 
-    The key will be extracted from the ``particle`` name (XML tag ``@Name``).
-    If the key already exists, the entry in particle database will be
-    overwritten by this one.
+    The key will be extracted from the ``particle`` name (XML tag ``Name``). If
+    the key already exists, the entry in particle database will be overwritten
+    by this one.
     """
     if not isinstance(particle, dict):
         logging.warning("Can only add dictionary entries to particle database")
