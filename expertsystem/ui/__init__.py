@@ -149,23 +149,23 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         self.allowed_interaction_types = allowed_interaction_types
 
     def prepare_graphs(self):
-        topology_graphs = self.build_topologies()
-        init_graphs = self.create_seed_graphs(topology_graphs)
-        graph_node_setting_pairs = self.determine_node_settings(init_graphs)
+        topology_graphs = self._build_topologies()
+        init_graphs = self._create_seed_graphs(topology_graphs)
+        graph_node_setting_pairs = self._determine_node_settings(init_graphs)
         # create groups of settings ordered by "probability"
         graph_settings_groups = create_interaction_setting_groups(
             graph_node_setting_pairs
         )
         return graph_settings_groups
 
-    def build_topologies(self):
+    def _build_topologies(self):
         all_graphs = self.topology_builder.build_graphs(
             len(self.initial_state), len(self.final_state)
         )
         logging.info(f"number of topology graphs: {len(all_graphs)}")
         return all_graphs
 
-    def create_seed_graphs(self, topology_graphs):
+    def _create_seed_graphs(self, topology_graphs):
         # initialize the graph edges (initial and final state)
         init_graphs = []
         for topology_graph in topology_graphs:
@@ -184,7 +184,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         logging.info(f"initialized {len(init_graphs)} graphs!")
         return init_graphs
 
-    def determine_node_settings(self, graphs):
+    def _determine_node_settings(self, graphs):
         # pylint: disable=too-many-locals
         graph_node_setting_pairs = []
         for instance in graphs:
@@ -266,14 +266,14 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             if self.number_of_threads > 1:
                 with Pool(self.number_of_threads) as pool:
                     for result in pool.imap_unordered(
-                        self.propagate_quantum_numbers, graph_setting_group, 1
+                        self._propagate_quantum_numbers, graph_setting_group, 1
                     ):
                         temp_results.append(result)
                         progress_bar.next()
             else:
                 for graph_setting_pair in graph_setting_group:
                     temp_results.append(
-                        self.propagate_quantum_numbers(graph_setting_pair)
+                        self._propagate_quantum_numbers(graph_setting_pair)
                     )
                     progress_bar.next()
             progress_bar.finish()
@@ -317,15 +317,15 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
         return (final_solutions, violated_laws)
 
-    def propagate_quantum_numbers(self, state_graph_node_settings_pair):
-        propagator = self.initialize_qn_propagator(
+    def _propagate_quantum_numbers(self, state_graph_node_settings_pair):
+        propagator = self._initialize_qn_propagator(
             state_graph_node_settings_pair[0],
             state_graph_node_settings_pair[1],
         )
         solutions = propagator.find_solutions()
         return (solutions, propagator.get_non_satisfied_conservation_laws())
 
-    def initialize_qn_propagator(self, state_graph, node_settings):
+    def _initialize_qn_propagator(self, state_graph, node_settings):
         propagator = FullPropagator(state_graph, self.propagation_mode)
         for node_id, interaction_settings in node_settings.items():
             propagator.assign_settings_to_node(node_id, interaction_settings)

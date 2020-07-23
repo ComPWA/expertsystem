@@ -96,9 +96,13 @@ def test_external_edge_initialization(
         tbd_manager.add_final_state_grouping(group)
     tbd_manager.number_of_threads = 1
 
-    topology_graphs = tbd_manager.build_topologies()
+    topology_graphs = (
+        tbd_manager._build_topologies()  # pylint: disable=protected-access
+    )
 
-    init_graphs = tbd_manager.create_seed_graphs(topology_graphs)
+    init_graphs = tbd_manager._create_seed_graphs(  # pylint: disable=protected-access
+        topology_graphs
+    )
     assert len(init_graphs) == result_graph_count
 
 
@@ -262,8 +266,12 @@ def test_edge_swap(initial_state, final_state):
     tbd_manager.set_allowed_interaction_types([InteractionTypes.Strong])
     tbd_manager.number_of_threads = 1
 
-    topology_graphs = tbd_manager.build_topologies()
-    init_graphs = tbd_manager.create_seed_graphs(topology_graphs)
+    topology_graphs = (
+        tbd_manager._build_topologies()  # pylint: disable=protected-access
+    )
+    init_graphs = tbd_manager._create_seed_graphs(  # pylint: disable=protected-access
+        topology_graphs
+    )
 
     for graph in init_graphs:
         ref_mapping = _create_edge_id_particle_mapping(
@@ -304,8 +312,12 @@ def test_match_external_edges(initial_state, final_state):
     tbd_manager.set_allowed_interaction_types([InteractionTypes.Strong])
     tbd_manager.number_of_threads = 1
 
-    topology_graphs = tbd_manager.build_topologies()
-    init_graphs = tbd_manager.create_seed_graphs(topology_graphs)
+    topology_graphs = (
+        tbd_manager._build_topologies()  # pylint: disable=protected-access
+    )
+    init_graphs = tbd_manager._create_seed_graphs(  # pylint: disable=protected-access
+        topology_graphs
+    )
 
     match_external_edges(init_graphs)
 
@@ -372,9 +384,13 @@ def test_external_edge_identical_particle_combinatorics(
         tbd_manager.add_final_state_grouping(group)
     tbd_manager.number_of_threads = 1
 
-    topology_graphs = tbd_manager.build_topologies()
+    topology_graphs = (
+        tbd_manager._build_topologies()  # pylint: disable=protected-access
+    )
 
-    init_graphs = tbd_manager.create_seed_graphs(topology_graphs)
+    init_graphs = tbd_manager._create_seed_graphs(  # pylint: disable=protected-access
+        topology_graphs
+    )
     match_external_edges(init_graphs)
 
     comb_graphs = []
