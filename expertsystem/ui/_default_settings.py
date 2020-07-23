@@ -1,14 +1,17 @@
 """Default configuration for the `expertsystem`."""
 
 from copy import deepcopy
-from os import path
+from os.path import (
+    dirname,
+    join,
+    realpath,
+)
 from typing import (
     Any,
     Dict,
     List,
 )
 
-import expertsystem
 from expertsystem.state.conservation_rules import (
     AdditiveQuantumNumberConservation,
     CParityConservation,
@@ -33,9 +36,9 @@ from expertsystem.state.propagation import (
 )
 
 
-EXPERT_SYSTEM_PATH = path.dirname(path.realpath(expertsystem.__file__))
+EXPERT_SYSTEM_PATH = dirname(dirname(realpath(__file__)))
 DEFAULT_PARTICLE_LIST_FILE = "particle_list.xml"
-DEFAULT_PARTICLE_LIST_PATH = path.join(
+DEFAULT_PARTICLE_LIST_PATH = join(
     EXPERT_SYSTEM_PATH, DEFAULT_PARTICLE_LIST_FILE
 )
 
