@@ -161,20 +161,20 @@ def create_default_interaction_settings(
     interaction_type_settings[InteractionTypes.Strong] = strong_settings
 
     # reorder conservation laws according to priority
-    weak_settings.conservation_laws = reorder_list_by_priority(
+    weak_settings.conservation_laws = _reorder_list_by_priority(
         weak_settings.conservation_laws, CONSERVATION_LAW_PRIORITIES
     )
-    em_settings.conservation_laws = reorder_list_by_priority(
+    em_settings.conservation_laws = _reorder_list_by_priority(
         em_settings.conservation_laws, CONSERVATION_LAW_PRIORITIES
     )
-    strong_settings.conservation_laws = reorder_list_by_priority(
+    strong_settings.conservation_laws = _reorder_list_by_priority(
         strong_settings.conservation_laws, CONSERVATION_LAW_PRIORITIES
     )
 
     return interaction_type_settings
 
 
-def reorder_list_by_priority(
+def _reorder_list_by_priority(
     some_list: List[Any], priority_mapping: Dict[str, Any]
 ) -> List[Any]:
     # first add priorities to the entries
