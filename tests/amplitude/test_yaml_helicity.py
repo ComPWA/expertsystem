@@ -7,7 +7,7 @@ import pytest
 import yaml
 
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
-from expertsystem.ui.system_control import (
+from expertsystem.ui._system_control import (
     InteractionTypes,
     StateTransitionManager,
 )

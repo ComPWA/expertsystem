@@ -10,7 +10,7 @@ from expertsystem.state.particle import (
 from expertsystem.ui._default_settings import (
     create_default_interaction_settings,
 )
-from expertsystem.ui.system_control import (
+from expertsystem.ui._system_control import (
     InteractionTypes,
     StateTransitionManager,
     _remove_conservation_law,

@@ -1,7 +1,7 @@
 """User Interface of the `expertsystem`."""
 
 __all__ = [
-    "system_control",
+    "_system_control",
 ]
 
-from . import system_control
+from . import _system_control

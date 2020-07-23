@@ -12,7 +12,7 @@ from expertsystem.topology.graph import (
     get_initial_state_edges,
     get_intermediate_state_edges,
 )
-from expertsystem.ui.system_control import (
+from expertsystem.ui._system_control import (
     InteractionTypes,
     StateTransitionManager,
     _create_edge_id_particle_mapping,

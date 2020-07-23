@@ -10,7 +10,7 @@ from expertsystem.topology.graph import (
     get_final_state_edges,
     get_initial_state_edges,
 )
-from expertsystem.ui.system_control import (
+from expertsystem.ui._system_control import (
     CompareGraphElementPropertiesFunctor,
     InteractionTypes,
     StateTransitionManager,
