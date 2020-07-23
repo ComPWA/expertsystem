@@ -49,7 +49,7 @@ from .default_settings import create_default_interaction_settings
 _EXPERT_SYSTEM_PATH = path.dirname(path.realpath(expertsystem.__file__))
 
 
-def change_qn_domain(interaction_settings, qn_name, new_domain):
+def _change_qn_domain(interaction_settings, qn_name, new_domain):
     if not isinstance(interaction_settings, InteractionNodeSettings):
         raise TypeError(
             "interaction_settings has to be of type InteractionNodeSettings"
@@ -57,7 +57,7 @@ def change_qn_domain(interaction_settings, qn_name, new_domain):
     interaction_settings.qn_domains.update({qn_name: new_domain})
 
 
-def remove_conservation_law(interaction_settings, cons_law):
+def _remove_conservation_law(interaction_settings, cons_law):
     if not isinstance(interaction_settings, InteractionNodeSettings):
         raise TypeError(
             "interaction_settings has to be of type InteractionNodeSettings"
@@ -68,7 +68,7 @@ def remove_conservation_law(interaction_settings, cons_law):
             break
 
 
-def filter_interaction_types(
+def _filter_interaction_types(
     valid_determined_interaction_types, allowed_interaction_types
 ):
     int_type_intersection = list(
@@ -153,7 +153,7 @@ class _LeptonCheck(_InteractionDeterminationFunctorInterface):
         return node_interaction_types
 
 
-def remove_duplicate_solutions(
+def _remove_duplicate_solutions(
     results, remove_qns_list=None, ignore_qns_list=None
 ):
     if remove_qns_list is None:
@@ -170,8 +170,8 @@ def remove_duplicate_solutions(
         for (sol_graphs, rule_violations) in group_results:
             temp_graphs = []
             for sol_graph in sol_graphs:
-                sol_graph = remove_qns_from_graph(sol_graph, remove_qns_list)
-                found_graph = check_equal_ignoring_qns(
+                sol_graph = _remove_qns_from_graph(sol_graph, remove_qns_list)
+                found_graph = _check_equal_ignoring_qns(
                     sol_graph, solutions, ignore_qns_list
                 )
                 if found_graph is None:
@@ -189,7 +189,9 @@ def remove_duplicate_solutions(
     return filtered_results
 
 
-def remove_qns_from_graph(graph, qn_list):  # pylint: disable=too-many-branches
+def _remove_qns_from_graph(
+    graph, qn_list
+):  # pylint: disable=too-many-branches
     qns_label = particle.Labels.QuantumNumber.name
     type_label = particle.Labels.Type.name
 
@@ -236,7 +238,7 @@ def remove_qns_from_graph(graph, qn_list):  # pylint: disable=too-many-branches
     return graph_copy
 
 
-def check_equal_ignoring_qns(ref_graph, solutions, ignored_qn_list):
+def _check_equal_ignoring_qns(ref_graph, solutions, ignored_qn_list):
     """Define equal operator for the graphs ignoring certain quantum numbers."""
     if not isinstance(ref_graph, StateTransitionGraph):
         raise TypeError(
@@ -275,7 +277,7 @@ def filter_graphs(graphs, filters):
         [`.StateTransitionGraph`]: filtered list of graphs
 
     Example:
-        Selecting only the solutions, in which the :math:`\\rho` decays via
+        Selecting only the solutions, in which the :math:`\rho` decays via
         p-wave:
 
         >>> my_filter = require_interaction_property(
@@ -349,7 +351,7 @@ def _find_node_ids_with_ingoing_particle_name(graph, ingoing_particle_name):
     return found_node_ids
 
 
-def analyse_solution_failure(violated_laws_per_node_and_graph):
+def _analyse_solution_failure(violated_laws_per_node_and_graph):
     # try to find rules that are just always violated
     violated_laws = []
     scoresheet = {}
@@ -376,41 +378,41 @@ def analyse_solution_failure(violated_laws_per_node_and_graph):
     return violated_laws
 
 
-def create_setting_combinations(node_settings):
+def _create_setting_combinations(node_settings):
     return [
         dict(zip(node_settings.keys(), x))
         for x in product(*node_settings.values())
     ]
 
 
-def calculate_strength(node_interaction_settings):
+def _calculate_strength(node_interaction_settings):
     strength = 1.0
     for int_setting in node_interaction_settings.values():
         strength *= int_setting.interaction_strength
     return strength
 
 
-def match_external_edges(graphs):
+def _match_external_edges(graphs):
     if not isinstance(graphs, list):
         raise TypeError("graphs argument is not of type list!")
     if not graphs:
         return
     ref_graph_id = 0
-    match_external_edge_ids(graphs, ref_graph_id, get_final_state_edges)
-    match_external_edge_ids(graphs, ref_graph_id, get_initial_state_edges)
+    _match_external_edge_ids(graphs, ref_graph_id, get_final_state_edges)
+    _match_external_edge_ids(graphs, ref_graph_id, get_initial_state_edges)
 
 
-def match_external_edge_ids(  # pylint: disable=too-many-locals
+def _match_external_edge_ids(  # pylint: disable=too-many-locals
     graphs, ref_graph_id, external_edge_getter_function
 ):
     ref_graph = graphs[ref_graph_id]
     # create external edge to particle mapping
-    ref_edge_id_particle_mapping = create_edge_id_particle_mapping(
+    ref_edge_id_particle_mapping = _create_edge_id_particle_mapping(
         ref_graph, external_edge_getter_function
     )
 
     for graph in graphs[:ref_graph_id] + graphs[ref_graph_id + 1 :]:
-        edge_id_particle_mapping = create_edge_id_particle_mapping(
+        edge_id_particle_mapping = _create_edge_id_particle_mapping(
             graph, external_edge_getter_function
         )
         # remove matching entries
@@ -430,12 +432,12 @@ def match_external_edge_ids(  # pylint: disable=too-many-locals
                 "Unable to match graphs, due to inherent graph"
                 " structure mismatch"
             )
-        swappings = calculate_swappings(edge_ids_mapping)
+        swappings = _calculate_swappings(edge_ids_mapping)
         for edge_id1, edge_id2 in swappings.items():
             graph.swap_edges(edge_id1, edge_id2)
 
 
-def calculate_swappings(id_mapping):
+def _calculate_swappings(id_mapping):
     """Calculate edge id swappings.
 
     Its important to use an ordered dict as the swappings do not commute!
@@ -451,7 +453,7 @@ def calculate_swappings(id_mapping):
     return swappings
 
 
-def create_edge_id_particle_mapping(graph, external_edge_getter_function):
+def _create_edge_id_particle_mapping(graph, external_edge_getter_function):
     name_label = particle.Labels.Name.name
     return {
         i: graph.edge_props[i][name_label]
@@ -459,7 +461,7 @@ def create_edge_id_particle_mapping(graph, external_edge_getter_function):
     }
 
 
-def perform_external_edge_identical_particle_combinatorics(graph):
+def _perform_external_edge_identical_particle_combinatorics(graph):
     """Create combinatorics clones of the `.StateTransitionGraph`.
 
     In case of identical particles in the initial or final state. Only
@@ -468,25 +470,25 @@ def perform_external_edge_identical_particle_combinatorics(graph):
     """
     if not isinstance(graph, StateTransitionGraph):
         raise TypeError("graph argument is not of type StateTransitionGraph!")
-    temp_new_graphs = external_edge_identical_particle_combinatorics(
+    temp_new_graphs = _external_edge_identical_particle_combinatorics(
         graph, get_final_state_edges
     )
     new_graphs = []
     for new_graph in temp_new_graphs:
         new_graphs.extend(
-            external_edge_identical_particle_combinatorics(
+            _external_edge_identical_particle_combinatorics(
                 new_graph, get_initial_state_edges
             )
         )
     return new_graphs
 
 
-def external_edge_identical_particle_combinatorics(
+def _external_edge_identical_particle_combinatorics(
     graph, external_edge_getter_function
 ):
     # pylint: disable=too-many-locals
     new_graphs = [graph]
-    edge_particle_mapping = create_edge_id_particle_mapping(
+    edge_particle_mapping = _create_edge_id_particle_mapping(
         graph, external_edge_getter_function
     )
     identical_particle_groups = {}
@@ -514,7 +516,7 @@ def external_edge_identical_particle_combinatorics(
         for new_graph in new_graphs:
             for combination in ext_edge_combinations:
                 graph_copy = deepcopy(new_graph)
-                swappings = calculate_swappings(combination)
+                swappings = _calculate_swappings(combination)
                 for edge_id1, edge_id2 in swappings.items():
                     graph_copy.swap_edges(edge_id1, edge_id2)
                 temp_new_graphs.append(graph_copy)
@@ -698,7 +700,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                         )
                     else:
                         node_int_types = determined_interactions
-                node_int_types = filter_interaction_types(
+                node_int_types = _filter_interaction_types(
                     node_int_types, self.allowed_interaction_types
                 )
                 logging.debug(
@@ -717,9 +719,9 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
     def create_interaction_setting_groups(graph_node_setting_pairs):
         graph_settings_groups = {}
         for (graph, node_settings) in graph_node_setting_pairs:
-            setting_combinations = create_setting_combinations(node_settings)
+            setting_combinations = _create_setting_combinations(node_settings)
             for setting in setting_combinations:
-                strength = calculate_strength(setting)
+                strength = _calculate_strength(setting)
                 if strength not in graph_settings_groups:
                     graph_settings_groups[strength] = []
                 graph_settings_groups[strength].append((graph, setting))
@@ -775,7 +777,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             )
 
         # remove duplicate solutions, which only differ in the interaction qn S
-        results = remove_duplicate_solutions(
+        results = _remove_duplicate_solutions(
             results, self.filter_remove_qns, self.filter_ignore_qns
         )
 
@@ -788,17 +790,17 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         logging.info(f"total number of found solutions: {len(solutions)}")
         violated_laws = []
         if len(solutions) == 0:
-            violated_laws = analyse_solution_failure(node_non_satisfied_rules)
+            violated_laws = _analyse_solution_failure(node_non_satisfied_rules)
             logging.info(f"violated rules: {violated_laws}")
 
         # finally perform combinatorics of identical external edges
         # (initial or final state edges) and prepare graphs for
         # amplitude generation
-        match_external_edges(solutions)
+        _match_external_edges(solutions)
         final_solutions = []
         for sol in solutions:
             final_solutions.extend(
-                perform_external_edge_identical_particle_combinatorics(sol)
+                _perform_external_edge_identical_particle_combinatorics(sol)
             )
 
         return (final_solutions, violated_laws)

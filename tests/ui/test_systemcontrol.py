@@ -14,11 +14,11 @@ from expertsystem.ui.system_control import (
     CompareGraphElementPropertiesFunctor,
     InteractionTypes,
     StateTransitionManager,
-    create_edge_id_particle_mapping,
+    _create_edge_id_particle_mapping,
+    _match_external_edges,
+    _perform_external_edge_identical_particle_combinatorics,
+    _remove_duplicate_solutions,
     filter_graphs,
-    match_external_edges,
-    perform_external_edge_identical_particle_combinatorics,
-    remove_duplicate_solutions,
     require_interaction_property,
 )
 
@@ -163,7 +163,7 @@ class TestSolutionFilter:  # pylint: disable=no-self-use
                 ([make_ls_test_graph(ls_pair[0], ls_pair[1])], [])
             )
 
-        results = remove_duplicate_solutions(graphs)
+        results = _remove_duplicate_solutions(graphs)
         num_solutions = [len(result[0]) for result in results["test"]]
         assert sum(num_solutions) == result
 
@@ -171,7 +171,7 @@ class TestSolutionFilter:  # pylint: disable=no-self-use
             graphs["test"].append(
                 ([make_ls_test_graph_scrambled(ls_pair[0], ls_pair[1])], [])
             )
-        results = remove_duplicate_solutions(graphs)
+        results = _remove_duplicate_solutions(graphs)
         num_solutions = [len(result[0]) for result in results["test"]]
         assert sum(num_solutions) == result
 
@@ -264,7 +264,7 @@ def test_edge_swap(initial_state, final_state):
     init_graphs = tbd_manager.create_seed_graphs(topology_graphs)
 
     for graph in init_graphs:
-        ref_mapping = create_edge_id_particle_mapping(
+        ref_mapping = _create_edge_id_particle_mapping(
             graph, get_final_state_edges
         )
         edge_keys = list(ref_mapping.keys())
@@ -305,20 +305,20 @@ def test_match_external_edges(initial_state, final_state):
     topology_graphs = tbd_manager.build_topologies()
     init_graphs = tbd_manager.create_seed_graphs(topology_graphs)
 
-    match_external_edges(init_graphs)
+    _match_external_edges(init_graphs)
 
-    ref_mapping_fs = create_edge_id_particle_mapping(
+    ref_mapping_fs = _create_edge_id_particle_mapping(
         init_graphs[0], get_final_state_edges
     )
-    ref_mapping_is = create_edge_id_particle_mapping(
+    ref_mapping_is = _create_edge_id_particle_mapping(
         init_graphs[0], get_initial_state_edges
     )
 
     for graph in init_graphs[1:]:
-        assert ref_mapping_fs == create_edge_id_particle_mapping(
+        assert ref_mapping_fs == _create_edge_id_particle_mapping(
             graph, get_final_state_edges
         )
-        assert ref_mapping_is == create_edge_id_particle_mapping(
+        assert ref_mapping_is == _create_edge_id_particle_mapping(
             graph, get_initial_state_edges
         )
 
@@ -373,26 +373,26 @@ def test_external_edge_identical_particle_combinatorics(
     topology_graphs = tbd_manager.build_topologies()
 
     init_graphs = tbd_manager.create_seed_graphs(topology_graphs)
-    match_external_edges(init_graphs)
+    _match_external_edges(init_graphs)
 
     comb_graphs = []
     for group in init_graphs:
         comb_graphs.extend(
-            perform_external_edge_identical_particle_combinatorics(group)
+            _perform_external_edge_identical_particle_combinatorics(group)
         )
     assert len(comb_graphs) == result_graph_count
 
-    ref_mapping_fs = create_edge_id_particle_mapping(
+    ref_mapping_fs = _create_edge_id_particle_mapping(
         comb_graphs[0], get_final_state_edges
     )
-    ref_mapping_is = create_edge_id_particle_mapping(
+    ref_mapping_is = _create_edge_id_particle_mapping(
         comb_graphs[0], get_initial_state_edges
     )
 
     for group in comb_graphs[1:]:
-        assert ref_mapping_fs == create_edge_id_particle_mapping(
+        assert ref_mapping_fs == _create_edge_id_particle_mapping(
             group, get_final_state_edges
         )
-        assert ref_mapping_is == create_edge_id_particle_mapping(
+        assert ref_mapping_is == _create_edge_id_particle_mapping(
             group, get_initial_state_edges
         )

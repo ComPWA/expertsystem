@@ -13,7 +13,7 @@ from expertsystem.ui.default_settings import (
 from expertsystem.ui.system_control import (
     InteractionTypes,
     StateTransitionManager,
-    remove_conservation_law,
+    _remove_conservation_law,
 )
 
 
@@ -113,7 +113,7 @@ def test_canonical_clebsch_gordan_ls_coupling(
     formalism_type = "canonical-helicity"
     int_settings = create_default_interaction_settings(formalism_type)
 
-    remove_conservation_law(
+    _remove_conservation_law(
         int_settings[InteractionTypes.Strong], ParityConservationHelicity()
     )
 
