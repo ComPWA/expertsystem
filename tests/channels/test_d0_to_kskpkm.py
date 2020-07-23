@@ -4,7 +4,6 @@
 
 import logging
 
-from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.ui import StateTransitionManager
 
 
@@ -30,9 +29,7 @@ def test_script():
     for solution in solutions:
         print(solution.edge_props[1]["Name"])
 
-    xml_generator = HelicityAmplitudeGenerator()
-    xml_generator.generate(solutions)
-    xml_generator.write_to_file("D0ToKs0KpKm.xml")
+    stm.write_amplitude_model(solutions, "D0ToKs0KpKm.xml")
 
 
 if __name__ == "__main__":
