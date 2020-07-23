@@ -15,15 +15,13 @@ def test_script():
     initial_state = [("D0", [0])]
     final_state = [("K_S0", [0]), ("K+", [0]), ("K-", [0])]
 
-    tbd_manager = StateTransitionManager(
+    stm = StateTransitionManager(
         initial_state, final_state, ["a0", "phi", "a2(1320)-"]
     )
-    tbd_manager.number_of_threads = 2
+    stm.number_of_threads = 2
 
-    graph_interaction_settings_groups = tbd_manager.prepare_graphs()
-    solutions, _ = tbd_manager.find_solutions(
-        graph_interaction_settings_groups
-    )
+    graph_interaction_settings_groups = stm.prepare_graphs()
+    solutions, _ = stm.find_solutions(graph_interaction_settings_groups)
 
     print("found " + str(len(solutions)) + " solutions!")
     assert len(solutions) == 5
