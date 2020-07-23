@@ -30,27 +30,6 @@
         <Type>CParity</Type>
         <Value>-1</Value>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0</Value>
-        <Projection>0</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
     <Particle>
       <Name>W-</Name>
@@ -95,8 +74,8 @@
       <Pid>2299</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_epem</Name>
-        <Value>4.230</Value>
+        <Name>Mass_EpEm (4230 MeV)</Name>
+        <Value>4.23</Value>
         <Fix>true</Fix>
       </Parameter>
       <QuantumNumber>
@@ -124,27 +103,6 @@
         <Type>GParity</Type>
         <Value>-1</Value>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0</Value>
-        <Projection>0</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
 
 
@@ -154,7 +112,7 @@
       <Pid>11</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_electron</Name>
+        <Name>Mass_e+</Name>
         <Value>0.0005109989461</Value>
       </Parameter>
       <QuantumNumber>
@@ -176,21 +134,6 @@
         <Class>Int</Class>
         <Type>ElectronLN</Type>
         <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>MuonLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>TauLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -198,7 +141,7 @@
       <Pid>-11</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_electron</Name>
+        <Name>Mass_e-</Name>
         <Value>0.0005109989461</Value>
       </Parameter>
       <QuantumNumber>
@@ -221,28 +164,13 @@
         <Type>ElectronLN</Type>
         <Value>1</Value>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>MuonLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>TauLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
     <Particle>
       <Name>mu+</Name>
       <Pid>13</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_muon</Name>
+        <Name>Mass_mu+</Name>
         <Value>0.1056583745</Value>
       </Parameter>
       <QuantumNumber>
@@ -262,23 +190,8 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>ElectronLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>MuonLN</Type>
         <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>TauLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -286,7 +199,7 @@
       <Pid>-13</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_muon</Name>
+        <Name>Mass_mu-</Name>
         <Value>0.1056583745</Value>
       </Parameter>
       <QuantumNumber>
@@ -306,23 +219,8 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>ElectronLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>MuonLN</Type>
         <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>TauLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -330,7 +228,7 @@
       <Pid>15</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_tau</Name>
+        <Name>Mass_tau+</Name>
         <Value>1.77686</Value>
       </Parameter>
       <QuantumNumber>
@@ -350,23 +248,8 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>ElectronLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>MuonLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>TauLN</Type>
         <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -374,7 +257,7 @@
       <Pid>-15</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_tau</Name>
+        <Name>Mass_tau-</Name>
         <Value>1.77686</Value>
       </Parameter>
       <QuantumNumber>
@@ -394,23 +277,8 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>ElectronLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>MuonLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>TauLN</Type>
         <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
 
@@ -420,8 +288,8 @@
       <Pid>12</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_electron</Name>
-        <Value>1e-9</Value>
+        <Name>Mass_ve</Name>
+        <Value>1e-09</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -442,21 +310,6 @@
         <Class>Int</Class>
         <Type>ElectronLN</Type>
         <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>MuonLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>TauLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -464,8 +317,8 @@
       <Pid>-12</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_electron</Name>
-        <Value>1e-9</Value>
+        <Name>Mass_vebar</Name>
+        <Value>1e-09</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -486,21 +339,6 @@
         <Class>Int</Class>
         <Type>ElectronLN</Type>
         <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>MuonLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>TauLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -508,8 +346,8 @@
       <Pid>14</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_muon</Name>
-        <Value>1e-9</Value>
+        <Name>Mass_vmu</Name>
+        <Value>1e-09</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -528,23 +366,8 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>ElectronLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>MuonLN</Type>
         <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>TauLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -552,8 +375,8 @@
       <Pid>-14</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_muon</Name>
-        <Value>1e-9</Value>
+        <Name>Mass_vmubar</Name>
+        <Value>1e-09</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -572,23 +395,8 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>ElectronLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>MuonLN</Type>
         <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>TauLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -596,8 +404,8 @@
       <Pid>16</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_tau</Name>
-        <Value>1e-9</Value>
+        <Name>Mass_vtau</Name>
+        <Value>1e-09</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -616,23 +424,8 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>ElectronLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>MuonLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>TauLN</Type>
         <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -640,8 +433,8 @@
       <Pid>-16</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_tau</Name>
-        <Value>1e-9</Value>
+        <Name>Mass_vtaubar</Name>
+        <Value>1e-09</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -660,23 +453,8 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>ElectronLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>MuonLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>TauLN</Type>
         <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
 
@@ -689,7 +467,7 @@
       <Pid>111</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_neutralPion</Name>
+        <Name>Mass_pi0</Name>
         <Value>0.1349766</Value>
         <Error>0.000006</Error>
       </Parameter>
@@ -724,28 +502,13 @@
         <Value>1</Value>
         <Projection>0</Projection>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
     <Particle>
       <Name>pi+</Name>
       <Pid>211</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_chargedPion</Name>
+        <Name>Mass_pi+</Name>
         <Value>0.13957018</Value>
         <Error>0.00000035</Error>
         <Fix>true</Fix>
@@ -776,28 +539,13 @@
         <Value>1</Value>
         <Projection>1</Projection>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
     <Particle>
       <Name>pi-</Name>
       <Pid>-211</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_chargedPion</Name>
+        <Name>Mass_pi-</Name>
         <Value>0.13957018</Value>
         <Error>0.00000035</Error>
         <Fix>true</Fix>
@@ -827,21 +575,6 @@
         <Type>IsoSpin</Type>
         <Value>1</Value>
         <Projection>-1</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -873,11 +606,6 @@
         <Type>CParity</Type>
         <Value>1</Value>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0</Value>
-      </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
         <FormFactor>
@@ -905,7 +633,7 @@
       <Pid>113</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_rho770</Name>
+        <Name>Mass_rho(770)0</Name>
         <Value>0.77526</Value>
         <Error>0.00025</Error>
       </Parameter>
@@ -947,7 +675,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_rho</Name>
+          <Name>Width_rho(770)0</Name>
           <Value>0.1491</Value>
         </Parameter>
         <Parameter>
@@ -965,7 +693,7 @@
       <Pid>213</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_rho770</Name>
+        <Name>Mass_rho(770)+</Name>
         <Value>0.77526</Value>
         <Error>0.00025</Error>
       </Parameter>
@@ -1002,7 +730,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_rho</Name>
+          <Name>Width_rho(770)+</Name>
           <Value>0.1491</Value>
         </Parameter>
         <Parameter>
@@ -1020,7 +748,7 @@
       <Pid>-213</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_rho770</Name>
+        <Name>Mass_rho(770)-</Name>
         <Value>0.77526</Value>
         <Error>0.00025</Error>
       </Parameter>
@@ -1050,11 +778,6 @@
         <Value>1</Value>
         <Projection>-1</Projection>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
         <FormFactor>
@@ -1062,7 +785,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_rho</Name>
+          <Name>Width_rho(770)-</Name>
           <Value>0.1491</Value>
         </Parameter>
         <Parameter>
@@ -1080,7 +803,7 @@
       <Pid>223</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_omega782</Name>
+        <Name>Mass_omega(782)</Name>
         <Value>0.78265</Value>
         <Error>0.00012</Error>
       </Parameter>
@@ -1105,11 +828,6 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>GParity</Type>
         <Value>-1</Value>
@@ -1121,7 +839,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_omega782</Name>
+          <Name>Width_omega(782)</Name>
           <Value>0.000001491</Value>
         </Parameter>
         <Parameter>
@@ -1139,7 +857,7 @@
       <Pid>9010221</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>mass_f0980</Name>
+        <Name>Mass_f0(980)</Name>
         <Value>0.994</Value>
         <Error>0.001</Error>
         <Fix>true</Fix>
@@ -1165,11 +883,6 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>GParity</Type>
         <Value>1</Value>
@@ -1181,8 +894,8 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>width_f0980</Name>
-          <Value>0.070</Value>
+          <Name>Width_f0(980)</Name>
+          <Value>0.07</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1199,7 +912,7 @@
       <Pid>9030221</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>mass_f01500</Name>
+        <Name>Mass_f0(1500)</Name>
         <Value>1.505</Value>
         <Error>0.006</Error>
         <Fix>true</Fix>
@@ -1236,7 +949,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>width_f01500</Name>
+          <Name>Width_f0(1500)</Name>
           <Value>0.109</Value>
         </Parameter>
         <Parameter>
@@ -1254,7 +967,7 @@
       <Pid>225</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>mass_f21270</Name>
+        <Name>Mass_f2(1270)</Name>
         <Value>1.2751</Value>
         <Error>0.0012</Error>
         <Fix>true</Fix>
@@ -1291,7 +1004,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>width_f21270</Name>
+          <Name>Width_f2(1270)</Name>
           <Value>0.185</Value>
         </Parameter>
         <Parameter>
@@ -1309,7 +1022,7 @@
       <Pid>9050225</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>mass_f21950</Name>
+        <Name>Mass_f2(1950)</Name>
         <Value>1.944</Value>
         <Error>0.012</Error>
         <Fix>true</Fix>
@@ -1346,7 +1059,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>width_f21950</Name>
+          <Name>Width_f2(1950)</Name>
           <Value>0.472</Value>
         </Parameter>
         <Parameter>
@@ -1364,7 +1077,7 @@
       <Pid>9000111</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_a0(980)</Name>
+        <Name>Mass_a0(980)0</Name>
         <Value>0.994</Value>
         <Error>0.001</Error>
         <Fix>true</Fix>
@@ -1390,15 +1103,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>GParity</Type>
+        <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>1</Value>
         <Projection>0</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>GParity</Type>
-        <Value>-1</Value>
       </QuantumNumber>
       <DecayInfo>
         <Type>flatte</Type>
@@ -1468,15 +1181,15 @@
         <Value>+1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>GParity</Type>
+        <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>1</Value>
         <Projection>1</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>GParity</Type>
-        <Value>-1</Value>
       </QuantumNumber>
       <DecayInfo>
         <Type>flatte</Type>
@@ -1537,15 +1250,15 @@
         <Value>+1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>GParity</Type>
+        <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>1</Value>
         <Projection>-1</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>GParity</Type>
-        <Value>-1</Value>
       </QuantumNumber>
       <DecayInfo>
         <Type>flatte</Type>
@@ -1611,15 +1324,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>GParity</Type>
+        <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>1</Value>
         <Projection>0</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>GParity</Type>
-        <Value>-1</Value>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -1628,7 +1341,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_a2(1320)-</Name>
+          <Name>Width_a2(1320)0</Name>
           <Value>0.00107</Value>
           <Error>0.00005</Error>
           <Fix>true</Fix>
@@ -1674,15 +1387,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>GParity</Type>
+        <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>1</Value>
         <Projection>1</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>GParity</Type>
-        <Value>-1</Value>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -1691,7 +1404,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_a2(1320)-</Name>
+          <Name>Width_a2(1320)+</Name>
           <Value>0.00107</Value>
           <Error>0.00005</Error>
           <Fix>true</Fix>
@@ -1737,15 +1450,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>GParity</Type>
+        <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>1</Value>
         <Projection>-1</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>GParity</Type>
-        <Value>-1</Value>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -1828,7 +1541,7 @@
       <Pid>-321</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_chargedKaon</Name>
+        <Name>Mass_K-</Name>
         <Value>0.493677</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -1845,6 +1558,11 @@
       <QuantumNumber>
         <Class>Int</Class>
         <Type>Parity</Type>
+        <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
@@ -1853,28 +1571,13 @@
         <Value>0.5</Value>
         <Projection>-0.5</Projection>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
     <Particle>
       <Name>K+</Name>
       <Pid>321</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_chargedKaon</Name>
+        <Name>Mass_K+</Name>
         <Value>0.493677</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -1894,25 +1597,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>Strangeness</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>0.5</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -1920,7 +1613,7 @@
       <Pid>310</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_neutralKaon</Name>
+        <Name>Mass_K_S0</Name>
         <Value>0.497614</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -1945,28 +1638,13 @@
         <Value>0.5</Value>
         <Projection>0.0</Projection>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
     <Particle>
       <Name>K_L0</Name>
       <Pid>130</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_neutralKaon</Name>
+        <Name>Mass_K_L0</Name>
         <Value>0.497614</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -1999,7 +1677,7 @@
       <Pid>411</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_chargedD</Name>
+        <Name>Mass_D+</Name>
         <Value>1.86958</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -2019,15 +1697,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>Charm</Type>
+        <Value>1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>0.5</Value>
         <Projection>0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>1</Value>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -2036,7 +1714,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_chargedD</Name>
+          <Name>Width_D+</Name>
           <Value>6.33E-13</Value>
           <Fix>true</Fix>
         </Parameter>
@@ -2055,7 +1733,7 @@
       <Pid>-411</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_chargedD</Name>
+        <Name>Mass_D-</Name>
         <Value>1.86958</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -2075,15 +1753,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>Charm</Type>
+        <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>0.5</Value>
         <Projection>-0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>-1</Value>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -2092,7 +1770,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_chargedD</Name>
+          <Name>Width_D-</Name>
           <Value>6.33E-13</Value>
           <Fix>true</Fix>
         </Parameter>
@@ -2111,7 +1789,7 @@
       <Pid>421</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_neutralD</Name>
+        <Name>Mass_D0</Name>
         <Value>1.86483</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -2131,25 +1809,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>-0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>Charm</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>-0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -2158,7 +1826,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_neutralD</Name>
+          <Name>Width_D0</Name>
           <Value>1.605E-12</Value>
           <Fix>true</Fix>
         </Parameter>
@@ -2177,7 +1845,7 @@
       <Pid>-421</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_neutralD</Name>
+        <Name>Mass_D0bar</Name>
         <Value>1.86483</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -2197,25 +1865,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>Charm</Type>
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -2224,7 +1882,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_neutralD</Name>
+          <Name>Width_D0bar</Name>
           <Value>1.605E-12</Value>
           <Fix>true</Fix>
         </Parameter>
@@ -2263,20 +1921,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>-0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>Charm</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>-0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -2324,20 +1977,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>Charm</Type>
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -2385,20 +2033,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>-0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>Charm</Type>
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>-0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -2446,20 +2089,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>Charm</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -2507,20 +2145,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>-0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>Charm</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>-0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -2549,7 +2182,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_XX</Name>
-        <Value>4.100</Value>
+        <Value>4.1</Value>
         <Fix>true</Fix>
       </Parameter>
       <QuantumNumber>
@@ -2573,19 +2206,14 @@
         <Value>1</Value>
         <Projection>-1</Projection>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
     <Particle>
       <Name>J/psi</Name>
       <Pid>443</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_jpsi</Name>
-        <Value>3.096900</Value>
+        <Name>Mass_J/psi</Name>
+        <Value>3.0969</Value>
         <Fix>true</Fix>
       </Parameter>
       <QuantumNumber>
@@ -2613,27 +2241,6 @@
         <Type>GParity</Type>
         <Value>-1</Value>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0</Value>
-        <Projection>0</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
         <FormFactor>
@@ -2641,7 +2248,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_jpsi</Name>
+          <Name>Width_J/psi</Name>
           <Value>9.29E-05</Value>
           <Fix>true</Fix>
         </Parameter>
@@ -2684,21 +2291,6 @@
         <Type>CParity</Type>
         <Value>-1</Value>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
         <FormFactor>
@@ -2725,8 +2317,8 @@
       <Pid>1234</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_chic1</Name>
-        <Value>3.510</Value>
+        <Name>Mass_Chic1</Name>
+        <Value>3.51</Value>
         <Fix>true</Fix>
       </Parameter>
       <QuantumNumber>
@@ -2754,26 +2346,6 @@
         <Type>GParity</Type>
         <Value>1</Value>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
         <FormFactor>
@@ -2781,7 +2353,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_chic1</Name>
+          <Name>Width_Chic1</Name>
           <Value>0.00084</Value>
           <Fix>true</Fix>
         </Parameter>
@@ -2803,7 +2375,7 @@
       <Pid>2212</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_proton</Name>
+        <Name>Mass_p</Name>
         <Value>0.938272081</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -2823,25 +2395,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>0.5</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -2849,7 +2411,7 @@
       <Pid>-2212</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_antiproton</Name>
+        <Name>Mass_pbar</Name>
         <Value>0.938272081</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -2869,25 +2431,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>-0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>-0.5</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -2895,7 +2447,7 @@
       <Pid>2112</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_neutron</Name>
+        <Name>Mass_n</Name>
         <Value>0.939565413</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -2912,6 +2464,11 @@
       <QuantumNumber>
         <Class>Int</Class>
         <Type>Parity</Type>
+        <Value>1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
+        <Class>Int</Class>
+        <Type>BaryonNumber</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
@@ -2920,28 +2477,13 @@
         <Value>0.5</Value>
         <Projection>-0.5</Projection>
       </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>BaryonNumber</Type>
-        <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
     </Particle>
     <Particle>
       <Name>nbar</Name>
       <Pid>2112</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_antineutron</Name>
+        <Name>Mass_nbar</Name>
         <Value>0.939565413</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -2961,25 +2503,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>0.5</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -2988,7 +2520,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_N(1650)+</Name>
-        <Value>1.650</Value>
+        <Value>1.65</Value>
         <Fix>true</Fix>
       </Parameter>
       <QuantumNumber>
@@ -3007,40 +2539,15 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>ElectronLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>MuonLN</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>TauLN</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -3067,7 +2574,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_N(1650)-</Name>
-        <Value>1.650</Value>
+        <Value>1.65</Value>
         <Fix>true</Fix>
       </Parameter>
       <QuantumNumber>
@@ -3086,25 +2593,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>-0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>-0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -3150,25 +2647,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1.5</Value>
-        <Projection>1.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>1.5</Value>
+        <Projection>1.5</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -3196,25 +2683,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1.5</Value>
-        <Projection>0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>1.5</Value>
+        <Projection>0.5</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -3242,25 +2719,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1.5</Value>
-        <Projection>-0.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>1.5</Value>
+        <Projection>-0.5</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -3288,25 +2755,15 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1.5</Value>
-        <Projection>-1.5</Projection>
-      </QuantumNumber>
-      <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>0</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>1.5</Value>
+        <Projection>-1.5</Projection>
       </QuantumNumber>
     </Particle>
 
@@ -3336,24 +2793,14 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.0</Value>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
+        <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>-1</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -3361,7 +2808,7 @@
       <Pid>-3122</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_antilambda</Name>
+        <Name>Mass_lambdabar</Name>
         <Value>1.115683</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -3381,24 +2828,14 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.0</Value>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
+        <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
         <Type>BaryonNumber</Type>
         <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>1</Value>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -3426,10 +2863,9 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1.0</Value>
-        <Projection>0.0</Projection>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
+        <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
@@ -3437,14 +2873,10 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>-1</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>1.0</Value>
+        <Projection>0.0</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Type>relativisticBreitWigner</Type>
@@ -3453,7 +2885,7 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_chic1</Name>
+          <Name>Width_sigma0</Name>
           <Value>0.0000089</Value>
           <Fix>true</Fix>
         </Parameter>
@@ -3484,10 +2916,9 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1.0</Value>
-        <Projection>1.0</Projection>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
+        <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
@@ -3495,14 +2926,10 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>-1</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>1.0</Value>
+        <Projection>1.0</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -3530,10 +2957,9 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1.0</Value>
-        <Projection>-1.0</Projection>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
+        <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
@@ -3541,14 +2967,10 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>-1</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>1.0</Value>
+        <Projection>-1.0</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -3556,7 +2978,7 @@
       <Pid>3322</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_xi0</Name>
+        <Name>Mass_Xi0</Name>
         <Value>1.31486</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -3576,10 +2998,9 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>0.5</Value>
-        <Projection>0.5</Projection>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
+        <Value>-2</Value>
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
@@ -3587,14 +3008,10 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>-2</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>0.5</Value>
+        <Projection>0.5</Projection>
       </QuantumNumber>
     </Particle>
     <Particle>
@@ -3602,7 +3019,7 @@
       <Pid>3312</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_xi-</Name>
+        <Name>Mass_Xi-</Name>
         <Value>1.32171</Value>
         <Fix>true</Fix>
       </Parameter>
@@ -3622,10 +3039,9 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1.0</Value>
-        <Projection>-0.5</Projection>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
+        <Value>-2</Value>
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
@@ -3633,14 +3049,10 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charm</Type>
-        <Value>0</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Strangeness</Type>
-        <Value>-2</Value>
+        <Class>Spin</Class>
+        <Type>IsoSpin</Type>
+        <Value>1.0</Value>
+        <Projection>-0.5</Projection>
       </QuantumNumber>
     </Particle>
   </ParticleList>

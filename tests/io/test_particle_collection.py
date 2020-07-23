@@ -95,3 +95,8 @@ class TestInternalParticleDict:
         definition = particle.DATABASE["J/psi"]
         j_psi = io.xml.dict_to_particle(definition)
         assert j_psi == J_PSI
+
+    @staticmethod
+    def test_dump_via_particle_collection():
+        particles = io.xml.dict_to_particle_collection(particle.DATABASE)
+        io.write(particles, "DATABASE_via_ParticleCollection.xml")
