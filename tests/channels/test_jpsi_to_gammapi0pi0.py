@@ -12,11 +12,11 @@ from expertsystem.topology.graph import (
     get_initial_state_edges,
     get_intermediate_state_edges,
 )
-from expertsystem.ui._system_control import (
+from expertsystem.ui import (
     InteractionTypes,
     StateTransitionManager,
-    _create_edge_id_particle_mapping,
 )
+from expertsystem.ui._system_control import _create_edge_id_particle_mapping
 
 
 @pytest.mark.slow

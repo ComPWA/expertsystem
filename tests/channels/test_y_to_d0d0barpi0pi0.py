@@ -12,14 +12,14 @@ from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     create_spin_domain,
 )
+from expertsystem.ui import (
+    InteractionTypes,
+    StateTransitionManager,
+)
 from expertsystem.ui._default_settings import (
     create_default_interaction_settings,
 )
-from expertsystem.ui._system_control import (
-    InteractionTypes,
-    StateTransitionManager,
-    _change_qn_domain,
-)
+from expertsystem.ui._system_control import _change_qn_domain
 
 logging.basicConfig(level=logging.INFO)
 

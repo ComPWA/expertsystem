@@ -2,6 +2,7 @@ import pytest
 
 from expertsystem.state import particle
 from expertsystem.state.particle import (
+    CompareGraphElementPropertiesFunctor,
     InteractionQuantumNumberNames,
     create_spin_domain,
 )
@@ -10,15 +11,16 @@ from expertsystem.topology.graph import (
     get_final_state_edges,
     get_initial_state_edges,
 )
-from expertsystem.ui._system_control import (
-    CompareGraphElementPropertiesFunctor,
+from expertsystem.ui import (
     InteractionTypes,
     StateTransitionManager,
+)
+from expertsystem.ui._system_control import (
     _create_edge_id_particle_mapping,
-    _match_external_edges,
-    _perform_external_edge_identical_particle_combinatorics,
-    _remove_duplicate_solutions,
     filter_graphs,
+    match_external_edges,
+    perform_external_edge_identical_particle_combinatorics,
+    remove_duplicate_solutions,
     require_interaction_property,
 )
 
@@ -163,7 +165,7 @@ class TestSolutionFilter:  # pylint: disable=no-self-use
                 ([make_ls_test_graph(ls_pair[0], ls_pair[1])], [])
             )
 
-        results = _remove_duplicate_solutions(graphs)
+        results = remove_duplicate_solutions(graphs)
         num_solutions = [len(result[0]) for result in results["test"]]
         assert sum(num_solutions) == result
 
@@ -171,7 +173,7 @@ class TestSolutionFilter:  # pylint: disable=no-self-use
             graphs["test"].append(
                 ([make_ls_test_graph_scrambled(ls_pair[0], ls_pair[1])], [])
             )
-        results = _remove_duplicate_solutions(graphs)
+        results = remove_duplicate_solutions(graphs)
         num_solutions = [len(result[0]) for result in results["test"]]
         assert sum(num_solutions) == result
 
@@ -305,7 +307,7 @@ def test_match_external_edges(initial_state, final_state):
     topology_graphs = tbd_manager.build_topologies()
     init_graphs = tbd_manager.create_seed_graphs(topology_graphs)
 
-    _match_external_edges(init_graphs)
+    match_external_edges(init_graphs)
 
     ref_mapping_fs = _create_edge_id_particle_mapping(
         init_graphs[0], get_final_state_edges
@@ -373,12 +375,12 @@ def test_external_edge_identical_particle_combinatorics(
     topology_graphs = tbd_manager.build_topologies()
 
     init_graphs = tbd_manager.create_seed_graphs(topology_graphs)
-    _match_external_edges(init_graphs)
+    match_external_edges(init_graphs)
 
     comb_graphs = []
     for group in init_graphs:
         comb_graphs.extend(
-            _perform_external_edge_identical_particle_combinatorics(group)
+            perform_external_edge_identical_particle_combinatorics(group)
         )
     assert len(comb_graphs) == result_graph_count
 

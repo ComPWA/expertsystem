@@ -7,14 +7,14 @@ from expertsystem.state.particle import (
     Spin,
     _SpinQNConverter,
 )
+from expertsystem.ui import (
+    InteractionTypes,
+    StateTransitionManager,
+)
 from expertsystem.ui._default_settings import (
     create_default_interaction_settings,
 )
-from expertsystem.ui._system_control import (
-    InteractionTypes,
-    StateTransitionManager,
-    _remove_conservation_law,
-)
+from expertsystem.ui._system_control import _remove_conservation_law
 
 
 @pytest.mark.parametrize(

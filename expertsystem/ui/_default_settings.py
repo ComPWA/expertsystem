@@ -1,12 +1,14 @@
 """Default configuration for the `expertsystem`."""
 
 from copy import deepcopy
+from os import path
 from typing import (
     Any,
     Dict,
     List,
 )
 
+import expertsystem
 from expertsystem.state.conservation_rules import (
     AdditiveQuantumNumberConservation,
     CParityConservation,
@@ -30,6 +32,12 @@ from expertsystem.state.propagation import (
     InteractionTypes,
 )
 
+
+EXPERT_SYSTEM_PATH = path.dirname(path.realpath(expertsystem.__file__))
+DEFAULT_PARTICLE_LIST_FILE = "particle_list.xml"
+DEFAULT_PARTICLE_LIST_PATH = path.join(
+    EXPERT_SYSTEM_PATH, DEFAULT_PARTICLE_LIST_FILE
+)
 
 # If a conservation law is not listed here, a default priority of 1 is assumed.
 # Higher number means higher priority
