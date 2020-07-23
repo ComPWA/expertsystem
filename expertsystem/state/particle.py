@@ -398,13 +398,18 @@ def find_particle(
     raise NotImplementedError(f"Cannot search for type {type(search_term)}")
 
 
-def get_particle_copy_by_name(particle_name):
-    """Get a `~copy.deepcopy` of a particle from the particle database.
+def get_particle_copy(
+    search_term: Union[str, int]
+) -> Union[dict, Dict[str, dict]]:
+    """Get a `~copy.deepcopy` of a particle or particles from the database.
 
     This is useful when you want to manipulate that copy and add it as a new
-    entry to the particle data base.
+    entry to the particle database.
+
+    Args:
+        search_term: see `.find_particle`.
     """
-    return deepcopy(DATABASE[particle_name])
+    return deepcopy(find_particle(search_term))
 
 
 def get_particle_property(particle_properties, qn_name, converter=None):
