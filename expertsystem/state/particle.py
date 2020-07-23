@@ -11,6 +11,10 @@ from collections import OrderedDict
 from copy import deepcopy
 from enum import Enum, auto
 from itertools import permutations
+from typing import (
+    Dict,
+    Union,
+)
 
 from numpy import arange
 
@@ -363,6 +367,35 @@ def add_to_particle_database(particle):
         return
     particle_name = particle[Labels.Name.name]
     DATABASE[particle_name] = particle
+
+
+def find_particle(
+    search_term: Union[str, int]
+) -> Union[dict, Dict[str, dict]]:
+    """Search for a particle in the database, by PID or name.
+
+    Returns:
+        When searching by name (`str`), all matches will be returned in the
+        form of a `dict`, with the particle names as keys. For instance,
+        searching :code:`"f"` returns all particles that contain an :code:`"f"`
+        in their name. If there's only one search result, only the definition
+        of particle is returned.
+    """
+    if isinstance(search_term, str):
+        search_results = {
+            name: definition
+            for name, definition in DATABASE.items()
+            if search_term in name
+        }
+        if len(search_results) == 1:
+            return list(search_results.values())[0]  # return value only
+        return search_results
+    if isinstance(search_term, int):
+        for particle in DATABASE.values():
+            if int(particle["Pid"]) == search_term:
+                return particle
+        raise LookupError(f"Could not find particle with PID {search_term}")
+    raise NotImplementedError(f"Cannot search for type {type(search_term)}")
 
 
 def get_particle_copy_by_name(particle_name):
@@ -779,10 +812,12 @@ def initialize_allowed_particle_list(allowed_particle_list):
         mod_allowed_particle_list = list(DATABASE.values())
     else:
         for allowed_particle in allowed_particle_list:
-            if isinstance(allowed_particle, str):
-                for name, value in DATABASE.items():
-                    if allowed_particle in name:
-                        mod_allowed_particle_list.append(value)
+            if isinstance(allowed_particle, (int, str)):
+                search_results = find_particle(allowed_particle)
+                if "Pid" in search_results:  # one particle only
+                    mod_allowed_particle_list.append(search_results)
+                else:  # several particles found
+                    mod_allowed_particle_list += list(search_results.values())
             else:
                 mod_allowed_particle_list.append(allowed_particle)
     return mod_allowed_particle_list
