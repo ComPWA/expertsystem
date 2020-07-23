@@ -5,7 +5,7 @@ from expertsystem.state.conservation_rules import ParityConservationHelicity
 from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     Spin,
-    SpinQNConverter,
+    _SpinQNConverter,
 )
 from expertsystem.ui.default_settings import (
     create_default_interaction_settings,
@@ -133,7 +133,7 @@ def test_canonical_clebsch_gordan_ls_coupling(
     s_label = InteractionQuantumNumberNames.S
     qn_label = particle.Labels.QuantumNumber
 
-    spin_converter = SpinQNConverter()
+    spin_converter = _SpinQNConverter()
     node_props = {
         0: {
             qn_label.name: [
