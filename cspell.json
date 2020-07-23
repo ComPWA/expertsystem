@@ -44,6 +44,7 @@
         "clebsch",
         "combi",
         "conda",
+        "deepcopy",
         "determinator",
         "determinators",
         "docstrings",
