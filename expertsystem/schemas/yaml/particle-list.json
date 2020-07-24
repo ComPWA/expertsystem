@@ -27,7 +27,7 @@
       "required": ["Charge", "Spin"],
       "properties": {
         "Charge": { "type": "integer" },
-        "Spin": { "type": "number" },
+        "Spin": { "type": "number", "multipleOf": 0.5 },
         "Parity": { "enum": [-1, 1] },
         "CParity": { "enum": [-1, 1] },
         "GParity": { "enum": [-1, 1] },
