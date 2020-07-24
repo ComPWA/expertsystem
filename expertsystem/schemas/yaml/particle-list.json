@@ -26,7 +26,7 @@
       "type": "object",
       "required": ["Charge", "Spin"],
       "properties": {
-        "Charge": { "type": "number" },
+        "Charge": { "type": "integer" },
         "Spin": { "type": "number" },
         "Parity": { "enum": [-1, 1] },
         "CParity": { "enum": [-1, 1] },
