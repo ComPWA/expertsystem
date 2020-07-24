@@ -217,7 +217,7 @@ class _IntQNConverter(AbstractQNConverter):
         return {
             self.type_label: qn_type.name,
             self.class_label: QuantumNumberClasses.Int.name,
-            self.value_label: str(qn_value),
+            self.value_label: qn_value,
         }
 
 
@@ -235,7 +235,7 @@ class _FloatQNConverter(AbstractQNConverter):
         return {
             self.type_label: qn_type.name,
             self.class_label: QuantumNumberClasses.Float.name,
-            self.value_label: str(qn_value),
+            self.value_label: qn_value,
         }
 
 
@@ -267,8 +267,8 @@ class _SpinQNConverter(AbstractQNConverter):
         return {
             self.type_label: qn_type.name,
             self.class_label: QuantumNumberClasses.Spin.name,
-            self.value_label: str(qn_value.magnitude()),
-            self.proj_label: str(qn_value.projection()),
+            self.value_label: qn_value.magnitude(),
+            self.proj_label: qn_value.projection(),
         }
 
 
