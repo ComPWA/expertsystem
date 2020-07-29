@@ -72,7 +72,10 @@ class Spin:
 
 
 class Particle(NamedTuple):
-    """Immutable data container for particle info."""
+    """Immutable container of data defining a physical particle.
+
+    Can *only** contain info that the `PDG <http://pdg.lbl.gov/>`_ would list.
+    """
 
     name: str
     pid: int
@@ -126,3 +129,36 @@ class ParticleCollection(abc.Mapping):
 
     def values(self) -> ValuesView[Particle]:
         return self.__particles.values()
+
+
+class QuantumState(NamedTuple):
+    """Collection of properties defining a quantum mechanical state.
+
+    Related to `.Particle`, but can contain more specific quantum state
+    information, such as `.Spin` projection.
+    """
+
+    charge: int
+    spin: Spin
+    mass: float
+    strangeness: int = 0
+    charmness: int = 0
+    bottomness: int = 0
+    topness: int = 0
+    baryon_number: int = 0
+    electron_number: int = 0
+    muon_number: int = 0
+    tau_number: int = 0
+    width: Optional[float] = None
+    isospin: Optional[Spin] = None
+    parity: Optional[Parity] = None
+    c_parity: Optional[Parity] = None
+    g_parity: Optional[Parity] = None
+
+
+class ComplexEnergyState(NamedTuple):
+    """Pole in the complex energy plane with quantum numbers."""
+
+    position: float
+    width: float
+    state: QuantumState
