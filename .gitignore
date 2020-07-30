@@ -2,6 +2,7 @@
 *.xml
 *.yaml
 *.yml
+!.github/*/*.yml
 !.readthedocs.yml
 !.travis.yml
 !codecov.yml
