@@ -11,13 +11,14 @@ from functools import reduce
 
 from numpy import arange
 
+from expertsystem.data import Spin
+
 from .particle import (
     InteractionQuantumNumberNames,
     ParticleDecayPropertyNames,
     ParticlePropertyNames,
     QNNameClassMapping,
     QuantumNumberClasses,
-    Spin,
     StateQuantumNumberNames,
     is_boson,
 )
