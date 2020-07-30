@@ -40,20 +40,24 @@ class Parity:
         return self.__value
 
 
-class Spin:
+class Spin(abc.Hashable):
     """Safe, immutable data container for (iso)spin."""
 
     def __init__(self, magnitude: float, projection: float) -> None:
         if abs(projection) > magnitude:
             raise ValueError(
-                "Spin projection cannot be larger than its magnitude"
+                "Spin projection cannot be larger than its magnitude:\n"
+                f"  {projection} > {magnitude}"
             )
         self.__magnitude = float(magnitude)
         self.__projection = float(projection)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Spin):
-            return self.__magnitude == other.magnitude
+            return (
+                self.__magnitude == other.magnitude
+                and self.__projection == other.projection
+            )
         return self.__magnitude == other
 
     def __float__(self) -> float:
@@ -69,6 +73,9 @@ class Spin:
     @property
     def projection(self) -> float:
         return self.__projection
+
+    def __hash__(self) -> int:
+        return hash(repr(self))
 
 
 class Particle(NamedTuple):
