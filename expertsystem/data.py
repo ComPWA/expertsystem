@@ -44,13 +44,17 @@ class Spin(abc.Hashable):
     """Safe, immutable data container for (iso)spin."""
 
     def __init__(self, magnitude: float, projection: float) -> None:
+        magnitude = float(magnitude)
+        projection = float(projection)
         if abs(projection) > magnitude:
             raise ValueError(
                 "Spin projection cannot be larger than its magnitude:\n"
                 f"  {projection} > {magnitude}"
             )
-        self.__magnitude = float(magnitude)
-        self.__projection = float(projection)
+        if projection == -0.0:
+            projection = 0.0
+        self.__magnitude = magnitude
+        self.__projection = projection
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Spin):
