@@ -10,8 +10,8 @@ class Edge:
         self.ending_node_id = None
         self.originating_node_id = None
 
-    def __repr__(self):
-        return str((self.ending_node_id, self.originating_node_id))
+    def __repr__(self) -> str:
+        return f"<class 'Edge': {self.ending_node_id} -> {self.originating_node_id}>"
 
     def __eq__(self, other):
         if isinstance(other, Edge):
@@ -61,23 +61,13 @@ class StateTransitionGraph:
     def set_graph_element_properties_comparator(self, comparator):
         self.graph_element_properties_comparator = comparator
 
-    def __repr__(self):
-        return_string = (
-            "\nnodes: "
-            + str(self.nodes)
-            + "\nedges: "
-            + str(self.edges)
-            + "\n"
+    def __repr__(self) -> str:
+        return (
+            f"\nnodes: {self.nodes}"
+            f"\nedges: {self.edges}"
+            f"\nnode props: {self.node_props}"
+            f"\nnode props: {self.edge_props}"
         )
-        return_string = return_string + "node props: {\n"
-        for key, value in self.node_props.items():
-            return_string = return_string + str(key) + ": " + str(value) + "\n"
-        return_string = return_string + "}\n"
-        return_string = return_string + "edge props: {\n"
-        for key, value in self.edge_props.items():
-            return_string = return_string + str(key) + ": " + str(value) + "\n"
-        return_string = return_string + "}\n"
-        return return_string
 
     def __eq__(self, other):
         if isinstance(other, StateTransitionGraph):
