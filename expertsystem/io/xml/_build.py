@@ -52,7 +52,7 @@ def build_particle(definition: dict) -> Particle:
         mass=float(definition["Parameter"]["Value"]),
         width=_xml_to_width(definition),
         charge=int(qn_defs["Charge"]),
-        spin=float(qn_defs["Spin"]),
+        spin=Spin(qn_defs["Spin"]),
         strangeness=int(qn_defs.get("Strangeness", 0)),
         charmness=int(qn_defs.get("Charm", 0)),
         bottomness=int(qn_defs.get("Bottomness", 0)),
@@ -69,12 +69,8 @@ def build_particle(definition: dict) -> Particle:
 
 
 def build_spin(definition: dict) -> Spin:
-    magnitude = float(definition["Value"])
-    if "Projection" not in definition and magnitude != 0.0:
-        raise ValueError(
-            "Can only have a spin without projection if magnitude = 0"
-        )
-    projection = float(definition["Projection"])
+    magnitude = definition["Value"]
+    projection = definition.get("Projection", None)
     return Spin(magnitude, projection)
 
 

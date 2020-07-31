@@ -9,6 +9,7 @@ from expertsystem.data import (
     Parity,
     Particle,
     ParticleCollection,
+    Spin,
 )
 from expertsystem.state import particle
 
@@ -21,7 +22,7 @@ J_PSI = Particle(
     pid=443,
     mass=3.0969,
     width=9.29e-05,
-    spin=1,
+    spin=Spin(1),
     charge=0,
     parity=Parity(-1),
     c_parity=Parity(-1),

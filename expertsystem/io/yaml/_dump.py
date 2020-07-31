@@ -43,7 +43,7 @@ def _to_quantum_number_dict(
     particle: Particle,
 ) -> Dict[str, Union[float, int]]:
     output_dict = {
-        "Spin": _attempt_to_int(particle.spin),
+        "Spin": _attempt_to_int(particle.spin.magnitude),
         "Charge": int(particle.charge),
     }
     optional_qn: List[
