@@ -85,6 +85,36 @@ class Spin(abc.Hashable):
         return hash(repr(self))
 
 
+class QuantumState(NamedTuple):
+    """Collection of properties defining a quantum mechanical state.
+
+    Related to `.Particle`, but can contain more specific quantum state
+    information, such as `.Spin` projection.
+    """
+
+    charge: int
+    spin: Spin
+    isospin: Optional[Spin] = None
+    strangeness: int = 0
+    charmness: int = 0
+    bottomness: int = 0
+    topness: int = 0
+    baryon_number: int = 0
+    electron_lepton_number: int = 0
+    muon_lepton_number: int = 0
+    tau_lepton_number: int = 0
+    parity: Optional[Parity] = None
+    c_parity: Optional[Parity] = None
+    g_parity: Optional[Parity] = None
+
+
+class ComplexEnergyState(NamedTuple):
+    """Pole in the complex energy plane, with quantum numbers."""
+
+    energy: complex
+    state: QuantumState
+
+
 class Particle(NamedTuple):
     """Immutable container of data defining a physical particle.
 
@@ -143,33 +173,3 @@ class ParticleCollection(abc.Mapping):
 
     def values(self) -> ValuesView[Particle]:
         return self.__particles.values()
-
-
-class QuantumState(NamedTuple):
-    """Collection of properties defining a quantum mechanical state.
-
-    Related to `.Particle`, but can contain more specific quantum state
-    information, such as `.Spin` projection.
-    """
-
-    charge: int
-    spin: Spin
-    isospin: Optional[Spin] = None
-    strangeness: int = 0
-    charmness: int = 0
-    bottomness: int = 0
-    topness: int = 0
-    baryon_number: int = 0
-    electron_lepton_number: int = 0
-    muon_lepton_number: int = 0
-    tau_lepton_number: int = 0
-    parity: Optional[Parity] = None
-    c_parity: Optional[Parity] = None
-    g_parity: Optional[Parity] = None
-
-
-class ComplexEnergyState(NamedTuple):
-    """Pole in the complex energy plane, with quantum numbers."""
-
-    energy: complex
-    state: QuantumState
