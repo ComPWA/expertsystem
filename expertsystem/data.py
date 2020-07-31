@@ -108,37 +108,83 @@ class QuantumState(NamedTuple):
     g_parity: Optional[Parity] = None
 
 
-class ComplexEnergyState(NamedTuple):
+class ComplexEnergyState:
     """Pole in the complex energy plane, with quantum numbers."""
 
-    energy: complex
-    state: QuantumState
+    def __init__(self, energy: complex, state: QuantumState):
+        self.__energy = complex(energy)
+        self.state: QuantumState = state
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ComplexEnergyState):
+            return self == other
+        if isinstance(other, QuantumState):
+            return self.state == other
+        raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return str(self.__energy)
+
+    @property
+    def complex_energy(self) -> complex:
+        return self.__energy
+
+    @property
+    def mass(self) -> float:
+        return self.__energy.real
+
+    @property
+    def width(self) -> float:
+        return self.__energy.imag
 
 
-class Particle(NamedTuple):
+class Particle(ComplexEnergyState):
     """Immutable container of data defining a physical particle.
 
     Can **only** contain info that the `PDG <http://pdg.lbl.gov/>`_ would list.
     """
 
-    name: str
-    pid: int
-    charge: int
-    spin: Spin
-    mass: float
-    strangeness: int = 0
-    charmness: int = 0
-    bottomness: int = 0
-    topness: int = 0
-    baryon_number: int = 0
-    electron_number: int = 0
-    muon_number: int = 0
-    tau_number: int = 0
-    width: Optional[float] = None
-    isospin: Optional[Spin] = None
-    parity: Optional[Parity] = None
-    c_parity: Optional[Parity] = None
-    g_parity: Optional[Parity] = None
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        name: str,
+        pid: int,
+        mass: float,
+        state: QuantumState,
+        width: float = 0.0,
+    ):
+        self.__name = str(name)
+        self.__pid = int(pid)
+        energy = complex(float(mass), float(width))
+        super().__init__(energy, state)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Particle):
+            return (
+                self.name == other.name
+                and self.pid == other.pid
+                and self.complex_energy == other.complex_energy
+                and self.state == other.state
+            )
+        if isinstance(other, ComplexEnergyState):
+            return super() == other
+        raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return (
+            f"<class {self.__class__.__name__}:"
+            + f" {self.name}, {self.pid},"
+            + f" mass={self.mass},"
+            + f" width={self.width},"
+            + f" state={self.state}"
+        )
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def pid(self) -> int:
+        return self.__pid
 
 
 class ParticleCollection(abc.Mapping):

@@ -9,6 +9,7 @@ from expertsystem.data import (
     Parity,
     Particle,
     ParticleCollection,
+    QuantumState,
     Spin,
 )
 
@@ -26,28 +27,27 @@ def build_particle_collection(definition: dict) -> ParticleCollection:
 
 def build_particle(name: str, definition: dict) -> Particle:
     qn_def = definition["QuantumNumbers"]
-    width: Optional[float] = definition.get("Width", None)
-    if width is not None:
-        width = float(width)
     return Particle(
         name=name,
         pid=int(definition["PID"]),
         mass=float(definition["Mass"]),
-        width=width,
-        charge=int(qn_def["Charge"]),
-        spin=Spin(qn_def["Spin"]),
-        strangeness=int(qn_def.get("Strangeness", 0)),
-        charmness=int(qn_def.get("Charmness", 0)),
-        bottomness=int(qn_def.get("Bottomness", 0)),
-        topness=int(qn_def.get("Topness", 0)),
-        baryon_number=int(qn_def.get("BaryonNumber", 0)),
-        electron_number=int(qn_def.get("ElectronLN", 0)),
-        muon_number=int(qn_def.get("MuonLN", 0)),
-        tau_number=int(qn_def.get("TauLN", 0)),
-        isospin=_yaml_to_isospin(qn_def.get("IsoSpin", None)),
-        parity=_yaml_to_parity(qn_def.get("Parity", None)),
-        c_parity=_yaml_to_parity(qn_def.get("CParity", None)),
-        g_parity=_yaml_to_parity(qn_def.get("GParity", None)),
+        width=float(definition.get("Width", 0.0)),
+        state=QuantumState(
+            charge=int(qn_def["Charge"]),
+            spin=Spin(qn_def["Spin"]),
+            strangeness=int(qn_def.get("Strangeness", 0)),
+            charmness=int(qn_def.get("Charmness", 0)),
+            bottomness=int(qn_def.get("Bottomness", 0)),
+            topness=int(qn_def.get("Topness", 0)),
+            baryon_number=int(qn_def.get("BaryonNumber", 0)),
+            electron_lepton_number=int(qn_def.get("ElectronLN", 0)),
+            muon_lepton_number=int(qn_def.get("MuonLN", 0)),
+            tau_lepton_number=int(qn_def.get("TauLN", 0)),
+            isospin=_yaml_to_isospin(qn_def.get("IsoSpin", None)),
+            parity=_yaml_to_parity(qn_def.get("Parity", None)),
+            c_parity=_yaml_to_parity(qn_def.get("CParity", None)),
+            g_parity=_yaml_to_parity(qn_def.get("GParity", None)),
+        ),
     )
 
 

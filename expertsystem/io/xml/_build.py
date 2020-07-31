@@ -15,6 +15,7 @@ from expertsystem.data import (
     Parity,
     Particle,
     ParticleCollection,
+    QuantumState,
     Spin,
 )
 
@@ -51,20 +52,22 @@ def build_particle(definition: dict) -> Particle:
         pid=int(definition["Pid"]),
         mass=float(definition["Parameter"]["Value"]),
         width=_xml_to_width(definition),
-        charge=int(qn_defs["Charge"]),
-        spin=Spin(qn_defs["Spin"]),
-        strangeness=int(qn_defs.get("Strangeness", 0)),
-        charmness=int(qn_defs.get("Charm", 0)),
-        bottomness=int(qn_defs.get("Bottomness", 0)),
-        topness=int(qn_defs.get("Topness", 0)),
-        baryon_number=int(qn_defs.get("BaryonNumber", 0)),
-        electron_number=int(qn_defs.get("ElectronLN", 0)),
-        muon_number=int(qn_defs.get("MuonLN", 0)),
-        tau_number=int(qn_defs.get("TauLN", 0)),
-        isospin=qn_defs.get("IsoSpin", None),
-        parity=qn_defs.get("Parity", None),
-        c_parity=qn_defs.get("CParity", None),
-        g_parity=qn_defs.get("GParity", None),
+        state=QuantumState(
+            charge=int(qn_defs["Charge"]),
+            spin=Spin(qn_defs["Spin"]),
+            isospin=qn_defs.get("IsoSpin", None),
+            strangeness=int(qn_defs.get("Strangeness", 0)),
+            charmness=int(qn_defs.get("Charm", 0)),
+            bottomness=int(qn_defs.get("Bottomness", 0)),
+            topness=int(qn_defs.get("Topness", 0)),
+            baryon_number=int(qn_defs.get("BaryonNumber", 0)),
+            electron_lepton_number=int(qn_defs.get("ElectronLN", 0)),
+            muon_lepton_number=int(qn_defs.get("MuonLN", 0)),
+            tau_lepton_number=int(qn_defs.get("TauLN", 0)),
+            parity=qn_defs.get("Parity", None),
+            c_parity=qn_defs.get("CParity", None),
+            g_parity=qn_defs.get("GParity", None),
+        ),
     )
 
 
@@ -74,7 +77,7 @@ def build_spin(definition: dict) -> Spin:
     return Spin(magnitude, projection)
 
 
-def _xml_to_width(definition: dict) -> Optional[float]:
+def _xml_to_width(definition: dict) -> float:
     definition = definition.get("DecayInfo", {})
     definition = definition.get("Parameter", None)
     if isinstance(definition, list):
@@ -83,7 +86,7 @@ def _xml_to_width(definition: dict) -> Optional[float]:
                 definition = item
                 break
     if definition is None or not isinstance(definition, dict):
-        return None
+        return 0.0
     return float(definition["Value"])
 
 

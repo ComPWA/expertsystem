@@ -3,6 +3,7 @@ import pytest
 from expertsystem.data import (
     Parity,
     Particle,
+    QuantumState,
     Spin,
 )
 
@@ -28,8 +29,11 @@ def test_spin():
 
 
 def test_particle():
-    particle = Particle("J/psi", 443, charge=0, spin=1, mass=3.0969)
+    particle = Particle(
+        "J/psi", 443, mass=3.0969, state=QuantumState(charge=0, spin=1)
+    )
     assert particle.mass == 3.0969
-    assert particle.bottomness == 0
+    assert particle.width == 0.0
+    assert particle.state.bottomness == 0
     with pytest.raises(AttributeError):
-        particle.baryon_number = -1
+        particle.state.baryon_number = -1
