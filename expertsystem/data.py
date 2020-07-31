@@ -166,8 +166,7 @@ class QuantumState(NamedTuple):
 
 
 class ComplexEnergyState(NamedTuple):
-    """Pole in the complex energy plane with quantum numbers."""
+    """Pole in the complex energy plane, with quantum numbers."""
 
-    energy_real: float
-    energy_imaginary: float
+    energy: complex
     state: QuantumState
