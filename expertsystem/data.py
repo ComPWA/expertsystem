@@ -146,9 +146,9 @@ class QuantumState(NamedTuple):
     bottomness: int = 0
     topness: int = 0
     baryon_number: int = 0
-    electron_number: int = 0
-    muon_number: int = 0
-    tau_number: int = 0
+    electron_lepton_number: int = 0
+    muon_lepton_number: int = 0
+    tau_lepton_number: int = 0
     parity: Optional[Parity] = None
     c_parity: Optional[Parity] = None
     g_parity: Optional[Parity] = None
