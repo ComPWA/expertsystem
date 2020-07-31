@@ -74,10 +74,12 @@ def _to_quantum_number_dict(
 def _from_spin(instance: Spin) -> Union[Dict[str, Union[float, int]], int]:
     if instance.magnitude == 0:
         return 0
-    return {
+    output = {
         "Value": _attempt_to_int(instance.magnitude),
-        "Projection": _attempt_to_int(instance.projection),
     }
+    if instance.projection is not None:
+        output["Projection"] = _attempt_to_int(instance.projection)
+    return output
 
 
 def _attempt_to_int(value: float) -> Union[float, int]:
