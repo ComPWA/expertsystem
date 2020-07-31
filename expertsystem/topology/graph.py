@@ -3,6 +3,47 @@
 from collections import OrderedDict
 
 
+class Edge:
+    """Struct-like definition of an edge."""
+
+    def __init__(self):
+        self.ending_node_id = None
+        self.originating_node_id = None
+
+    def __str__(self):
+        return str((self.ending_node_id, self.originating_node_id))
+
+    def __repr__(self):
+        return str((self.ending_node_id, self.originating_node_id))
+
+    def __eq__(self, other):
+        if isinstance(other, Edge):
+            return (
+                self.ending_node_id == other.ending_node_id
+                and self.originating_node_id == other.originating_node_id
+            )
+        return NotImplemented
+
+
+class InteractionNode:  # pylint: disable=too-few-public-methods
+    """Struct-like definition of an interaction node."""
+
+    def __init__(
+        self, type_name, number_of_ingoing_edges, number_of_outgoing_edges
+    ):
+        if not isinstance(number_of_ingoing_edges, int):
+            raise TypeError("NumberOfIngoingEdges must be an integer")
+        if not isinstance(number_of_outgoing_edges, int):
+            raise TypeError("NumberOfOutgoingEdges must be an integer")
+        if number_of_ingoing_edges < 1:
+            raise ValueError("NumberOfIngoingEdges has to be larger than 0")
+        if number_of_outgoing_edges < 1:
+            raise ValueError("NumberOfOutgoingEdges has to be larger than 0")
+        self.type_name = type_name
+        self.number_of_ingoing_edges = number_of_ingoing_edges
+        self.number_of_outgoing_edges = number_of_outgoing_edges
+
+
 class StateTransitionGraph:
     """Graph class that contains edges and nodes.
 
@@ -184,47 +225,6 @@ class StateTransitionGraph:
         So that no dangling parts which are not connected.
         """
         return True
-
-
-class InteractionNode:  # pylint: disable=too-few-public-methods
-    """Struct-like definition of an interaction node."""
-
-    def __init__(
-        self, type_name, number_of_ingoing_edges, number_of_outgoing_edges
-    ):
-        if not isinstance(number_of_ingoing_edges, int):
-            raise TypeError("NumberOfIngoingEdges must be an integer")
-        if not isinstance(number_of_outgoing_edges, int):
-            raise TypeError("NumberOfOutgoingEdges must be an integer")
-        if number_of_ingoing_edges < 1:
-            raise ValueError("NumberOfIngoingEdges has to be larger than 0")
-        if number_of_outgoing_edges < 1:
-            raise ValueError("NumberOfOutgoingEdges has to be larger than 0")
-        self.type_name = type_name
-        self.number_of_ingoing_edges = number_of_ingoing_edges
-        self.number_of_outgoing_edges = number_of_outgoing_edges
-
-
-class Edge:
-    """Struct-like definition of an edge."""
-
-    def __init__(self):
-        self.ending_node_id = None
-        self.originating_node_id = None
-
-    def __str__(self):
-        return str((self.ending_node_id, self.originating_node_id))
-
-    def __repr__(self):
-        return str((self.ending_node_id, self.originating_node_id))
-
-    def __eq__(self, other):
-        if isinstance(other, Edge):
-            return (
-                self.ending_node_id == other.ending_node_id
-                and self.originating_node_id == other.originating_node_id
-            )
-        return NotImplemented
 
 
 def are_graphs_isomorphic(graph1, graph2):  # pylint: disable=unused-argument
