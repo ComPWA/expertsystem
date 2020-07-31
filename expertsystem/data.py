@@ -74,7 +74,7 @@ class Spin:
 class Particle(NamedTuple):
     """Immutable container of data defining a physical particle.
 
-    Can *only** contain info that the `PDG <http://pdg.lbl.gov/>`_ would list.
+    Can **only** contain info that the `PDG <http://pdg.lbl.gov/>`_ would list.
     """
 
     name: str
@@ -140,7 +140,7 @@ class QuantumState(NamedTuple):
 
     charge: int
     spin: Spin
-    mass: float
+    isospin: Optional[Spin] = None
     strangeness: int = 0
     charmness: int = 0
     bottomness: int = 0
@@ -149,8 +149,6 @@ class QuantumState(NamedTuple):
     electron_number: int = 0
     muon_number: int = 0
     tau_number: int = 0
-    width: Optional[float] = None
-    isospin: Optional[Spin] = None
     parity: Optional[Parity] = None
     c_parity: Optional[Parity] = None
     g_parity: Optional[Parity] = None
@@ -159,6 +157,6 @@ class QuantumState(NamedTuple):
 class ComplexEnergyState(NamedTuple):
     """Pole in the complex energy plane with quantum numbers."""
 
-    position: float
-    width: float
+    energy_real: float
+    energy_imaginary: float
     state: QuantumState
