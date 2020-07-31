@@ -117,7 +117,10 @@ class ComplexEnergyState:
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, ComplexEnergyState):
-            return self == other
+            return (
+                self.complex_energy == other.complex_energy
+                and self.state == other.state
+            )
         raise NotImplementedError
 
     def __repr__(self) -> str:
@@ -163,8 +166,6 @@ class Particle(ComplexEnergyState):
                 and self.complex_energy == other.complex_energy
                 and self.state == other.state
             )
-        if isinstance(other, ComplexEnergyState):
-            return super() == other
         raise NotImplementedError
 
     def __repr__(self) -> str:
