@@ -10,9 +10,6 @@ class Edge:
         self.ending_node_id = None
         self.originating_node_id = None
 
-    def __str__(self):
-        return str((self.ending_node_id, self.originating_node_id))
-
     def __repr__(self):
         return str((self.ending_node_id, self.originating_node_id))
 
@@ -77,20 +74,6 @@ class StateTransitionGraph:
             return_string = return_string + str(key) + ": " + str(value) + "\n"
         return_string = return_string + "}\n"
         return_string = return_string + "edge props: {\n"
-        for key, value in self.edge_props.items():
-            return_string = return_string + str(key) + ": " + str(value) + "\n"
-        return_string = return_string + "}\n"
-        return return_string
-
-    def __str__(self):
-        return_string = (
-            "\nnodes: " + str(self.nodes) + "\nedges: " + str(self.edges)
-        )
-        return_string = return_string + "\nnode props: {\n"
-        for key, value in self.node_props.items():
-            return_string = return_string + str(key) + ": " + str(value) + "\n"
-        return_string = return_string + "}\n"
-        return_string = return_string + "\nedge props: {\n"
         for key, value in self.edge_props.items():
             return_string = return_string + str(key) + ": " + str(value) + "\n"
         return_string = return_string + "}\n"
