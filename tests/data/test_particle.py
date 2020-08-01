@@ -14,8 +14,6 @@ def test_parity():
     parity = Parity(+1)
     assert parity == +1
     assert int(parity) == +1
-    with pytest.raises(AttributeError):
-        parity.value = -1
 
 
 def test_spin():
@@ -35,5 +33,3 @@ def test_particle():
     assert particle.mass == 3.0969
     assert particle.width == 0.0
     assert particle.state.bottomness == 0
-    with pytest.raises(AttributeError):
-        particle.state.baryon_number = -1
