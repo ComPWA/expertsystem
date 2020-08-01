@@ -28,7 +28,7 @@ def test_spin():
 
 def test_particle():
     particle = Particle(
-        "J/psi", 443, mass=3.0969, state=QuantumState(charge=0, spin=1)
+        "J/psi", 443, mass=3.0969, state=QuantumState(charge=0, spin=Spin(1))
     )
     assert particle.mass == 3.0969
     assert particle.width == 0.0

@@ -75,7 +75,7 @@ def test_yaml_to_xml():
     xml_particle_collection = io.load_particle_collection(xml_file)
     assert xml_particle_collection == yaml_particle_collection
     dummy_particle = Particle(
-        name="0", pid=0, mass=0, state=QuantumState(charge=0, spin=0)
+        name="0", pid=0, mass=0, state=QuantumState(charge=0, spin=Spin(0))
     )
     yaml_particle_collection.add(dummy_particle)
     assert xml_particle_collection != yaml_particle_collection
