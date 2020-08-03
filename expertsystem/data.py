@@ -41,7 +41,7 @@ class Parity:
 
 
 class Spin(abc.Hashable):
-    """Safe, immutable data container for (iso)spin."""
+    """Safe, immutable data container for spin **with projection**."""
 
     def __init__(self, magnitude: float, projection: float) -> None:
         magnitude = float(magnitude)
@@ -83,15 +83,14 @@ class Spin(abc.Hashable):
 
 
 @dataclass(frozen=True)
-class QuantumState:  # pylint: disable=too-many-instance-attributes
-    """Collection of properties defining a quantum mechanical state.
+class _QuantumStateBase:  # pylint: disable=too-many-instance-attributes
+    """Base class, used by `.Particle` and `.QuantumState`.
 
-    Related to `.Particle`, but can contain more specific quantum state
-    information, such as `.Spin` projection.
+    This is to make spin projection required in `.QuantumState` and unavailable
+    in `.Particle` (spin is just a `float`).
     """
 
-    charge: int
-    spin: Spin
+    charge: int = 0
     isospin: Optional[Spin] = None
     strangeness: int = 0
     charmness: int = 0
@@ -106,82 +105,64 @@ class QuantumState:  # pylint: disable=too-many-instance-attributes
     g_parity: Optional[Parity] = None
 
 
-class ComplexEnergyState:
+@dataclass(frozen=True)
+class QuantumState(_QuantumStateBase):
+    """Base class, used by `.Particle` and `.QuantumState`.
+
+    This is to make spin projection required in the one and unavailable in the
+    other.
+    """
+
+    spin: Spin = Spin(0.0, 0.0)
+
+
+@dataclass(frozen=True)
+class _ComplexEnergyStateBase:
     """Pole in the complex energy plane, with quantum numbers."""
 
-    def __init__(self, energy: complex, state: QuantumState):
-        self.__energy = complex(energy)
-        self.state: QuantumState = state
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, ComplexEnergyState):
-            return (
-                self.complex_energy == other.complex_energy
-                and self.state == other.state
-            )
-        raise NotImplementedError
-
-    def __repr__(self) -> str:
-        return str(self.__energy)
+    energy: complex = complex(0.0, 0.0)
 
     @property
     def complex_energy(self) -> complex:
-        return self.__energy
+        return self.energy
 
     @property
     def mass(self) -> float:
-        return self.__energy.real
+        return self.energy.real
 
     @property
     def width(self) -> float:
-        return self.__energy.imag
+        return self.energy.imag
 
 
-class Particle(ComplexEnergyState):
+@dataclass(frozen=True)
+class ComplexEnergyState(QuantumState, _ComplexEnergyStateBase):
+    """Pole in the complex energy plane, with quantum numbers."""
+
+    energy: complex = complex(0.0, 0.0)
+
+    @property
+    def complex_energy(self) -> complex:
+        return self.energy
+
+    @property
+    def mass(self) -> float:
+        return self.energy.real
+
+    @property
+    def width(self) -> float:
+        return self.energy.imag
+
+
+@dataclass(frozen=True)
+class Particle(_QuantumStateBase, _ComplexEnergyStateBase):
     """Immutable container of data defining a physical particle.
 
     Can **only** contain info that the `PDG <http://pdg.lbl.gov/>`_ would list.
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
-        self,
-        name: str,
-        pid: int,
-        mass: float,
-        state: QuantumState,
-        width: float = 0.0,
-    ):
-        self.__name = str(name)
-        self.__pid = int(pid)
-        energy = complex(float(mass), float(width))
-        super().__init__(energy, state)
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, Particle):
-            return (
-                self.name == other.name
-                and self.pid == other.pid
-                and self.complex_energy == other.complex_energy
-                and self.state == other.state
-            )
-        raise NotImplementedError
-
-    def __repr__(self) -> str:
-        return (
-            f"<class {self.__class__.__name__}:"
-            + f" {self.name}, {self.pid},"
-            + f" mass={self.mass},"
-            + f" width={self.width},"
-            + f" state={self.state}"
-        )
-
-    @property
-    def name(self) -> str:
-        return self.__name
-
-    @property
-    def pid(self) -> int:
-        return self.__pid
+    name: str = ""
+    pid: int = 0
 
 
 class ParticleCollection(abc.Mapping):
