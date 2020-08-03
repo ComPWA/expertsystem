@@ -3,9 +3,30 @@ import pytest
 from expertsystem.data import (
     Parity,
     Particle,
+    ParticleCollection,
     ParticleQuantumState,
     Spin,
 )
+
+
+@pytest.mark.parametrize(
+    "instance",
+    [
+        ParticleCollection(),
+        Spin(2.5, -0.5),
+        Parity(1),
+        Particle(
+            name="J/psi",
+            pid=443,
+            mass=3.0969,
+            width=9.29e-05,
+            state=ParticleQuantumState(spin=1, charge=0),
+        ),
+    ],
+)
+def test_repr(instance):
+    copy_from_repr = eval(repr(instance))  # pylint: disable=eval-used
+    assert copy_from_repr == instance
 
 
 def test_parity():
