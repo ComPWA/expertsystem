@@ -1,5 +1,20 @@
 """A collection of data containers."""
 
+__all__ = [  # fix order in API
+    "ParticleCollection",
+    "Particle",
+    "ComplexEnergyState",
+    "QuantumState",
+    "ParticleQuantumState",
+    "Parity",
+    "Spin",
+    "HasComplexEnergy",
+    "HasFloatSpin",
+    "HasQuantumNumbers",
+    "HasSpin",
+]
+
+
 from collections import abc
 from dataclasses import dataclass
 from typing import (
@@ -41,21 +56,18 @@ class Parity:
 
 
 class Spin(abc.Hashable):
-    """Safe, immutable data container for (iso)spin."""
+    """Safe, immutable data container for spin **with projection**."""
 
-    def __init__(
-        self, magnitude: float, projection: Optional[float] = None
-    ) -> None:
+    def __init__(self, magnitude: float, projection: float) -> None:
         magnitude = float(magnitude)
-        if projection is not None:
-            projection = float(projection)
-            if abs(projection) > magnitude:
-                raise ValueError(
-                    "Spin projection cannot be larger than its magnitude:\n"
-                    f"  {projection} > {magnitude}"
-                )
-            if projection == -0.0:
-                projection = 0.0
+        projection = float(projection)
+        if abs(projection) > magnitude:
+            raise ValueError(
+                "Spin projection cannot be larger than its magnitude:\n"
+                f"  {projection} > {magnitude}"
+            )
+        if projection == -0.0:
+            projection = 0.0
         self.__magnitude = magnitude
         self.__projection = projection
 
@@ -78,7 +90,7 @@ class Spin(abc.Hashable):
         return self.__magnitude
 
     @property
-    def projection(self) -> Optional[float]:
+    def projection(self) -> float:
         return self.__projection
 
     def __hash__(self) -> int:
@@ -86,15 +98,14 @@ class Spin(abc.Hashable):
 
 
 @dataclass(frozen=True)
-class QuantumState:  # pylint: disable=too-many-instance-attributes
-    """Collection of properties defining a quantum mechanical state.
+class HasQuantumNumbers:  # pylint: disable=too-many-instance-attributes
+    """Set of quantum numbers **excluding spin**.
 
-    Related to `.Particle`, but can contain more specific quantum state
-    information, such as `.Spin` projection.
+    This is to make spin projection required in `.QuantumState` (`.HasSpin`)
+    and unavailable in `.Particle` (`.HasFloatSpin`).
     """
 
-    charge: int
-    spin: Spin
+    charge: int = 0
     isospin: Optional[Spin] = None
     strangeness: int = 0
     charmness: int = 0
@@ -109,23 +120,35 @@ class QuantumState:  # pylint: disable=too-many-instance-attributes
     g_parity: Optional[Parity] = None
 
 
-class ComplexEnergyState:
-    """Pole in the complex energy plane, with quantum numbers."""
+@dataclass(frozen=True)
+class HasSpin:
+    """Required to disallow default arguments for `.QuantumState`."""
 
-    def __init__(self, energy: complex, state: QuantumState):
+    spin: Spin
+
+
+@dataclass(frozen=True)
+class HasFloatSpin:
+    """Required to disallow default arguments for `.ParticleQuantumState`."""
+
+    spin: float
+
+
+@dataclass(frozen=True)
+class QuantumState(HasQuantumNumbers, HasSpin):
+    """Contains all quantum numbers unambiguously defining a quantum state."""
+
+
+@dataclass(frozen=True)
+class ParticleQuantumState(HasQuantumNumbers, HasFloatSpin):
+    """Similar to `.QuantumState` but only carrying spin magnitude."""
+
+
+class HasComplexEnergy:
+    """Required to disallow default arguments for `.ComplexEnergyState`."""
+
+    def __init__(self, energy: complex):
         self.__energy = complex(energy)
-        self.state: QuantumState = state
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, ComplexEnergyState):
-            return (
-                self.complex_energy == other.complex_energy
-                and self.state == other.state
-            )
-        raise NotImplementedError
-
-    def __repr__(self) -> str:
-        return str(self.__energy)
 
     @property
     def complex_energy(self) -> complex:
@@ -140,7 +163,15 @@ class ComplexEnergyState:
         return self.__energy.imag
 
 
-class Particle(ComplexEnergyState):
+class ComplexEnergyState(HasComplexEnergy):
+    """Pole in the complex energy plane, with quantum numbers."""
+
+    def __init__(self, energy: complex, state: QuantumState):
+        super().__init__(energy)
+        self.state: QuantumState = state
+
+
+class Particle(HasComplexEnergy):
     """Immutable container of data defining a physical particle.
 
     Can **only** contain info that the `PDG <http://pdg.lbl.gov/>`_ would list.
@@ -150,14 +181,22 @@ class Particle(ComplexEnergyState):
         self,
         name: str,
         pid: int,
+        state: ParticleQuantumState,
         mass: float,
-        state: QuantumState,
         width: float = 0.0,
     ):
-        self.__name = str(name)
-        self.__pid = int(pid)
-        energy = complex(float(mass), float(width))
-        super().__init__(energy, state)
+        super().__init__(complex(mass, width))
+        self.__name: str = name
+        self.__pid: int = pid
+        self.state: ParticleQuantumState = state
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def pid(self) -> int:
+        return self.__pid
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Particle):
@@ -170,21 +209,7 @@ class Particle(ComplexEnergyState):
         raise NotImplementedError
 
     def __repr__(self) -> str:
-        return (
-            f"<class {self.__class__.__name__}:"
-            + f" {self.name}, {self.pid},"
-            + f" mass={self.mass},"
-            + f" width={self.width},"
-            + f" state={self.state}"
-        )
-
-    @property
-    def name(self) -> str:
-        return self.__name
-
-    @property
-    def pid(self) -> int:
-        return self.__pid
+        return f"{self.__class__.__name__}{self.name, self.pid, self.state, self.mass, self.width}"
 
 
 class ParticleCollection(abc.Mapping):

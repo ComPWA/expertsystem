@@ -62,7 +62,7 @@ def _to_quantum_number_list(particle: Particle) -> List[Dict[str, Any]]:
     conversion_map: Dict[
         str, Union[Optional[Parity], Optional[Spin], float, int]
     ] = {
-        "Spin": particle.state.spin.magnitude,
+        "Spin": particle.state.spin,
         "Charge": particle.state.charge,
         "Parity": particle.state.parity,
         "CParity": particle.state.c_parity,
