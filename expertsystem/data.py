@@ -43,19 +43,16 @@ class Parity:
 class Spin(abc.Hashable):
     """Safe, immutable data container for (iso)spin."""
 
-    def __init__(
-        self, magnitude: float, projection: Optional[float] = None
-    ) -> None:
+    def __init__(self, magnitude: float, projection: float) -> None:
         magnitude = float(magnitude)
-        if projection is not None:
-            projection = float(projection)
-            if abs(projection) > magnitude:
-                raise ValueError(
-                    "Spin projection cannot be larger than its magnitude:\n"
-                    f"  {projection} > {magnitude}"
-                )
-            if projection == -0.0:
-                projection = 0.0
+        projection = float(projection)
+        if abs(projection) > magnitude:
+            raise ValueError(
+                "Spin projection cannot be larger than its magnitude:\n"
+                f"  {projection} > {magnitude}"
+            )
+        if projection == -0.0:
+            projection = 0.0
         self.__magnitude = magnitude
         self.__projection = projection
 
@@ -78,7 +75,7 @@ class Spin(abc.Hashable):
         return self.__magnitude
 
     @property
-    def projection(self) -> Optional[float]:
+    def projection(self) -> float:
         return self.__projection
 
     def __hash__(self) -> int:
