@@ -1,6 +1,7 @@
 """A collection of data containers."""
 
 from collections import abc
+from dataclasses import dataclass
 from typing import (
     Dict,
     ItemsView,
@@ -10,7 +11,6 @@ from typing import (
     Union,
     ValuesView,
 )
-from typing import NamedTuple
 
 
 class Parity:
@@ -85,7 +85,8 @@ class Spin(abc.Hashable):
         return hash(repr(self))
 
 
-class QuantumState(NamedTuple):
+@dataclass(frozen=True)
+class QuantumState:  # pylint: disable=too-many-instance-attributes
     """Collection of properties defining a quantum mechanical state.
 
     Related to `.Particle`, but can contain more specific quantum state
