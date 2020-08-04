@@ -57,7 +57,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         interaction_type_settings=None,
         formalism_type="helicity",
         topology_building="isobar",
-        number_of_threads=1,
+        number_of_threads=4,
         propagation_mode="fast",
     ):
         if allowed_intermediate_particles is None:

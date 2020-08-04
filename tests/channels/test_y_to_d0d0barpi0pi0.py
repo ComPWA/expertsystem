@@ -53,7 +53,7 @@ def test_script_simple():
 
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
     # stm.add_final_state_grouping([['D0', 'pi0'], ['D0bar', 'pi0']])
-    stm.number_of_threads = 1
+    stm.number_of_threads = 2
 
     graph_node_setting_pairs = stm.prepare_graphs()
 
@@ -87,7 +87,7 @@ def test_script_simple():
     )
 
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
-    stm.number_of_threads = 1
+    stm.number_of_threads = 2
 
     graph_node_setting_pairs = stm.prepare_graphs()
     solutions, _ = stm.find_solutions(graph_node_setting_pairs)
@@ -131,7 +131,7 @@ def test_script_full():
 
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
     stm.add_final_state_grouping([["D0", "pi0"], ["D0bar", "pi0"]])
-    stm.number_of_threads = 1
+    stm.number_of_threads = 2
 
     graph_node_setting_pairs = stm.prepare_graphs()
 
@@ -166,7 +166,7 @@ def test_script_full():
 
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
     stm.add_final_state_grouping([["D0", "pi0"], ["D0bar", "pi0"]])
-    stm.number_of_threads = 1
+    stm.number_of_threads = 2
 
     graph_node_setting_pairs = stm.prepare_graphs()
     solutions, _ = stm.find_solutions(graph_node_setting_pairs)
