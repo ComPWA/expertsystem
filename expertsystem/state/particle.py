@@ -259,11 +259,6 @@ def load_particles(filename: str) -> None:
     DATABASE.merge(particle_collection)
 
 
-def write_particle_database(filename: str) -> None:
-    """Write particle database instance to human readable format."""
-    io.write(DATABASE, filename)
-
-
 def get_particle_property(particle_properties, qn_name, converter=None):
     # pylint: disable=too-many-branches,too-many-locals,too-many-nested-blocks
     qns_label = Labels.QuantumNumber.name
