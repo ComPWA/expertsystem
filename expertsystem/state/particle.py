@@ -22,7 +22,6 @@ from numpy import arange
 
 from expertsystem import io
 from expertsystem.data import (
-    Particle,
     ParticleCollection,
     Spin,
 )
@@ -263,18 +262,6 @@ def load_particles(filename: str) -> None:
 def write_particle_database(filename: str) -> None:
     """Write particle database instance to human readable format."""
     io.write(DATABASE, filename)
-
-
-def get_particle_copy(search_term: Union[str, int]) -> Particle:
-    """Get a `~copy.deepcopy` of a particle or particles from the database.
-
-    This is useful when you want to manipulate that copy and add it as a new
-    entry to the particle database.
-
-    Args:
-        search_term: see `.ParticleCollection.find`.
-    """
-    return deepcopy(DATABASE.find(search_term))
 
 
 def get_particle_property(particle_properties, qn_name, converter=None):
