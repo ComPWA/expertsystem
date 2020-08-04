@@ -29,7 +29,7 @@ def test_script():
         final_state=[("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
         allowed_intermediate_particles=["f0", "f2", "omega"],
     )
-    stm.number_of_threads = 2
+    stm.number_of_threads = 1
     stm.set_allowed_interaction_types(
         [InteractionTypes.Strong, InteractionTypes.EM]
     )

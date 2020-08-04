@@ -66,7 +66,6 @@ def test_parity_prefactor(
         test_input.final_state,
         allowed_intermediate_particles=test_input.intermediate_states,
     )
-    # stm.number_of_threads = 1
     stm.add_final_state_grouping(test_input.final_state_grouping)
     stm.set_allowed_interaction_types([InteractionTypes.EM])
     graph_interaction_settings_groups = stm.prepare_graphs()
