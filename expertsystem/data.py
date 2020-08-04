@@ -5,7 +5,6 @@ __all__ = [  # fix order in API
     "Particle",
     "ComplexEnergyState",
     "QuantumState",
-    "ParticleQuantumState",
     "Parity",
     "Spin",
     "ComplexEnergy",
@@ -102,7 +101,7 @@ _T = TypeVar("_T", float, Spin)
 
 
 @dataclass(frozen=True)
-class QuantumStateBase(
+class QuantumState(
     Generic[_T]
 ):  # pylint: disable=too-many-instance-attributes
     """Set of quantum numbers with a **generic type spin**.
@@ -125,14 +124,6 @@ class QuantumStateBase(
     parity: Optional[Parity] = None
     c_parity: Optional[Parity] = None
     g_parity: Optional[Parity] = None
-
-
-class QuantumState(QuantumStateBase[Spin]):  # pylint: disable=R0903
-    """Contains all quantum numbers unambiguously defining a quantum state."""
-
-
-class ParticleQuantumState(QuantumStateBase[float]):  # pylint: disable=R0903
-    """Similar to `.QuantumState` but only carrying spin magnitude."""
 
 
 class ComplexEnergy:
@@ -168,9 +159,9 @@ class ComplexEnergy:
 class ComplexEnergyState(ComplexEnergy):
     """Pole in the complex energy plane, with quantum numbers."""
 
-    def __init__(self, energy: complex, state: QuantumState):
+    def __init__(self, energy: complex, state: QuantumState[Spin]):
         super().__init__(energy)
-        self.state: QuantumState = state
+        self.state: QuantumState[Spin] = state
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}{self.complex_energy, self.state}"
@@ -186,14 +177,14 @@ class Particle(ComplexEnergy):
         self,
         name: str,
         pid: int,
-        state: ParticleQuantumState,
+        state: QuantumState[float],
         mass: float,
         width: float = 0.0,
     ):
         super().__init__(complex(mass, width))
         self.__name: str = name
         self.__pid: int = pid
-        self.state: ParticleQuantumState = state
+        self.state: QuantumState[float] = state
 
     @property
     def name(self) -> str:
