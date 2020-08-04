@@ -247,7 +247,7 @@ def load_particles(filename: str) -> None:
     """Add entries to the particle database from a custom config file.
 
     By default, the expert system loads the particle database from the XML file
-    :file:`particle_list.xml` that comes with the `expertsystem`. Use
+    :file:`particle_list.yml` that comes with the `expertsystem`. Use
     this function to append or overwrite definitions in the particle database.
 
     .. note::
