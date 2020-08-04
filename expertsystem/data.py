@@ -246,3 +246,7 @@ class ParticleCollection(abc.Mapping):
 
     def values(self) -> ValuesView[Particle]:
         return self.__particles.values()
+
+    def merge(self, other: "ParticleCollection") -> None:
+        for particle in other.values():
+            self.add(particle)

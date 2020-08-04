@@ -13,6 +13,7 @@ from expertsystem.data import (
 )
 from expertsystem.state import particle
 
+
 EXPERTSYSTEM_PATH = dirname(realpath(expertsystem.__file__))
 _XML_FILE = f"{EXPERTSYSTEM_PATH}/particle_list.xml"
 _YAML_FILE = f"{EXPERTSYSTEM_PATH}/particle_list.yml"
@@ -90,17 +91,6 @@ class TestInternalParticleDict:
     ui.load_default_particle_list()
 
     @staticmethod
-    def test_particle_validation():
-        for item in particle.DATABASE.values():
-            io.xml.validation.particle(item)
-
-    @staticmethod
     def test_build_particle_from_internal_database():
-        definition = particle.DATABASE["J/psi"]
-        j_psi = io.xml.dict_to_particle(definition)
+        j_psi = particle.DATABASE["J/psi"]
         assert j_psi == J_PSI
-
-    @staticmethod
-    def test_dump_via_particle_collection():
-        particles = io.xml.dict_to_particle_collection(particle.DATABASE)
-        io.write(particles, "DATABASE_via_ParticleCollection.xml")
