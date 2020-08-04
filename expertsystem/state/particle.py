@@ -22,6 +22,7 @@ from numpy import arange
 
 from expertsystem import io
 from expertsystem.data import (
+    Particle,
     ParticleCollection,
     Spin,
 )
@@ -264,48 +265,16 @@ def write_particle_database(filename: str) -> None:
     io.write(DATABASE, filename)
 
 
-def find_particle(
-    search_term: Union[str, int]
-) -> Union[dict, Dict[str, dict]]:
-    """Search for a particle in the database, by PID or name.
-
-    Returns:
-        When searching by name (`str`), all matches will be returned in the
-        form of a `dict`, with the particle names as keys. For instance,
-        searching :code:`"f"` returns all particles that contain an :code:`"f"`
-        in their name. If there's only one search result, only the definition
-        of particle is returned.
-    """
-    search_results = {}
-    if isinstance(search_term, str):
-        search_results = {
-            particle.name: io.xml.object_to_dict(particle)
-            for particle in DATABASE.values()
-            if search_term in particle.name
-        }
-        if len(search_results) == 1:
-            return list(search_results.values())[0]  # return value only
-        return search_results
-    if isinstance(search_term, int):
-        for particle in DATABASE.values():
-            if particle.pid == search_term:
-                return io.xml.object_to_dict(particle)
-        raise LookupError(f"Could not find particle with PID {search_term}")
-    raise NotImplementedError(f"Cannot search for type {type(search_term)}")
-
-
-def get_particle_copy(
-    search_term: Union[str, int]
-) -> Union[dict, Dict[str, dict]]:
+def get_particle_copy(search_term: Union[str, int]) -> Particle:
     """Get a `~copy.deepcopy` of a particle or particles from the database.
 
     This is useful when you want to manipulate that copy and add it as a new
     entry to the particle database.
 
     Args:
-        search_term: see `.find_particle`.
+        search_term: see `.ParticleCollection.find`.
     """
-    return deepcopy(find_particle(search_term))
+    return deepcopy(DATABASE.find(search_term))
 
 
 def get_particle_property(particle_properties, qn_name, converter=None):
@@ -717,7 +686,8 @@ def initialize_allowed_particle_list(allowed_particle_list):
     else:
         for allowed_particle in allowed_particle_list:
             if isinstance(allowed_particle, (int, str)):
-                search_results = find_particle(allowed_particle)
+                subset = DATABASE.find_subset(allowed_particle)
+                search_results = io.xml.object_to_dict(subset)
                 if "Pid" in search_results:  # one particle only
                     mod_allowed_particle_list.append(search_results)
                 else:  # several particles found
