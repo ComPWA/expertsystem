@@ -8,10 +8,7 @@ __all__ = [  # fix order in API
     "ParticleQuantumState",
     "Parity",
     "Spin",
-    "HasComplexEnergy",
-    "HasFloatSpin",
-    "HasQuantumNumbers",
-    "HasSpin",
+    "ComplexEnergy",
 ]
 
 
@@ -19,10 +16,12 @@ from collections import abc
 from dataclasses import dataclass
 from typing import (
     Dict,
+    Generic,
     ItemsView,
     Iterator,
     KeysView,
     Optional,
+    TypeVar,
     Union,
     ValuesView,
 )
@@ -99,14 +98,20 @@ class Spin(abc.Hashable):
         return hash(repr(self))
 
 
-@dataclass(frozen=True)
-class HasQuantumNumbers:  # pylint: disable=too-many-instance-attributes
-    """Set of quantum numbers **excluding spin**.
+_T = TypeVar("_T", float, Spin)
 
-    This is to make spin projection required in `.QuantumState` (`.HasSpin`)
-    and unavailable in `.Particle` (`.HasFloatSpin`).
+
+@dataclass(frozen=True)
+class QuantumStateBase(
+    Generic[_T]
+):  # pylint: disable=too-many-instance-attributes
+    """Set of quantum numbers with a **generic type spin**.
+
+    This is to make spin projection required in `.QuantumState` and unavailable
+    in `.Particle`.
     """
 
+    spin: _T
     charge: int = 0
     isospin: Optional[Spin] = None
     strangeness: int = 0
@@ -122,32 +127,19 @@ class HasQuantumNumbers:  # pylint: disable=too-many-instance-attributes
     g_parity: Optional[Parity] = None
 
 
-@dataclass(frozen=True)
-class HasSpin:
-    """Required to disallow default arguments for `.QuantumState`."""
-
-    spin: Spin
-
-
-@dataclass(frozen=True)
-class HasFloatSpin:
-    """Required to disallow default arguments for `.ParticleQuantumState`."""
-
-    spin: float
-
-
-@dataclass(frozen=True)
-class QuantumState(HasQuantumNumbers, HasSpin):
+class QuantumState(QuantumStateBase[Spin]):  # pylint: disable=R0903
     """Contains all quantum numbers unambiguously defining a quantum state."""
 
 
-@dataclass(frozen=True)
-class ParticleQuantumState(HasQuantumNumbers, HasFloatSpin):
+class ParticleQuantumState(QuantumStateBase[float]):  # pylint: disable=R0903
     """Similar to `.QuantumState` but only carrying spin magnitude."""
 
 
-class HasComplexEnergy:
-    """Required to disallow default arguments for `.ComplexEnergyState`."""
+class ComplexEnergy:
+    """Defines a complex valued energy.
+
+    Resembles a position (pole) in the complex energy plane.
+    """
 
     def __init__(self, energy: complex):
         self.__energy = complex(energy)
@@ -164,16 +156,27 @@ class HasComplexEnergy:
     def width(self) -> float:
         return self.__energy.imag
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ComplexEnergy):
+            return self.complex_energy == other.complex_energy
+        raise NotImplementedError
 
-class ComplexEnergyState(HasComplexEnergy):
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}{self.complex_energy}"
+
+
+class ComplexEnergyState(ComplexEnergy):
     """Pole in the complex energy plane, with quantum numbers."""
 
     def __init__(self, energy: complex, state: QuantumState):
         super().__init__(energy)
         self.state: QuantumState = state
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}{self.complex_energy, self.state}"
 
-class Particle(HasComplexEnergy):
+
+class Particle(ComplexEnergy):
     """Immutable container of data defining a physical particle.
 
     Can **only** contain info that the `PDG <http://pdg.lbl.gov/>`_ would list.
@@ -205,7 +208,7 @@ class Particle(HasComplexEnergy):
             return (
                 self.name == other.name
                 and self.pid == other.pid
-                and self.complex_energy == other.complex_energy
+                and super().__eq__(other)
                 and self.state == other.state
             )
         raise NotImplementedError
