@@ -77,7 +77,7 @@ def test_yaml_to_xml():
     dummy_particle = Particle(
         name="0", pid=0, mass=0, state=ParticleQuantumState(charge=0, spin=0)
     )
-    yaml_particle_collection.add(dummy_particle)
+    yaml_particle_collection += dummy_particle
     assert xml_particle_collection != yaml_particle_collection
 
 

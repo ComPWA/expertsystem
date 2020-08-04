@@ -237,6 +237,17 @@ class ParticleCollection(abc.Mapping):
     def __len__(self) -> int:
         return len(self.__particles)
 
+    def __iadd__(
+        self, other: Union[Particle, "ParticleCollection"]
+    ) -> "ParticleCollection":
+        if isinstance(other, Particle):
+            self.add(other)
+        elif isinstance(other, ParticleCollection):
+            self.merge(other)
+        else:
+            raise NotImplementedError
+        return self
+
     def __repr__(self) -> str:
         return str(self.__particles)
 
