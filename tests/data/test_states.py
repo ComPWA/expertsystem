@@ -14,6 +14,7 @@ from expertsystem.data import (
     "instance",
     [
         QuantumState(spin=Spin(1, 1), charge=0),
+        ComplexEnergy(complex(3.0969, 9.29e-05)),
         ComplexEnergyState(
             complex(3.0969, 9.29e-05),
             state=QuantumState(spin=Spin(1, 1), charge=0),
