@@ -25,11 +25,11 @@ jobs:
           pip install .[doc]
           sudo apt-get -y install make pandoc
       - name: Check external links
-        working-directory: docs
+        working-directory: doc
         run: |
           make linkcheck
       - name: Build documentation and run notebooks
-        working-directory: docs
+        working-directory: doc
         env:
           NBSPHINX_EXECUTE: YES
         run: |
