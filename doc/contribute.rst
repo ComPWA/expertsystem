@@ -82,7 +82,7 @@ files in the repository with the command:
 
   pre-commit run -a
 
-This command is also run on Travis CI whenever you submit a pull request,
+This command is also run on GitHub actions whenever you submit a pull request,
 ensuring that all files in the repository follow the conventions set in the
 config files of these tools.
 
@@ -277,6 +277,17 @@ release notes, try to follow the style of previous releases and summarize the
 changes since the last release. This can be easily seen from the linear commit
 history <contribute:Git commit conventions of the master branch (see
 :ref:`contribute:Commit conventions`, use :code:`git log`).
+
+
+Continuous Integration
+^^^^^^^^^^^^^^^^^^^^^^
+
+All :ref:`style checks <contribute:Automated style checks>`, testing of the
+:ref:`documentation and links <contribute:Documentation>`, and :ref:`unit tests
+<contribute:Testing>` are performed upon each pull request through `GitHub
+Actions <https://docs.github.com/en/actions>`_ (see status overview `here
+<https://github.com/ComPWA/expertsystem/actions>`__). All checks performed for
+each PR have to pass before the PR can be merged.
 
 
 Visual Studio code
