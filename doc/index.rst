@@ -9,9 +9,9 @@
   :alt: PyPI - Python Version
   :target: https://pypi.org/project/expertsystem
 
-.. image:: https://github.com/ComPWA/expertsystem/workflows/Test%20package/badge.svg
+.. image:: https://github.com/ComPWA/expertsystem/workflows/CI/badge.svg
   :alt: CI status
-  :target: https://github.com/ComPWA/expertsystem/actions?query=branch%3Amaster+workflow%3A%22Test+package%22
+  :target: https://github.com/ComPWA/expertsystem/actions?query=branch%3Amaster+workflow%3A%22CI%22
 
 .. image:: https://codecov.io/gh/ComPWA/expertsystem/branch/master/graph/badge.svg
   :alt: Test Coverage

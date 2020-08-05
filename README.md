@@ -1,7 +1,7 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples%2Fquickstart.ipynb)
 [![PyPI](https://badge.fury.io/py/expertsystem.svg)](https://pypi.org/project/expertsystem)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/expertsystem)](https://pypi.org/project/expertsystem)
-[![CI status](https://github.com/ComPWA/expertsystem/workflows/Test%20package/badge.svg)](https://github.com/ComPWA/expertsystem/actions?query=branch%3Amaster+workflow%3A%22Test+package%22)
+[![CI status](https://github.com/ComPWA/expertsystem/workflows/CI/badge.svg)](https://github.com/ComPWA/expertsystem/actions?query=branch%3Amaster+workflow%3ACI)
 [![Test coverage](https://codecov.io/gh/ComPWA/expertsystem/branch/master/graph/badge.svg)](https://codecov.io/gh/ComPWA/expertsystem)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/db355758fb0e4654818b85997f03e3b8)](https://www.codacy.com/gh/ComPWA/expertsystem)
 [![Documentation build status](https://readthedocs.org/projects/expertsystem/badge/?version=latest)](https://expertsystem.readthedocs.io)
