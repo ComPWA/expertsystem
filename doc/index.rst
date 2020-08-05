@@ -9,10 +9,6 @@
   :alt: PyPI - Python Version
   :target: https://pypi.org/project/expertsystem
 
-.. image:: https://travis-ci.com/ComPWA/expertsystem.svg?branch=master
-  :alt: Travis CI
-  :target: https://travis-ci.com/ComPWA/expertsystem
-
 .. image:: https://codecov.io/gh/ComPWA/expertsystem/branch/master/graph/badge.svg
   :alt: Test Coverage
   :target: https://codecov.io/gh/ComPWA/expertsystem
