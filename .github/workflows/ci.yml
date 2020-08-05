@@ -8,7 +8,7 @@ on:
 
 jobs:
   documentation:
-    name: Documentation
+    name: Check documentation and links
     runs-on: ubuntu-18.04
     strategy:
       matrix:
