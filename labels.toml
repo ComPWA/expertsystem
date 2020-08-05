@@ -6,7 +6,7 @@ description = "Something isn't working"
 [Epic]
 color = "3E4B9E"
 name = "Epic"
-#description = null  # To use: uncomment and replace null with value
+description = ""
 
 ["⚪ Duplicate"]
 color = "cfd3d7"
