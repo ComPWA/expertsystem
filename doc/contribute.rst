@@ -33,6 +33,10 @@ source code is considered the 'installation'.
 
   For more info, see :ref:`contribute:Visual Studio code`.
 
+
+Automated style checks
+----------------------
+
 When working on the source code of the `expertsystem`, it is highly recommended
 to install certain additional Python tools. Assuming you installed the
 `expertsystem` in :ref:`development mode <install:Development mode>`, these
@@ -51,10 +55,10 @@ configuration files (e.g. `pyproject.toml
 <http://pylint.pycqa.org/en/latest/>`_, and `tox.ini
 <https://github.com/ComPWA/expertsystem/blob/master/tox.ini>`__ for `flake8
 <https://flake8.pycqa.org/>`_ and `pydocstyle <http://www.pydocstyle.org/>`_).
-These config files **define our convention policies**. If you run into
-persistent linting errors, this may mean we need to further specify our
-conventions. In that case, it's best to create an issue and propose a policy
-change that can then be formulated in the config files.
+These config files **define our convention policies**, such as :pep:`8`. If you
+run into persistent linting errors, this may mean we need to further specify
+our conventions. In that case, it's best to create an issue and propose a
+policy change that can then be formulated in the config files.
 
 
 Pre-commit
@@ -207,41 +211,6 @@ Git
 * In the master branch, each commit should compile and be tested. In your own
   branches, it is recommended to commit frequently (WIP keyword), but squash
   those commits upon submitting a merge request.
-
-
-Python conventions
-------------------
-
-* Follow :pep:`8` conventions.
-
-* Any Python file that's part of a module should contain (in this order):
-
-  1. A docstring describing what the file contains and does, followed by two
-  empty lines.
-
-  2. A definition of `__all__
-     <https://docs.python.org/3/tutorial/modules.html#importing-from-a-package>`_,
-     so that you can see immediately what this Python file defines, **followed
-     by two empty lines**.
-
-  3. Only after these come the :code:`import` statements, following the
-     :pep:`8` conventions for imports.
-
-* When calling or defining multiple arguments of a function and multiple
-  entries in a data container, split the entries over multiple lines and end
-  the last entry with a comma, like so:
-
-  .. code-block:: python
-
-    __all__ = [
-        'core',
-        'optimizer',
-        'physics',
-        'plot',
-    ]
-
-  This is to facilitate eventual `diff <https://git-scm.com/docs/git-diff>`_
-  comparisons in Git.
 
 
 Visual Studio code
