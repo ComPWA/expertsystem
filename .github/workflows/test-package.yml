@@ -1,4 +1,4 @@
-name: Test Python package
+name: Test package
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   documentation:
-    name: Test documentation
+    name: Documentation
     runs-on: ubuntu-18.04
     strategy:
       matrix:
@@ -58,7 +58,7 @@ jobs:
         run: cspell $(git ls-files)
 
   pytest:
-    name: Runtime tests
+    name: Unit tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
