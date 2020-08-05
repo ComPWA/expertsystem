@@ -9,6 +9,10 @@
   :alt: PyPI - Python Version
   :target: https://pypi.org/project/expertsystem
 
+.. image:: https://github.com/ComPWA/expertsystem/workflows/Test%20package/badge.svg
+  :alt: CI status
+  :target: https://github.com/ComPWA/expertsystem/actions?query=branch%3Amaster+workflow%3A%22Test+package%22
+
 .. image:: https://codecov.io/gh/ComPWA/expertsystem/branch/master/graph/badge.svg
   :alt: Test Coverage
   :target: https://codecov.io/gh/ComPWA/expertsystem
@@ -19,7 +23,7 @@
 
 .. image:: https://readthedocs.org/projects/expertsystem/badge/?version=latest
   :alt: Documentation build status
-  :target: https://pwa.readthedocs.io/projects/expertsystem/
+  :target: https://expertsystem.readthedocs.io
 
 .. image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
   :target: https://github.com/pre-commit/pre-commit
