@@ -3,6 +3,15 @@
 How to contribute?
 ==================
 
+.. tip::
+
+  Bugs can be reported `here
+  <https://github.com/ComPWA/expertsystem/issues/new/choose>`__. Also, please
+  do have a look at the `'good first issues' page
+  <https://github.com/ComPWA/expertsystem/issues?q=is%3Aissue+is%3Aopen+label%3A%22%F0%9F%92%AB+Good+first+issue%22>`_:
+  they are nice challenges to get into the find your way around the source
+  code! ;)
+
 If you have installed the `expertsystem` in :ref:`install:Development mode`, it
 is easy to tweak the source code and try out new ideas immediately, because the
 source code is considered the 'installation'.
