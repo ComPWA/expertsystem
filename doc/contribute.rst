@@ -16,10 +16,11 @@ source code is considered the 'installation'.
   .. code-block:: shell
 
     git clone https://github.com/ComPWA/expertsystem.git
-    code expertsystem
+    cd expertsystem
     conda env create
     conda activate es
     pip install -e .[dev]
+    code .  # open folder in VSCode
 
   For more info, see :ref:`contribute:Visual Studio code`.
 
