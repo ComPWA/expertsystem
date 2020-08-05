@@ -13,7 +13,7 @@ on:
 
 jobs:
   check-labels:
-    name: Check PR labels
+    name: Check labels
     runs-on: ubuntu-latest
     steps:
       - uses: docker://agilepathway/pull-request-label-checker:latest
