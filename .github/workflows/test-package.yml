@@ -98,13 +98,4 @@ jobs:
         with:
           name: coverage
           path: .coverage
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install codecov
-      - name: Upload test coverage
-        run: codecov
+      - uses: codecov/codecov-action@v1
