@@ -67,6 +67,8 @@ jobs:
         exclude:
           - os: macos-10.15
             python-version: 3.8
+          - os: ubuntu-18.04 # coverage job
+            python-version: 3.8
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -78,12 +80,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install .[test]
       - name: Test with pytest
-        run: pytest --cov=expertsystem
-      - name: Upload test coverage
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage
-          path: .coverage
+        run: pytest
 
   codecov:
     name: Publish test coverage
@@ -94,8 +91,14 @@ jobs:
         python-version: [3.7]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
         with:
-          name: coverage
-          path: .coverage
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[test]
+      - name: Test with pytest-cov
+        run: pytest --cov=expertsystem --cov-report=xml
       - uses: codecov/codecov-action@v1
