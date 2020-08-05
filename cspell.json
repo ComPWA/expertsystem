@@ -20,7 +20,6 @@
         ".pre-commit-config.yaml",
         ".pylintrc",
         ".readthedocs.yml",
-        ".travis.yml",
         ".vscode/*",
         ".vscode/.gitignore",
         "Makefile",
