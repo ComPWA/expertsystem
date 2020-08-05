@@ -43,7 +43,7 @@ configuration files (e.g. `pyproject.toml
 <https://github.com/ComPWA/expertsystem/blob/master/tox.ini>`__ for `flake8
 <https://flake8.pycqa.org/>`_ and `pydocstyle <http://www.pydocstyle.org/>`_).
 These config files **define our convention policies**. If you run into
-persistent linting errors this may mean we need to further specify our
+persistent linting errors, this may mean we need to further specify our
 conventions. In that case, it's best to create an issue and propose a policy
 change that can then be formulated in the config files.
 
@@ -52,7 +52,7 @@ Pre-commit
 ----------
 
 All **style checks** are enforced through a tool called `pre-commit
-<https://pre-commit.com/>`__. This tool needs to be activated, but only once
+<https://pre-commit.com/>`__. This tool needs to be activated, but only once,
 after you clone the repository:
 
 .. code-block:: shell
