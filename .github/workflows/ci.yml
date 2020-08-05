@@ -10,10 +10,11 @@ on:
 
 jobs:
   codecov:
-    name: Publish test coverage
-    runs-on: ubuntu-18.04
+    name: Unit tests + coverage
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ubuntu-18.04]
         python-version: [3.7]
     steps:
       - uses: actions/checkout@master
@@ -37,7 +38,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, macos-10.15]
+        os:
+          - macos-10.15
+          - ubuntu-18.04
         python-version: [3.7, 3.8]
         exclude:
           - os: macos-10.15
