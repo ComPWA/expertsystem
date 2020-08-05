@@ -36,7 +36,7 @@ jobs:
           make html
 
   style:
-    name: Check style
+    name: Style checks
     runs-on: ubuntu-18.04
     strategy:
       matrix:
@@ -53,12 +53,12 @@ jobs:
           pip install .[dev]
           sudo npm install -g cspell
       - name: Perform style checks
-        run: |
-          tox -e sty
-          cspell $(git ls-files)
+        run: tox -e sty
+      - name: Check spelling
+        run: cspell $(git ls-files)
 
   pytest:
-    name: Runtime tests (pytest)
+    name: Runtime tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -78,8 +78,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install .[test]
       - name: Test with pytest
-        run: |
-          pytest --cov=expertsystem
+        run: pytest --cov=expertsystem
       - name: Upload test coverage
         uses: actions/upload-artifact@v2
         with:
