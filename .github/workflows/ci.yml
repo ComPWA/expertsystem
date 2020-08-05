@@ -84,7 +84,6 @@ jobs:
 
   codecov:
     name: Publish test coverage
-    needs: pytest
     runs-on: ubuntu-18.04
     strategy:
       matrix:
