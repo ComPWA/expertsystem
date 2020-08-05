@@ -1,12 +1,13 @@
 # cspell:ignore commitlint kode
 
-name: pr-name-linter
+name: PR Title Linter
 on:
   pull_request:
     types: ["opened", "edited", "reopened", "synchronize"]
 
 jobs:
   lint:
+    name: Check PR title
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
