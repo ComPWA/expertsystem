@@ -195,8 +195,38 @@ section, and enables you to quickly add or ignore words through the
 <https://www.npmjs.com/>`_.
 
 
-Git
----
+Git and GitHub
+--------------
+
+The `expertsystem` source code is maintained with Git and published through
+GitHub. We keep track of issues with the code, documentation, and developer
+set-up with GitHub issues (see overview `here
+<https://github.com/ComPWA/expertsystem/issues>`__). This is also the place
+where you can `report bugs
+<https://github.com/ComPWA/expertsystem/issues/new/choose>`_.
+
+
+Issue management
+^^^^^^^^^^^^^^^^
+
+We keep track of issue dependencies, time estimates, planning, pipeline
+statuses, et cetera with `ZenHub <https://app.zenhub.com>`_. You can use your
+GitHub account to log in there and automatically get access to the
+`expertsystem` issue board once you are part of the `ComPWA organization
+<https://github.com/ComPWA>`_.
+
+Publicly available are:
+
+* `Issue labels <https://github.com/ComPWA/expertsystem/labels>`_: help to
+  categorize issues by type (maintenance, enhancement, bug, etc.).
+
+* `Milestones
+  <https://github.com/ComPWA/expertsystem/milestones?direction=asc&sort=title&state=open>`__:
+  way to bundle issues for upcoming releases.
+
+
+Commit conventions
+^^^^^^^^^^^^^^^^^^
 
 * Please use
   `conventional commit messages <https://www.conventionalcommits.org/>`_: start
@@ -208,9 +238,45 @@ Git
   imagine the commit to give a command to the code framework. So for instance:
   :code:`feat: add coverage report tools` or :code:`fix: remove ...`.
 
-* In the master branch, each commit should compile and be tested. In your own
-  branches, it is recommended to commit frequently (WIP keyword), but squash
-  those commits upon submitting a merge request.
+* Keep pull requests small. If the issue you try to address is too big, discuss
+  in the team whether the issue can be converted into an `Epic
+  <https://blog.zenhub.com/working-with-epics-in-github>`_ and split up into
+  smaller tasks.
+
+* Before creating a pull request, run :code:`tox`. See also
+  :ref:`contribute:Testing`.
+
+* Also use a
+  `conventional commit message <https://www.conventionalcommits.org/>`_ style
+  for the PR title. This is because we follow a `linear commit history
+  <https://docs.github.com/en/github/administering-a-repository/requiring-a-linear-commit-history>`_
+  and the PR title will become the eventual commit message. Note that a
+  conventional commit message style is `enforced through GitHub Actions
+  <https://github.com/ComPWA/expertsystem/actions?query=workflow%3A%22PR+linting%22>`_,
+  as well as :ref:`PR labels <contribute:Issue management>`.
+
+* PRs can only be merged through 'squash and merge'. There, you will see a
+  summary based on the separate commits that constitute this PR. Leave the
+  relevant commits in as bullet points. See the `commit history
+  <https://github.com/ComPWA/expertsystem/commits/master>`_ for examples. This
+  comes in especially handy when `drafting a release <contribute:Milestones and
+  releases>`_!
+
+
+Milestones and releases
+^^^^^^^^^^^^^^^^^^^^^^^
+
+An overview of the `expertsystem` package releases can be found `on PyPI
+history page <https://pypi.org/project/expertsystem/#history>`__. More
+descriptive release notes can be found on the `release page
+<https://github.com/ComPWA/expertsystem/releases>`__.
+
+New releases are automatically published to PyPI when a new tag is created (see
+`setuptools-scm <https://pypi.org/project/setuptools-scm>`_). When creating new
+release notes, try to follow the style of previous releases and summarize the
+changes since the last release. This can be easily seen from the linear commit
+history <contribute:Git commit conventions of the master branch (see
+:ref:`contribute:Commit conventions`, use :code:`git log`).
 
 
 Visual Studio code
