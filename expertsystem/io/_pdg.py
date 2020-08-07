@@ -20,7 +20,7 @@ def load_pdg() -> ParticleCollection:
         if item.mass is not None:
             mass = item.mass
         new_particle = Particle(
-            name=str(item.pdg_name),
+            name=str(item.name),
             pid=int(item.pdgid),
             mass=float(mass),
             width=0.0,

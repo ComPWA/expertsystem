@@ -131,8 +131,8 @@ class TestInternalParticleDict:
 def test_pdg():
     pdg_particle_collection = io.load_particle_collection()
     # io.write(pdg_particle_collection, "pdg.yml")
-    assert len(pdg_particle_collection) == 3138
-    d_meson = pdg_particle_collection["D"]
+    assert len(pdg_particle_collection) == 6422
+    d_meson = pdg_particle_collection["D0"]
     assert d_meson.mass == 1864.83
     assert d_meson.state.charge == 0
     assert d_meson.state.spin == -1
