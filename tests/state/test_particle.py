@@ -8,7 +8,7 @@ load_default_particle_list()
 
 @pytest.mark.parametrize(
     "particle_name, anti_particle_name",
-    [("D+", "D-"), ("p", "pbar"), ("mu+", "mu-")],
+    [("D+", "D-"), ("p", "pbar"), ("mu+", "mu-"), ("W+", "W-")],
 )
 def test_create_antiparticle(particle_name, anti_particle_name):
     template_particle = DATABASE[particle_name]
