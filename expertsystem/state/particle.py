@@ -784,8 +784,8 @@ def merge_qn_props(qns_state, qns_particle):
 
 def create_particle(  # pylint: disable=too-many-arguments,too-many-locals
     template_particle: Particle,
-    name: str,
-    pid: int,
+    name: Optional[str] = None,
+    pid: Optional[int] = None,
     mass: Optional[float] = None,
     width: Optional[float] = None,
     state: Optional[float] = None,
@@ -804,12 +804,6 @@ def create_particle(  # pylint: disable=too-many-arguments,too-many-locals
     c_parity: Optional[float] = None,
     g_parity: Optional[float] = None,
 ) -> Particle:
-    if name == template_particle.name:
-        raise ValueError(
-            f"Names should be different: {template_particle.name}"
-        )
-    if pid == template_particle.pid:
-        raise ValueError(f"pid should be different: {template_particle.pid}")
     if state:
         new_state = state
     else:
@@ -848,8 +842,8 @@ def create_particle(  # pylint: disable=too-many-arguments,too-many-locals
             else template_particle.state.g_parity,
         )
     new_particle = Particle(
-        name=name,
-        pid=pid,
+        name=name if name else template_particle.name,
+        pid=pid if pid else template_particle.pid,
         mass=mass if mass else template_particle.mass,
         width=width if width else template_particle.width,
         state=new_state,
