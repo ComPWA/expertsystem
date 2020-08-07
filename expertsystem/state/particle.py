@@ -795,7 +795,12 @@ def create_antiparticle(
         g_parity = template_particle.state.g_parity
     parity = None
     if template_particle.state.parity:
-        if template_particle.state.baryon_number:
+        if (
+            template_particle.state.baryon_number
+            or template_particle.state.electron_lepton_number
+            or template_particle.state.muon_lepton_number
+            or template_particle.state.tau_lepton_number
+        ):
             parity = -template_particle.state.parity
         else:
             parity = template_particle.state.parity
