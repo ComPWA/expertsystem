@@ -75,10 +75,11 @@ class StateTransitionGraph:
 
     def __repr__(self) -> str:
         return (
-            f"\nnodes: {self.nodes}"
-            f"\nedges: {self.edges}"
-            f"\nnode props: {self.node_props}"
-            f"\nnode props: {self.edge_props}"
+            f"{self.__class__.__name__}()"
+            f"\n    nodes: {self.nodes}"
+            f"\n    edges: {self.edges}"
+            f"\n    node props: {self.node_props}"
+            f"\n    node props: {self.edge_props}"
         )
 
     def __eq__(self, other: object) -> bool:
