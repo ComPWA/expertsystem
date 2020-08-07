@@ -9,11 +9,14 @@ from pathlib import Path
 
 from expertsystem.data import ParticleCollection
 
+from . import _pdg
 from . import xml
 from . import yaml
 
 
-def load_particle_collection(filename: str) -> ParticleCollection:
+def load_particle_collection(filename: str = "") -> ParticleCollection:
+    if not filename:
+        return _pdg.load_pdg()
     file_extension = _get_file_extension(filename)
     if file_extension in ["yaml", "yml"]:
         return yaml.load_particle_collection(filename)

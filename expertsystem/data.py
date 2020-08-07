@@ -33,7 +33,7 @@ class Parity:
     def __init__(self, value: Union[float, int, str]) -> None:
         value = float(value)
         if value not in [-1.0, +1.0]:
-            raise ValueError("Parity can only be +1 or -1")
+            raise ValueError(f"Parity can only be +1 or -1, not {value}")
         self.__value: int = int(value)
 
     def __eq__(self, other: object) -> bool:

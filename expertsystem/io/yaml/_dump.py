@@ -82,7 +82,7 @@ def _from_spin(instance: Spin) -> Union[Dict[str, Union[float, int]], int]:
     return output
 
 
-def _attempt_to_int(value: Union[Spin, float]) -> Union[float, int]:
+def _attempt_to_int(value: Union[Spin, float, int]) -> Union[float, int]:
     if isinstance(value, Spin):
         value = float(value)
     if value.is_integer():
