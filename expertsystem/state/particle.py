@@ -22,7 +22,6 @@ from numpy import arange
 
 from expertsystem import io
 from expertsystem.data import (
-    Parity,
     Particle,
     ParticleCollection,
     QuantumState,
@@ -787,21 +786,20 @@ def create_antiparticle(
 ) -> Particle:
     isospin = None
     if template_particle.state.isospin:
-        isospin = Spin(
-            magnitude=template_particle.state.isospin.magnitude,
-            projection=-template_particle.state.isospin.projection,
-        )
+        isospin = -template_particle.state.isospin
     c_parity = None
     if template_particle.state.c_parity:
-        c_parity = Parity(template_particle.state.c_parity.value)
+        c_parity = template_particle.state.c_parity
     g_parity = None
     if template_particle.state.g_parity:
-        g_parity = Parity(template_particle.state.g_parity.value)
-    if template_particle.state.baryon_number:
-        parity = Parity(-template_particle.state.parity.value)
-    else:
-        parity = Parity(template_particle.state.parity.value)
-    new_state = QuantumState(
+        g_parity = template_particle.state.g_parity
+    parity = None
+    if template_particle.state.parity:
+        if template_particle.state.baryon_number:
+            parity = -template_particle.state.parity
+        else:
+            parity = template_particle.state.parity
+    new_state = QuantumState[float](
         spin=template_particle.state.spin,
         charge=-template_particle.state.charge,
         strangeness=-template_particle.state.strangeness,
