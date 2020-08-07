@@ -22,7 +22,10 @@ from numpy import arange
 
 from expertsystem import io
 from expertsystem.data import (
+    Parity,
+    Particle,
     ParticleCollection,
+    QuantumState,
     Spin,
 )
 from expertsystem.topology.graph import (
@@ -777,3 +780,48 @@ def merge_qn_props(qns_state, qns_particle):
         if not qn_found:
             qns.append(qn_entry)
     return qns
+
+
+def create_antiparticle(
+    template_particle: Particle, new_name: str = None
+) -> Particle:
+    isospin = None
+    if template_particle.state.isospin:
+        isospin = Spin(
+            magnitude=template_particle.state.isospin.magnitude,
+            projection=-template_particle.state.isospin.projection,
+        )
+    c_parity = None
+    if template_particle.state.c_parity:
+        c_parity = Parity(template_particle.state.c_parity.value)
+    g_parity = None
+    if template_particle.state.g_parity:
+        g_parity = Parity(template_particle.state.g_parity.value)
+    if template_particle.state.baryon_number:
+        parity = Parity(-template_particle.state.parity.value)
+    else:
+        parity = Parity(template_particle.state.parity.value)
+    new_state = QuantumState(
+        spin=template_particle.state.spin,
+        charge=-template_particle.state.charge,
+        strangeness=-template_particle.state.strangeness,
+        charmness=-template_particle.state.charmness,
+        bottomness=-template_particle.state.bottomness,
+        topness=-template_particle.state.topness,
+        baryon_number=-template_particle.state.baryon_number,
+        electron_lepton_number=-template_particle.state.electron_lepton_number,
+        muon_lepton_number=-template_particle.state.muon_lepton_number,
+        tau_lepton_number=-template_particle.state.tau_lepton_number,
+        isospin=isospin,
+        parity=parity,
+        c_parity=c_parity,
+        g_parity=g_parity,
+    )
+    new_particle = Particle(
+        name=new_name if new_name else "anti-" + template_particle.name,
+        pid=-template_particle.pid,
+        mass=template_particle.mass,
+        width=template_particle.width,
+        state=new_state,
+    )
+    return new_particle
