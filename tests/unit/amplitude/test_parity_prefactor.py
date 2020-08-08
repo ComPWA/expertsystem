@@ -81,6 +81,8 @@ def test_parity_prefactor(
         ]
         assert len(in_edge) == 1
         node_id = solution.edges[in_edge[0]].ending_node_id
+        if node_id is None:
+            continue
 
         prefactor = get_interaction_property(
             solution.node_props[node_id],
