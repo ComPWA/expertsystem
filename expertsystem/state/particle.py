@@ -857,12 +857,6 @@ def create_antiparticle(
     isospin = None
     if template_particle.state.isospin:
         isospin = -template_particle.state.isospin
-    c_parity = None
-    if template_particle.state.c_parity:
-        c_parity = template_particle.state.c_parity
-    g_parity = None
-    if template_particle.state.g_parity:
-        g_parity = template_particle.state.g_parity
     parity = None
     if template_particle.state.parity:
         if template_particle.state.spin.is_integer():
@@ -886,7 +880,7 @@ def create_antiparticle(
         tau_lepton_number=-template_particle.state.tau_lepton_number,
         isospin=isospin,
         parity=parity,
-        c_parity=c_parity,
-        g_parity=g_parity,
+        c_parity=template_particle.state.c_parity,
+        g_parity=template_particle.state.g_parity,
     )
     return new_particle
