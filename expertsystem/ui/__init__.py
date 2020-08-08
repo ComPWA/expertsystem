@@ -26,11 +26,11 @@ from progress.bar import IncrementalBar
 
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
-from expertsystem.state.conservation_rules import AbstractRule
 from expertsystem.state.particle import (
     CompareGraphElementPropertiesFunctor,
     DATABASE,
     InteractionQuantumNumberNames,
+    StateDefinition,
     initialize_graph,
     load_particles,
 )
@@ -57,7 +57,11 @@ from ._default_settings import (
 )
 from ._system_control import (
     GammaCheck,
+    GraphSettingsGroups,
     LeptonCheck,
+    NodeSettings,
+    SolutionMapping,
+    ViolatedLaws,
     analyse_solution_failure,
     create_interaction_setting_groups,
     filter_interaction_types,
@@ -72,8 +76,8 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        initial_state: List[Union[str, Tuple[str, List[float]]]],
-        final_state: List[Union[str, Tuple[str, List[float]]]],
+        initial_state: List[StateDefinition],
+        final_state: List[StateDefinition],
         allowed_intermediate_particles: Optional[List[str]] = None,
         interaction_type_settings: Dict[
             InteractionTypes, InteractionNodeSettings
@@ -184,12 +188,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 )
         self.allowed_interaction_types = allowed_interaction_types
 
-    def prepare_graphs(
-        self,
-    ) -> Dict[
-        float,  # strength
-        List[Tuple[StateTransitionGraph, Dict[int, InteractionNodeSettings]]],
-    ]:
+    def prepare_graphs(self,) -> GraphSettingsGroups:
         topology_graphs = self._build_topologies()
         init_graphs = self._create_seed_graphs(topology_graphs)
         graph_node_setting_pairs = self._determine_node_settings(init_graphs)
@@ -228,15 +227,13 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
     def _determine_node_settings(
         self, graphs: List[StateTransitionGraph]
-    ) -> List[
-        Tuple[StateTransitionGraph, Dict[int, List[InteractionNodeSettings]]]
-    ]:
+    ) -> List[Tuple[StateTransitionGraph, NodeSettings]]:
         # pylint: disable=too-many-locals
         graph_node_setting_pairs = []
         for instance in graphs:
             final_state_edges = get_final_state_edges(instance)
             initial_state_edges = get_initial_state_edges(instance)
-            node_settings: Dict[int, List[InteractionNodeSettings]] = {}
+            node_settings: NodeSettings = {}
             for node_id in instance.nodes:
                 node_int_types: List[InteractionTypes] = []
                 out_edge_ids = get_edges_outgoing_to_node(instance, node_id)
@@ -282,27 +279,12 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         return graph_node_setting_pairs
 
     def find_solutions(
-        self,
-        graph_setting_groups: Dict[
-            float,
-            List[
-                Tuple[
-                    StateTransitionGraph, Dict[int, InteractionNodeSettings],
-                ]
-            ],
-        ],
+        self, graph_setting_groups: GraphSettingsGroups,
     ) -> Tuple[
         List[StateTransitionGraph], List[str]
     ]:  # pylint: disable=too-many-locals
         """Check for solutions for a specific set of interaction settings."""
-        results: Dict[
-            float,
-            List[
-                Tuple[
-                    List[StateTransitionGraph], Dict[int, List[AbstractRule]],
-                ]
-            ],
-        ] = {}
+        results: SolutionMapping = {}
         logging.info(
             "Number of interaction settings groups being processed: %d",
             len(graph_setting_groups),
@@ -318,9 +300,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             logging.info(f"running with {self.number_of_threads} threads...")
 
             temp_results: List[
-                Tuple[
-                    List[StateTransitionGraph], Dict[int, List[AbstractRule]],
-                ]
+                Tuple[List[StateTransitionGraph], ViolatedLaws]
             ] = []
             progress_bar = IncrementalBar(
                 "Propagating quantum numbers...", max=len(graph_setting_group)
@@ -356,7 +336,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             results, self.filter_remove_qns, self.filter_ignore_qns
         )
 
-        node_non_satisfied_rules: List[Dict[int, List[AbstractRule]]] = []
+        node_non_satisfied_rules: List[ViolatedLaws] = []
         solutions: List[StateTransitionGraph] = []
         for item in results.values():
             for (temp_solutions, non_satisfied_laws) in item:
@@ -386,7 +366,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             StateTransitionGraph, Dict[int, InteractionNodeSettings]
         ],
     ) -> Tuple[
-        List[StateTransitionGraph], Dict[int, List[AbstractRule]],
+        List[StateTransitionGraph], ViolatedLaws,
     ]:
         propagator = self._initialize_qn_propagator(
             state_graph_node_settings_pair[0],

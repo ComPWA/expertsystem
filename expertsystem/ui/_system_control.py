@@ -41,6 +41,18 @@ from expertsystem.topology.graph import (
 )
 
 
+Strength = float
+
+GraphSettings = Tuple[StateTransitionGraph, Dict[int, InteractionNodeSettings]]
+GraphSettingsGroups = Dict[Strength, List[GraphSettings]]
+NodeSettings = Dict[int, List[InteractionNodeSettings]]
+
+ViolatedLaws = Dict[int, List[AbstractRule]]
+SolutionMapping = Dict[
+    Strength, List[Tuple[List[StateTransitionGraph], ViolatedLaws]],
+]
+
+
 def _change_qn_domain(
     interaction_settings: InteractionNodeSettings,
     qn_name: InteractionQuantumNumberNames,
@@ -167,16 +179,10 @@ class LeptonCheck(_InteractionDeterminationFunctorInterface):
 
 
 def remove_duplicate_solutions(
-    results: Dict[
-        float,
-        List[Tuple[List[StateTransitionGraph], Dict[int, List[AbstractRule]]]],
-    ],
+    results: SolutionMapping,
     remove_qns_list: Optional[Any] = None,
     ignore_qns_list: Optional[Any] = None,
-) -> Dict[
-    float,
-    List[Tuple[List[StateTransitionGraph], Dict[int, List[AbstractRule]]]],
-]:
+) -> SolutionMapping:
     if remove_qns_list is None:
         remove_qns_list = []
     if ignore_qns_list is None:
@@ -184,10 +190,7 @@ def remove_duplicate_solutions(
     logging.info("removing duplicate solutions...")
     logging.info(f"removing these qns from graphs: {remove_qns_list}")
     logging.info(f"ignoring qns in graph comparison: {ignore_qns_list}")
-    filtered_results: Dict[
-        float,
-        List[Tuple[List[StateTransitionGraph], Dict[int, List[AbstractRule]]]],
-    ] = {}
+    filtered_results: SolutionMapping = {}
     solutions: List[StateTransitionGraph] = list()
     remove_counter = 0
     for strength, group_results in results.items():
@@ -386,7 +389,7 @@ def _find_node_ids_with_ingoing_particle_name(
 
 
 def analyse_solution_failure(
-    violated_laws_per_node_and_graph: List[Dict[int, List[AbstractRule]]],
+    violated_laws_per_node_and_graph: List[ViolatedLaws],
 ) -> List[str]:
     # try to find rules that are just always violated
     violated_laws: List[str] = []
@@ -415,17 +418,9 @@ def analyse_solution_failure(
 
 
 def create_interaction_setting_groups(
-    graph_node_setting_pairs: List[
-        Tuple[StateTransitionGraph, Dict[int, List[InteractionNodeSettings]]]
-    ]
-) -> Dict[
-    float,
-    List[Tuple[StateTransitionGraph, Dict[int, InteractionNodeSettings]]],
-]:
-    graph_settings_groups: Dict[
-        float,  # strength
-        List[Tuple[StateTransitionGraph, Dict[int, InteractionNodeSettings]]],
-    ] = {}
+    graph_node_setting_pairs: List[Tuple[StateTransitionGraph, NodeSettings]]
+) -> GraphSettingsGroups:
+    graph_settings_groups: GraphSettingsGroups = {}
     for (instance, node_settings) in graph_node_setting_pairs:
         setting_combinations = _create_setting_combinations(node_settings)
         for setting in setting_combinations:
@@ -437,7 +432,7 @@ def create_interaction_setting_groups(
 
 
 def _create_setting_combinations(
-    node_settings: Dict[int, List[InteractionNodeSettings]],
+    node_settings: NodeSettings,
 ) -> List[Dict[int, InteractionNodeSettings]]:
     return [
         dict(zip(node_settings.keys(), x))
