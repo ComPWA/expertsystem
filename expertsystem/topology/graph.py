@@ -7,6 +7,9 @@ from typing import (
     List,
     Optional,
     Sequence,
+    Set,
+    Tuple,
+    Union,
 )
 
 
@@ -69,7 +72,7 @@ class StateTransitionGraph:
         self.graph_element_properties_comparator: Optional[Callable] = None
 
     def set_graph_element_properties_comparator(
-        self, comparator: Callable
+        self, comparator: Optional[Callable]
     ) -> None:
         self.graph_element_properties_comparator = comparator
 
@@ -165,7 +168,7 @@ class StateTransitionGraph:
             self.edges[edge_id].originating_node_id = node_id
 
     def get_originating_node_list(
-        self, edge_ids: Sequence[int]
+        self, edge_ids: Union[Set[int], Tuple[int, ...]]
     ) -> List[Optional[int]]:
         """Get list of node ids from which the supplied edges originate from.
 
