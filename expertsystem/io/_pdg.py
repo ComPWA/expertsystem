@@ -32,19 +32,14 @@ def __calculate_lepton_qn(pdg_particle: PdgDatabase) -> tuple:
 
 def __compute_quark_numbers(
     pdg_particle: PdgDatabase,
-) -> Tuple[float, int, int, int, int]:
-    spin_projection = 0.0
+) -> Tuple[int, int, int, int]:
     strangeness = 0
     charmness = 0
     bottomness = 0
     topness = 0
     if pdg_particle.pdgid.is_hadron:
         for quark in pdg_particle.quarks:
-            if quark in ["u", "D"]:
-                spin_projection += 0.5
-            elif quark in ["U", "d"]:
-                spin_projection -= 0.5
-            elif quark == "S":
+            if quark == "S":
                 strangeness += 1
             elif quark == "s":
                 strangeness -= 1
@@ -61,12 +56,22 @@ def __compute_quark_numbers(
             elif quark == "T":
                 topness -= 1
     return (
-        spin_projection,
         strangeness,
         charmness,
         bottomness,
         topness,
     )
+
+
+def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
+    spin_projection = 0.0
+    if pdg_particle.pdgid.is_hadron:
+        for quark in pdg_particle.quarks:
+            if quark in ["u", "D"]:
+                spin_projection += 0.5
+            elif quark in ["U", "d"]:
+                spin_projection -= 0.5
+    return spin_projection
 
 
 def __create_parity(parity_enum: enums.Parity) -> Optional[Parity]:
@@ -96,7 +101,7 @@ def load_pdg() -> ParticleCollection:
     )
     particle_collection = ParticleCollection()
     for item in all_pdg_particles:
-        hadron_qn = __compute_quark_numbers(item)
+        quark_numbers = __compute_quark_numbers(item)
         lepton_qn = __calculate_lepton_qn(item)
         new_particle = Particle(
             name=str(item.name),
@@ -106,15 +111,17 @@ def load_pdg() -> ParticleCollection:
             state=QuantumState[float](
                 charge=int(item.charge),
                 spin=float(item.J),
-                strangeness=hadron_qn[1],
-                charmness=hadron_qn[2],
-                bottomness=hadron_qn[3],
-                topness=hadron_qn[4],
+                strangeness=quark_numbers[0],
+                charmness=quark_numbers[1],
+                bottomness=quark_numbers[2],
+                topness=quark_numbers[3],
                 baryon_number=__calculate_baryonnumber(item),
                 electron_lepton_number=lepton_qn[0],
                 muon_lepton_number=lepton_qn[1],
                 tau_lepton_number=lepton_qn[2],
-                isospin=__create_spin(item.I, hadron_qn[0]),
+                isospin=__create_spin(
+                    item.I, __compute_isospin_projection(item)
+                ),
                 parity=__create_parity(item.P),
                 c_parity=__create_parity(item.C),
                 g_parity=__create_parity(item.G),
