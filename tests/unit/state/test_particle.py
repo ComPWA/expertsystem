@@ -42,7 +42,7 @@ def test_create_particle(
 
 @pytest.mark.parametrize(
     "particle_name, anti_particle_name",
-    [("D+", "D-"), ("p", "pbar"), ("mu+", "mu-"), ("W+", "W-")],
+    [("D+", "D-"), ("p", "p~"), ("mu+", "mu-"), ("W+", "W-")],
 )
 def test_create_antiparticle(
     particle_database,  # pylint: disable=W0621
