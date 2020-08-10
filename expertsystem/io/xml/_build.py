@@ -73,7 +73,7 @@ def build_particle(definition: dict) -> Particle:
 
 def build_spin(definition: dict) -> Spin:
     magnitude = definition["Value"]
-    projection = definition.get("Projection", None)
+    projection = definition.get("Projection", 0.0)
     return Spin(magnitude, projection)
 
 
