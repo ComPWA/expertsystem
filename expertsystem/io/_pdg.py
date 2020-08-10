@@ -100,7 +100,7 @@ def __calculate_lepton_qn(pdg_particle: PdgDatabase) -> Tuple[int, int, int]:
     muon_lepton_number = 0
     tau_lepton_number = 0
     if pdg_particle.pdgid.is_lepton:
-        lepton_number = pdg_particle.pdgid / abs(pdg_particle.pdgid)
+        lepton_number = int(pdg_particle.pdgid / abs(pdg_particle.pdgid))
         if "e" in pdg_particle.name:
             electron_lepton_number = lepton_number
         elif "mu" in pdg_particle.name:
@@ -111,7 +111,7 @@ def __calculate_lepton_qn(pdg_particle: PdgDatabase) -> Tuple[int, int, int]:
 
 
 def __calculate_baryonnumber(pdg_particle: PdgDatabase) -> int:
-    return (
+    return int(
         pdg_particle.pdgid
         / abs(pdg_particle.pdgid)
         * pdg_particle.pdgid.is_baryon
