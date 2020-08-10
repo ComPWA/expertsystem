@@ -14,20 +14,44 @@ from expertsystem.data import (
 )
 
 
+def load_pdg() -> ParticleCollection:
+    all_pdg_particles = PdgDatabase.findall(
+        lambda item: item.charge.is_integer()  # remove quarks
+        and item.J is not None  # remove new physics and nuclei
+    )
+    particle_collection = ParticleCollection()
+    for pdg_particle in all_pdg_particles:
+        new_particle = __convert_pdg_instance(pdg_particle)
+        particle_collection.add(new_particle)
+    return particle_collection
+
+
 # cspell:ignore pdgid
-def __calculate_lepton_qn(pdg_particle: PdgDatabase) -> tuple:
-    electron_lepton_number = 0
-    muon_lepton_number = 0
-    tau_lepton_number = 0
-    if pdg_particle.pdgid.is_lepton:
-        lepton_number = pdg_particle.pdgid / abs(pdg_particle.pdgid)
-        if "e" in pdg_particle.name:
-            electron_lepton_number = lepton_number
-        elif "mu" in pdg_particle.name:
-            muon_lepton_number = lepton_number
-        elif "tau" in pdg_particle.name:
-            tau_lepton_number = lepton_number
-    return electron_lepton_number, muon_lepton_number, tau_lepton_number
+def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
+    quark_numbers = __compute_quark_numbers(pdg_particle)
+    lepton_qn = __calculate_lepton_qn(pdg_particle)
+    return Particle(
+        name=str(pdg_particle.name),
+        pid=int(pdg_particle.pdgid),
+        mass=0.0 if pdg_particle.mass is None else float(pdg_particle.mass),
+        width=0.0 if pdg_particle.width is None else float(pdg_particle.width),
+        state=QuantumState[float](
+            charge=int(pdg_particle.charge),
+            spin=float(pdg_particle.J),
+            strangeness=quark_numbers[0],
+            charmness=quark_numbers[1],
+            bottomness=quark_numbers[2],
+            topness=quark_numbers[3],
+            baryon_number=__calculate_baryonnumber(pdg_particle),
+            electron_lepton_number=lepton_qn[0],
+            muon_lepton_number=lepton_qn[1],
+            tau_lepton_number=lepton_qn[2],
+            isospin=__create_isospin(pdg_particle),
+            parity=__create_parity(pdg_particle.P),
+            c_parity=__create_parity(pdg_particle.C),
+            g_parity=__create_parity(pdg_particle.G),
+        ),
+    )
 
 
 def __compute_quark_numbers(
@@ -63,10 +87,27 @@ def __compute_quark_numbers(
     )
 
 
-def __create_parity(parity_enum: enums.Parity) -> Optional[Parity]:
-    if parity_enum in [enums.Parity.o, enums.Parity.u]:
-        return None
-    return Parity(parity_enum)
+def __calculate_lepton_qn(pdg_particle: PdgDatabase) -> tuple:
+    electron_lepton_number = 0
+    muon_lepton_number = 0
+    tau_lepton_number = 0
+    if pdg_particle.pdgid.is_lepton:
+        lepton_number = pdg_particle.pdgid / abs(pdg_particle.pdgid)
+        if "e" in pdg_particle.name:
+            electron_lepton_number = lepton_number
+        elif "mu" in pdg_particle.name:
+            muon_lepton_number = lepton_number
+        elif "tau" in pdg_particle.name:
+            tau_lepton_number = lepton_number
+    return electron_lepton_number, muon_lepton_number, tau_lepton_number
+
+
+def __calculate_baryonnumber(pdg_particle: PdgDatabase,) -> int:
+    return (
+        pdg_particle.pdgid
+        / abs(pdg_particle.pdgid)
+        * pdg_particle.pdgid.is_baryon
+    )
 
 
 def __create_isospin(pdg_particle: PdgDatabase) -> Optional[Spin]:
@@ -86,48 +127,7 @@ def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
     return spin_projection
 
 
-def __calculate_baryonnumber(pdg_particle: PdgDatabase,) -> int:
-    return (
-        pdg_particle.pdgid
-        / abs(pdg_particle.pdgid)
-        * pdg_particle.pdgid.is_baryon
-    )
-
-
-def load_pdg() -> ParticleCollection:
-    all_pdg_particles = PdgDatabase.findall(
-        lambda item: item.charge.is_integer()  # remove quarks
-        and item.J is not None  # remove new physics and nuclei
-    )
-    particle_collection = ParticleCollection()
-    for pdg_particle in all_pdg_particles:
-        new_particle = __convert_pdg_instance(pdg_particle)
-        particle_collection.add(new_particle)
-    return particle_collection
-
-
-def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
-    quark_numbers = __compute_quark_numbers(pdg_particle)
-    lepton_qn = __calculate_lepton_qn(pdg_particle)
-    return Particle(
-        name=str(pdg_particle.name),
-        pid=int(pdg_particle.pdgid),
-        mass=0.0 if pdg_particle.mass is None else float(pdg_particle.mass),
-        width=0.0 if pdg_particle.width is None else float(pdg_particle.width),
-        state=QuantumState[float](
-            charge=int(pdg_particle.charge),
-            spin=float(pdg_particle.J),
-            strangeness=quark_numbers[0],
-            charmness=quark_numbers[1],
-            bottomness=quark_numbers[2],
-            topness=quark_numbers[3],
-            baryon_number=__calculate_baryonnumber(pdg_particle),
-            electron_lepton_number=lepton_qn[0],
-            muon_lepton_number=lepton_qn[1],
-            tau_lepton_number=lepton_qn[2],
-            isospin=__create_isospin(pdg_particle),
-            parity=__create_parity(pdg_particle.P),
-            c_parity=__create_parity(pdg_particle.C),
-            g_parity=__create_parity(pdg_particle.G),
-        ),
-    )
+def __create_parity(parity_enum: enums.Parity) -> Optional[Parity]:
+    if parity_enum in [enums.Parity.o, enums.Parity.u]:
+        return None
+    return Parity(parity_enum)
