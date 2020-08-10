@@ -6,7 +6,9 @@ of the `expertsystem`.
 
 import logging
 from copy import deepcopy
+
 from multiprocessing import Pool
+
 from typing import (
     Dict,
     List,
