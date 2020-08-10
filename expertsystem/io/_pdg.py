@@ -18,6 +18,7 @@ def load_pdg() -> ParticleCollection:
     all_pdg_particles = PdgDatabase.findall(
         lambda item: item.charge.is_integer()  # remove quarks
         and item.J is not None  # remove new physics and nuclei
+        and abs(item.pdgid) < 1e9  # p and n as nucleus
     )
     particle_collection = ParticleCollection()
     for pdg_particle in all_pdg_particles:
