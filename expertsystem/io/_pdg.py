@@ -69,7 +69,8 @@ def __compute_quark_numbers(
     bottomness = 0
     topness = 0
     if pdg_particle.pdgid.is_hadron:
-        for quark in pdg_particle.quarks:
+        quark_content = pdg_particle.quarks.replace("sqrt", "")
+        for quark in quark_content:
             if quark == "S":
                 strangeness += 1
             elif quark == "s":

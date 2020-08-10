@@ -131,6 +131,6 @@ class TestInternalParticleDict:
     def test_pdg_size(self):
         assert len(self.pdg) == 541
 
-    @pytest.mark.parametrize("name", ["gamma"])
+    @pytest.mark.parametrize("name", ["D0", "gamma"])
     def test_pdg_entries(self, name):
         assert particle.DATABASE[name] == self.pdg[name]
