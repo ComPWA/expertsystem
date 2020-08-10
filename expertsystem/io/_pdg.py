@@ -28,13 +28,20 @@ def load_pdg() -> ParticleCollection:
 
 # cspell:ignore pdgid
 def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
+    def convert_mass_width(value: Optional[float]) -> float:
+        if value is None:
+            return 0.0
+        return (  # https://github.com/ComPWA/expertsystem/issues/178
+            float(value) / 1e3
+        )
+
     quark_numbers = __compute_quark_numbers(pdg_particle)
     lepton_qn = __calculate_lepton_qn(pdg_particle)
     return Particle(
         name=str(pdg_particle.name),
         pid=int(pdg_particle.pdgid),
-        mass=0.0 if pdg_particle.mass is None else float(pdg_particle.mass),
-        width=0.0 if pdg_particle.width is None else float(pdg_particle.width),
+        mass=convert_mass_width(pdg_particle.mass),
+        width=convert_mass_width(pdg_particle.width),
         state=QuantumState[float](
             charge=int(pdg_particle.charge),
             spin=float(pdg_particle.J),
