@@ -129,7 +129,7 @@ class TestInternalParticleDict:
 
 
 def test_pdg():
-    pdg_particle_collection = io.load_particle_collection()
+    pdg_particle_collection = io.load_pdg()
     # io.write(pdg_particle_collection, "pdg.yml")
     assert len(pdg_particle_collection) == 541
     d_meson = pdg_particle_collection["D0"]
