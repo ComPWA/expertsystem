@@ -16,7 +16,7 @@ Welcome to PWA Expert System!
       .. image:: https://img.shields.io/pypi/pyversions/expertsystem
         :alt: Supported Python versions
         :target: https://pypi.org/project/expertsystem
-      .. image:: http://www.mypy-lang.org/static/mypy_badge.svg
+      .. image:: mypy_badge.svg
         :alt: Checked with mypy
         :target: http://mypy-lang.org
 
