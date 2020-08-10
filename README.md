@@ -1,7 +1,7 @@
 # PWA Expert System
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples%2Fquickstart.ipynb)
 [![Documentation build status](https://readthedocs.org/projects/expertsystem/badge/?version=latest)](https://expertsystem.readthedocs.io)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples%2Fquickstart.ipynb)
 
 [![PyPI package](https://badge.fury.io/py/expertsystem.svg)](https://pypi.org/project/expertsystem)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/expertsystem)](https://pypi.org/project/expertsystem)

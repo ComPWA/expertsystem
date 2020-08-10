@@ -3,12 +3,12 @@ Welcome to PWA Expert System!
 
 .. list-table::
 
-  * - .. image:: https://mybinder.org/badge_logo.svg
-        :alt: Try out Jupyter notebooks
-        :target: https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples%2Fquickstart.ipynb
-      .. image:: https://readthedocs.org/projects/expertsystem/badge/?version=latest
+  * - .. image:: https://readthedocs.org/projects/expertsystem/badge/?version=latest
         :alt: Documentation build status
         :target: https://expertsystem.readthedocs.io
+      .. image:: https://mybinder.org/badge_logo.svg
+        :alt: Try out Jupyter notebooks
+        :target: https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples%2Fquickstart.ipynb
 
   * - .. image:: https://badge.fury.io/py/expertsystem.svg
         :alt: PyPI package
