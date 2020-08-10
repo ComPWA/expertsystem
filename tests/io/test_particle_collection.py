@@ -127,12 +127,12 @@ class TestInternalParticleDict:
         assert gamma_from_subset.pid == 22
         assert gamma_from_subset is particle.DATABASE["gamma"]
 
-
-def test_pdg():
-    pdg_particle_collection = io.load_pdg()
-    # io.write(pdg_particle_collection, "pdg.yml")
-    assert len(pdg_particle_collection) == 541
-    d_meson = pdg_particle_collection["D0"]
-    assert d_meson.mass == 1864.83
-    assert d_meson.state.charge == 0
-    assert d_meson.state.spin == 0.0
+    @staticmethod
+    def test_pdg():
+        pdg_particle_collection = io.load_pdg()
+        # io.write(pdg_particle_collection, "pdg.yml")
+        assert len(pdg_particle_collection) == 541
+        d_meson = pdg_particle_collection["D0"]
+        assert d_meson.mass == 1864.83
+        assert d_meson.state.charge == 0
+        assert d_meson.state.spin == 0.0
