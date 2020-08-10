@@ -8,7 +8,7 @@ Welcome to PWA Expert System!
         :target: https://expertsystem.readthedocs.io
       .. image:: https://mybinder.org/badge_logo.svg
         :alt: Try out Jupyter notebooks
-        :target: https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples%2Fquickstart.ipynb
+        :target: https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples
 
   * - .. image:: https://badge.fury.io/py/expertsystem.svg
         :alt: PyPI package
