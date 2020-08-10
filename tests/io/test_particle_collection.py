@@ -89,6 +89,7 @@ def test_equivalence_xml_yaml_particle_list():
 
 class TestInternalParticleDict:
     ui.load_default_particle_list()
+    pdg = io.load_pdg()
 
     @staticmethod
     def test_build_particle_from_internal_database():
@@ -127,12 +128,9 @@ class TestInternalParticleDict:
         assert gamma_from_subset.pid == 22
         assert gamma_from_subset is particle.DATABASE["gamma"]
 
-    @staticmethod
-    def test_pdg():
-        pdg_particle_collection = io.load_pdg()
-        # io.write(pdg_particle_collection, "pdg.yml")
-        assert len(pdg_particle_collection) == 541
-        d_meson = pdg_particle_collection["D0"]
-        assert d_meson.mass == 1864.83
-        assert d_meson.state.charge == 0
-        assert d_meson.state.spin == 0.0
+    def test_pdg_size(self):
+        assert len(self.pdg) == 541
+
+    @pytest.mark.parametrize("name", ["gamma"])
+    def test_pdg_entries(self, name):
+        assert particle.DATABASE[name] == self.pdg[name]
