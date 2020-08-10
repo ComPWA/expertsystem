@@ -96,19 +96,13 @@ def load_pdg() -> ParticleCollection:
     )
     particle_collection = ParticleCollection()
     for item in all_pdg_particles:
-        mass = 0
-        if item.mass is not None:
-            mass = item.mass
-        width = 0
-        if item.width is not None:
-            width = item.width
         hadron_qn = __compute_quark_numbers(item)
         lepton_qn = __calculate_lepton_qn(item)
         new_particle = Particle(
             name=str(item.name),
             pid=int(item.pdgid),
-            mass=float(mass),
-            width=width,
+            mass=0.0 if item.mass is None else float(item.mass),
+            width=0.0 if item.width is None else float(item.width),
             state=QuantumState[float](
                 charge=int(item.charge),
                 spin=float(item.J),
