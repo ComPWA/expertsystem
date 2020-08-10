@@ -63,6 +63,18 @@ def __compute_quark_numbers(
     )
 
 
+def __create_parity(parity_enum: enums.Parity) -> Optional[Parity]:
+    if parity_enum in [enums.Parity.o, enums.Parity.u]:
+        return None
+    return Parity(parity_enum)
+
+
+def __create_isospin(pdg_particle: PdgDatabase) -> Optional[Spin]:
+    if pdg_particle.I is None:
+        return None
+    return Spin(pdg_particle.I, __compute_isospin_projection(pdg_particle))
+
+
 def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
     spin_projection = 0.0
     if pdg_particle.pdgid.is_hadron:
@@ -72,18 +84,6 @@ def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
             elif quark in ["U", "d"]:
                 spin_projection -= 0.5
     return spin_projection
-
-
-def __create_parity(parity_enum: enums.Parity) -> Optional[Parity]:
-    if parity_enum in [enums.Parity.o, enums.Parity.u]:
-        return None
-    return Parity(parity_enum)
-
-
-def __create_spin(magnitude: float, projection: float) -> Optional[Spin]:
-    if magnitude is None:
-        return None
-    return Spin(magnitude, projection)
 
 
 def __calculate_baryonnumber(pdg_particle: PdgDatabase,) -> int:
@@ -119,9 +119,7 @@ def load_pdg() -> ParticleCollection:
                 electron_lepton_number=lepton_qn[0],
                 muon_lepton_number=lepton_qn[1],
                 tau_lepton_number=lepton_qn[2],
-                isospin=__create_spin(
-                    item.I, __compute_isospin_projection(item)
-                ),
+                isospin=__create_isospin(item),
                 parity=__create_parity(item.P),
                 c_parity=__create_parity(item.C),
                 g_parity=__create_parity(item.G),
