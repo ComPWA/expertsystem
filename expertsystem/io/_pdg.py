@@ -100,30 +100,34 @@ def load_pdg() -> ParticleCollection:
         and item.J is not None  # remove new physics and nuclei
     )
     particle_collection = ParticleCollection()
-    for item in all_pdg_particles:
-        quark_numbers = __compute_quark_numbers(item)
-        lepton_qn = __calculate_lepton_qn(item)
-        new_particle = Particle(
-            name=str(item.name),
-            pid=int(item.pdgid),
-            mass=0.0 if item.mass is None else float(item.mass),
-            width=0.0 if item.width is None else float(item.width),
-            state=QuantumState[float](
-                charge=int(item.charge),
-                spin=float(item.J),
-                strangeness=quark_numbers[0],
-                charmness=quark_numbers[1],
-                bottomness=quark_numbers[2],
-                topness=quark_numbers[3],
-                baryon_number=__calculate_baryonnumber(item),
-                electron_lepton_number=lepton_qn[0],
-                muon_lepton_number=lepton_qn[1],
-                tau_lepton_number=lepton_qn[2],
-                isospin=__create_isospin(item),
-                parity=__create_parity(item.P),
-                c_parity=__create_parity(item.C),
-                g_parity=__create_parity(item.G),
-            ),
-        )
+    for pdg_particle in all_pdg_particles:
+        new_particle = __convert_pdg_instance(pdg_particle)
         particle_collection.add(new_particle)
     return particle_collection
+
+
+def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
+    quark_numbers = __compute_quark_numbers(pdg_particle)
+    lepton_qn = __calculate_lepton_qn(pdg_particle)
+    return Particle(
+        name=str(pdg_particle.name),
+        pid=int(pdg_particle.pdgid),
+        mass=0.0 if pdg_particle.mass is None else float(pdg_particle.mass),
+        width=0.0 if pdg_particle.width is None else float(pdg_particle.width),
+        state=QuantumState[float](
+            charge=int(pdg_particle.charge),
+            spin=float(pdg_particle.J),
+            strangeness=quark_numbers[0],
+            charmness=quark_numbers[1],
+            bottomness=quark_numbers[2],
+            topness=quark_numbers[3],
+            baryon_number=__calculate_baryonnumber(pdg_particle),
+            electron_lepton_number=lepton_qn[0],
+            muon_lepton_number=lepton_qn[1],
+            tau_lepton_number=lepton_qn[2],
+            isospin=__create_isospin(pdg_particle),
+            parity=__create_parity(pdg_particle.P),
+            c_parity=__create_parity(pdg_particle.C),
+            g_parity=__create_parity(pdg_particle.G),
+        ),
+    )
