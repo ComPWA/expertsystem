@@ -87,7 +87,7 @@ def __compute_quark_numbers(
     )
 
 
-def __calculate_lepton_qn(pdg_particle: PdgDatabase) -> tuple:
+def __calculate_lepton_qn(pdg_particle: PdgDatabase) -> Tuple[int, int, int]:
     electron_lepton_number = 0
     muon_lepton_number = 0
     tau_lepton_number = 0
@@ -102,7 +102,7 @@ def __calculate_lepton_qn(pdg_particle: PdgDatabase) -> tuple:
     return electron_lepton_number, muon_lepton_number, tau_lepton_number
 
 
-def __calculate_baryonnumber(pdg_particle: PdgDatabase,) -> int:
+def __calculate_baryonnumber(pdg_particle: PdgDatabase) -> int:
     return (
         pdg_particle.pdgid
         / abs(pdg_particle.pdgid)
