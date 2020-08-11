@@ -668,6 +668,11 @@
         <Value>1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>GParity</Type>
+        <Value>+1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>0.0</Value>
@@ -778,6 +783,11 @@
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
+        <Class>Int</Class>
+        <Type>GParity</Type>
+        <Value>+1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>1</Value>
@@ -829,6 +839,11 @@
         <Class>Int</Class>
         <Type>CParity</Type>
         <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
+        <Class>Int</Class>
+        <Type>GParity</Type>
+        <Value>+1</Value>
       </QuantumNumber>
       <QuantumNumber>
         <Class>Spin</Class>

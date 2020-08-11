@@ -181,6 +181,7 @@ ParticleList:
       Parity: -1
       CParity: 1
       IsoSpin: 0
+      GParity: 1
 
   rho(770)0:
     PID: 113
@@ -203,6 +204,7 @@ ParticleList:
       Charge: +1
       Parity: -1
       CParity: -1
+      GParity: 1
       IsoSpin: { Value: 1, Projection: +1 }
 
   rho(770)-:
@@ -214,6 +216,7 @@ ParticleList:
       Charge: -1
       Parity: -1
       CParity: -1
+      GParity: 1
       IsoSpin: { Value: 1, Projection: -1 }
 
   omega(782):
