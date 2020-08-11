@@ -103,7 +103,7 @@ class TestInternalParticleDict:
     def test_find():
         f2_1950 = particle.DATABASE.find(9050225)
         assert f2_1950.name == "f2(1950)"
-        assert f2_1950.mass == 1.944
+        assert f2_1950.mass == 1.936
         phi = particle.DATABASE.find("phi(1020)")
         assert phi.pid == 333
         assert phi.width == 0.004249
@@ -119,7 +119,7 @@ class TestInternalParticleDict:
         search_result = particle.DATABASE.find_subset("f0")
         f0_1500_from_subset = search_result["f0(1500)"]
         assert len(search_result) == 2
-        assert f0_1500_from_subset.mass == 1.505
+        assert f0_1500_from_subset.mass == 1.506
         assert f0_1500_from_subset is particle.DATABASE["f0(1500)"]
         assert f0_1500_from_subset is not particle.DATABASE["f0(980)"]
 

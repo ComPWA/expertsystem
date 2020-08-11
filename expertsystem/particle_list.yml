@@ -11,7 +11,7 @@ ParticleList:
 
   W-:
     PID: -24
-    Mass: 80.385
+    Mass: 80.379
     Width: 2.085
     QuantumNumbers:
       Spin: 1
@@ -19,7 +19,7 @@ ParticleList:
 
   W+:
     PID: 24
-    Mass: 80.385
+    Mass: 80.379
     Width: 2.085
     QuantumNumbers:
       Spin: 1
@@ -85,7 +85,7 @@ ParticleList:
 
   ve:
     PID: 12
-    Mass: 1.0e-09
+    Mass: 0.0
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -94,7 +94,7 @@ ParticleList:
 
   vebar:
     PID: -12
-    Mass: 1.0e-09
+    Mass: 0.0
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -103,7 +103,7 @@ ParticleList:
 
   vmu:
     PID: 14
-    Mass: 1.0e-09
+    Mass: 0.0
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -112,7 +112,7 @@ ParticleList:
 
   vmubar:
     PID: -14
-    Mass: 1.0e-09
+    Mass: 0.0
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -121,7 +121,7 @@ ParticleList:
 
   vtau:
     PID: 16
-    Mass: 1.0e-09
+    Mass: 0.0
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -130,7 +130,7 @@ ParticleList:
 
   vtaubar:
     PID: -16
-    Mass: 1.0e-09
+    Mass: 0.0
     QuantumNumbers:
       Spin: 0.5
       Charge: 0
@@ -139,7 +139,7 @@ ParticleList:
 
   pi0:
     PID: 111
-    Mass: 0.1349766
+    Mass: 0.134977
     Width: 7.73e-09
     QuantumNumbers:
       Spin: 0
@@ -151,7 +151,7 @@ ParticleList:
 
   pi+:
     PID: 211
-    Mass: 0.13957018
+    Mass: 0.13957061
     Width: 2.5284e-17
     QuantumNumbers:
       Spin: 0
@@ -162,7 +162,7 @@ ParticleList:
 
   pi-:
     PID: -211
-    Mass: 0.13957018
+    Mass: 0.13957061
     Width: 2.5284e-17
     QuantumNumbers:
       Spin: 0
@@ -230,7 +230,7 @@ ParticleList:
 
   f0(980):
     PID: 9010221
-    Mass: 0.994
+    Mass: 0.99
     Width: 0.06
     QuantumNumbers:
       Spin: 0
@@ -242,7 +242,7 @@ ParticleList:
 
   f0(1500):
     PID: 9030221
-    Mass: 1.505
+    Mass: 1.506
     Width: 0.112
     QuantumNumbers:
       Spin: 0
@@ -254,7 +254,7 @@ ParticleList:
 
   f2(1270):
     PID: 225
-    Mass: 1.2751
+    Mass: 1.2755
     Width: 0.1867
     QuantumNumbers:
       Spin: 2
@@ -266,7 +266,7 @@ ParticleList:
 
   f2(1950):
     PID: 9050225
-    Mass: 1.944
+    Mass: 1.936
     Width: 0.464
     QuantumNumbers:
       Spin: 2
@@ -278,7 +278,7 @@ ParticleList:
 
   a0(980)0:
     PID: 9000111
-    Mass: 0.994
+    Mass: 0.98
     Width: 0.075
     QuantumNumbers:
       Spin: 0
@@ -290,7 +290,7 @@ ParticleList:
 
   a0(980)+:
     PID: 9000211
-    Mass: 0.994
+    Mass: 0.98
     Width: 0.075
     QuantumNumbers:
       Spin: 0
@@ -301,7 +301,7 @@ ParticleList:
 
   a0(980)-:
     PID: -9000211
-    Mass: 0.994
+    Mass: 0.98
     Width: 0.075
     QuantumNumbers:
       Spin: 0
@@ -312,7 +312,7 @@ ParticleList:
 
   a2(1320)0:
     PID: 115
-    Mass: 1.3184
+    Mass: 1.3169
     Width: 0.107
     QuantumNumbers:
       Spin: 2
@@ -324,7 +324,7 @@ ParticleList:
 
   a2(1320)+:
     PID: 215
-    Mass: 1.3184
+    Mass: 1.3169
     Width: 0.107
     QuantumNumbers:
       Spin: 2
@@ -336,7 +336,7 @@ ParticleList:
 
   a2(1320)-:
     PID: -215
-    Mass: 1.3184
+    Mass: 1.3169
     Width: 0.107
     QuantumNumbers:
       Spin: 2
@@ -401,7 +401,7 @@ ParticleList:
 
   D+:
     PID: 411
-    Mass: 1.86958
+    Mass: 1.86965
     Width: 6.33E-13
     QuantumNumbers:
       Spin: 0
@@ -412,7 +412,7 @@ ParticleList:
 
   D-:
     PID: -411
-    Mass: 1.86958
+    Mass: 1.86965
     Width: 6.33E-13
     QuantumNumbers:
       Spin: 0
@@ -445,7 +445,7 @@ ParticleList:
 
   D*(2007)0:
     PID: 423
-    Mass: 2.007
+    Mass: 2.00685
     Width: 0.0021
     QuantumNumbers:
       Spin: 1
@@ -456,7 +456,7 @@ ParticleList:
 
   D*(2007)0bar:
     PID: -423
-    Mass: 2.007
+    Mass: 2.00685
     Width: 0.0021
     QuantumNumbers:
       Spin: 1
@@ -467,7 +467,7 @@ ParticleList:
 
   D*(2010)-:
     PID: -413
-    Mass: 2.01
+    Mass: 2.01026
     Width: 83.4E-6
     QuantumNumbers:
       Spin: 1
@@ -478,7 +478,7 @@ ParticleList:
 
   D*(2010)+:
     PID: 413
-    Mass: 2.01
+    Mass: 2.01026
     Width: 83.4E-6
     QuantumNumbers:
       Spin: 1
@@ -489,7 +489,7 @@ ParticleList:
 
   D1(2420)0:
     PID: 10423
-    Mass: 2.4214
+    Mass: 2.4208
     Width: 0.0317
     QuantumNumbers:
       Spin: 1
@@ -523,7 +523,7 @@ ParticleList:
 
   Chic1:
     PID: 20443
-    Mass: 3.510
+    Mass: 3.51067
     Width: 0.00084
     QuantumNumbers:
       Spin: 1
