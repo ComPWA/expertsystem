@@ -38,6 +38,13 @@ def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
 
     quark_numbers = __compute_quark_numbers(pdg_particle)
     lepton_numbers = __compute_lepton_numbers(pdg_particle)
+    if pdg_particle.pdgid.is_lepton:  # convention: C(fermion)=+1
+        if pdg_particle.pdgid > 0:
+            parity: Optional[Parity] = Parity(+1)
+        else:
+            parity = Parity(-1)
+    else:
+        parity = __create_parity(pdg_particle.P)
     return Particle(
         name=str(pdg_particle.name),
         pid=int(pdg_particle.pdgid),
@@ -55,7 +62,7 @@ def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
             muon_lepton_number=lepton_numbers[1],
             tau_lepton_number=lepton_numbers[2],
             isospin=__create_isospin(pdg_particle),
-            parity=__create_parity(pdg_particle.P),
+            parity=parity,
             c_parity=__create_parity(pdg_particle.C),
             g_parity=__create_parity(pdg_particle.G),
         ),
