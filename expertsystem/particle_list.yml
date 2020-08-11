@@ -296,7 +296,7 @@ ParticleList:
       Spin: 0
       Charge: 1
       Parity: +1
-      IsoSpin: { Value: 1, Projection: 1 }
+      IsoSpin: { Value: 1, Projection: 0 }
       GParity: -1
 
   a0(980)-:
@@ -307,7 +307,7 @@ ParticleList:
       Spin: 0
       Charge: -1
       Parity: +1
-      IsoSpin: { Value: 1, Projection: -1 }
+      IsoSpin: { Value: 1, Projection: 0 }
       GParity: -1
 
   a2(1320)0:
@@ -719,7 +719,7 @@ ParticleList:
       Spin: 0.5
       Charge: -1
       Parity: 1
-      IsoSpin: { Value: 1.0, Projection: -0.5 }
+      IsoSpin: { Value: 0.5, Projection: -0.5 }
       BaryonNumber: 1
       Strangeness: -2
 

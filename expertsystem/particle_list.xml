@@ -1251,7 +1251,7 @@
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>1</Value>
-        <Projection>1</Projection>
+        <Projection>0</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Parameter>
@@ -1318,7 +1318,7 @@
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
         <Value>1</Value>
-        <Projection>-1</Projection>
+        <Projection>0</Projection>
       </QuantumNumber>
       <DecayInfo>
         <Parameter>
@@ -3119,7 +3119,7 @@
       <QuantumNumber>
         <Class>Spin</Class>
         <Type>IsoSpin</Type>
-        <Value>1.0</Value>
+        <Value>0.5</Value>
         <Projection>-0.5</Projection>
       </QuantumNumber>
       <DecayInfo>
