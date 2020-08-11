@@ -484,15 +484,6 @@ ParticleList:
       IsoSpin: { Value: 0.5, Projection: -0.5 }
       Charmness: 1
 
-  XX:
-    PID: 1111
-    Mass: 4.100
-    QuantumNumbers:
-      Spin: 1
-      Charge: -1
-      Parity: -1
-      IsoSpin: { Value: 1, Projection: -1 }
-
   J/psi:
     PID: 443
     Mass: 3.096900

@@ -2123,36 +2123,6 @@
       </DecayInfo>
     </Particle>
     <Particle>
-      <Name>XX</Name>
-      <Pid>1111</Pid>
-      <Parameter>
-        <Type>Mass</Type>
-        <Name>Mass_XX</Name>
-        <Value>4.1</Value>
-      </Parameter>
-      <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>Spin</Type>
-        <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Charge</Type>
-        <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>Parity</Type>
-        <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Spin</Class>
-        <Type>IsoSpin</Type>
-        <Value>1</Value>
-        <Projection>-1</Projection>
-      </QuantumNumber>
-    </Particle>
-    <Particle>
       <Name>J/psi</Name>
       <Pid>443</Pid>
       <Parameter>
