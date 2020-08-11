@@ -779,11 +779,6 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>CParity</Type>
-        <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>GParity</Type>
         <Value>+1</Value>
       </QuantumNumber>
@@ -833,11 +828,6 @@
       <QuantumNumber>
         <Class>Int</Class>
         <Type>Parity</Type>
-        <Value>-1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
-        <Type>CParity</Type>
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>
@@ -1451,11 +1441,6 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>CParity</Type>
-        <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>GParity</Type>
         <Value>-1</Value>
       </QuantumNumber>
@@ -1509,11 +1494,6 @@
       </QuantumNumber>
       <QuantumNumber>
         <Class>Int</Class>
-        <Type>CParity</Type>
-        <Value>1</Value>
-      </QuantumNumber>
-      <QuantumNumber>
-        <Class>Int</Class>
         <Type>GParity</Type>
         <Value>-1</Value>
       </QuantumNumber>
@@ -1563,6 +1543,11 @@
       <QuantumNumber>
         <Class>Int</Class>
         <Type>Parity</Type>
+        <Value>-1</Value>
+      </QuantumNumber>
+      <QuantumNumber>
+        <Class>Int</Class>
+        <Type>CParity</Type>
         <Value>-1</Value>
       </QuantumNumber>
       <QuantumNumber>

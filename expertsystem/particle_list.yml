@@ -203,7 +203,6 @@ ParticleList:
       Spin: 1
       Charge: +1
       Parity: -1
-      CParity: -1
       GParity: 1
       IsoSpin: { Value: 1, Projection: +1 }
 
@@ -215,7 +214,6 @@ ParticleList:
       Spin: 1
       Charge: -1
       Parity: -1
-      CParity: -1
       GParity: 1
       IsoSpin: { Value: 1, Projection: -1 }
 
@@ -333,7 +331,6 @@ ParticleList:
       Spin: 2
       Charge: 1
       Parity: 1
-      CParity: 1
       IsoSpin: { Value: 1, Projection: 1 }
       GParity: -1
 
@@ -345,7 +342,6 @@ ParticleList:
       Spin: 2
       Charge: -1
       Parity: 1
-      CParity: 1
       IsoSpin: { Value: 1, Projection: -1 }
       GParity: -1
 
@@ -357,6 +353,7 @@ ParticleList:
       Spin: 1
       Charge: 0
       Parity: -1
+      CParity: -1
       GParity: -1
       IsoSpin: 0
 
