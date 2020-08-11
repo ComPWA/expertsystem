@@ -109,9 +109,7 @@ class TestInternalParticleDict:
         assert phi.width == 0.004266
 
     @staticmethod
-    @pytest.mark.parametrize(
-        "search_term", [666, 2112, "non-existing"]  # 2112: nbar == n
-    )
+    @pytest.mark.parametrize("search_term", [666, "non-existing"])
     def test_find_fail(search_term):
         with pytest.raises(LookupError):
             particle.DATABASE.find(search_term)

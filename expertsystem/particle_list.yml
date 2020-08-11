@@ -24,7 +24,7 @@ ParticleList:
       Charge: 1
 
   e+:
-    PID: 11
+    PID: -11
     Mass: 0.0005109989461
     QuantumNumbers:
       Spin: 0.5
@@ -33,7 +33,7 @@ ParticleList:
       ElectronLN: -1
 
   e-:
-    PID: -11
+    PID: 11
     Mass: 0.0005109989461
     QuantumNumbers:
       Spin: 0.5
@@ -42,7 +42,7 @@ ParticleList:
       ElectronLN: 1
 
   mu+:
-    PID: 13
+    PID: -13
     Mass: 0.1056583745
     QuantumNumbers:
       Spin: 0.5
@@ -51,7 +51,7 @@ ParticleList:
       MuonLN: -1
 
   mu-:
-    PID: -13
+    PID: 13
     Mass: 0.1056583745
     QuantumNumbers:
       Spin: 0.5
@@ -60,7 +60,7 @@ ParticleList:
       MuonLN: 1
 
   tau+:
-    PID: 15
+    PID: -15
     Mass: 1.77686
     QuantumNumbers:
       Spin: 0.5
@@ -69,7 +69,7 @@ ParticleList:
       TauLN: -1
 
   tau-:
-    PID: -15
+    PID: 15
     Mass: 1.77686
     QuantumNumbers:
       Spin: 0.5
@@ -289,7 +289,7 @@ ParticleList:
       GParity: -1
 
   a0(980)-:
-    PID: 9000211
+    PID: -9000211
     Mass: 0.994
     QuantumNumbers:
       Spin: 0
@@ -508,7 +508,7 @@ ParticleList:
       IsoSpin: 0
 
   Chic1:
-    PID: 1234
+    PID: 20443
     Mass: 3.510
     Width: 0.00084
     QuantumNumbers:
@@ -550,7 +550,7 @@ ParticleList:
       BaryonNumber: 1
 
   nbar:
-    PID: 2112
+    PID: -2112
     Mass: 0.939565413
     QuantumNumbers:
       Spin: 0.5
@@ -560,7 +560,7 @@ ParticleList:
       BaryonNumber: -1
 
   N(1650)+:
-    PID: 3112212
+    PID: 32212
     Mass: 1.650
     Width: 0.125
     QuantumNumbers:
@@ -571,7 +571,7 @@ ParticleList:
       BaryonNumber: 1
 
   N(1650)-:
-    PID: -3112212
+    PID: -32212
     Mass: 1.650
     Width: 0.125
     QuantumNumbers:

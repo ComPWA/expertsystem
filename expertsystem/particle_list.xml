@@ -113,7 +113,7 @@
     <!-- ==================== Leptons ==================== -->
     <Particle>
       <Name>e+</Name>
-      <Pid>11</Pid>
+      <Pid>-11</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_e+</Name>
@@ -142,7 +142,7 @@
     </Particle>
     <Particle>
       <Name>e-</Name>
-      <Pid>-11</Pid>
+      <Pid>11</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_e-</Name>
@@ -171,7 +171,7 @@
     </Particle>
     <Particle>
       <Name>mu+</Name>
-      <Pid>13</Pid>
+      <Pid>-13</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_mu+</Name>
@@ -200,7 +200,7 @@
     </Particle>
     <Particle>
       <Name>mu-</Name>
-      <Pid>-13</Pid>
+      <Pid>13</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_mu-</Name>
@@ -229,7 +229,7 @@
     </Particle>
     <Particle>
       <Name>tau+</Name>
-      <Pid>15</Pid>
+      <Pid>-15</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_tau+</Name>
@@ -258,7 +258,7 @@
     </Particle>
     <Particle>
       <Name>tau-</Name>
-      <Pid>-15</Pid>
+      <Pid>15</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_tau-</Name>
@@ -1215,7 +1215,7 @@
     </Particle>
     <Particle>
       <Name>a0(980)-</Name>
-      <Pid>9000211</Pid>
+      <Pid>-9000211</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_a0(980)-</Name>
@@ -2233,7 +2233,7 @@
     </Particle>
     <Particle>
       <Name>Chic1</Name>
-      <Pid>1234</Pid>
+      <Pid>20443</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_Chic1</Name>
@@ -2398,7 +2398,7 @@
     </Particle>
     <Particle>
       <Name>nbar</Name>
-      <Pid>2112</Pid>
+      <Pid>-2112</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_nbar</Name>
@@ -2433,7 +2433,7 @@
     </Particle>
     <Particle>
       <Name>N(1650)+</Name>
-      <Pid>3112212</Pid>
+      <Pid>32212</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_N(1650)+</Name>
@@ -2486,7 +2486,7 @@
     </Particle>
     <Particle>
       <Name>N(1650)-</Name>
-      <Pid>-3112212</Pid>
+      <Pid>-32212</Pid>
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_N(1650)-</Name>
