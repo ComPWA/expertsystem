@@ -2680,11 +2680,11 @@
 
     <!-- ===== Strange Baryons ===== -->
     <Particle>
-      <Name>lambda</Name>
+      <Name>Lambda</Name>
       <Pid>3122</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_lambda</Name>
+        <Name>Mass_Lambda</Name>
         <Value>1.115683</Value>
       </Parameter>
       <QuantumNumber>
@@ -2719,11 +2719,11 @@
       </QuantumNumber>
     </Particle>
     <Particle>
-      <Name>lambdabar</Name>
+      <Name>Lambdabar</Name>
       <Pid>-3122</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_lambdabar</Name>
+        <Name>Mass_Lambdabar</Name>
         <Value>1.115683</Value>
       </Parameter>
       <QuantumNumber>
@@ -2758,11 +2758,11 @@
       </QuantumNumber>
     </Particle>
     <Particle>
-      <Name>sigma0</Name>
+      <Name>Sigma0</Name>
       <Pid>3212</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_sigma0</Name>
+        <Name>Mass_Sigma0</Name>
         <Value>1.192642</Value>
       </Parameter>
       <QuantumNumber>
@@ -2803,17 +2803,17 @@
         </FormFactor>
         <Parameter>
           <Type>Width</Type>
-          <Name>Width_sigma0</Name>
+          <Name>Width_Sigma0</Name>
           <Value>0.0000089</Value>
         </Parameter>
       </DecayInfo>
     </Particle>
     <Particle>
-      <Name>sigma+</Name>
+      <Name>Sigma+</Name>
       <Pid>3222</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_sigma+</Name>
+        <Name>Mass_Sigma+</Name>
         <Value>1.18937</Value>
       </Parameter>
       <QuantumNumber>
@@ -2849,11 +2849,11 @@
       </QuantumNumber>
     </Particle>
     <Particle>
-      <Name>sigma-</Name>
+      <Name>Sigma-</Name>
       <Pid>3112</Pid>
       <Parameter>
         <Type>Mass</Type>
-        <Name>Mass_sigma-</Name>
+        <Name>Mass_Sigma-</Name>
         <Value>1.197449</Value>
       </Parameter>
       <QuantumNumber>

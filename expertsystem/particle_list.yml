@@ -621,7 +621,7 @@ ParticleList:
       IsoSpin: { Value: 1.5, Projection: -1.5 }
       BaryonNumber: 1
 
-  lambda:
+  Lambda:
     PID: 3122
     Mass: 1.115683
     QuantumNumbers:
@@ -632,7 +632,7 @@ ParticleList:
       BaryonNumber: 1
       Strangeness: -1
 
-  lambdabar:
+  Lambdabar:
     PID: -3122
     Mass: 1.115683
     QuantumNumbers:
@@ -643,7 +643,7 @@ ParticleList:
       BaryonNumber: -1
       Strangeness: 1
 
-  sigma0:
+  Sigma0:
     PID: 3212
     Mass: 1.192642
     Width: 0.0000089
@@ -655,7 +655,7 @@ ParticleList:
       BaryonNumber: 1
       Strangeness: -1
 
-  sigma+:
+  Sigma+:
     PID: 3222
     Mass: 1.18937
     QuantumNumbers:
@@ -666,7 +666,7 @@ ParticleList:
       BaryonNumber: 1
       Strangeness: -1
 
-  sigma-:
+  Sigma-:
     PID: 3112
     Mass: 1.197449
     QuantumNumbers:
