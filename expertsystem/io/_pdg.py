@@ -37,7 +37,7 @@ def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
         )
 
     quark_numbers = __compute_quark_numbers(pdg_particle)
-    lepton_numbers = __calculate_lepton_numbers(pdg_particle)
+    lepton_numbers = __compute_lepton_numbers(pdg_particle)
     return Particle(
         name=str(pdg_particle.name),
         pid=int(pdg_particle.pdgid),
@@ -50,7 +50,7 @@ def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
             charmness=quark_numbers[1],
             bottomness=quark_numbers[2],
             topness=quark_numbers[3],
-            baryon_number=__calculate_baryonnumber(pdg_particle),
+            baryon_number=__compute_baryonnumber(pdg_particle),
             electron_lepton_number=lepton_numbers[0],
             muon_lepton_number=lepton_numbers[1],
             tau_lepton_number=lepton_numbers[2],
@@ -83,7 +83,7 @@ def __compute_quark_numbers(
     )
 
 
-def __calculate_lepton_numbers(
+def __compute_lepton_numbers(
     pdg_particle: PdgDatabase,
 ) -> Tuple[int, int, int]:
     electron_lepton_number = 0
@@ -100,7 +100,7 @@ def __calculate_lepton_numbers(
     return electron_lepton_number, muon_lepton_number, tau_lepton_number
 
 
-def __calculate_baryonnumber(pdg_particle: PdgDatabase) -> int:
+def __compute_baryonnumber(pdg_particle: PdgDatabase) -> int:
     return int(
         pdg_particle.pdgid
         / abs(pdg_particle.pdgid)
