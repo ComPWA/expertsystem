@@ -106,7 +106,7 @@ class TestInternalParticleDict:
         assert f2_1950.mass == 1.944
         phi = particle.DATABASE.find("phi(1020)")
         assert phi.pid == 333
-        assert phi.width == 0.004266
+        assert phi.width == 0.004249
 
     @staticmethod
     @pytest.mark.parametrize("search_term", [666, "non-existing"])

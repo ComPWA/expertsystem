@@ -1245,7 +1245,7 @@ ParticleList:
   f0(1500):
     PID: 9030221
     Mass: 1.505
-    Width: 0.109
+    Width: 0.112
     QuantumNumbers:
       Spin: 0
       Charge: 0
@@ -1256,7 +1256,7 @@ ParticleList:
   f0(980):
     PID: 9010221
     Mass: 0.994
-    Width: 0.070
+    Width: 0.06
     QuantumNumbers:
       Spin: 0
       Charge: 0
@@ -1267,7 +1267,7 @@ ParticleList:
   f2(1270):
     PID: 225
     Mass: 1.2751
-    Width: 0.185
+    Width: 0.1867
     QuantumNumbers:
       Spin: 2
       Charge: 0
@@ -1278,7 +1278,7 @@ ParticleList:
   f2(1950):
     PID: 9050225
     Mass: 1.944
-    Width: 0.472
+    Width: 0.464
     QuantumNumbers:
       Spin: 2
       Charge: 0
@@ -1297,6 +1297,7 @@ ParticleList:
   pi0:
     PID: 111
     Mass: 0.1349766
+    Width: 7.73e-09
     QuantumNumbers:
       Spin: 0
       Charge: 0

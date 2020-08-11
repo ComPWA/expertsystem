@@ -49,6 +49,13 @@
         <Type>Charge</Type>
         <Value>-1</Value>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_W-</Name>
+          <Value>2.085</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>W+</Name>
@@ -68,6 +75,13 @@
         <Type>Charge</Type>
         <Value>1</Value>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_W+</Name>
+          <Value>2.085</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>EpEm (4230 MeV)</Name>
@@ -197,6 +211,13 @@
         <Type>MuonLN</Type>
         <Value>-1</Value>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_mu+</Name>
+          <Value>2.9959847e-19</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>mu-</Name>
@@ -226,6 +247,13 @@
         <Type>MuonLN</Type>
         <Value>1</Value>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_mu-</Name>
+          <Value>2.9959847e-19</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>tau+</Name>
@@ -255,6 +283,13 @@
         <Type>TauLN</Type>
         <Value>-1</Value>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_tau+</Name>
+          <Value>2.267e-12</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>tau-</Name>
@@ -284,6 +319,13 @@
         <Type>TauLN</Type>
         <Value>1</Value>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_tau-</Name>
+          <Value>2.267e-12</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
 
     <!-- Neutrinos -->
@@ -505,6 +547,13 @@
         <Value>1</Value>
         <Projection>0</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_pi0</Name>
+          <Value>7.73e-09</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>pi+</Name>
@@ -540,6 +589,13 @@
         <Value>1</Value>
         <Projection>1</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_pi+</Name>
+          <Value>2.5284e-17</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>pi-</Name>
@@ -575,6 +631,13 @@
         <Value>1</Value>
         <Projection>-1</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_pi-</Name>
+          <Value>2.5284e-17</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>eta</Name>
@@ -838,7 +901,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_omega(782)</Name>
-          <Value>0.000001491</Value>
+          <Value>0.00849</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -895,7 +958,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_f0(980)</Name>
-          <Value>0.07</Value>
+          <Value>0.06</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -952,7 +1015,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_f0(1500)</Name>
-          <Value>0.109</Value>
+          <Value>0.112</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1009,7 +1072,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_f2(1270)</Name>
-          <Value>0.185</Value>
+          <Value>0.1867</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1066,7 +1129,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_f2(1950)</Name>
-          <Value>0.472</Value>
+          <Value>0.464</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1117,6 +1180,11 @@
         <Projection>0</Projection>
       </QuantumNumber>
       <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_a0(980)0</Name>
+          <Value>0.075</Value>
+        </Parameter>
         <Type>flatte</Type>
         <FormFactor>
           <Type>BlattWeisskopf</Type>
@@ -1186,6 +1254,11 @@
         <Projection>1</Projection>
       </QuantumNumber>
       <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_a0(980)+</Name>
+          <Value>0.075</Value>
+        </Parameter>
         <Type>flatte</Type>
         <FormFactor>
           <Type>BlattWeisskopf</Type>
@@ -1248,6 +1321,11 @@
         <Projection>-1</Projection>
       </QuantumNumber>
       <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_a0(980)-</Name>
+          <Value>0.075</Value>
+        </Parameter>
         <Type>flatte</Type>
         <FormFactor>
           <Type>BlattWeisskopf</Type>
@@ -1322,7 +1400,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_a2(1320)0</Name>
-          <Value>0.00107</Value>
+          <Value>0.107</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1380,7 +1458,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_a2(1320)+</Name>
-          <Value>0.00107</Value>
+          <Value>0.107</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1438,7 +1516,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_a2(1320)-</Name>
-          <Value>0.00107</Value>
+          <Value>0.107</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1490,7 +1568,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_phi(1020)</Name>
-          <Value>0.004266</Value>
+          <Value>0.004249</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1537,6 +1615,13 @@
         <Value>0.5</Value>
         <Projection>-0.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_K-</Name>
+          <Value>5.317e-17</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>K+</Name>
@@ -1572,6 +1657,13 @@
         <Value>0.5</Value>
         <Projection>0.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_K+</Name>
+          <Value>5.317e-17</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>K0</Name>
@@ -1899,7 +1991,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_D*(2007)0</Name>
-          <Value>0.001</Value>
+          <Value>0.0021</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1952,7 +2044,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_D*(2007)0bar</Name>
-          <Value>0.001</Value>
+          <Value>0.0021</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -2111,7 +2203,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_D1(2420)0</Name>
-          <Value>27.4E-3</Value>
+          <Value>0.0317</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -2571,6 +2663,13 @@
         <Value>1.5</Value>
         <Projection>1.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Delta(1232)++</Name>
+          <Value>0.117</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>Delta(1232)+</Name>
@@ -2606,6 +2705,13 @@
         <Value>1.5</Value>
         <Projection>0.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Delta(1232)+</Name>
+          <Value>0.117</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>Delta(1232)0</Name>
@@ -2641,6 +2747,13 @@
         <Value>1.5</Value>
         <Projection>-0.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Delta(1232)0</Name>
+          <Value>0.117</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>Delta(1232)-</Name>
@@ -2676,6 +2789,13 @@
         <Value>1.5</Value>
         <Projection>-1.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Delta(1232)-</Name>
+          <Value>0.117</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
 
     <!-- ===== Strange Baryons ===== -->
@@ -2717,6 +2837,13 @@
         <Type>IsoSpin</Type>
         <Value>0.0</Value>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Lambda</Name>
+          <Value>2.501e-15</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>Lambdabar</Name>
@@ -2756,6 +2883,13 @@
         <Type>IsoSpin</Type>
         <Value>0.0</Value>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Lambdabar</Name>
+          <Value>2.501e-15</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>Sigma0</Name>
@@ -2847,6 +2981,13 @@
         <Value>1.0</Value>
         <Projection>1.0</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Sigma+</Name>
+          <Value>8.208999999999999e-15</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>Sigma-</Name>
@@ -2887,6 +3028,13 @@
         <Value>1.0</Value>
         <Projection>-1.0</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Sigma-</Name>
+          <Value>4.45e-15</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>Xi0</Name>
@@ -2927,6 +3075,13 @@
         <Value>0.5</Value>
         <Projection>0.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Xi0</Name>
+          <Value>2.27e-15</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>Xi-</Name>
@@ -2967,6 +3122,13 @@
         <Value>1.0</Value>
         <Projection>-0.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_Xi-</Name>
+          <Value>4.02e-15</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
   </ParticleList>
 </root>
