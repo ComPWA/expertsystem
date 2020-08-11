@@ -71,23 +71,10 @@ def __compute_quark_numbers(
     topness = 0
     if pdg_particle.pdgid.is_hadron:
         quark_content = pdg_particle.quarks.replace("sqrt", "")
-        for quark in quark_content:
-            if quark == "S":
-                strangeness += 1
-            elif quark == "s":
-                strangeness -= 1
-            elif quark == "c":
-                charmness += 1
-            elif quark == "C":
-                charmness -= 1
-            elif quark == "b":
-                bottomness += 1
-            elif quark == "B":
-                bottomness -= 1
-            elif quark == "t":
-                topness += 1
-            elif quark == "T":
-                topness -= 1
+        strangeness = quark_content.count("S") - quark_content.count("s")
+        charmness = quark_content.count("c") - quark_content.count("C")
+        bottomness = quark_content.count("B") - quark_content.count("b")
+        topness = quark_content.count("t") - quark_content.count("T")
     return (
         strangeness,
         charmness,
