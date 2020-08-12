@@ -44,8 +44,6 @@ def test_parity():
 
 
 def test_spin():
-    with pytest.raises(ValueError):
-        Spin(1, -2)
     isospin = Spin(1.5, -0.5)
     assert isospin == 1.5
     assert float(isospin) == 1.5
@@ -55,6 +53,15 @@ def test_spin():
     flipped_spin = -isospin
     assert flipped_spin.magnitude == isospin.magnitude
     assert flipped_spin.projection == -isospin.projection
+
+
+@pytest.mark.parametrize(
+    "magnitude, projection",
+    [(1, -2), (0.3, 0.3), (1.5, -1.0), (0.5, 0.0), (0.5, 1.0)],
+)
+def test_spin_exceptions(magnitude, projection):
+    with pytest.raises(ValueError):
+        Spin(magnitude, projection)
 
 
 def test_particle():
