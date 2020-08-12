@@ -1602,6 +1602,11 @@
         <Value>0.5</Value>
         <Projection>-0.5</Projection>
       </QuantumNumber>
+      <QuantumNumber>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
+        <Value>1</Value>
+      </QuantumNumber>
     </Particle>
     <Particle>
       <Name>K0bar</Name>
@@ -1631,6 +1636,11 @@
         <Type>IsoSpin</Type>
         <Value>0.5</Value>
         <Projection>0.5</Projection>
+      </QuantumNumber>
+      <QuantumNumber>
+        <Class>Int</Class>
+        <Type>Strangeness</Type>
+        <Value>-1</Value>
       </QuantumNumber>
     </Particle>
 
