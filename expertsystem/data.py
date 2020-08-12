@@ -73,10 +73,10 @@ class Spin(abc.Hashable):
                 "Spin projection cannot be larger than its magnitude:\n"
                 f"  {projection} > {magnitude}"
             )
-        if (projection - magnitude) % 1.0 != 0.0:
+        if not (projection - magnitude).is_integer():
             raise ValueError(
-                f"Spin projection {projection} does not comply with "
-                "(projection - magnitude) % 1.0 == 0.0"
+                f"{self.__class__.__name__}{magnitude, projection}: "
+                "(projection - magnitude) should be integer! "
             )
         if projection == -0.0:
             projection = 0.0
