@@ -365,24 +365,6 @@ ParticleList:
       IsoSpin: { Value: 0.5, Projection: 0.5 }
       Strangeness: 1
 
-  K_S0:
-    PID: 310
-    Mass: 0.497614
-    QuantumNumbers:
-      Spin: 0
-      Charge: 0
-      Parity: -1
-      IsoSpin: { Value: 0.5, Projection: 0.0 }
-
-  K_L0:
-    PID: 130
-    Mass: 0.497614
-    QuantumNumbers:
-      Spin: 0
-      Charge: 0
-      Parity: -1
-      IsoSpin: { Value: 0.5, Projection: -0.5 }
-
   K0:
     PID: 311
     Mass: 0.497611

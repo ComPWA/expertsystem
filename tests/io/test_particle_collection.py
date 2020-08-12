@@ -51,7 +51,7 @@ def test_not_implemented_errors():
 @pytest.mark.parametrize("input_file", [_XML_FILE, _YAML_FILE])
 def test_load_particle_collection(input_file):
     particles = io.load_particle_collection(input_file)
-    assert len(particles) == 71
+    assert len(particles) == 69
     assert "J/psi" in particles
     j_psi = particles["J/psi"]
     assert j_psi.pid == J_PSI.pid
