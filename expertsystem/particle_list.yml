@@ -372,6 +372,7 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: -1
+      Strangeness: 1
       IsoSpin: { Value: 0.5, Projection: -0.5 }
 
   K0bar:
@@ -381,6 +382,7 @@ ParticleList:
       Spin: 0
       Charge: 0
       Parity: -1
+      Strangeness: 1
       IsoSpin: { Value: 0.5, Projection: 0.5 }
 
   D+:
