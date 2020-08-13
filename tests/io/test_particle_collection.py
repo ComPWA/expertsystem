@@ -148,5 +148,3 @@ class TestInternalParticleDict:
             particle.DATABASE += 3.14  # type: ignore
         with pytest.raises(NotImplementedError):
             assert new_particle == "gamma"
-        with pytest.raises(NotImplementedError):
-            assert particle.DATABASE == 0
