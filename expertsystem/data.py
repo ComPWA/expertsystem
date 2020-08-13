@@ -8,6 +8,7 @@ __all__ = [  # fix order in API
     "Parity",
     "Spin",
     "ComplexEnergy",
+    "compute_gellmann_nishijima",
 ]
 
 
@@ -213,6 +214,37 @@ class Particle(ComplexEnergy):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}{self.name, self.pid, self.state, self.mass, self.width}"
+
+
+def compute_gellmann_nishijima(state: QuantumState) -> Optional[float]:
+    r"""Compute charge using the Gell-Mann–Nishijima formula.
+
+    If isospin is not `None`, returns the value :math:`Q`: computed with the
+    `Gell-Mann–Nishijima formula
+    <https://en.wikipedia.org/wiki/Gell-Mann%E2%80%93Nishijima_formula>`_:
+
+    .. math::
+        Q = I_3 + \frac{1}{2}(B+S+C+B'+T)
+
+    where
+    :math:`Q` is charge (computed),
+    :math:`I_3` is `.Spin.projection`,
+    :math:`B` is `~.QuantumState.baryon_number`,
+    :math:`S` is `~.QuantumState.strangeness`,
+    :math:`C` is `~.QuantumState.charmness`,
+    :math:`B'` is `~.QuantumState.bottomness`, and
+    :math:`T` is `~.QuantumState.topness`.
+    """
+    if state.isospin is None:
+        return None
+    computed_charge = state.isospin.projection + 0.5 * (
+        state.baryon_number
+        + state.strangeness
+        + state.charmness
+        + state.bottomness
+        + state.topness
+    )
+    return computed_charge
 
 
 class ParticleCollection(abc.Mapping):

@@ -6,6 +6,7 @@ from expertsystem.data import (
     ParticleCollection,
     QuantumState,
     Spin,
+    compute_gellmann_nishijima,
 )
 
 
@@ -60,3 +61,24 @@ def test_particle():
     assert particle.mass == 3.0969
     assert particle.width == 0.0
     assert particle.state.bottomness == 0
+
+
+@pytest.mark.parametrize(
+    "state, expected",
+    [
+        (
+            QuantumState(
+                spin=0.0, charge=1, isospin=Spin(1.0, 0.0), strangeness=2,
+            ),
+            1,
+        ),
+        (
+            QuantumState(
+                spin=1.0, charge=1, isospin=Spin(1.5, 0.5), charmness=1,
+            ),
+            1,
+        ),
+    ],
+)
+def test_gellmann_nishijima(state, expected):
+    assert compute_gellmann_nishijima(state) == expected
