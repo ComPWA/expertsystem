@@ -79,10 +79,19 @@ def test_particle():
             ),
             1,
         ),
+        (
+            QuantumState(
+                spin=0.5, charge=1, isospin=Spin(1.0, 1.0), baryon_number=1,
+            ),
+            1.5,
+        ),
     ],
 )
 def test_gellmann_nishijima(state, expected):
     assert compute_gellmann_nishijima(state) == expected
+
+
+def test_gellmann_nishijima_exception():
     with pytest.raises(ValueError):
         print(
             Particle(
