@@ -297,7 +297,7 @@ ParticleList:
       Spin: 0
       Charge: 1
       Parity: +1
-      IsoSpin: { Value: 1, Projection: 0 }
+      IsoSpin: { Value: 1, Projection: +1 }
       GParity: -1
 
   a0(980)-:
@@ -308,7 +308,7 @@ ParticleList:
       Spin: 0
       Charge: -1
       Parity: +1
-      IsoSpin: { Value: 1, Projection: 0 }
+      IsoSpin: { Value: 1, Projection: -1 }
       GParity: -1
 
   a2(1320)0:

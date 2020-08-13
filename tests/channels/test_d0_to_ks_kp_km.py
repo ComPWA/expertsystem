@@ -23,7 +23,7 @@ def test_script():
     solutions, _ = stm.find_solutions(graph_interaction_settings_groups)
 
     print("found " + str(len(solutions)) + " solutions!")
-    assert len(solutions) == 3
+    assert len(solutions) == 5
 
     # print intermediate state particle names
     for solution in solutions:
