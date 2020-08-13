@@ -38,11 +38,15 @@ def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
 
     quark_numbers = __compute_quark_numbers(pdg_particle)
     lepton_numbers = __compute_lepton_numbers(pdg_particle)
-    if pdg_particle.pdgid.is_lepton:  # convention: C(fermion)=+1
-        if pdg_particle.pdgid > 0:
-            parity: Optional[Parity] = Parity(+1)
-        else:
-            parity = Parity(-1)
+    if pdg_particle.J % 1.0 == 0.5:  # if fermion
+        if pdg_particle.pdgid.is_lepton:  # convention: C(fermion)=+1
+            parity = pdg_particle.pdgid / abs(pdg_particle.pdgid)
+        elif (  # https://github.com/scikit-hep/particle/issues/250
+            pdg_particle.P == pdg_particle.invert().P
+        ):
+            parity = (
+                pdg_particle.pdgid / abs(pdg_particle.pdgid) * pdg_particle.P
+            )
     else:
         parity = __create_parity(pdg_particle.P)
     return Particle(
