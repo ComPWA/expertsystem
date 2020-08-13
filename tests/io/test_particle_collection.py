@@ -123,8 +123,30 @@ class TestInternalParticleDict:
         assert f0_1500_from_subset is particle.DATABASE["f0(1500)"]
         assert f0_1500_from_subset is not particle.DATABASE["f0(980)"]
 
+        # test iadd
+        particle.DATABASE += search_result
+
         search_result = particle.DATABASE.find_subset(22)
         gamma_from_subset = search_result["gamma"]
         assert len(search_result) == 1
         assert gamma_from_subset.pid == 22
         assert gamma_from_subset is particle.DATABASE["gamma"]
+
+    @staticmethod
+    def test_exceptions():
+        new_particle = particle.create_particle(
+            template_particle=particle.DATABASE["gamma"], name="gamma_new"
+        )
+        particle.DATABASE += new_particle
+        with pytest.raises(LookupError):
+            particle.DATABASE.find_subset(22)
+        with pytest.raises(NotImplementedError):
+            particle.DATABASE.find_subset(3.14)  # type: ignore
+        with pytest.raises(NotImplementedError):
+            particle.DATABASE.find(3.14)  # type: ignore
+        with pytest.raises(NotImplementedError):
+            particle.DATABASE += 3.14  # type: ignore
+        with pytest.raises(NotImplementedError):
+            assert new_particle == "gamma"
+        with pytest.raises(NotImplementedError):
+            assert particle.DATABASE == 0

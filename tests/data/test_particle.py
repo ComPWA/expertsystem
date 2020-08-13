@@ -26,7 +26,7 @@ J_PSI = Particle(
 
 
 @pytest.mark.parametrize(
-    "instance", [ParticleCollection(), Spin(2.5, -0.5), Parity(1), J_PSI,],
+    "instance", [ParticleCollection(), Spin(2.5, -0.5), Parity(1), J_PSI],
 )
 def test_repr(instance):
     copy_from_repr = eval(repr(instance))  # pylint: disable=eval-used
@@ -66,6 +66,7 @@ def test_particle():
 @pytest.mark.parametrize(
     "state, expected",
     [
+        (QuantumState(spin=0.0, charge=1, isospin=None), None),
         (
             QuantumState(
                 spin=0.0, charge=1, isospin=Spin(1.0, 0.0), strangeness=2,
