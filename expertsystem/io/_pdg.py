@@ -1,6 +1,10 @@
 """Create a `.ParticleCollection` instance from PDG info."""
 
-from typing import Optional, Tuple
+from typing import (
+    Dict,
+    Optional,
+    Tuple,
+)
 
 from numpy import sign
 
@@ -121,7 +125,20 @@ def __create_isospin(pdg_particle: PdgDatabase) -> Optional[Spin]:
     return Spin(pdg_particle.I, __compute_isospin_projection(pdg_particle))
 
 
+__isospin_projection_mapping: Dict[str, float] = {
+    # quark content "Maybe non-qq"
+    "a(0)(980)+": +1.0,
+    "a(0)(980)-": -1.0,
+    "pi(1)(1400)+": +1.0,
+    "pi(1)(1400)-": -1.0,
+    "pi(1)(1600)+": +1.0,
+    "pi(1)(1600)-": -1.0,
+}
+
+
 def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
+    if pdg_particle.name in __isospin_projection_mapping:
+        return __isospin_projection_mapping[pdg_particle.name]
     spin_projection = 0.0
     if pdg_particle.pdgid.is_hadron:
         for quark in pdg_particle.quarks:
