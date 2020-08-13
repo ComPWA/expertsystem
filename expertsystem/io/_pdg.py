@@ -2,6 +2,8 @@
 
 from typing import Optional, Tuple
 
+from numpy import sign
+
 from particle import Particle as PdgDatabase
 from particle.particle import enums
 
@@ -40,13 +42,11 @@ def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
     lepton_numbers = __compute_lepton_numbers(pdg_particle)
     if pdg_particle.J % 1.0 == 0.5:  # if fermion
         if pdg_particle.pdgid.is_lepton:  # convention: C(fermion)=+1
-            parity = pdg_particle.pdgid / abs(pdg_particle.pdgid)
+            parity = sign(pdg_particle.pdgid)
         elif (  # https://github.com/scikit-hep/particle/issues/250
             pdg_particle.P == pdg_particle.invert().P
         ):
-            parity = (
-                pdg_particle.pdgid / abs(pdg_particle.pdgid) * pdg_particle.P
-            )
+            parity = sign(pdg_particle.pdgid) * pdg_particle.P
     else:
         parity = __create_parity(pdg_particle.P)
     return Particle(
@@ -106,7 +106,7 @@ def __compute_lepton_numbers(
     muon_lepton_number = 0
     tau_lepton_number = 0
     if pdg_particle.pdgid.is_lepton:
-        lepton_number = int(pdg_particle.pdgid / abs(pdg_particle.pdgid))
+        lepton_number = int(sign(pdg_particle.pdgid))
         if "e" in pdg_particle.name:
             electron_lepton_number = lepton_number
         elif "mu" in pdg_particle.name:
@@ -117,11 +117,7 @@ def __compute_lepton_numbers(
 
 
 def __compute_baryonnumber(pdg_particle: PdgDatabase) -> int:
-    return int(
-        pdg_particle.pdgid
-        / abs(pdg_particle.pdgid)
-        * pdg_particle.pdgid.is_baryon
-    )
+    return int(sign(pdg_particle.pdgid) * pdg_particle.pdgid.is_baryon)
 
 
 def __create_isospin(pdg_particle: PdgDatabase) -> Optional[Spin]:
