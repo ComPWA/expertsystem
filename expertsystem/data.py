@@ -189,6 +189,22 @@ class Particle(ComplexEnergy):
         mass: float,
         width: float = 0.0,
     ):
+        if (
+            state.isospin is not None
+            and compute_gellmann_nishijima(state) != state.charge
+        ):
+            raise ValueError(
+                f"Cannot construct particle {name} because its quantum numbers"
+                " don't agree with the Gell-Mann–Nishijima formula:\n"
+                f"  Q[{state.charge}] != "
+                f"Iz[{state.isospin.projection}] + 1/2 "
+                f"(B[{state.baryon_number}] + "
+                f" S[{state.strangeness}] + "
+                f" C[{state.charmness}] +"
+                f" B'[{state.bottomness}] +"
+                f" T[{state.strangeness}]"
+                ")"
+            )
         super().__init__(complex(mass, width))
         self.__name: str = name
         self.__pid: int = pid
