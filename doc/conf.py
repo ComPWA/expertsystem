@@ -77,7 +77,6 @@ exclude_patterns = [
     "*build",
     "adr/template.md",
     "test",
-    "tests",
 ]
 
 # General sphinx settings
