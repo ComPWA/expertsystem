@@ -21,10 +21,11 @@ SCRIPT_PATH = dirname(realpath(__file__))
 
 @pytest.fixture(scope="module")
 def amplitude_generator():
-    initial_state = [("J/psi", [-1, 1])]
-    final_state = [("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])]
-
-    stm = StateTransitionManager(initial_state, final_state, ["f"])
+    stm = StateTransitionManager(
+        initial_state=[("J/psi", [-1, 1])],
+        final_state=["gamma", "pi0", "pi0"],
+        allowed_intermediate_particles=["f"],
+    )
     stm.set_allowed_interaction_types(
         [InteractionTypes.Strong, InteractionTypes.EM]
     )
