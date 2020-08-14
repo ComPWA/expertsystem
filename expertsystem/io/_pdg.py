@@ -45,7 +45,7 @@ def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
     quark_numbers = __compute_quark_numbers(pdg_particle)
     lepton_numbers = __compute_lepton_numbers(pdg_particle)
     if pdg_particle.pdgid.is_lepton:  # convention: C(fermion)=+1
-        parity: Optional[Parity] = Parity(sign(pdg_particle.pdgid))
+        parity: Optional[Parity] = Parity(sign(pdg_particle.pdgid))  # type: ignore
     else:
         parity = __create_parity(pdg_particle.P)
     return Particle(
