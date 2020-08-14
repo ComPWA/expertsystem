@@ -138,7 +138,7 @@ repository with the command:
 
 .. code-block:: shell
 
-  tox -e :doc:
+  tox -e doc
 
 Alternatively, you can run :code:`sphinx-build` yourself as follows:
 
