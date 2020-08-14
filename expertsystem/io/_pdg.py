@@ -1,5 +1,6 @@
 """Create a `.ParticleCollection` instance from PDG info."""
 
+import re
 from typing import (
     Dict,
     Optional,
@@ -20,11 +21,20 @@ from expertsystem.data import (
 )
 
 
+__skip_particles = {
+    "K(L)0",  # no isospin projection
+    "K(S)0",  # no isospin projection
+    "B(s2)*(5840)0",  # isospin(0.5, 0.0) ?
+    "B(s2)*(5840)~0",  # isospin(0.5, 0.0) ?
+}
+
+
 def load_pdg() -> ParticleCollection:
     all_pdg_particles = PdgDatabase.findall(
         lambda item: item.charge.is_integer()  # remove quarks
         and item.J is not None  # remove new physics and nuclei
         and abs(item.pdgid) < 1e9  # p and n as nucleus
+        and item.name not in __skip_particles
     )
     particle_collection = ParticleCollection()
     for pdg_particle in all_pdg_particles:
@@ -141,10 +151,18 @@ def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
         return __isospin_projection_mapping[pdg_particle.name]
     spin_projection = 0.0
     if pdg_particle.pdgid.is_hadron:
-        quark_content = pdg_particle.quarks
+        matches = re.search(r"([dDuUsScCbBtT+-]+)", pdg_particle.quarks)
+        if matches is None:
+            quark_content = ""
+        else:
+            quark_content = matches[1]
         spin_projection += quark_content.count("u") + quark_content.count("D")
         spin_projection -= quark_content.count("U") + quark_content.count("d")
         spin_projection *= 0.5
+    if not (pdg_particle.I - spin_projection).is_integer():
+        raise ValueError(
+            f"Cannot have isospin {pdg_particle.I, spin_projection}"
+        )
     return spin_projection
 
 
