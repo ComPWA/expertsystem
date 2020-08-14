@@ -22,7 +22,7 @@ SCRIPT_PATH = dirname(realpath(__file__))
 def amplitude_generator():
     stm = StateTransitionManager(
         initial_state=[("J/psi", [-1, 1])],
-        final_state=[("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
+        final_state=["gamma", "pi0", "pi0"],
         allowed_intermediate_particles=["f0"],
         formalism_type="canonical-helicity",
     )
