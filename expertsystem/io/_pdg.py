@@ -141,11 +141,10 @@ def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
         return __isospin_projection_mapping[pdg_particle.name]
     spin_projection = 0.0
     if pdg_particle.pdgid.is_hadron:
-        for quark in pdg_particle.quarks:
-            if quark in ["u", "D"]:
-                spin_projection += 0.5
-            elif quark in ["U", "d"]:
-                spin_projection -= 0.5
+        quark_content = pdg_particle.quarks
+        spin_projection += quark_content.count("u") + quark_content.count("D")
+        spin_projection -= quark_content.count("U") + quark_content.count("d")
+        spin_projection *= 0.5
     return spin_projection
 
 
