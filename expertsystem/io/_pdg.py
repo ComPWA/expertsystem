@@ -151,11 +151,7 @@ def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
         return __isospin_projection_mapping[pdg_particle.name]
     spin_projection = 0.0
     if pdg_particle.pdgid.is_hadron:
-        matches = re.search(r"([dDuUsScCbBtT+-]+)", pdg_particle.quarks)
-        if matches is None:
-            quark_content = ""
-        else:
-            quark_content = matches[1]
+        quark_content = __filter_quark_content(pdg_particle)
         spin_projection += quark_content.count("u") + quark_content.count("D")
         spin_projection -= quark_content.count("U") + quark_content.count("d")
         spin_projection *= 0.5
@@ -164,6 +160,13 @@ def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
             f"Cannot have isospin {pdg_particle.I, spin_projection}"
         )
     return spin_projection
+
+
+def __filter_quark_content(pdg_particle: PdgDatabase) -> str:
+    matches = re.search(r"([dDuUsScCbBtT+-]+)", pdg_particle.quarks)
+    if matches is None:
+        return ""
+    return matches[1]
 
 
 def __create_parity(parity_enum: enums.Parity) -> Optional[Parity]:
