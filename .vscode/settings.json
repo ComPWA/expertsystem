@@ -30,7 +30,7 @@
   "python.linting.pylintCategorySeverity.refactor": "Information",
   "python.linting.pylintEnabled": true,
   "python.linting.pylintUseMinimalCheckers": false,
-  "python.testing.pytestArgs": ["test", "--no-cov"],
+  "python.testing.pytestArgs": ["test/unit", "--no-cov"],
   "python.testing.pytestEnabled": true,
   "restructuredtext.builtDocumentationPath": "${workspaceFolder}/doc/_build/html",
   "restructuredtext.confPath": "${workspaceFolder}/doc",
