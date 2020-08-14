@@ -190,6 +190,13 @@ with:
 This command takes more time than :code:`tox -e doc`, but it is good practice
 to do this before you submit a pull request.
 
+.. tip::
+
+  Sometimes it happens that your Jupyter installation does not recognize your
+  :ref:`virtual environment <install:Step 2: Create a virtual environment>`. In
+  that case, have a look at `these instructions
+  <https://ipython.readthedocs.io/en/stable/install/kernel_install.html#kernels-for-different-environments>`__.
+
 
 Spelling
 --------
