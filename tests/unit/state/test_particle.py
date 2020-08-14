@@ -1,10 +1,10 @@
 import pytest
 
-from expertsystem.state.particle import (
-    DATABASE,
+from expertsystem.data import (
     create_antiparticle,
     create_particle,
 )
+from expertsystem.state.particle import DATABASE
 from expertsystem.ui import load_default_particle_list
 
 
