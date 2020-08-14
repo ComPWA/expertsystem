@@ -24,7 +24,7 @@ def amplitude_generator():
     stm = StateTransitionManager(
         initial_state=[("J/psi", [-1, 1])],
         final_state=["gamma", "pi0", "pi0"],
-        allowed_intermediate_particles=["f"],
+        allowed_intermediate_particles=["f0"],
     )
     stm.set_allowed_interaction_types(
         [InteractionTypes.Strong, InteractionTypes.EM]
@@ -106,7 +106,7 @@ def test_kinematics_section(imported_dict):
 
 def test_parameter_section(imported_dict):
     parameter_list = imported_dict["Parameters"]
-    assert len(parameter_list) == 17
+    assert len(parameter_list) == 5
     for parameter in parameter_list:
         assert "Name" in parameter
         assert "Value" in parameter

@@ -1264,28 +1264,6 @@ ParticleList:
       CParity: 1
       GParity: 1
       IsoSpin: 0
-  f2(1270):
-    PID: 225
-    Mass: 1.2755
-    Width: 0.1867
-    QuantumNumbers:
-      Spin: 2
-      Charge: 0
-      Parity: 1
-      CParity: 1
-      GParity: 1
-      IsoSpin: 0
-  f2(1950):
-    PID: 9050225
-    Mass: 1.936
-    Width: 0.464
-    QuantumNumbers:
-      Spin: 2
-      Charge: 0
-      Parity: 1
-      CParity: 1
-      GParity: 1
-      IsoSpin: 0
   gamma:
     PID: 22
     Mass: 0.0
