@@ -328,3 +328,67 @@ def dicts_unequal(dict1: dict, dict2: dict) -> bool:
     return OrderedDict(sorted(dict1.items())) != OrderedDict(
         sorted(dict2.items())
     )
+
+
+class DotGenerator:
+    """Generate dot sources.
+
+    It can be used as 'graphviz.Source(dot_source)', or write to a file.
+    """
+
+    dot_head = """
+digraph {
+    rankdir=LR;
+    node [shape=point];
+    edge [arrowhead=none, labelfloat=true];
+    """
+    dot_tail = "}\n"
+    dot_rank_same = "    {{ rank=same {} }};\n"
+    dot_default_node = '    "{}" [shape=none, label="{}"];\n'
+    dot_default_edge = '    "{}" -> "{}";\n'
+    dot_label_edge = '    "{}" -> "{}" [label="{}"];\n'
+
+    @staticmethod
+    def from_graph(graph: StateTransitionGraph) -> str:
+        """Get dot source from StateTransitionGraph for visualization."""
+
+        def node_name(edge: int, id_: Optional[int] = None) -> str:
+            if id_ is None:
+                return "edge{}".format(edge)
+            return "node{}".format(id_)
+
+        def format_particle(id_: List[int]) -> str:
+            name_list = ['"{}"'.format(node_name(i)) for i in id_]
+            return ",".join(name_list)
+
+        dot_source = DotGenerator.dot_head
+
+        top = get_initial_state_edges(graph)
+        outs = get_final_state_edges(graph)
+        for i in top:
+            dot_source += DotGenerator.dot_default_node.format(
+                node_name(i), graph.edge_props[i]["Name"]
+            )
+        for i in outs:
+            dot_source += DotGenerator.dot_default_node.format(
+                node_name(i), graph.edge_props[i]["Name"]
+            )
+
+        dot_source += DotGenerator.dot_rank_same.format(format_particle(top))
+        dot_source += DotGenerator.dot_rank_same.format(format_particle(outs))
+
+        for i, edge in graph.edges.items():
+            j, k = edge.ending_node_id, edge.originating_node_id
+            if j is None or k is None:
+                dot_source += DotGenerator.dot_default_edge.format(
+                    node_name(i, k), node_name(i, j)
+                )
+            else:
+                dot_source += DotGenerator.dot_label_edge.format(
+                    node_name(i, k),
+                    node_name(i, j),
+                    graph.edge_props[i]["Name"],
+                )
+
+        dot_source += DotGenerator.dot_tail
+        return dot_source
