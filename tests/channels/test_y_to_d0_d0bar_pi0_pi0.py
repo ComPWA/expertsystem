@@ -1,5 +1,5 @@
 """ sample script for the testing purposes using the decay
-    Y -> D*0 D*0bar -> D0 D0bar pi0 pi0
+    Y(4260) -> D*0 D*0bar -> D0 D0bar pi0 pi0
 """
 
 import logging
@@ -26,8 +26,8 @@ logging.basicConfig(level=logging.INFO)
 
 def test_script_simple():
     # initialize the graph edges (initial and final state)
-    initial_state = [("Y", [-1, 1])]
-    final_state = [("D*(2007)0", [-1, 0, 1]), ("D*(2007)0bar", [-1, 0, 1])]
+    initial_state = [("Y(4260)", [-1, 1])]
+    final_state = [("D*(2007)0", [-1, 0, 1]), ("D*(2007)~0", [-1, 0, 1])]
 
     # because the amount of solutions is too big we change the default domains
     formalism_type = "canonical-helicity"
@@ -104,8 +104,8 @@ def test_script_simple():
 @pytest.mark.slow
 def test_script_full():
     # initialize the graph edges (initial and final state)
-    initial_state = [("Y", [-1, 1])]
-    final_state = ["D0", "D0bar", "pi0", "pi0"]
+    initial_state = [("Y(4260)", [-1, 1])]
+    final_state = ["D0", "D~0", "pi0", "pi0"]
 
     # because the amount of solutions is too big we change the default domains
     formalism_type = "canonical-helicity"
@@ -130,7 +130,7 @@ def test_script_full():
     )
 
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
-    stm.add_final_state_grouping([["D0", "pi0"], ["D0bar", "pi0"]])
+    stm.add_final_state_grouping([["D0", "pi0"], ["D~0", "pi0"]])
     stm.number_of_threads = 2
 
     graph_node_setting_pairs = stm.prepare_graphs()
@@ -165,7 +165,7 @@ def test_script_full():
     )
 
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
-    stm.add_final_state_grouping([["D0", "pi0"], ["D0bar", "pi0"]])
+    stm.add_final_state_grouping([["D0", "pi0"], ["D~0", "pi0"]])
     stm.number_of_threads = 2
 
     graph_node_setting_pairs = stm.prepare_graphs()
