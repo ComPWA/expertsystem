@@ -1,4 +1,4 @@
-from copy import copy
+from copy import deepcopy
 
 import pytest
 
@@ -42,7 +42,7 @@ def test_exceptions(particle_database):
     new_particle = create_particle(
         template_particle=particle_database["gamma"], name="gamma_new"
     )
-    dummy_database = copy(particle_database)
+    dummy_database = deepcopy(particle_database)
     dummy_database += new_particle
     with pytest.raises(LookupError):
         dummy_database.find_subset(22)
