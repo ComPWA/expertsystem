@@ -1,7 +1,5 @@
 """Functions that steer operations of the `expertsystem`."""
 
-# cspell:ignore vebar, vmubar, vtau, vtaubar
-
 import logging
 from abc import ABC, abstractmethod
 from collections import OrderedDict
@@ -117,12 +115,12 @@ class LeptonCheck(_InteractionDeterminationFunctorInterface):
                 if [
                     x
                     for x in [
-                        "ve",
-                        "vebar",
-                        "vmu",
-                        "vmubar",
-                        "vtau",
-                        "vtaubar",
+                        "nu(e)",
+                        "nu(e)~",
+                        "nu(mu)",
+                        "nu(mu)~",
+                        "nu(tau)",
+                        "nu(tau)~",
                     ]
                     if x == edge_props[self.name_label]
                 ]:
