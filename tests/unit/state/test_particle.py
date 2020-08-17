@@ -65,8 +65,5 @@ def test_create_antiparticle_tilde():
     assert len(anti_particles) == 9
     for anti_particle in anti_particles.values():
         particle_name = anti_particle.name.replace("~", "")
-        particle = DATABASE[particle_name]
-        created_anti_particle = create_antiparticle(
-            particle, anti_particle.name
-        )
-        assert created_anti_particle == anti_particle
+        created_particle = create_antiparticle(anti_particle, particle_name)
+        assert created_particle == DATABASE[particle_name]
