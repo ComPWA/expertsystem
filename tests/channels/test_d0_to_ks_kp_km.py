@@ -3,8 +3,10 @@
 """
 
 import logging
+import dot_parser
 
 from expertsystem.ui import StateTransitionManager
+from expertsystem.topology.graph import DotGenerator
 
 
 def test_script():
@@ -30,6 +32,10 @@ def test_script():
         print(solution.edge_props[1]["Name"])
 
     stm.write_amplitude_model(solutions, "D0ToKs0KpKm.xml")
+
+    for i in solutions:
+        dot_data = DotGenerator.from_graph(i)
+        assert dot_parser.parse_dot_data(dot_data) is not None
 
 
 if __name__ == "__main__":
