@@ -82,9 +82,6 @@ def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
     )
 
 
-__remove_from_quark_content = {"sqrt", "Maybe"}
-
-
 def __compute_quark_numbers(
     pdg_particle: PdgDatabase,
 ) -> Tuple[int, int, int, int]:
@@ -93,9 +90,7 @@ def __compute_quark_numbers(
     bottomness = 0
     topness = 0
     if pdg_particle.pdgid.is_hadron:
-        quark_content = pdg_particle.quarks
-        for word in __remove_from_quark_content:
-            quark_content = quark_content.replace(word, "")
+        quark_content = __filter_quark_content(pdg_particle)
         strangeness = quark_content.count("S") - quark_content.count("s")
         charmness = quark_content.count("c") - quark_content.count("C")
         bottomness = quark_content.count("B") - quark_content.count("b")
