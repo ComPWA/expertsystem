@@ -132,7 +132,12 @@ def __compute_baryonnumber(pdg_particle: PdgDatabase) -> int:
 def __create_isospin(pdg_particle: PdgDatabase) -> Optional[Spin]:
     if pdg_particle.I is None:
         return None
-    return Spin(pdg_particle.I, __compute_isospin_projection(pdg_particle))
+    magnitude = pdg_particle.I
+    projection = __compute_isospin_projection(pdg_particle)
+    isospin = Spin(magnitude, projection)
+    if not (magnitude - projection).is_integer():
+        raise ValueError(f"{pdg_particle.name} has isospin {isospin}")
+    return isospin
 
 
 _maybe_qq = {
