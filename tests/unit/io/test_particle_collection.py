@@ -5,11 +5,9 @@ import pytest
 import expertsystem
 from expertsystem import io
 from expertsystem.data import (
-    Parity,
     Particle,
     ParticleCollection,
     QuantumState,
-    Spin,
     create_particle,
 )
 
@@ -17,21 +15,6 @@ from expertsystem.data import (
 EXPERTSYSTEM_PATH = dirname(realpath(expertsystem.__file__))
 _XML_FILE = f"{EXPERTSYSTEM_PATH}/particle_list.xml"
 _YAML_FILE = f"{EXPERTSYSTEM_PATH}/particle_list.yml"
-
-J_PSI = Particle(
-    name="J/psi(1S)",
-    pid=443,
-    mass=3.0969,
-    width=9.29e-05,
-    state=QuantumState[float](
-        spin=1,
-        charge=0,
-        isospin=Spin(0, 0),
-        parity=Parity(-1),
-        c_parity=Parity(-1),
-        g_parity=Parity(-1),
-    ),
-)
 
 
 def test_not_implemented_errors():
@@ -53,7 +36,7 @@ def test_load_particle_collection(input_file):
     assert len(particles) == 68
     assert "J/psi(1S)" in particles
     j_psi = particles["J/psi(1S)"]
-    assert j_psi.pid == J_PSI.pid
+    assert j_psi.pid == 443
     particle_names = list(particles.keys())
     for name, particle_name in zip(particle_names, particles):
         assert name == particle_name
@@ -91,11 +74,6 @@ def test_equivalence_xml_yaml_particle_list():
 
 
 class TestInternalParticleDict:
-    @staticmethod
-    def test_build_particle_from_internal_database(particle_database):
-        j_psi = particle_database["J/psi(1S)"]
-        assert j_psi == J_PSI
-
     @staticmethod
     def test_find(particle_database):
         f2_1950 = particle_database.find(9050225)
