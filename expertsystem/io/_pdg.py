@@ -146,7 +146,7 @@ def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
             pdg_particle
         )
         baryon_number = __compute_baryonnumber(pdg_particle)
-        spin_projection = GellmannNishijima.compute_isospin_projection(
+        projection = GellmannNishijima.compute_isospin_projection(
             charge=pdg_particle.charge,
             baryon_number=baryon_number,
             strangeness=strangeness,
@@ -155,21 +155,15 @@ def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
             topness=topness,
         )
     else:
-        spin_projection = 0.0
+        projection = 0.0
         if pdg_particle.pdgid.is_hadron:
             quark_content = __filter_quark_content(pdg_particle)
-            spin_projection += quark_content.count("u") + quark_content.count(
-                "D"
-            )
-            spin_projection -= quark_content.count("U") + quark_content.count(
-                "d"
-            )
-            spin_projection *= 0.5
-    if not (pdg_particle.I - spin_projection).is_integer():
-        raise ValueError(
-            f"Cannot have isospin {pdg_particle.I, spin_projection}"
-        )
-    return spin_projection
+            projection += quark_content.count("u") + quark_content.count("D")
+            projection -= quark_content.count("U") + quark_content.count("d")
+            projection *= 0.5
+    if not (pdg_particle.I - projection).is_integer():
+        raise ValueError(f"Cannot have isospin {pdg_particle.I, projection}")
+    return projection
 
 
 def __filter_quark_content(pdg_particle: PdgDatabase) -> str:
