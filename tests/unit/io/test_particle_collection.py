@@ -4,7 +4,6 @@ import pytest
 
 import expertsystem
 from expertsystem import io
-from expertsystem import ui
 from expertsystem.data import (
     Parity,
     Particle,
@@ -13,7 +12,6 @@ from expertsystem.data import (
     Spin,
     create_particle,
 )
-from expertsystem.state import particle
 
 
 EXPERTSYSTEM_PATH = dirname(realpath(expertsystem.__file__))
@@ -93,59 +91,57 @@ def test_equivalence_xml_yaml_particle_list():
 
 
 class TestInternalParticleDict:
-    ui.load_default_particle_list()
-
     @staticmethod
-    def test_build_particle_from_internal_database():
-        j_psi = particle.DATABASE["J/psi(1S)"]
+    def test_build_particle_from_internal_database(particle_database):
+        j_psi = particle_database["J/psi(1S)"]
         assert j_psi == J_PSI
 
     @staticmethod
-    def test_find():
-        f2_1950 = particle.DATABASE.find(9050225)
+    def test_find(particle_database):
+        f2_1950 = particle_database.find(9050225)
         assert f2_1950.name == "f(2)(1950)"
         assert f2_1950.mass == 1.936
-        phi = particle.DATABASE.find("phi(1020)")
+        phi = particle_database.find("phi(1020)")
         assert phi.pid == 333
         assert phi.width == 0.004249
 
     @staticmethod
     @pytest.mark.parametrize("search_term", [666, "non-existing"])
-    def test_find_fail(search_term):
+    def test_find_fail(particle_database, search_term):
         with pytest.raises(LookupError):
-            particle.DATABASE.find(search_term)
+            particle_database.find(search_term)
 
     @staticmethod
-    def test_find_subset():
-        search_result = particle.DATABASE.find_subset("f(0)")
+    def test_find_subset(particle_database):
+        search_result = particle_database.find_subset("f(0)")
         f0_1500_from_subset = search_result["f(0)(1500)"]
         assert len(search_result) == 2
         assert f0_1500_from_subset.mass == 1.506
-        assert f0_1500_from_subset is particle.DATABASE["f(0)(1500)"]
-        assert f0_1500_from_subset is not particle.DATABASE["f(0)(980)"]
+        assert f0_1500_from_subset is particle_database["f(0)(1500)"]
+        assert f0_1500_from_subset is not particle_database["f(0)(980)"]
 
         # test iadd
-        particle.DATABASE += search_result
+        particle_database += search_result
 
-        search_result = particle.DATABASE.find_subset(22)
+        search_result = particle_database.find_subset(22)
         gamma_from_subset = search_result["gamma"]
         assert len(search_result) == 1
         assert gamma_from_subset.pid == 22
-        assert gamma_from_subset is particle.DATABASE["gamma"]
+        assert gamma_from_subset is particle_database["gamma"]
 
     @staticmethod
-    def test_exceptions():
+    def test_exceptions(particle_database):
         new_particle = create_particle(
-            template_particle=particle.DATABASE["gamma"], name="gamma_new"
+            template_particle=particle_database["gamma"], name="gamma_new"
         )
-        particle.DATABASE += new_particle
+        particle_database += new_particle
         with pytest.raises(LookupError):
-            particle.DATABASE.find_subset(22)
+            particle_database.find_subset(22)
         with pytest.raises(NotImplementedError):
-            particle.DATABASE.find_subset(3.14)  # type: ignore
+            particle_database.find_subset(3.14)  # type: ignore
         with pytest.raises(NotImplementedError):
-            particle.DATABASE.find(3.14)  # type: ignore
+            particle_database.find(3.14)  # type: ignore
         with pytest.raises(NotImplementedError):
-            particle.DATABASE += 3.14  # type: ignore
+            particle_database += 3.14  # type: ignore
         with pytest.raises(NotImplementedError):
             assert new_particle == "gamma"
