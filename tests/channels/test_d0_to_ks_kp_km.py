@@ -3,7 +3,7 @@
 """
 
 import logging
-import dot_parser
+import dot_parser  # type: ignore
 
 from expertsystem.ui import StateTransitionManager
 from expertsystem.topology.graph import DotGenerator
