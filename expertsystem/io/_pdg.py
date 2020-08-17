@@ -140,24 +140,8 @@ def __create_isospin(pdg_particle: PdgDatabase) -> Optional[Spin]:
     return isospin
 
 
-_maybe_qq = {
-    "a(0)(980)+",
-    "a(0)(980)-",
-    "a(0)(980)0",
-    "f(0)(1500)",
-    "f(0)(500)",
-    "f(0)(980)",
-    "pi(1)(1400)+",
-    "pi(1)(1400)-",
-    "pi(1)(1400)0",
-    "pi(1)(1600)+",
-    "pi(1)(1600)-",
-    "pi(1)(1600)0",
-}
-
-
 def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
-    if pdg_particle.name in _maybe_qq:
+    if "qq" in pdg_particle.quarks.lower():
         strangeness, charmness, bottomness, topness = __compute_quark_numbers(
             pdg_particle
         )
