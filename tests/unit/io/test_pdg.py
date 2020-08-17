@@ -36,6 +36,18 @@ def test_pdg_size(pdg):
     assert len(pdg) == 532
 
 
+def test_missing_in_pdg(pdg, particle_database):
+    particle_list_names = set(particle_database)
+    pdg_names = set(pdg)
+    in_common = particle_list_names & pdg_names
+    missing_in_pdg = particle_list_names ^ in_common
+    assert missing_in_pdg == {
+        "EpEm (4230 MeV)",
+        "N(1650)-",
+        "Y(4260)",
+    }
+
+
 @pytest.mark.parametrize("name", ["D0", "gamma"])
 def test_pdg_entries(pdg, particle_database, name):
     assert particle_database[name] == pdg[name]
