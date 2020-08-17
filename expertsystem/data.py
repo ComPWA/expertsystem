@@ -8,7 +8,7 @@ __all__ = [  # fix order in API
     "Parity",
     "Spin",
     "ComplexEnergy",
-    "compute_gellmann_nishijima",
+    "GellmannNishijima",
 ]
 
 
@@ -191,7 +191,7 @@ class Particle(ComplexEnergy):
     ):
         if (
             state.isospin is not None
-            and compute_gellmann_nishijima(state) != state.charge
+            and GellmannNishijima.compute_charge(state) != state.charge
         ):
             raise ValueError(
                 f"Cannot construct particle {name} because its quantum numbers"
@@ -232,11 +232,10 @@ class Particle(ComplexEnergy):
         return f"{self.__class__.__name__}{self.name, self.pid, self.state, self.mass, self.width}"
 
 
-def compute_gellmann_nishijima(state: QuantumState) -> Optional[float]:
-    r"""Compute charge using the Gell-Mann–Nishijima formula.
+class GellmannNishijima:
+    r"""Collection of conversion methods using Gell-Mann–Nishijima.
 
-    If isospin is not `None`, returns the value :math:`Q`: computed with the
-    `Gell-Mann–Nishijima formula
+    The methods in this class use the `Gell-Mann–Nishijima formula
     <https://en.wikipedia.org/wiki/Gell-Mann%E2%80%93Nishijima_formula>`_:
 
     .. math::
@@ -251,16 +250,42 @@ def compute_gellmann_nishijima(state: QuantumState) -> Optional[float]:
     :math:`B'` is `~.QuantumState.bottomness`, and
     :math:`T` is `~.QuantumState.topness`.
     """
-    if state.isospin is None:
-        return None
-    computed_charge = state.isospin.projection + 0.5 * (
-        state.baryon_number
-        + state.strangeness
-        + state.charmness
-        + state.bottomness
-        + state.topness
-    )
-    return computed_charge
+
+    @staticmethod
+    def compute_charge(state: QuantumState) -> Optional[float]:
+        """Compute charge using the Gell-Mann–Nishijima formula.
+
+        If isospin is not `None`, returns the value :math:`Q`: computed with
+        the `Gell-Mann–Nishijima formula <.GellmannNishijima>`.
+        """
+        if state.isospin is None:
+            return None
+        computed_charge = state.isospin.projection + 0.5 * (
+            state.baryon_number
+            + state.strangeness
+            + state.charmness
+            + state.bottomness
+            + state.topness
+        )
+        return computed_charge
+
+    @staticmethod
+    def compute_isospin_projection(  # pylint: disable=too-many-arguments
+        charge: float,
+        baryon_number: float,
+        strangeness: float,
+        charmness: float,
+        bottomness: float,
+        topness: float,
+    ) -> float:
+        """Compute isospin projection using the Gell-Mann–Nishijima formula.
+
+        See `~.GellmannNishijima.compute_charge`, but then computed for
+        :math:`I_3`.
+        """
+        return charge - 0.5 * (
+            baryon_number + strangeness + charmness + bottomness + topness
+        )
 
 
 class ParticleCollection(abc.Mapping):
