@@ -129,10 +129,7 @@ def __create_isospin(pdg_particle: PdgDatabase) -> Optional[Spin]:
         return None
     magnitude = pdg_particle.I
     projection = __compute_isospin_projection(pdg_particle)
-    isospin = Spin(magnitude, projection)
-    if not (magnitude - projection).is_integer():
-        raise ValueError(f"{pdg_particle.name} has isospin {isospin}")
-    return isospin
+    return Spin(magnitude, projection)
 
 
 def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
