@@ -130,7 +130,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_e+</Name>
-        <Value>0.0005109989461</Value>
+        <Value>0.0005109989460999999</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -159,7 +159,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_e-</Name>
-        <Value>0.0005109989461</Value>
+        <Value>0.0005109989460999999</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -214,7 +214,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_mu+</Name>
-          <Value>2.9959847e-19</Value>
+          <Value>2.9959837e-19</Value>
         </Parameter>
       </DecayInfo>
     </Particle>
@@ -250,7 +250,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_mu-</Name>
-          <Value>2.9959847e-19</Value>
+          <Value>2.9959837e-19</Value>
         </Parameter>
       </DecayInfo>
     </Particle>
@@ -260,7 +260,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_tau+</Name>
-        <Value>1.77686</Value>
+        <Value>1.7768599999999999</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -296,7 +296,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_tau-</Name>
-        <Value>1.77686</Value>
+        <Value>1.7768599999999999</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -513,7 +513,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_pi0</Name>
-        <Value>0.134977</Value>
+        <Value>0.1349768</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -560,7 +560,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_pi+</Name>
-        <Value>0.13957061</Value>
+        <Value>0.13957039000000002</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -602,7 +602,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_pi-</Name>
-        <Value>0.13957061</Value>
+        <Value>0.13957039000000002</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -742,7 +742,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_rho(770)0</Name>
-          <Value>0.1491</Value>
+          <Value>0.14909999999999998</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -795,7 +795,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_rho(770)+</Name>
-          <Value>0.1491</Value>
+          <Value>0.14909999999999998</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -848,7 +848,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_rho(770)-</Name>
-          <Value>0.1491</Value>
+          <Value>0.14909999999999998</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -905,7 +905,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_omega(782)</Name>
-          <Value>0.00849</Value>
+          <Value>0.008490000000000001</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1076,7 +1076,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_f(2)(1270)</Name>
-          <Value>0.1867</Value>
+          <Value>0.18669999999999998</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1363,7 +1363,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_a(2)(1320)0</Name>
-        <Value>1.3169</Value>
+        <Value>1.3169000000000002</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -1421,7 +1421,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_a(2)(1320)+</Name>
-        <Value>1.3169</Value>
+        <Value>1.3169000000000002</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -1474,7 +1474,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_a(2)(1320)-</Name>
-        <Value>1.3169</Value>
+        <Value>1.3169000000000002</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -1567,7 +1567,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_phi(1020)</Name>
-          <Value>0.004249</Value>
+          <Value>0.004248999999999999</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -1586,7 +1586,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_K-</Name>
-        <Value>0.493677</Value>
+        <Value>0.49367700000000003</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -1628,7 +1628,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_K+</Name>
-        <Value>0.493677</Value>
+        <Value>0.49367700000000003</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -1670,7 +1670,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_K0</Name>
-        <Value>0.497611</Value>
+        <Value>0.49761099999999997</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -1705,7 +1705,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_K~0</Name>
-        <Value>0.497611</Value>
+        <Value>0.49761099999999997</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -1990,7 +1990,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_D*(2007)0</Name>
-          <Value>0.0021</Value>
+          <Value>0.0021000000000000003</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -2043,7 +2043,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_D*(2007)~0</Name>
-          <Value>0.0021</Value>
+          <Value>0.0021000000000000003</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -2096,7 +2096,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_D*(2010)-</Name>
-          <Value>83.4E-6</Value>
+          <Value>8.340000000000001e-05</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -2149,7 +2149,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_D*(2010)+</Name>
-          <Value>83.4E-6</Value>
+          <Value>8.340000000000001e-05</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -2166,7 +2166,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_D1(2420)0</Name>
-        <Value>2.4208</Value>
+        <Value>2.4208000000000003</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -2368,7 +2368,7 @@
         <Parameter>
           <Type>Width</Type>
           <Name>Width_Chic1</Name>
-          <Value>0.00084</Value>
+          <Value>0.0008399999999999999</Value>
         </Parameter>
         <Parameter>
           <Type>MesonRadius</Type>
@@ -2388,7 +2388,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_p</Name>
-        <Value>0.938272081</Value>
+        <Value>0.9382720809999999</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -2423,7 +2423,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_p~</Name>
-        <Value>0.938272081</Value>
+        <Value>0.9382720809999999</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -2458,7 +2458,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_n</Name>
-        <Value>0.939565413</Value>
+        <Value>0.9395654130000001</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -2486,6 +2486,13 @@
         <Value>0.5</Value>
         <Projection>-0.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_n~</Name>
+          <Value>7.485e-28</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>n~</Name>
@@ -2493,7 +2500,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_n~</Name>
-        <Value>0.939565413</Value>
+        <Value>0.9395654130000001</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>
@@ -2521,6 +2528,13 @@
         <Value>0.5</Value>
         <Projection>0.5</Projection>
       </QuantumNumber>
+      <DecayInfo>
+        <Parameter>
+          <Type>Width</Type>
+          <Name>Width_n~</Name>
+          <Value>7.485e-28</Value>
+        </Parameter>
+      </DecayInfo>
     </Particle>
     <Particle>
       <Name>N(1650)+</Name>
@@ -2947,7 +2961,7 @@
       <Parameter>
         <Type>Mass</Type>
         <Name>Mass_Sigma+</Name>
-        <Value>1.18937</Value>
+        <Value>1.1893699999999998</Value>
       </Parameter>
       <QuantumNumber>
         <Class>Spin</Class>

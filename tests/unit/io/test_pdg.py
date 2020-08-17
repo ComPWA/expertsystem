@@ -48,6 +48,8 @@ def test_missing_in_pdg(pdg, particle_database):
     }
 
 
-@pytest.mark.parametrize("name", ["D0", "gamma"])
-def test_pdg_entries(pdg, particle_database, name):
-    assert particle_database[name] == pdg[name]
+def test_pdg_entries(pdg, particle_database):
+    for name in particle_database:
+        if name not in pdg:
+            continue
+        assert particle_database[name] == pdg[name]
