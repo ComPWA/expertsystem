@@ -3,6 +3,7 @@
 """
 
 import logging
+
 import pydot
 
 from expertsystem.topology.graph import DotGenerator
