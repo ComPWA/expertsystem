@@ -11,7 +11,7 @@ def test_find(particle_database):
     assert f2_1950.mass == 1.936
     phi = particle_database.find("phi(1020)")
     assert phi.pid == 333
-    assert phi.width == 0.004248999999999999
+    assert phi.width == 0.004249
 
 
 @pytest.mark.parametrize("search_term", [666, "non-existing"])
