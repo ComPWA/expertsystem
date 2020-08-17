@@ -1,10 +1,5 @@
 """Serialization module for containers of `expertsystem.data`."""
 
-__all__ = [
-    "load_particle_collection",
-    "write",
-]
-
 from pathlib import Path
 
 from expertsystem.data import ParticleCollection
