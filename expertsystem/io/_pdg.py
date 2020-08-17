@@ -167,7 +167,7 @@ def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
 
 
 def __filter_quark_content(pdg_particle: PdgDatabase) -> str:
-    matches = re.search(r"([dDuUsScCbBtT+-]+)", pdg_particle.quarks)
+    matches = re.search(r"([dDuUsScCbBtT+-]{2,})", pdg_particle.quarks)
     if matches is None:
         return ""
     return matches[1]
