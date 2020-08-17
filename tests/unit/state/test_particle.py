@@ -66,9 +66,7 @@ def test_create_antiparticle_tilde():
     for anti_particle in anti_particles.values():
         particle_name = anti_particle.name.replace("~", "")
         particle = DATABASE[particle_name]
-        anti_particle_name = particle_name + "~"
-        anti_particle_name = anti_particle_name.replace("0~", "~0")
         created_anti_particle = create_antiparticle(
-            particle, anti_particle_name
+            particle, anti_particle.name
         )
         assert created_anti_particle == anti_particle
