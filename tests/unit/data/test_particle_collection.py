@@ -1,3 +1,5 @@
+from copy import copy
+
 import pytest
 
 from expertsystem.data import create_particle
@@ -40,14 +42,15 @@ def test_exceptions(particle_database):
     new_particle = create_particle(
         template_particle=particle_database["gamma"], name="gamma_new"
     )
-    particle_database += new_particle
+    dummy_database = copy(particle_database)
+    dummy_database += new_particle
     with pytest.raises(LookupError):
-        particle_database.find_subset(22)
+        dummy_database.find_subset(22)
     with pytest.raises(NotImplementedError):
-        particle_database.find_subset(3.14)  # type: ignore
+        dummy_database.find_subset(3.14)  # type: ignore
     with pytest.raises(NotImplementedError):
-        particle_database.find(3.14)  # type: ignore
+        dummy_database.find(3.14)  # type: ignore
     with pytest.raises(NotImplementedError):
-        particle_database += 3.14  # type: ignore
+        dummy_database += 3.14  # type: ignore
     with pytest.raises(NotImplementedError):
         assert new_particle == "gamma"
