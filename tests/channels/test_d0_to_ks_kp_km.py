@@ -3,10 +3,10 @@
 """
 
 import logging
-import dot_parser  # type: ignore
+import pydot
 
-from expertsystem.ui import StateTransitionManager
 from expertsystem.topology.graph import DotGenerator
+from expertsystem.ui import StateTransitionManager
 
 
 def test_script():
@@ -35,7 +35,7 @@ def test_script():
 
     for i in solutions:
         dot_data = DotGenerator.from_graph(i)
-        assert dot_parser.parse_dot_data(dot_data) is not None
+        assert pydot.graph_from_dot_data(dot_data) is not None
 
 
 if __name__ == "__main__":
