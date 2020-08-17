@@ -2,7 +2,6 @@
 
 import re
 from typing import (
-    Dict,
     Optional,
     Tuple,
 )
@@ -13,6 +12,7 @@ from particle import Particle as PdgDatabase
 from particle.particle import enums
 
 from expertsystem.data import (
+    GellmannNishijima,
     Parity,
     Particle,
     ParticleCollection,
@@ -135,26 +135,47 @@ def __create_isospin(pdg_particle: PdgDatabase) -> Optional[Spin]:
     return Spin(pdg_particle.I, __compute_isospin_projection(pdg_particle))
 
 
-__isospin_projection_mapping: Dict[str, float] = {
-    # quark content "Maybe non-qq"
-    "a(0)(980)+": +1.0,
-    "a(0)(980)-": -1.0,
-    "pi(1)(1400)+": +1.0,
-    "pi(1)(1400)-": -1.0,
-    "pi(1)(1600)+": +1.0,
-    "pi(1)(1600)-": -1.0,
+_maybe_qq = {
+    "a(0)(980)+",
+    "a(0)(980)-",
+    "a(0)(980)0",
+    "f(0)(1500)",
+    "f(0)(500)",
+    "f(0)(980)",
+    "pi(1)(1400)+",
+    "pi(1)(1400)-",
+    "pi(1)(1400)0",
+    "pi(1)(1600)+",
+    "pi(1)(1600)-",
+    "pi(1)(1600)0",
 }
 
 
 def __compute_isospin_projection(pdg_particle: PdgDatabase) -> float:
-    if pdg_particle.name in __isospin_projection_mapping:
-        return __isospin_projection_mapping[pdg_particle.name]
-    spin_projection = 0.0
-    if pdg_particle.pdgid.is_hadron:
-        quark_content = __filter_quark_content(pdg_particle)
-        spin_projection += quark_content.count("u") + quark_content.count("D")
-        spin_projection -= quark_content.count("U") + quark_content.count("d")
-        spin_projection *= 0.5
+    if pdg_particle.name in _maybe_qq:
+        strangeness, charmness, bottomness, topness = __compute_quark_numbers(
+            pdg_particle
+        )
+        baryon_number = __compute_baryonnumber(pdg_particle)
+        spin_projection = GellmannNishijima.compute_isospin_projection(
+            charge=pdg_particle.charge,
+            baryon_number=baryon_number,
+            strangeness=strangeness,
+            charmness=charmness,
+            bottomness=bottomness,
+            topness=topness,
+        )
+    else:
+        spin_projection = 0.0
+        if pdg_particle.pdgid.is_hadron:
+            quark_content = __filter_quark_content(pdg_particle)
+            spin_projection += quark_content.count("u") + quark_content.count(
+                "D"
+            )
+            spin_projection -= quark_content.count("U") + quark_content.count(
+                "d"
+            )
+            spin_projection *= 0.5
     if not (pdg_particle.I - spin_projection).is_integer():
         raise ValueError(
             f"Cannot have isospin {pdg_particle.I, spin_projection}"
