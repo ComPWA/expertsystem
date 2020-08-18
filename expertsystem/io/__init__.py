@@ -3,7 +3,6 @@
 __all__ = [
     "load_particle_collection",
     "write",
-    "dot",
 ]
 
 from pathlib import Path
@@ -32,6 +31,8 @@ def write(instance: object, filename: str) -> None:
         return yaml.write(instance, filename)
     if file_extension == "xml":
         return xml.write(instance, filename)
+    if file_extension == "gv":
+        return dot.write(instance, filename)
     raise NotImplementedError(
         f'No writer defined for file type "{file_extension}"'
     )

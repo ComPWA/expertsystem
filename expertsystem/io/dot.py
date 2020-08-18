@@ -28,6 +28,12 @@ def convert_to_dot(instance: object) -> str:
     )
 
 
+def write(instance: object, filename: str) -> None:
+    output_str = convert_to_dot(instance)
+    with open(filename, "w") as stream:
+        stream.write(output_str)
+
+
 _DOT_HEAD = """
 digraph {
     rankdir=LR;
