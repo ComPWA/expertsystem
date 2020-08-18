@@ -102,6 +102,10 @@ primary_domain = "py"
 nitpicky = True  # warn if cross-references are missing
 nitpick_ignore = [
     ("py:class", "StateTransitionGraph"),
+    ("py:class", "a set-like object providing a view on D's items"),
+    ("py:class", "a set-like object providing a view on D's keys"),
+    ("py:class", "_T"),
+    ("py:class", "an object providing a view on D's values"),
     ("py:class", "expertsystem.solvers.constraint.Constraint"),
     ("py:class", "expertsystem.state.propagation.GraphElementTypes"),
 ]
