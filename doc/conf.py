@@ -142,7 +142,3 @@ nbsphinx_execute_arguments = [
     "--InlineBackend.figure_formats={'svg', 'pdf'}",
     "--InlineBackend.rc={'figure.dpi': 96}",
 ]
-
-
-def setup(app):  # type: ignore
-    return {"parallel_read_safe": False}
