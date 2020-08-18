@@ -24,7 +24,7 @@ def particle_database() -> ParticleCollection:
 
 
 @pytest.fixture(scope="module")
-def canonical_solutions():
+def jpsi_to_gamma_pi_pi_canonical_solutions():
     stm = StateTransitionManager(
         initial_state=[("J/psi(1S)", [-1, 1])],
         final_state=["gamma", "pi0", "pi0"],
@@ -38,7 +38,7 @@ def canonical_solutions():
 
 
 @pytest.fixture(scope="module")
-def helicity_solutions():
+def jpsi_to_gamma_pi_pi_helicity_solutions():
     stm = StateTransitionManager(
         initial_state=[("J/psi(1S)", [-1, 1])],
         final_state=["gamma", "pi0", "pi0"],
@@ -53,14 +53,18 @@ def helicity_solutions():
 
 
 @pytest.fixture(scope="module")
-def canonical_amplitude_generator(canonical_solutions):
+def jpsi_to_gamma_pi_pi_canonical_amplitude_generator(
+    jpsi_to_gamma_pi_pi_canonical_solutions,
+):
     amplitude_generator = CanonicalAmplitudeGenerator()
-    amplitude_generator.generate(canonical_solutions)
+    amplitude_generator.generate(jpsi_to_gamma_pi_pi_canonical_solutions)
     return amplitude_generator
 
 
 @pytest.fixture(scope="module")
-def helicity_amplitude_generator(helicity_solutions):
+def jpsi_to_gamma_pi_pi_helicity_amplitude_generator(
+    jpsi_to_gamma_pi_pi_helicity_solutions,
+):
     amplitude_generator = HelicityAmplitudeGenerator()
-    amplitude_generator.generate(helicity_solutions)
+    amplitude_generator.generate(jpsi_to_gamma_pi_pi_helicity_solutions)
     return amplitude_generator
