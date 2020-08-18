@@ -4,9 +4,6 @@
 
 import logging
 
-import pydot
-
-from expertsystem.topology.graph import DotGenerator
 from expertsystem.ui import StateTransitionManager
 
 
@@ -33,10 +30,6 @@ def test_script():
         print(solution.edge_props[1]["Name"])
 
     stm.write_amplitude_model(solutions, "D0ToKs0KpKm.xml")
-
-    for i in solutions:
-        dot_data = DotGenerator.from_graph(i)
-        assert pydot.graph_from_dot_data(dot_data) is not None
 
 
 if __name__ == "__main__":
