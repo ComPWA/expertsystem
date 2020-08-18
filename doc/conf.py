@@ -75,7 +75,6 @@ extensions = [
 exclude_patterns = [
     "**.ipynb_checkpoints",
     "*build",
-    "adr/template.md",
     "tests",
 ]
 

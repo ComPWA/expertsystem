@@ -84,7 +84,6 @@
         "xmltodict"
     ],
     "ignoreWords": [
-        "adrs",
         "arange",
         "cano",
         "celltoolbar",
