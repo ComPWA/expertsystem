@@ -3,12 +3,14 @@
 __all__ = [
     "load_particle_collection",
     "write",
+    "dot",
 ]
 
 from pathlib import Path
 
 from expertsystem.data import ParticleCollection
 
+from . import dot
 from . import xml
 from . import yaml
 
