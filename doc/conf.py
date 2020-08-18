@@ -58,8 +58,8 @@ source_suffix = [
 master_doc = "index"
 
 extensions = [
+    "myst_parser",
     "nbsphinx",
-    "recommonmark",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.autosummary",
