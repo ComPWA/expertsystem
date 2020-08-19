@@ -15,12 +15,13 @@ from expertsystem.data import (
     GellmannNishijima,
     Parity,
     Particle,
+    ParticleCollection,
     QuantumState,
     Spin,
 )
 
 
-skip_particles = {
+__skip_particles = {
     "K(L)0",  # no isospin projection
     "K(S)0",  # no isospin projection
     "B(s2)*(5840)0",  # isospin(0.5, 0.0) ?
@@ -28,8 +29,22 @@ skip_particles = {
 }
 
 
+def load_pdg() -> ParticleCollection:
+    all_pdg_particles = PdgDatabase.findall(
+        lambda item: item.charge.is_integer()  # remove quarks
+        and item.J is not None  # remove new physics and nuclei
+        and abs(item.pdgid) < 1e9  # p and n as nucleus
+        and item.name not in __skip_particles
+    )
+    particle_collection = ParticleCollection()
+    for pdg_particle in all_pdg_particles:
+        new_particle = __convert_pdg_instance(pdg_particle)
+        particle_collection.add(new_particle)
+    return particle_collection
+
+
 # cspell:ignore pdgid
-def convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
+def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
     def convert_mass_width(value: Optional[float]) -> float:
         if value is None:
             return 0.0

@@ -2,8 +2,6 @@
 
 from pathlib import Path
 
-from particle import Particle as PdgDatabase
-
 from expertsystem.data import ParticleCollection
 
 from . import _pdg
@@ -22,24 +20,13 @@ def load_particle_collection(filename: str) -> ParticleCollection:
     )
 
 
-# cspell:ignore pdgid
 def load_pdg() -> ParticleCollection:
-    """Create a `.ParticleCollection` with entries from the PDG.
+    """Create a `.ParticleCollection` with all entries from the PDG.
 
     PDG info is imported from the `scikit-hep/particle
     <https://github.com/scikit-hep/particle/blob/master/README.rst>`_ package.
     """
-    all_pdg_particles = PdgDatabase.findall(
-        lambda item: item.charge.is_integer()  # remove quarks
-        and item.J is not None  # remove new physics and nuclei
-        and abs(item.pdgid) < 1e9  # p and n as nucleus
-        and item.name not in _pdg.skip_particles
-    )
-    particle_collection = ParticleCollection()
-    for pdg_particle in all_pdg_particles:
-        new_particle = _pdg.convert_pdg_instance(pdg_particle)
-        particle_collection.add(new_particle)
-    return particle_collection
+    return _pdg.load_pdg()
 
 
 def write(instance: object, filename: str) -> None:
