@@ -218,7 +218,14 @@ def remove_duplicate_solutions(
 
 
 def _remove_qns_from_graph(  # pylint: disable=too-many-branches
-    graph: StateTransitionGraph, qn_list: list
+    graph: StateTransitionGraph,
+    qn_list: List[
+        Union[
+            InteractionQuantumNumberNames,
+            StateQuantumNumberNames,
+            ParticlePropertyNames,
+        ]
+    ],
 ) -> StateTransitionGraph:
     qns_label = particle.Labels.QuantumNumber.name
     type_label = particle.Labels.Type.name
