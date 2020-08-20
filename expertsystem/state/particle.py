@@ -451,21 +451,21 @@ def initialize_graph(
         )
 
     # check if all initial and final state particles have spin projections set
-    initial_state = [check_if_spin_projections_set(x) for x in initial_state]
-    final_state = [check_if_spin_projections_set(x) for x in final_state]
+    initial_state = [__safe_set_spin_projections(x) for x in initial_state]
+    final_state = [__safe_set_spin_projections(x) for x in final_state]
 
     attached_is_edges = [
         empty_topology.get_originating_initial_state_edges(i)
         for i in empty_topology.nodes
     ]
-    is_edge_particle_pairs = calculate_combinatorics(
+    is_edge_particle_pairs = __calculate_combinatorics(
         is_edges, initial_state, attached_is_edges
     )
     attached_fs_edges = [
         empty_topology.get_originating_final_state_edges(i)
         for i in empty_topology.nodes
     ]
-    fs_edge_particle_pairs = calculate_combinatorics(
+    fs_edge_particle_pairs = __calculate_combinatorics(
         fs_edges, final_state, attached_fs_edges, final_state_groupings
     )
 
@@ -474,13 +474,12 @@ def initialize_graph(
         for fs_pair in fs_edge_particle_pairs:
             merged_dicts = initial_state_pair.copy()
             merged_dicts.update(fs_pair)
-            initialized_graph = initialize_edges(empty_topology, merged_dicts)
-            new_graphs.extend(initialized_graph)
+            new_graphs.extend(__initialize_edges(empty_topology, merged_dicts))
 
     return new_graphs
 
 
-def check_if_spin_projections_set(state: StateDefinition,) -> StateWithSpins:
+def __safe_set_spin_projections(state: StateDefinition) -> StateWithSpins:
     if isinstance(state, str):
         particle_name = state
         particle = DATABASE[state]
@@ -494,7 +493,7 @@ def check_if_spin_projections_set(state: StateDefinition,) -> StateWithSpins:
     return state
 
 
-def calculate_combinatorics(
+def __calculate_combinatorics(
     edges,
     state_particles,
     attached_external_edges_per_node,
@@ -507,7 +506,7 @@ def calculate_combinatorics(
 
     # now initialize the attached external edge list with the particles
     comb_attached_ext_edges = [
-        initialize_external_edge_lists(attached_external_edges_per_node, x)
+        __initialize_external_edge_lists(attached_external_edges_per_node, x)
         for x in combinatorics_list
     ]
 
@@ -558,7 +557,7 @@ def calculate_combinatorics(
     return combinatorics_list
 
 
-def initialize_external_edge_lists(
+def __initialize_external_edge_lists(
     attached_external_edges_per_node, edge_particle_mapping
 ):
     init_edge_lists = []
@@ -569,7 +568,7 @@ def initialize_external_edge_lists(
     return sorted(init_edge_lists)
 
 
-def initialize_edges(
+def __initialize_edges(
     graph: StateTransitionGraph, edge_particle_dict: Dict[int, StateWithSpins],
 ) -> List[StateTransitionGraph]:
     for edge_id, state_particle in edge_particle_dict.items():
@@ -586,7 +585,7 @@ def initialize_edges(
         new_graphs = []
         for temp_graph in temp_graphs:
             new_graphs.extend(
-                populate_edge_with_spin_projections(
+                __populate_edge_with_spin_projections(
                     temp_graph, edge_id, spin_projections
                 )
             )
@@ -594,7 +593,7 @@ def initialize_edges(
     return new_graphs
 
 
-def populate_edge_with_spin_projections(
+def __populate_edge_with_spin_projections(
     graph: StateTransitionGraph, edge_id: int, spin_projections: List[float]
 ) -> List[StateTransitionGraph]:
     qns_label = Labels.QuantumNumber.name
@@ -684,16 +683,16 @@ def get_particle_candidates_for_state(state, allowed_particle_list):
     qns_label = Labels.QuantumNumber.name
 
     for allowed_state in allowed_particle_list:
-        if check_qns_equal(state[qns_label], allowed_state[qns_label]):
+        if __check_qns_equal(state[qns_label], allowed_state[qns_label]):
             temp_particle = deepcopy(allowed_state)
-            temp_particle[qns_label] = merge_qn_props(
+            temp_particle[qns_label] = __merge_qn_props(
                 state[qns_label], allowed_state[qns_label]
             )
             particle_edges.append(temp_particle)
     return particle_edges
 
 
-def check_qns_equal(qns_state, qns_particle):
+def __check_qns_equal(qns_state, qns_particle):
     equal = True
     class_label = Labels.Class.name
     type_label = Labels.Type.name
@@ -710,14 +709,14 @@ def check_qns_equal(qns_state, qns_particle):
                 is QuantumNumberClasses[par_qn_entry[class_label]]
             ):
                 qn_found = True
-                if compare_qns(qn_entry, par_qn_entry):
+                if __compare_qns(qn_entry, par_qn_entry):
                     qn_value_match = True
                 break
         if not qn_found:
             # check if there is a default value
             qn_name = StateQuantumNumberNames[qn_entry[type_label]]
             if qn_name in QNDefaultValues:
-                if compare_qns(qn_entry, QNDefaultValues[qn_name]):
+                if __compare_qns(qn_entry, QNDefaultValues[qn_name]):
                     qn_found = True
                     qn_value_match = True
 
@@ -727,7 +726,7 @@ def check_qns_equal(qns_state, qns_particle):
     return equal
 
 
-def compare_qns(qn_dict, qn_dict2):
+def __compare_qns(qn_dict, qn_dict2):
     qn_class = QuantumNumberClasses[qn_dict[Labels.Class.name]]
     value_label = Labels.Value.name
 
@@ -758,7 +757,7 @@ def compare_qns(qn_dict, qn_dict2):
     return val1 == val2
 
 
-def merge_qn_props(qns_state, qns_particle):
+def __merge_qn_props(qns_state, qns_particle):
     class_label = Labels.Class.name
     type_label = Labels.Type.name
     qns = deepcopy(qns_particle)
