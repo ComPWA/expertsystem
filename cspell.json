@@ -25,6 +25,7 @@
         ".vscode/*",
         ".vscode/.gitignore",
         "Makefile",
+        "additional_particle_definitions.yml",
         "codecov.yml",
         "cspell.json",
         "doc/_templates/*",
