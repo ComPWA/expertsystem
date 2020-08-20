@@ -9,6 +9,7 @@
 !codecov.yml
 !environment.yml
 !examples/additional_particles.yml
+!expertsystem/additional_particle_definitions.yml
 !expertsystem/particle_list.*
 !tests/**/expected_recipe.yml
 

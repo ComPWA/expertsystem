@@ -25,7 +25,7 @@ _For an overview of **upcoming releases and planned functionality**, see
 ## Available features
 
 - **Input**: Particle database
-  - [ ] Source of truth: PDG
+  - [x] Source of truth: PDG
   - [x] Predefined particle list file
   - [x] Option to overwrite and append with custom particle definitions
 - **State transition graph**

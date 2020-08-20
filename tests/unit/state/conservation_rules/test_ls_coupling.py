@@ -106,8 +106,13 @@ from expertsystem.ui._system_control import _remove_conservation_law
         ),  # pylint: disable=too-many-locals
     ],
 )
-def test_canonical_clebsch_gordan_ls_coupling(
-    initial_state, final_state, ang_mom, spin, solution_count
+def test_canonical_clebsch_gordan_ls_coupling(  # pylint: disable=too-many-arguments
+    limited_allowed_intermediate_states,
+    initial_state,
+    final_state,
+    ang_mom,
+    spin,
+    solution_count,
 ):
     # because the amount of solutions is too big we change the default domains
     formalism_type = "canonical-helicity"
@@ -120,7 +125,7 @@ def test_canonical_clebsch_gordan_ls_coupling(
     stm = StateTransitionManager(
         initial_state,
         final_state,
-        [],
+        allowed_intermediate_particles=limited_allowed_intermediate_states,
         interaction_type_settings=int_settings,
         formalism_type=formalism_type,
     )
