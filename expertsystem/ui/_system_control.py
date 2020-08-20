@@ -16,6 +16,7 @@ from typing import (
     Optional,
     Set,
     Tuple,
+    Union,
 )
 
 from expertsystem.data import Spin
@@ -268,7 +269,9 @@ def _remove_qns_from_graph(  # pylint: disable=too-many-branches
 def _check_equal_ignoring_qns(
     ref_graph: StateTransitionGraph,
     solutions: List[StateTransitionGraph],
-    ignored_qn_list: List[str],
+    ignored_qn_list: List[
+        Union[StateQuantumNumberNames, InteractionQuantumNumberNames]
+    ],
 ) -> Optional[StateTransitionGraph]:
     """Define equal operator for the graphs ignoring certain quantum numbers."""
     if not isinstance(ref_graph, StateTransitionGraph):
