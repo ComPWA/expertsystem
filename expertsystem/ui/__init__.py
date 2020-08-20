@@ -208,14 +208,14 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             topology_graph.set_graph_element_properties_comparator(
                 CompareGraphElementPropertiesFunctor()
             )
-            init_graphs.extend(
-                initialize_graph(
-                    topology_graph,
-                    self.initial_state,
-                    self.final_state,
-                    self.final_state_groupings,
-                )
+            initialized_graphs = initialize_graph(
+                empty_topology=topology_graph,
+                initial_state=self.initial_state,
+                final_state=self.final_state,
+                final_state_groupings=self.final_state_groupings,
             )
+            init_graphs.extend(initialized_graphs)
+
         logging.info(f"initialized {len(init_graphs)} graphs!")
         return init_graphs
 
