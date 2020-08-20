@@ -30,8 +30,7 @@ _For an overview of **upcoming releases and planned functionality**, see
   - [x] Option to overwrite and append with custom particle definitions
 - **State transition graph**
   - [x] Feynman graph like description of the reactions
-  - [ ] Visualization of the topology
-        ([`graphviz`](https://pypi.org/project/graphviz/))
+  - [x] Visualization of the decay topology
 - **Conservation rules**
   - [x] Open-closed design
   - [x] Large set of predefined rules
