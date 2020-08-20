@@ -439,21 +439,15 @@ def initialize_graph(
     if len(initial_state) != len(is_edges):
         raise ValueError(
             "The graph initial state and the supplied initial"
-            "state are of different size! ("
-            + str(len(is_edges))
-            + " != "
-            + str(len(initial_state))
-            + ")"
+            "state are of different size! "
+            f"({len(is_edges)} !=  {len(initial_state)})"
         )
     fs_edges = empty_topology.get_final_state_edges()
     if len(final_state) != len(fs_edges):
         raise ValueError(
-            "The graph final state and the supplied final"
-            "state are of different size! ("
-            + str(len(fs_edges))
-            + " != "
-            + str(len(final_state))
-            + ")"
+            "The graph initial state and the supplied initial"
+            "state are of different size! "
+            f"({len(fs_edges)} !=  {len(final_state)})"
         )
 
     # check if all initial and final state particles have spin projections set
