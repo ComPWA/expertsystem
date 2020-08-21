@@ -35,6 +35,10 @@ from expertsystem.topology.graph import (
 )
 
 
+StateWithSpins = Tuple[str, List[float]]
+StateDefinition = Union[str, StateWithSpins]
+
+
 class Labels(Enum):
     """Labels that are useful in the particle module."""
 
@@ -80,7 +84,7 @@ class StateQuantumNumberNames(Enum):
     BaryonNumber = auto()
     Bottomness = auto()
     Charge = auto()
-    Charm = auto()
+    Charmness = auto()
     CParity = auto()
     ElectronLN = auto()
     GParity = auto()
@@ -118,7 +122,7 @@ QNDefaultValues = {
     StateQuantumNumberNames.Charge: 0,
     StateQuantumNumberNames.IsoSpin: Spin(0.0, 0.0),
     StateQuantumNumberNames.Strangeness: 0,
-    StateQuantumNumberNames.Charm: 0,
+    StateQuantumNumberNames.Charmness: 0,
     StateQuantumNumberNames.Bottomness: 0,
     StateQuantumNumberNames.Topness: 0,
     StateQuantumNumberNames.BaryonNumber: 0,
@@ -139,7 +143,7 @@ QNNameClassMapping = {
     StateQuantumNumberNames.GParity: QuantumNumberClasses.Int,
     StateQuantumNumberNames.IsoSpin: QuantumNumberClasses.Spin,
     StateQuantumNumberNames.Strangeness: QuantumNumberClasses.Int,
-    StateQuantumNumberNames.Charm: QuantumNumberClasses.Int,
+    StateQuantumNumberNames.Charmness: QuantumNumberClasses.Int,
     StateQuantumNumberNames.Bottomness: QuantumNumberClasses.Int,
     StateQuantumNumberNames.Topness: QuantumNumberClasses.Int,
     InteractionQuantumNumberNames.L: QuantumNumberClasses.Spin,
@@ -250,12 +254,12 @@ DATABASE = ParticleCollection()
 def load_particles(filename: str) -> None:
     """Add entries to the particle database from a custom config file.
 
-    By default, the expert system loads the particle database from the XML file
-    :file:`particle_list.yml` that comes with the `expertsystem`. Use
-    this function to append or overwrite definitions in the particle database.
+    By default, the expert system loads the particle database from the `PDG
+    <https://pdg.lbl.gov/>`_. Use this function to append or overwrite
+    definitions in the particle database.
 
     .. note::
-        If a particle name in the loaded XML file already exists in the
+        If a particle name in the imported file already exists in the
         particle database, the one in the particle database will be
         overwritten.
     """
@@ -481,9 +485,7 @@ def initialize_graph(graph, initial_state, final_state, final_state_groupings):
     return new_graphs
 
 
-def check_if_spin_projections_set(
-    state: Union[str, Tuple[str, List[float]]]
-) -> Tuple[str, List[float]]:
+def check_if_spin_projections_set(state: StateDefinition,) -> StateWithSpins:
     if isinstance(state, str):
         particle_name = state
         particle = DATABASE[state]
@@ -573,8 +575,7 @@ def initialize_external_edge_lists(
 
 
 def initialize_edges(
-    graph: StateTransitionGraph,
-    edge_particle_dict: Dict[int, Tuple[str, List[float]]],
+    graph: StateTransitionGraph, edge_particle_dict: Dict[int, StateWithSpins],
 ) -> List[StateTransitionGraph]:
     for edge_id, state_particle in edge_particle_dict.items():
         particle_name = state_particle[0]
