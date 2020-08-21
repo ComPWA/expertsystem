@@ -25,14 +25,7 @@ from expertsystem.data import (
     ParticleCollection,
     Spin,
 )
-from expertsystem.topology.graph import (
-    StateTransitionGraph,
-    get_final_state_edges,
-    get_initial_state_edges,
-    get_intermediate_state_edges,
-    get_originating_final_state_edges,
-    get_originating_initial_state_edges,
-)
+from expertsystem.topology.graph import StateTransitionGraph
 
 
 StateWithSpins = Tuple[str, List[float]]
@@ -438,7 +431,7 @@ def initialize_graph(
     final_state,
     final_state_groupings,
 ) -> List[StateTransitionGraph]:
-    is_edges = get_initial_state_edges(empty_topology)
+    is_edges = empty_topology.get_initial_state_edges()
     if len(initial_state) != len(is_edges):
         raise ValueError(
             "The graph initial state and the supplied initial"
@@ -448,7 +441,7 @@ def initialize_graph(
             + str(len(initial_state))
             + ")"
         )
-    fs_edges = get_final_state_edges(empty_topology)
+    fs_edges = empty_topology.get_final_state_edges()
     if len(final_state) != len(fs_edges):
         raise ValueError(
             "The graph final state and the supplied final"
@@ -464,14 +457,14 @@ def initialize_graph(
     final_state = [check_if_spin_projections_set(x) for x in final_state]
 
     attached_is_edges = [
-        get_originating_initial_state_edges(empty_topology, i)
+        empty_topology.get_originating_initial_state_edges(i)
         for i in empty_topology.nodes
     ]
     is_edge_particle_pairs = calculate_combinatorics(
         is_edges, initial_state, attached_is_edges
     )
     attached_fs_edges = [
-        get_originating_final_state_edges(empty_topology, i)
+        empty_topology.get_originating_final_state_edges(i)
         for i in empty_topology.nodes
     ]
     fs_edge_particle_pairs = calculate_combinatorics(
@@ -645,7 +638,7 @@ def initialize_graphs_with_particles(graphs, allowed_particle_list=None):
 
     for graph in graphs:
         logging.debug("initializing graph...")
-        intermediate_edges = get_intermediate_state_edges(graph)
+        intermediate_edges = graph.get_intermediate_state_edges()
         current_new_graphs = [graph]
         for int_edge_id in intermediate_edges:
             particle_edges = get_particle_candidates_for_state(

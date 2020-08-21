@@ -18,7 +18,6 @@ from typing import (
 from .graph import (
     InteractionNode,
     StateTransitionGraph,
-    are_graphs_isomorphic,
 )
 
 
@@ -75,9 +74,8 @@ class SimpleStateTransitionTopologyBuilder:
             for graph_index1, graph_index2 in itertools.combinations(
                 range(len(extendable_graph_list)), 2
             ):
-                if are_graphs_isomorphic(
-                    extendable_graph_list[graph_index1][0],
-                    extendable_graph_list[graph_index2][0],
+                if extendable_graph_list[graph_index1][0].is_isomorphic(
+                    extendable_graph_list[graph_index2][0]
                 ):
                     extendable_graph_list.remove(
                         extendable_graph_list[graph_index2]

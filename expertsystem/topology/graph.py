@@ -204,125 +204,99 @@ class StateTransitionGraph:
         """
         return True
 
+    def is_isomorphic(self, other: "StateTransitionGraph") -> bool:
+        """Check if two graphs are isomorphic.
 
-def are_graphs_isomorphic(  # pylint: disable=unused-argument
-    graph1: StateTransitionGraph, graph2: StateTransitionGraph
-) -> bool:
-    """Check if two graphs are isomorphic.
+        Returns:
+            bool:
+                True if the two graphs have a one-to-one mapping of the node IDs
+                and edge IDs.
+        """
+        # EdgeIndexMapping = {}
+        # NodeIndexMapping = {}
 
-    Returns:
-        bool:
-            True if the two graphs have a one-to-one mapping of the node IDs
-            and edge IDs.
-    """
-    # EdgeIndexMapping = {}
-    # NodeIndexMapping = {}
+        # get start edges
+        # CurrentEdges = [graph1.getInitial]
 
-    # get start edges
-    # CurrentEdges = [graph1.getInitial]
+        # while(CurrentEdges):
+        #    TempEdges = CurrentEdges
+        #    CurrentEdges = []
 
-    # while(CurrentEdges):
-    #    TempEdges = CurrentEdges
-    #    CurrentEdges = []
+        # check if the mapping is still valid and can be extended
 
-    # check if the mapping is still valid and can be extended
+    def get_initial_state_edges(self) -> List[int]:
+        is_list: List[int] = []
+        for edge_id, edge in self.edges.items():
+            if edge.originating_node_id is None:
+                is_list.append(edge_id)
+        return sorted(is_list)
 
+    def get_final_state_edges(self) -> List[int]:
+        fs_list: List[int] = []
+        for edge_id, edge in self.edges.items():
+            if edge.ending_node_id is None:
+                fs_list.append(edge_id)
+        return sorted(fs_list)
 
-def get_initial_state_edges(graph: StateTransitionGraph) -> List[int]:
-    if not isinstance(graph, StateTransitionGraph):
-        raise TypeError("graph must be a StateTransitionGraph")
-    is_list: List[int] = []
-    for edge_id, edge in graph.edges.items():
-        if edge.originating_node_id is None:
-            is_list.append(edge_id)
-    return sorted(is_list)
+    def get_intermediate_state_edges(self) -> List[int]:
+        is_list: List[int] = []
+        for edge_id, edge in self.edges.items():
+            if (
+                edge.ending_node_id is not None
+                and edge.originating_node_id is not None
+            ):
+                is_list.append(edge_id)
+        return sorted(is_list)
 
-
-def get_final_state_edges(graph: StateTransitionGraph) -> List[int]:
-    fs_list: List[int] = []
-    for edge_id, edge in graph.edges.items():
-        if edge.ending_node_id is None:
-            fs_list.append(edge_id)
-    return sorted(fs_list)
-
-
-def get_intermediate_state_edges(graph: StateTransitionGraph) -> List[int]:
-    is_list: List[int] = []
-    for edge_id, edge in graph.edges.items():
-        if (
-            edge.ending_node_id is not None
-            and edge.originating_node_id is not None
-        ):
-            is_list.append(edge_id)
-    return sorted(is_list)
-
-
-def get_edges_ingoing_to_node(
-    graph: StateTransitionGraph, node_id: Optional[int]
-) -> List[int]:
-    if not isinstance(graph, StateTransitionGraph):
-        raise TypeError("graph must be a StateTransitionGraph")
-    edge_list: List[int] = []
-    for edge_id, edge in graph.edges.items():
-        if edge.ending_node_id == node_id:
-            edge_list.append(edge_id)
-    return edge_list
-
-
-def get_edges_outgoing_to_node(
-    graph: StateTransitionGraph, node_id: Optional[int]
-) -> List[int]:
-    if not isinstance(graph, StateTransitionGraph):
-        raise TypeError("graph must be a StateTransitionGraph")
-    edge_list: List[int] = []
-    for edge_id, edge in graph.edges.items():
-        if edge.originating_node_id == node_id:
-            edge_list.append(edge_id)
-    return edge_list
-
-
-def get_originating_final_state_edges(
-    graph: StateTransitionGraph, node_id: Optional[int]
-) -> List[int]:
-    if not isinstance(graph, StateTransitionGraph):
-        raise TypeError("graph must be a StateTransitionGraph")
-    fs_edges = get_final_state_edges(graph)
-    edge_list = []
-    temp_edge_list = get_edges_outgoing_to_node(graph, node_id)
-    while temp_edge_list:
-        new_temp_edge_list = []
-        for edge_id in temp_edge_list:
-            if edge_id in fs_edges:
+    def get_edges_ingoing_to_node(self, node_id: Optional[int]) -> List[int]:
+        edge_list: List[int] = []
+        for edge_id, edge in self.edges.items():
+            if edge.ending_node_id == node_id:
                 edge_list.append(edge_id)
-            else:
-                new_node_id = graph.edges[edge_id].ending_node_id
-                new_temp_edge_list.extend(
-                    get_edges_outgoing_to_node(graph, new_node_id)
-                )
-        temp_edge_list = new_temp_edge_list
-    return edge_list
+        return edge_list
 
-
-def get_originating_initial_state_edges(
-    graph: StateTransitionGraph, node_id: int
-) -> List[int]:
-    if not isinstance(graph, StateTransitionGraph):
-        raise TypeError("graph must be a StateTransitionGraph")
-    is_edges = get_initial_state_edges(graph)
-    edge_list = []
-    temp_edge_list = get_edges_ingoing_to_node(graph, node_id)
-    while temp_edge_list:
-        new_temp_edge_list = []
-        for edge_id in temp_edge_list:
-            if edge_id in is_edges:
+    def get_edges_outgoing_to_node(self, node_id: Optional[int]) -> List[int]:
+        edge_list: List[int] = []
+        for edge_id, edge in self.edges.items():
+            if edge.originating_node_id == node_id:
                 edge_list.append(edge_id)
-            else:
-                new_node_id = graph.edges[edge_id].originating_node_id
-                new_temp_edge_list.extend(
-                    get_edges_ingoing_to_node(graph, new_node_id)
-                )
-        temp_edge_list = new_temp_edge_list
-    return edge_list
+        return edge_list
+
+    def get_originating_final_state_edges(
+        self, node_id: Optional[int]
+    ) -> List[int]:
+        fs_edges = self.get_final_state_edges()
+        edge_list = []
+        temp_edge_list = self.get_edges_outgoing_to_node(node_id)
+        while temp_edge_list:
+            new_temp_edge_list = []
+            for edge_id in temp_edge_list:
+                if edge_id in fs_edges:
+                    edge_list.append(edge_id)
+                else:
+                    new_node_id = self.edges[edge_id].ending_node_id
+                    new_temp_edge_list.extend(
+                        self.get_edges_outgoing_to_node(new_node_id)
+                    )
+            temp_edge_list = new_temp_edge_list
+        return edge_list
+
+    def get_originating_initial_state_edges(self, node_id: int) -> List[int]:
+        is_edges = self.get_initial_state_edges()
+        edge_list = []
+        temp_edge_list = self.get_edges_ingoing_to_node(node_id)
+        while temp_edge_list:
+            new_temp_edge_list = []
+            for edge_id in temp_edge_list:
+                if edge_id in is_edges:
+                    edge_list.append(edge_id)
+                else:
+                    new_node_id = self.edges[edge_id].originating_node_id
+                    new_temp_edge_list.extend(
+                        self.get_edges_ingoing_to_node(new_node_id)
+                    )
+            temp_edge_list = new_temp_edge_list
+        return edge_list
 
 
 def _dicts_unequal(dict1: dict, dict2: dict) -> bool:
