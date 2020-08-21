@@ -23,8 +23,6 @@ from expertsystem.data import (
     Spin,
 )
 
-from . import validation
-
 
 def from_particle_collection(particles: ParticleCollection) -> dict:
     output = dict()
@@ -57,8 +55,7 @@ def from_particle_state(instance: Union[ComplexEnergyState, Particle]) -> dict:
         output_dict["DecayInfo"] = create_parameter_dict(
             instance.width, "Width", instance
         )
-    if isinstance(instance, Particle):
-        validation.particle(output_dict)
+
     return output_dict
 
 

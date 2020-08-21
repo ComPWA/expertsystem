@@ -78,7 +78,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         topology_building: str = "isobar",
         number_of_threads: int = 4,
         propagation_mode: str = "fast",
-        load_pdg: bool = True,
+        reload_pdg: bool = False,
     ) -> None:
         if allowed_intermediate_particles is None:
             allowed_intermediate_particles = []
@@ -141,7 +141,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 )
         self.topology_builder = SimpleStateTransitionTopologyBuilder(int_nodes)
 
-        if load_pdg:
+        if reload_pdg or len(DATABASE) == 0:
             load_default_particles()
 
     @property
