@@ -25,7 +25,7 @@ from expertsystem.data import (
     ParticleCollection,
     Spin,
 )
-from expertsystem.topology.graph import StateTransitionGraph
+from expertsystem.topology import StateTransitionGraph
 
 
 StateWithSpins = Tuple[str, List[float]]

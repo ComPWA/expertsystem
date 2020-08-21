@@ -6,7 +6,7 @@ from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     create_spin_domain,
 )
-from expertsystem.topology.graph import StateTransitionGraph
+from expertsystem.topology import StateTransitionGraph
 from expertsystem.ui import (
     InteractionTypes,
     StateTransitionManager,

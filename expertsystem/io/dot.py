@@ -8,7 +8,7 @@ from typing import (
     Optional,
 )
 
-from expertsystem.topology.graph import StateTransitionGraph
+from expertsystem.topology import StateTransitionGraph
 
 
 def convert_to_dot(instance: object) -> str:

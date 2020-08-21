@@ -32,13 +32,11 @@ from expertsystem.state.propagation import (
     InteractionNodeSettings,
     InteractionTypes,
 )
-from expertsystem.topology.graph import (
+from expertsystem.topology import (
     InteractionNode,
     StateTransitionGraph,
 )
-from expertsystem.topology.topology_builder import (
-    SimpleStateTransitionTopologyBuilder,
-)
+from expertsystem.topology import SimpleStateTransitionTopologyBuilder
 
 from ._default_settings import (
     DEFAULT_PARTICLE_LIST_PATH,

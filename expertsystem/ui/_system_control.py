@@ -34,7 +34,7 @@ from expertsystem.state.propagation import (
     InteractionNodeSettings,
     InteractionTypes,
 )
-from expertsystem.topology.graph import StateTransitionGraph
+from expertsystem.topology import StateTransitionGraph
 
 
 Strength = float
