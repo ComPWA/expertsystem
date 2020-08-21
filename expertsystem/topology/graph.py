@@ -86,7 +86,7 @@ class StateTransitionGraph:
         if isinstance(other, StateTransitionGraph):
             if set(self.nodes) != set(other.nodes):
                 return False
-            if dicts_unequal(self.edges, other.edges):
+            if _dicts_unequal(self.edges, other.edges):
                 return False
             if self.graph_element_properties_comparator is not None:
                 if not self.graph_element_properties_comparator(
@@ -325,7 +325,7 @@ def get_originating_initial_state_edges(
     return edge_list
 
 
-def dicts_unequal(dict1: dict, dict2: dict) -> bool:
+def _dicts_unequal(dict1: dict, dict2: dict) -> bool:
     return OrderedDict(sorted(dict1.items())) != OrderedDict(
         sorted(dict2.items())
     )
