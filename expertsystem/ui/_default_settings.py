@@ -14,13 +14,13 @@ from typing import (
 
 from expertsystem.state.conservation_rules import (
     BaryonNumberConservation,
+    CParityConservation,
     ChargeConservation,
     CharmConservation,
     ClebschGordanCheckHelicityToCanonical,
-    CParityConservation,
     ElectronLNConservation,
-    GellMannNishijimaRule,
     GParityConservation,
+    GellMannNishijimaRule,
     HelicityConservation,
     IdenticalParticleSymmetrization,
     IsoSpinConservation,
@@ -28,8 +28,8 @@ from expertsystem.state.conservation_rules import (
     MuonLNConservation,
     ParityConservation,
     ParityConservationHelicity,
-    StrangenessConservation,
     SpinConservation,
+    StrangenessConservation,
     TauLNConservation,
 )
 from expertsystem.state.particle import (
