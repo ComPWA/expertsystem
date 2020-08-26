@@ -481,13 +481,12 @@ def initialize_graph(  # pylint: disable=too-many-locals
             f"({len(fs_edges)} !=  {len(final_state)})"
         )
 
-    # check if all initial and final state particles have spin projections set
-    initial_state_with_projections = [
-        __safe_set_spin_projections(x, particles) for x in initial_state
-    ]
-    final_state_with_projections = [
-        __safe_set_spin_projections(x, particles) for x in final_state
-    ]
+    initial_state_with_projections = __safe_set_spin_projections(
+        initial_state, particles
+    )
+    final_state_with_projections = __safe_set_spin_projections(
+        final_state, particles
+    )
 
     attached_is_edges = [
         empty_topology.get_originating_initial_state_edges(i)
@@ -521,19 +520,27 @@ def initialize_graph(  # pylint: disable=too-many-locals
 
 
 def __safe_set_spin_projections(
-    state: StateDefinition, particle_db: ParticleCollection
-) -> StateWithSpins:
-    if isinstance(state, str):
-        particle_name = state
-        particle = particle_db[state]
-        spin_projections = arange(  # type: ignore
-            -particle.spin, particle.spin + 1, 1.0
-        ).tolist()
-        if particle.mass == 0.0:
-            if 0.0 in spin_projections:
-                del spin_projections[spin_projections.index(0.0)]
-        state = (particle_name, spin_projections)
-    return state
+    list_of_states: Sequence[StateDefinition], particle_db: ParticleCollection,
+) -> Sequence[StateWithSpins]:
+    def safe_set_spin_projections(
+        state: StateDefinition, particle_db: ParticleCollection
+    ) -> StateWithSpins:
+        if isinstance(state, str):
+            particle_name = state
+            particle = particle_db[state]
+            spin_projections = arange(  # type: ignore
+                -particle.spin, particle.spin + 1, 1.0
+            ).tolist()
+            if particle.mass == 0.0:
+                if 0.0 in spin_projections:
+                    del spin_projections[spin_projections.index(0.0)]
+            state = (particle_name, spin_projections)
+        return state
+
+    return [
+        safe_set_spin_projections(state, particle_db)
+        for state in list_of_states
+    ]
 
 
 def __calculate_combinatorics(
