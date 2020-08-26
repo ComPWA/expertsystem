@@ -216,6 +216,13 @@ def rule_conditions(variable_conditions):
 
         rule_class.check_requirements = check_requirements
         rule_class.get_required_qn_names = get_required_qn_names
+        if rule_class.__doc__ is None:
+            rule_class.__doc__ = ""
+        else:
+            rule_class.__doc__ += "\n\n"
+        rule_class.__doc__ += "Required quantum numbers:\n\n"
+        for required_qn in required_qns:
+            rule_class.__doc__ += f"  - `.{required_qn}`\n"
         RuleConditions.register(rule_class)
 
         return rule_class
