@@ -120,7 +120,7 @@ def is_particle_antiparticle_pair(pid1, pid2):
     return pid1 == -pid2
 
 
-class Rule(ABC):
+class Rule:
     """Interface for rules.
 
     A `Rule` performs checks on an `.InteractionNode` and its attached `.Edge` s.
@@ -136,7 +136,6 @@ class Rule(ABC):
     def __str__(self):
         return f"{self.__class__.__name__}"
 
-    @abstractmethod
     def __call__(
         self, ingoing_part_qns, outgoing_part_qns, interaction_qns
     ) -> bool:
@@ -244,12 +243,6 @@ def additive_quantum_number_rule(quantum_number: StateQuantumNumberNames):
     """
 
     def decorator(rule_class):
-        def new_repr(self):  # pylint: disable=unused-argument
-            return f"{rule_class.__name__}"
-
-        def new_str(self):  # pylint: disable=unused-argument
-            return f"{rule_class.__name__}"
-
         def new_call(
             self, ingoing_part_qns, outgoing_part_qns, _
         ):  # pylint: disable=unused-argument
@@ -263,8 +256,6 @@ def additive_quantum_number_rule(quantum_number: StateQuantumNumberNames):
             return in_qn_sum == out_qn_sum
 
         rule_class.__call__ = new_call
-        rule_class.__repr__ = new_repr
-        rule_class.__str__ = new_str
         rule_class.__doc__ = (
             f"""Bases: `Rule`, decorated with `{additive_quantum_number_rule.__name__}`.\n\n"""
             f"""Check for {quantum_number.name} conservation."""
@@ -272,44 +263,44 @@ def additive_quantum_number_rule(quantum_number: StateQuantumNumberNames):
         rule_class = rule_conditions(
             variable_conditions=[(quantum_number, [DefinedForAllEdges()])]
         )(rule_class)
-        Rule.register(rule_class)
+        # Rule.register(rule_class)
         return rule_class
 
     return decorator
 
 
 @additive_quantum_number_rule(StateQuantumNumberNames.Charge)
-class ChargeConservation:
+class ChargeConservation(Rule):
     pass
 
 
 @additive_quantum_number_rule(StateQuantumNumberNames.BaryonNumber)
-class BaryonNumberConservation:
+class BaryonNumberConservation(Rule):
     pass
 
 
 @additive_quantum_number_rule(StateQuantumNumberNames.ElectronLN)
-class ElectronLNConservation:
+class ElectronLNConservation(Rule):
     pass
 
 
 @additive_quantum_number_rule(StateQuantumNumberNames.MuonLN)
-class MuonLNConservation:
+class MuonLNConservation(Rule):
     pass
 
 
 @additive_quantum_number_rule(StateQuantumNumberNames.TauLN)
-class TauLNConservation:
+class TauLNConservation(Rule):
     pass
 
 
 @additive_quantum_number_rule(StateQuantumNumberNames.Strangeness)
-class StrangenessConservation:
+class StrangenessConservation(Rule):
     pass
 
 
 @additive_quantum_number_rule(StateQuantumNumberNames.Charmness)
-class CharmConservation:
+class CharmConservation(Rule):
     pass
 
 
