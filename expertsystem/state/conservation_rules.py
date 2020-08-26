@@ -251,7 +251,7 @@ def additive_quantum_number_rule(quantum_number: StateQuantumNumberNames):
 
         rule_class.__call__ = new_call
         rule_class.__doc__ = (
-            f"""Bases: `Rule`, decorated with `{additive_quantum_number_rule.__name__}`.\n\n"""
+            f"""Decorated via `{additive_quantum_number_rule.__name__}`.\n\n"""
             f"""Check for {quantum_number.name} conservation."""
         )
         rule_class = rule_conditions(
