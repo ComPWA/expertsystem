@@ -4,6 +4,8 @@ Contains:
 - Functors for quantum number condition checks.
 """
 
+# pylint: disable=abstract-method
+
 import logging
 from abc import ABC, abstractmethod
 from copy import deepcopy
