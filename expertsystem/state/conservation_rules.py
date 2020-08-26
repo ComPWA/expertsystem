@@ -228,7 +228,19 @@ def rule_conditions(variable_conditions):
     return decorator
 
 
-def additive_quantum_number_rule(quantum_number):
+def additive_quantum_number_rule(quantum_number: StateQuantumNumberNames):
+    r"""Class decorator for creating an additive conservation `Rule`.
+
+    Use this decorator to create a conservation `Rule` for a quantum number
+    to which an additive conservation rule applies:
+
+    .. math:: \sum q_{in} = \sum q_{out}
+
+    Args:
+        quantum_number (StateQuantumNumberNames): Quantum number to which you
+            want to apply the additive conservation check.
+    """
+
     def decorator(rule_class):
         def new_repr(self):
             return f"{rule_class.__name__}"
@@ -250,9 +262,8 @@ def additive_quantum_number_rule(quantum_number):
         rule_class.__repr__ = new_repr
         rule_class.__str__ = new_str
         rule_class.__doc__ = (
-            f"""Check for {quantum_number.name} conservation.\n\n"""
-            r""":math:`\sum q_{in} = \sum q_{out}`
-            """
+            f"""Bases: `Rule`, decorated with `{additive_quantum_number_rule.__name__}`.\n\n"""
+            f"""Check for {quantum_number.name} conservation."""
         )
         rule_class = rule_conditions(
             variable_conditions=[(quantum_number, [DefinedForAllEdges()])]
