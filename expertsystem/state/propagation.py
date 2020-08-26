@@ -20,7 +20,7 @@ from expertsystem.solvers.constraint import (
     Unassigned,
 )
 from expertsystem.state import particle
-from expertsystem.state.conservation_rules import Rule, RuleConditions
+from expertsystem.state.conservation_rules import Rule
 from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     ParticleDecayPropertyNames,
@@ -663,8 +663,6 @@ class ConservationLawConstraintWrapper(Constraint):
     def __init__(self, rule, variable_mapping, name_delimiter):
         if not isinstance(rule, Rule):
             raise TypeError("rule has to be of type Rule!")
-        if not isinstance(rule, RuleConditions):
-            raise TypeError("rule has to be of type RuleConditions!")
         self.rule = rule
         self.in_variable_set = variable_mapping["ingoing"]
         self.fixed_in_variables = variable_mapping["ingoing-fixed"]

@@ -128,22 +128,6 @@ class Rule:
 
     For additive quantum numbers the decorator `additive_quantum_number_rule`
     can simplify the constrution of the appropriate `Rule`.
-    """
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}"
-
-    def __str__(self):
-        return f"{self.__class__.__name__}"
-
-    def __call__(
-        self, ingoing_part_qns, outgoing_part_qns, interaction_qns
-    ) -> bool:
-        raise NotImplementedError
-
-
-class RuleConditions(ABC):
-    """Interface for rule conditions.
 
     Besides the rule logic itself, a `Rule` also has the responsibility of
     stating its run conditions. These can be separated into two categories:
@@ -157,12 +141,21 @@ class RuleConditions(ABC):
     decorator.
     """
 
-    @abstractmethod
+    def __repr__(self):
+        return f"{self.__class__.__name__}"
+
+    def __str__(self):
+        return f"{self.__class__.__name__}"
+
     def get_required_qn_names(self):
         raise NotImplementedError
 
-    @abstractmethod
     def check_requirements(self, in_edges, out_edges, int_node):
+        raise NotImplementedError
+
+    def __call__(
+        self, ingoing_part_qns, outgoing_part_qns, interaction_qns
+    ) -> bool:
         raise NotImplementedError
 
 
@@ -222,7 +215,6 @@ def rule_conditions(variable_conditions):
         rule_class.__doc__ += "Required quantum numbers:\n\n"
         for required_qn in required_qns:
             rule_class.__doc__ += f"  - `.{required_qn}`\n"
-        RuleConditions.register(rule_class)
 
         return rule_class
 
@@ -263,7 +255,6 @@ def additive_quantum_number_rule(quantum_number: StateQuantumNumberNames):
         rule_class = rule_conditions(
             variable_conditions=[(quantum_number, [DefinedForAllEdges()])]
         )(rule_class)
-        # Rule.register(rule_class)
         return rule_class
 
     return decorator
