@@ -458,7 +458,7 @@ class CompareGraphElementPropertiesFunctor:
         return True
 
 
-def initialize_graph(
+def initialize_graph(  # pylint: disable=too-many-locals
     empty_topology: StateTransitionGraph,
     particles: ParticleCollection,
     initial_state: List[StateDefinition],
@@ -481,10 +481,10 @@ def initialize_graph(
         )
 
     # check if all initial and final state particles have spin projections set
-    initial_state = [
+    initial_state_with_projections = [
         __safe_set_spin_projections(x, particles) for x in initial_state
     ]
-    final_state = [
+    final_state_with_projections = [
         __safe_set_spin_projections(x, particles) for x in final_state
     ]
 
@@ -493,14 +493,18 @@ def initialize_graph(
         for i in empty_topology.nodes
     ]
     is_edge_particle_pairs = __calculate_combinatorics(
-        is_edges, initial_state, attached_is_edges
+        is_edges, initial_state_with_projections, attached_is_edges
     )
+
     attached_fs_edges = [
         empty_topology.get_originating_final_state_edges(i)
         for i in empty_topology.nodes
     ]
     fs_edge_particle_pairs = __calculate_combinatorics(
-        fs_edges, final_state, attached_fs_edges, final_state_groupings
+        fs_edges,
+        final_state_with_projections,
+        attached_fs_edges,
+        final_state_groupings,
     )
 
     new_graphs: List[StateTransitionGraph] = list()
@@ -533,11 +537,11 @@ def __safe_set_spin_projections(
 
 def __calculate_combinatorics(
     edges: List[int],
-    state_particles: List[StateDefinition],
+    state_particles: List[StateWithSpins],
     attached_external_edges_per_node: List[List[int]],
     allowed_particle_groupings: Optional[List[List[str]]] = None,
 ) -> List[
-    Dict[int, StateDefinition]
+    Dict[int, StateWithSpins]
 ]:  # pylint: disable=too-many-branches,too-many-locals
     combinatorics_list = [
         dict(zip(edges, particles))
@@ -599,8 +603,8 @@ def __calculate_combinatorics(
 
 def __initialize_external_edge_lists(
     attached_external_edges_per_node: List[List[int]],
-    edge_particle_mapping: Dict[int, StateDefinition],
-) -> List[List[StateDefinition]]:
+    edge_particle_mapping: Dict[int, StateWithSpins],
+) -> List[List[StateWithSpins]]:
     init_edge_lists = []
     for edge_list in attached_external_edges_per_node:
         init_edge_lists.append(
@@ -611,7 +615,7 @@ def __initialize_external_edge_lists(
 
 def __initialize_edges(
     graph: StateTransitionGraph,
-    edge_particle_dict: Dict[int, StateDefinition],
+    edge_particle_dict: Dict[int, StateWithSpins],
     particle_db: ParticleCollection,
 ) -> List[StateTransitionGraph]:
     for edge_id, state_particle in edge_particle_dict.items():
