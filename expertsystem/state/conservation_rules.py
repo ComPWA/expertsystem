@@ -216,7 +216,7 @@ def rule_conditions(variable_conditions):
                     return False
             return True
 
-        def get_required_qn_names(self):
+        def get_required_qn_names(self):  # pylint: disable=unused-argument
             return required_qns
 
         rule_class.check_requirements = check_requirements
@@ -242,13 +242,15 @@ def additive_quantum_number_rule(quantum_number: StateQuantumNumberNames):
     """
 
     def decorator(rule_class):
-        def new_repr(self):
+        def new_repr(self):  # pylint: disable=unused-argument
             return f"{rule_class.__name__}"
 
-        def new_str(self):
+        def new_str(self):  # pylint: disable=unused-argument
             return f"{rule_class.__name__}"
 
-        def new_call(self, ingoing_part_qns, outgoing_part_qns, _):
+        def new_call(
+            self, ingoing_part_qns, outgoing_part_qns, _
+        ):  # pylint: disable=unused-argument
             charge = quantum_number
             in_qn_sum = sum(
                 [part[charge] for part in ingoing_part_qns if charge in part]
@@ -899,7 +901,6 @@ class GellMannNishijimaRule(Rule):
 
         :math:`Q=I_3+\frac{Y}{2}` for each particle.
         """
-
         charge_label = StateQuantumNumberNames.Charge
         isospin_label = StateQuantumNumberNames.IsoSpin
 
