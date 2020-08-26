@@ -168,6 +168,13 @@ class RuleConditions(ABC):
 
 
 def rule_conditions(variable_conditions):
+    quantum_number_types = (
+        StateQuantumNumberNames,
+        InteractionQuantumNumberNames,
+        ParticlePropertyNames,
+        ParticleDecayPropertyNames,
+    )
+
     def decorator(rule_class):
         all_conditions = []
         required_qns = []
@@ -177,22 +184,10 @@ def rule_conditions(variable_conditions):
                 qn_name, conditions = var_condition
             else:
                 qn_name = var_condition
-            if not (
-                isinstance(
-                    qn_name,
-                    (
-                        StateQuantumNumberNames,
-                        InteractionQuantumNumberNames,
-                        ParticlePropertyNames,
-                        ParticleDecayPropertyNames,
-                    ),
-                )
-            ):
+            if not isinstance(qn_name, quantum_number_types):
                 raise TypeError(
-                    "qn_name has to be of type "
-                    + "ParticleQuantumNumberNames or "
-                    + "InteractionQuantumNumberNames or "
-                    + "ParticlePropertyNames"
+                    "qn_name has to be of one of the following types:\n"
+                    f"  {quantum_number_types}"
                 )
             required_qns.append(qn_name)
             if conditions:
