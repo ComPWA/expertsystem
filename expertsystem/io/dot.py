@@ -57,13 +57,9 @@ def __graph_to_dot(graph: StateTransitionGraph) -> str:
 
     top = graph.get_initial_state_edges()
     outs = graph.get_final_state_edges()
-    for i in top:
+    for edge_id in top + outs:
         dot_source += _DOT_DEFAULT_NODE.format(
-            __node_name(i), __edge_label(graph, i)
-        )
-    for i in outs:
-        dot_source += _DOT_DEFAULT_NODE.format(
-            __node_name(i), __edge_label(graph, i)
+            __node_name(edge_id), __edge_label(graph, edge_id)
         )
 
     dot_source += _DOT_RANK_SAME.format(__format_particle(top))
