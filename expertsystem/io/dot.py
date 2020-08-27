@@ -19,6 +19,15 @@ def convert_to_dot(instance: object) -> str:
     """
     if isinstance(instance, StateTransitionGraph):
         return __graph_to_dot(instance)
+    if isinstance(instance, list):
+        output_dot_string = "digraph {\n"
+        for i, item in enumerate(instance):
+            dot_single_graph = convert_to_dot(item).replace(
+                "digraph", f"subgraph cluster_{i}"
+            )
+            output_dot_string += f"{dot_single_graph}\n"
+        output_dot_string += "}"
+        return output_dot_string
     raise NotImplementedError(
         f"Cannot convert a {instance.__class__.__name__} to DOT language"
     )
@@ -44,34 +53,6 @@ _DOT_LABEL_EDGE = '    "{}" -> "{}" [label="{}"];\n'
 
 
 def __graph_to_dot(graph: StateTransitionGraph) -> str:
-    def node_name(edge_id: int, node_id: Optional[int] = None) -> str:
-        if node_id is None:
-            return f"edge{edge_id}"
-        return f"node{node_id}"
-
-    def format_particle(node_edge_ids: List[int]) -> str:
-        name_list = [f'"{node_name(i)}"' for i in node_edge_ids]
-        return ",".join(name_list)
-
-    def edge_label(graph: StateTransitionGraph, edge_id: int) -> str:
-        if edge_id in graph.edge_props:
-            properties = graph.edge_props[edge_id]
-            label = properties.get("Name", i)
-            quantum_numbers = properties.get("QuantumNumber", None)
-            if quantum_numbers is not None:
-                spin_projection_candidates = [
-                    number.get("Projection", None)
-                    for number in quantum_numbers
-                    if number["Type"] == "Spin"
-                ]
-                if spin_projection_candidates:
-                    projection = float(spin_projection_candidates[0])
-                    if projection.is_integer():
-                        projection = int(projection)
-                    label += f"[{projection}]"
-        else:
-            label = str(i)
-        return label
 
     dot_source = _DOT_HEAD
 
@@ -79,26 +60,58 @@ def __graph_to_dot(graph: StateTransitionGraph) -> str:
     outs = graph.get_final_state_edges()
     for i in top:
         dot_source += _DOT_DEFAULT_NODE.format(
-            node_name(i), edge_label(graph, i)
+            __node_name(i), __edge_label(graph, i)
         )
     for i in outs:
         dot_source += _DOT_DEFAULT_NODE.format(
-            node_name(i), edge_label(graph, i)
+            __node_name(i), __edge_label(graph, i)
         )
 
-    dot_source += _DOT_RANK_SAME.format(format_particle(top))
-    dot_source += _DOT_RANK_SAME.format(format_particle(outs))
+    dot_source += _DOT_RANK_SAME.format(__format_particle(top))
+    dot_source += _DOT_RANK_SAME.format(__format_particle(outs))
 
     for i, edge in graph.edges.items():
         j, k = edge.ending_node_id, edge.originating_node_id
         if j is None or k is None:
             dot_source += _DOT_DEFAULT_EDGE.format(
-                node_name(i, k), node_name(i, j)
+                __node_name(i, k), __node_name(i, j)
             )
         else:
             dot_source += _DOT_LABEL_EDGE.format(
-                node_name(i, k), node_name(i, j), edge_label(graph, i),
+                __node_name(i, k), __node_name(i, j), __edge_label(graph, i),
             )
 
     dot_source += _DOT_TAIL
     return dot_source
+
+
+def __node_name(edge_id: int, node_id: Optional[int] = None) -> str:
+    if node_id is None:
+        return f"edge{edge_id}"
+    return f"node{node_id}"
+
+
+def __format_particle(node_edge_ids: List[int]) -> str:
+    name_list = [f'"{__node_name(i)}"' for i in node_edge_ids]
+    return ",".join(name_list)
+
+
+def __edge_label(graph: StateTransitionGraph, edge_id: int) -> str:
+    if edge_id in graph.edge_props:
+        properties = graph.edge_props[edge_id]
+        label = properties.get("Name", edge_id)
+        quantum_numbers = properties.get("QuantumNumber", None)
+        if quantum_numbers is not None:
+            spin_projection_candidates = [
+                number.get("Projection", None)
+                for number in quantum_numbers
+                if number["Type"] == "Spin"
+            ]
+            if spin_projection_candidates:
+                projection = float(spin_projection_candidates[0])
+                if projection.is_integer():
+                    projection = int(projection)
+                label += f"[{projection}]"
+    else:
+        label = str(edge_id)
+    return label
