@@ -53,17 +53,25 @@ def __graph_to_dot(graph: StateTransitionGraph) -> str:
         name_list = [f'"{node_name(i)}"' for i in node_edge_ids]
         return ",".join(name_list)
 
+    def edge_label(graph: StateTransitionGraph, edge_id: int) -> str:
+        if edge_id in graph.edge_props:
+            properties = graph.edge_props[edge_id]
+            label = properties.get("Name", i)
+        else:
+            label = str(i)
+        return label
+
     dot_source = _DOT_HEAD
 
     top = graph.get_initial_state_edges()
     outs = graph.get_final_state_edges()
     for i in top:
         dot_source += _DOT_DEFAULT_NODE.format(
-            node_name(i), graph.edge_props.get(i, {}).get("Name", i)
+            node_name(i), edge_label(graph, i)
         )
     for i in outs:
         dot_source += _DOT_DEFAULT_NODE.format(
-            node_name(i), graph.edge_props.get(i, {}).get("Name", i)
+            node_name(i), edge_label(graph, i)
         )
 
     dot_source += _DOT_RANK_SAME.format(format_particle(top))
@@ -77,9 +85,7 @@ def __graph_to_dot(graph: StateTransitionGraph) -> str:
             )
         else:
             dot_source += _DOT_LABEL_EDGE.format(
-                node_name(i, k),
-                node_name(i, j),
-                graph.edge_props.get(i, {}).get("Name", i),
+                node_name(i, k), node_name(i, j), edge_label(graph, i),
             )
 
     dot_source += _DOT_TAIL
