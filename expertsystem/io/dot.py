@@ -57,6 +57,18 @@ def __graph_to_dot(graph: StateTransitionGraph) -> str:
         if edge_id in graph.edge_props:
             properties = graph.edge_props[edge_id]
             label = properties.get("Name", i)
+            quantum_numbers = properties.get("QuantumNumber", None)
+            if quantum_numbers is not None:
+                spin_projection_candidates = [
+                    number.get("Projection", None)
+                    for number in quantum_numbers
+                    if number["Type"] == "Spin"
+                ]
+                if spin_projection_candidates:
+                    projection = float(spin_projection_candidates[0])
+                    if projection.is_integer():
+                        projection = int(projection)
+                    label += f"[{projection}]"
         else:
             label = str(i)
         return label
