@@ -42,7 +42,7 @@ def write(instance: object, filename: str) -> None:
 _DOT_HEAD = """digraph {
     rankdir=LR;
     node [shape=point, width=0];
-    edge [arrowhead=none, labelfloat=true];
+    edge [arrowhead=none];
 """
 _DOT_TAIL = "}\n"
 _DOT_RANK_SAME = "    {{ rank=same {} }};\n"
