@@ -39,12 +39,11 @@ def write(instance: object, filename: str) -> None:
         stream.write(output_str)
 
 
-_DOT_HEAD = """
-digraph {
+_DOT_HEAD = """digraph {
     rankdir=LR;
     node [shape=point, width=0];
     edge [arrowhead=none, labelfloat=true];
-    """
+"""
 _DOT_TAIL = "}\n"
 _DOT_RANK_SAME = "    {{ rank=same {} }};\n"
 _DOT_DEFAULT_NODE = '    "{}" [shape=none, label="{}"];\n'
