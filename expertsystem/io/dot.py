@@ -4,6 +4,8 @@ See :doc:`/usage/visualization` for more info.
 """
 
 from typing import (
+    Any,
+    Callable,
     List,
     Optional,
 )
@@ -44,19 +46,29 @@ _DOT_DEFAULT_EDGE = '    "{}" -> "{}";\n'
 _DOT_LABEL_EDGE = '    "{}" -> "{}" [label="{}"];\n'
 
 
+def embed_dot(func: Callable[[Any], str]) -> Callable[[Any], str]:
+    """Add a DOT head and tail to some DOT content."""
+
+    def wrapper(*args, **kwargs):  # type: ignore
+        dot_source = _DOT_HEAD
+        dot_source += func(*args, **kwargs)
+        dot_source += _DOT_TAIL
+        return dot_source
+
+    return wrapper
+
+
+@embed_dot
 def __graph_list_to_dot(graphs: List[StateTransitionGraph]) -> str:
-    dot_source = _DOT_HEAD
+    dot_source = ""
     for i, graph in enumerate(graphs):
         dot_source += __graph_to_dot_content(graph, prefix=f"g{i}_")
-    dot_source += _DOT_TAIL
     return dot_source
 
 
+@embed_dot
 def __graph_to_dot(graph: StateTransitionGraph) -> str:
-    dot_source = _DOT_HEAD
-    dot_source += __graph_to_dot_content(graph)
-    dot_source += _DOT_TAIL
-    return dot_source
+    return __graph_to_dot_content(graph)
 
 
 def __graph_to_dot_content(
