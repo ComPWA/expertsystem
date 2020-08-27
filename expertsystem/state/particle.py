@@ -703,7 +703,7 @@ def initialize_graphs_with_particles(
 def filter_particles(
     particle_db: ParticleCollection, allowed_particle_names: List[str],
 ) -> List[Dict[str, Any]]:
-    """Filters `ParticleCollection` based on the allowed particle names.
+    """Filters `.ParticleCollection` based on the allowed particle names.
 
     Note this function currently also converts back to dict structures, which
     are still used internally by the propagation code.
