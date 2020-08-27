@@ -46,10 +46,9 @@ def visualize_graphs():
         # pylint: disable=import-error,import-outside-toplevel
         import graphviz  # type: ignore
 
-        for i, graph in enumerate(graphs):
-            dot_source = io.dot.convert_to_dot(graph)
-            vis = graphviz.Source(dot_source, filename=f"graph{i}.gv")
-            vis.render(view=True)
+        dot_source = io.dot.convert_to_dot(graphs)
+        vis = graphviz.Source(dot_source)
+        vis.view()
     except ModuleNotFoundError:
         pass
 
