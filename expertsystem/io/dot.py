@@ -15,19 +15,12 @@ def convert_to_dot(instance: object) -> str:
     """Convert a `object` to a DOT language `str`.
 
     Only works for objects that can be represented as a graph, particularly a
-    `.StateTransitionGraph`.
+    `.StateTransitionGraph` or a `list` of `.StateTransitionGraph` instances.
     """
     if isinstance(instance, StateTransitionGraph):
         return __graph_to_dot(instance)
     if isinstance(instance, list):
-        output_dot_string = "digraph {\n"
-        for i, item in enumerate(instance):
-            dot_single_graph = convert_to_dot(item).replace(
-                "digraph", f"subgraph cluster_{i}"
-            )
-            output_dot_string += f"{dot_single_graph}\n"
-        output_dot_string += "}"
-        return output_dot_string
+        return __graph_list_to_dot(instance)
     raise NotImplementedError(
         f"Cannot convert a {instance.__class__.__name__} to DOT language"
     )
@@ -51,32 +44,45 @@ _DOT_DEFAULT_EDGE = '    "{}" -> "{}";\n'
 _DOT_LABEL_EDGE = '    "{}" -> "{}" [label="{}"];\n'
 
 
-def __graph_to_dot(graph: StateTransitionGraph) -> str:
-
+def __graph_list_to_dot(graphs: List[StateTransitionGraph]) -> str:
     dot_source = _DOT_HEAD
+    for i, graph in enumerate(graphs):
+        dot_source += __graph_to_dot_content(graph, prefix=f"g{i}_")
+    dot_source += _DOT_TAIL
+    return dot_source
 
+
+def __graph_to_dot(graph: StateTransitionGraph) -> str:
+    dot_source = _DOT_HEAD
+    dot_source += __graph_to_dot_content(graph)
+    dot_source += _DOT_TAIL
+    return dot_source
+
+
+def __graph_to_dot_content(
+    graph: StateTransitionGraph, prefix: str = ""
+) -> str:
+    dot_source = ""
     top = graph.get_initial_state_edges()
     outs = graph.get_final_state_edges()
     for edge_id in top + outs:
         dot_source += _DOT_DEFAULT_NODE.format(
-            __node_name(edge_id), __edge_label(graph, edge_id)
+            prefix + __node_name(edge_id), __edge_label(graph, edge_id)
         )
-
-    dot_source += _DOT_RANK_SAME.format(__format_particle(top))
-    dot_source += _DOT_RANK_SAME.format(__format_particle(outs))
-
+    dot_source += __rank_string(top, prefix)
+    dot_source += __rank_string(outs, prefix)
     for i, edge in graph.edges.items():
         j, k = edge.ending_node_id, edge.originating_node_id
         if j is None or k is None:
             dot_source += _DOT_DEFAULT_EDGE.format(
-                __node_name(i, k), __node_name(i, j)
+                prefix + __node_name(i, k), prefix + __node_name(i, j)
             )
         else:
             dot_source += _DOT_LABEL_EDGE.format(
-                __node_name(i, k), __node_name(i, j), __edge_label(graph, i),
+                prefix + __node_name(i, k),
+                prefix + __node_name(i, j),
+                __edge_label(graph, i),
             )
-
-    dot_source += _DOT_TAIL
     return dot_source
 
 
@@ -86,9 +92,10 @@ def __node_name(edge_id: int, node_id: Optional[int] = None) -> str:
     return f"node{node_id}"
 
 
-def __format_particle(node_edge_ids: List[int]) -> str:
-    name_list = [f'"{__node_name(i)}"' for i in node_edge_ids]
-    return ",".join(name_list)
+def __rank_string(node_edge_ids: List[int], prefix: str = "") -> str:
+    name_list = [f'"{prefix}{__node_name(i)}"' for i in node_edge_ids]
+    name_string = ", ".join(name_list)
+    return _DOT_RANK_SAME.format(name_string)
 
 
 def __edge_label(graph: StateTransitionGraph, edge_id: int) -> str:
