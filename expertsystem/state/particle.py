@@ -462,7 +462,7 @@ def initialize_graph(
     particles: ParticleCollection,
     initial_state: List[StateDefinition],
     final_state: List[StateDefinition],
-    final_state_groupings: List[List[str]],
+    final_state_groupings: Optional[List[List[str]]] = None,
 ) -> List[StateTransitionGraph]:
     is_edges = empty_topology.get_initial_state_edges()
     if len(initial_state) != len(is_edges):
