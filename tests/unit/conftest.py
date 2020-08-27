@@ -7,7 +7,6 @@ from expertsystem import ui
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.data import ParticleCollection
-from expertsystem.state.particle import DATABASE
 from expertsystem.ui import (
     InteractionTypes,
     StateTransitionManager,
@@ -17,10 +16,9 @@ from expertsystem.ui import (
 logging.basicConfig(level=logging.ERROR)
 
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="module")
 def particle_database() -> ParticleCollection:
-    ui.load_default_particles()
-    return DATABASE
+    return ui.load_default_particles()
 
 
 @pytest.fixture(scope="module")
