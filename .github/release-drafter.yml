@@ -1,5 +1,6 @@
 name-template: PWA Expert System $NEXT_PATCH_VERSION
 tag-template: $NEXT_PATCH_VERSION
+
 categories:
   - title: 💡 New features
     label: 💡 Enhancement
@@ -11,8 +12,12 @@ categories:
     label: 📝 Docs
   - title: 🖱️ Internals
     label: 🖱️ DX
+
+change-template: "- $TITLE (#$NUMBER)"
 sort-direction: ascending
 template: |
   # Release $NEXT_PATCH_VERSION
 
   $CHANGES
+
+  _Contributors: $CONTRIBUTORS_
