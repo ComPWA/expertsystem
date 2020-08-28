@@ -42,7 +42,7 @@ def visualize_graphs():
     """Render graphs when running this file directly."""
     ui.load_default_particles()
     topology = create_dummy_topology()
-    graphs = test_initialize_graph(topology, None)
+    graphs = test_initialize_graph(topology, io.load_pdg())
     try:
         # pylint: disable=import-error,import-outside-toplevel
         import graphviz  # type: ignore
