@@ -11,6 +11,7 @@ categories:
     label: 📝 Docs
   - title: 🖱️ Internals
     label: 🖱️ DX
+sort-direction: ascending
 template: |
   # Release $NEXT_PATCH_VERSION
 
