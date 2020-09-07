@@ -43,15 +43,7 @@ def visualize_graphs():
     ui.load_default_particles()
     topology = create_dummy_topology()
     graphs = test_initialize_graph(topology, io.load_pdg())
-    try:
-        # pylint: disable=import-error,import-outside-toplevel
-        import graphviz  # type: ignore
-
-        dot_source = io.dot.convert_to_dot(graphs)
-        vis = graphviz.Source(dot_source)
-        vis.view()
-    except ModuleNotFoundError:
-        pass
+    io.write(graphs, "jpsi_to_gamma_pi0_pi0.gv")
 
 
 if __name__ == "__main__":
