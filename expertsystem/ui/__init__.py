@@ -27,6 +27,8 @@ from expertsystem.state.particle import (
     StateDefinition,
     filter_particles,
     initialize_graph,
+    match_external_edges,
+    perform_external_edge_identical_particle_combinatorics,
 )
 from expertsystem.state.propagation import (
     FullPropagator,
@@ -53,8 +55,6 @@ from ._system_control import (
     analyse_solution_failure,
     create_interaction_setting_groups,
     filter_interaction_types,
-    match_external_edges,
-    perform_external_edge_identical_particle_combinatorics,
     remove_duplicate_solutions,
 )
 
