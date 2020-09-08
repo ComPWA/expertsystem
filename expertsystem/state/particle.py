@@ -16,6 +16,7 @@ from typing import (
     Dict,
     List,
     Optional,
+    Sequence,
     Set,
     Tuple,
     Union,
@@ -31,7 +32,7 @@ from expertsystem.data import (
 from expertsystem.topology import StateTransitionGraph
 
 
-StateWithSpins = Tuple[str, List[float]]
+StateWithSpins = Tuple[str, Sequence[float]]
 StateDefinition = Union[str, StateWithSpins]
 
 
@@ -461,8 +462,8 @@ class CompareGraphElementPropertiesFunctor:
 def initialize_graph(  # pylint: disable=too-many-locals
     empty_topology: StateTransitionGraph,
     particles: ParticleCollection,
-    initial_state: List[StateDefinition],
-    final_state: List[StateDefinition],
+    initial_state: Sequence[StateDefinition],
+    final_state: Sequence[StateDefinition],
     final_state_groupings: Optional[List[List[str]]] = None,
 ) -> List[StateTransitionGraph]:
     is_edges = empty_topology.get_initial_state_edges()
@@ -537,7 +538,7 @@ def __safe_set_spin_projections(
 
 def __calculate_combinatorics(
     edges: List[int],
-    state_particles: List[StateWithSpins],
+    state_particles: Sequence[StateWithSpins],
     attached_external_edges_per_node: List[List[int]],
     allowed_particle_groupings: Optional[List[List[str]]] = None,
 ) -> List[
@@ -643,7 +644,9 @@ def __initialize_edges(
 
 
 def __populate_edge_with_spin_projections(
-    graph: StateTransitionGraph, edge_id: int, spin_projections: List[float]
+    graph: StateTransitionGraph,
+    edge_id: int,
+    spin_projections: Sequence[float],
 ) -> List[StateTransitionGraph]:
     qns_label = Labels.QuantumNumber.name
     type_label = Labels.Type.name
