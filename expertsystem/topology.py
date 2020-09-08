@@ -52,11 +52,15 @@ class StateTransitionGraph:
     """
 
     def __init__(self) -> None:
-        self.nodes: Set[int] = set()
+        self.__nodes: Set[int] = set()
         self.edges: Dict[int, Edge] = {}
         self.node_props: Dict[int, dict] = {}
         self.edge_props: Dict[int, dict] = {}
         self.graph_element_properties_comparator: Optional[Callable] = None
+
+    @property
+    def nodes(self) -> Set[int]:
+        return self.__nodes
 
     def set_graph_element_properties_comparator(
         self, comparator: Optional[Callable]
@@ -74,7 +78,7 @@ class StateTransitionGraph:
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, StateTransitionGraph):
-            if set(self.nodes) != set(other.nodes):
+            if set(self.__nodes) != set(other.nodes):
                 return False
             if _dicts_unequal(self.edges, other.edges):
                 return False
@@ -97,9 +101,9 @@ class StateTransitionGraph:
         Raises:
             ValueError: if node_id already exists
         """
-        if node_id in self.nodes:
+        if node_id in self.__nodes:
             raise ValueError(f"Node with id {node_id} already exists!")
-        self.nodes.add(node_id)
+        self.__nodes.add(node_id)
 
     def add_edges(self, edge_ids: List[int]) -> None:
         """Add edges with the ids in the edge_ids list."""
