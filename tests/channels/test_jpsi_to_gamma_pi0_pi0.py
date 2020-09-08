@@ -23,7 +23,7 @@ logging.getLogger().setLevel(logging.ERROR)
         (["f(0)(1500)"], 4),
         (["f(0)(980)", "f(0)(1500)"], 8),
         (["f(2)(1270)"], 12),
-        (["omega(782)"], 16),
+        (["omega(782)"], 8),
         (
             [
                 "f(0)(980)",
@@ -32,7 +32,7 @@ logging.getLogger().setLevel(logging.ERROR)
                 "f(2)(1950)",
                 "omega(782)",
             ],
-            48,
+            40,
         ),
     ],
 )
