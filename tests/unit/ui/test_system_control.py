@@ -114,7 +114,7 @@ def make_ls_test_graph(angular_momentum_magnitude, coupled_spin_magnitude):
     graph.set_graph_element_properties_comparator(
         CompareGraphElementPropertiesFunctor()
     )
-    graph.nodes.append(0)
+    graph.add_node(0)
     graph.node_props[0] = {
         "QuantumNumber": [
             {
@@ -141,7 +141,7 @@ def make_ls_test_graph_scrambled(
     graph.set_graph_element_properties_comparator(
         CompareGraphElementPropertiesFunctor()
     )
-    graph.nodes.append(0)
+    graph.add_node(0)
     graph.node_props[0] = {
         "QuantumNumber": [
             {

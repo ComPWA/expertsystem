@@ -17,6 +17,7 @@ from typing import (
     List,
     Optional,
     Sequence,
+    Set,
     Tuple,
 )
 
@@ -51,7 +52,7 @@ class StateTransitionGraph:
     """
 
     def __init__(self) -> None:
-        self.nodes: List[int] = []
+        self.nodes: Set[int] = set()
         self.edges: Dict[int, Edge] = {}
         self.node_props: Dict[int, dict] = {}
         self.edge_props: Dict[int, dict] = {}
@@ -98,7 +99,7 @@ class StateTransitionGraph:
         """
         if node_id in self.nodes:
             raise ValueError(f"Node with id {node_id} already exists!")
-        self.nodes.append(node_id)
+        self.nodes.add(node_id)
 
     def add_edges(self, edge_ids: List[int]) -> None:
         """Add edges with the ids in the edge_ids list."""
