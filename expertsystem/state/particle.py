@@ -466,20 +466,19 @@ def initialize_graph(  # pylint: disable=too-many-locals
     final_state: Sequence[StateDefinition],
     final_state_groupings: Optional[List[List[List[str]]]] = None,
 ) -> List[StateTransitionGraph]:
+    def assert_number_of_states(
+        state_definitions: Sequence, edge_ids: Sequence[int]
+    ) -> None:
+        if len(state_definitions) != len(edge_ids):
+            raise ValueError(
+                "Number of state definitions is not same as number of edge IDs:"
+                f"(len({state_definitions}) != len({edge_ids})"
+            )
+
     is_edges = empty_topology.get_initial_state_edges()
-    if len(initial_state) != len(is_edges):
-        raise ValueError(
-            "The graph initial state and the supplied initial"
-            "state are of different size! "
-            f"({len(is_edges)} !=  {len(initial_state)})"
-        )
     fs_edges = empty_topology.get_final_state_edges()
-    if len(final_state) != len(fs_edges):
-        raise ValueError(
-            "The graph initial state and the supplied initial"
-            "state are of different size! "
-            f"({len(fs_edges)} !=  {len(final_state)})"
-        )
+    assert_number_of_states(initial_state, is_edges)
+    assert_number_of_states(final_state, fs_edges)
 
     initial_state_with_projections = __safe_set_spin_projections(
         initial_state, particles
