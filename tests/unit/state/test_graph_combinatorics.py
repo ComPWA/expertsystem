@@ -1,8 +1,14 @@
 # pylint: disable=redefined-outer-name
 
+from math import factorial
+
 import pytest
 
-from expertsystem.state.particle import initialize_graph
+from expertsystem.state.particle import (
+    _safe_set_spin_projections,
+    generate_outer_edge_permutations,
+    initialize_graph,
+)
 from expertsystem.topology import (
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
@@ -34,3 +40,32 @@ def test_initialize_graph(
         final_state_groupings=final_state_groupings,
     )
     assert len(graphs) == 4
+
+
+@pytest.mark.parametrize(
+    "initial_state, final_state",
+    [
+        (["J/psi(1S)"], ["gamma", "pi0", "pi0"]),
+        (["J/psi(1S)"], ["K+", "K-", "pi+", "pi-"]),
+        (["e+", "e-"], ["gamma", "pi-", "pi+"]),
+        (["e+", "e-"], ["K+", "K-", "pi+", "pi-"]),
+    ],
+)
+def test_generate_outer_edge_permutations(
+    initial_state, final_state, three_body_decay, particle_database
+):
+    initial_state_with_spins = _safe_set_spin_projections(
+        initial_state, particle_database
+    )
+    final_state_with_spins = _safe_set_spin_projections(
+        final_state, particle_database
+    )
+    list_of_permutations = list(
+        generate_outer_edge_permutations(
+            three_body_decay, initial_state_with_spins, final_state_with_spins,
+        )
+    )
+    n_permutations_final_state = factorial(len(final_state))
+    n_permutations_initial_state = factorial(len(initial_state))
+    n_permutations = n_permutations_final_state * n_permutations_initial_state
+    assert len(list_of_permutations) == n_permutations

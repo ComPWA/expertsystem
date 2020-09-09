@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+
 """Collection of data structures and functions for particle information.
 
 This module defines a particle as a collection of quantum numbers and things
@@ -14,6 +16,7 @@ from itertools import permutations
 from typing import (
     Any,
     Dict,
+    Generator,
     List,
     Optional,
     Sequence,
@@ -538,6 +541,23 @@ def _safe_set_spin_projections(
         safe_set_spin_projections(state, particle_db)
         for state in list_of_states
     ]
+
+
+def generate_outer_edge_permutations(
+    topology: StateTransitionGraph,
+    initial_state: Sequence[StateWithSpins],
+    final_state: Sequence[StateWithSpins],
+) -> Generator[Dict[int, StateWithSpins], None, None]:
+    initial_state_ids = topology.get_initial_state_edges()
+    final_state_ids = topology.get_final_state_edges()
+    for initial_state_permutation in permutations(initial_state):
+        for final_state_permutation in permutations(final_state):
+            yield dict(
+                zip(
+                    initial_state_ids + final_state_ids,
+                    initial_state_permutation + final_state_permutation,
+                )
+            )
 
 
 def __calculate_combinatorics(
