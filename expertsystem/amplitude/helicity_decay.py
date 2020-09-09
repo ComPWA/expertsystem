@@ -270,7 +270,12 @@ def _get_name_hel_list(graph, edge_ids):
         if temp_hel % 1 == 0:
             temp_hel = int(temp_hel)
         name_hel_list.append((graph.edge_props[i][name_label], temp_hel))
-    return name_hel_list
+
+    # in order to ensure correct naming of amplitude coefficients the list has
+    # to be sorted by name. The same coefficient names have to be created for
+    # two graphs that only differ from a kinematic standpoint
+    # (swapped external edges)
+    return sorted(name_hel_list, key=lambda entry: entry[0])
 
 
 class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
