@@ -480,10 +480,10 @@ def initialize_graph(  # pylint: disable=too-many-locals
     assert_number_of_states(initial_state, is_edges)
     assert_number_of_states(final_state, fs_edges)
 
-    initial_state_with_projections = __safe_set_spin_projections(
+    initial_state_with_projections = _safe_set_spin_projections(
         initial_state, particles
     )
-    final_state_with_projections = __safe_set_spin_projections(
+    final_state_with_projections = _safe_set_spin_projections(
         final_state, particles
     )
 
@@ -516,7 +516,7 @@ def initialize_graph(  # pylint: disable=too-many-locals
     return new_graphs
 
 
-def __safe_set_spin_projections(
+def _safe_set_spin_projections(
     list_of_states: Sequence[StateDefinition], particle_db: ParticleCollection,
 ) -> Sequence[StateWithSpins]:
     def safe_set_spin_projections(
