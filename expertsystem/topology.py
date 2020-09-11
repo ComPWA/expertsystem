@@ -10,6 +10,7 @@ import copy
 import itertools
 import logging
 from collections import OrderedDict
+from dataclasses import dataclass
 from typing import (
     Callable,
     Dict,
@@ -22,23 +23,12 @@ from typing import (
 )
 
 
+@dataclass
 class Edge:
-    """Struct-like definition of an edge."""
+    """Struct-like definition of an edge, used in `Topology`."""
 
-    def __init__(self) -> None:
-        self.ending_node_id: Optional[int] = None
-        self.originating_node_id: Optional[int] = None
-
-    def __repr__(self) -> str:
-        return f"<class 'Edge': {self.ending_node_id} -> {self.originating_node_id}>"
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, Edge):
-            return (
-                self.ending_node_id == other.ending_node_id
-                and self.originating_node_id == other.originating_node_id
-            )
-        raise NotImplementedError
+    ending_node_id: Optional[int] = None
+    originating_node_id: Optional[int] = None
 
 
 class Topology:
