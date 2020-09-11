@@ -53,21 +53,25 @@ class Topology:
         edges: Optional[Dict[int, Edge]] = None,
     ) -> None:
         self.__nodes: Set[int] = set()
-        self.edges: Dict[int, Edge] = {}
+        self.__edges: Dict[int, Edge] = dict()
         if nodes is not None:
             self.__nodes = set(nodes)
         if edges is not None:
-            self.edges = edges
+            self.__edges = edges
 
     @property
     def nodes(self) -> Set[int]:
         return self.__nodes
 
+    @property
+    def edges(self) -> Dict[int, Edge]:
+        return self.__edges
+
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}()"
             f"\n    nodes: {self.nodes}"
-            f"\n    edges: {self.edges}"
+            f"\n    edges: {self.__edges}"
         )
 
     def __eq__(self, other: object) -> bool:
@@ -88,9 +92,9 @@ class Topology:
     def add_edges(self, edge_ids: List[int]) -> None:
         """Add edges with the ids in the edge_ids list."""
         for edge_id in edge_ids:
-            if edge_id in self.edges:
+            if edge_id in self.__edges:
                 raise ValueError(f"Edge with id {edge_id} already exists!")
-            self.edges[edge_id] = Edge()
+            self.__edges[edge_id] = Edge()
 
     def attach_edges_to_node_ingoing(
         self, ingoing_edge_ids: Iterable[int], node_id: int
@@ -109,34 +113,34 @@ class Topology:
         """
         # first check if the ingoing edges are all available
         for edge_id in ingoing_edge_ids:
-            if edge_id not in self.edges:
+            if edge_id not in self.__edges:
                 raise ValueError(f"Edge with id {edge_id} does not exist!")
-            if self.edges[edge_id].ending_node_id is not None:
+            if self.__edges[edge_id].ending_node_id is not None:
                 raise ValueError(
                     f"Edge with id {edge_id} is already ingoing to"
-                    f" node {self.edges[edge_id].ending_node_id}"
+                    f" node {self.__edges[edge_id].ending_node_id}"
                 )
 
         # update the newly connected edges
         for edge_id in ingoing_edge_ids:
-            self.edges[edge_id].ending_node_id = node_id
+            self.__edges[edge_id].ending_node_id = node_id
 
     def attach_edges_to_node_outgoing(
         self, outgoing_edge_ids: Iterable[int], node_id: int
     ) -> None:
         # first check if the ingoing edges are all available
         for edge_id in outgoing_edge_ids:
-            if edge_id not in self.edges:
+            if edge_id not in self.__edges:
                 raise ValueError(f"Edge with id {edge_id} does not exist!")
-            if self.edges[edge_id].originating_node_id is not None:
+            if self.__edges[edge_id].originating_node_id is not None:
                 raise ValueError(
                     f"Edge with id {edge_id} is already outgoing from"
-                    f" node {self.edges[edge_id].originating_node_id}"
+                    f" node {self.__edges[edge_id].originating_node_id}"
                 )
 
         # update the edges
         for edge_id in outgoing_edge_ids:
-            self.edges[edge_id].originating_node_id = node_id
+            self.__edges[edge_id].originating_node_id = node_id
 
     def get_originating_node_list(
         self, edge_ids: Iterable[int]
@@ -260,10 +264,10 @@ class Topology:
         return edge_list
 
     def swap_edges(self, edge_id1: int, edge_id2: int) -> None:
-        popped_edge_id1 = self.edges.pop(edge_id1)
-        popped_edge_id2 = self.edges.pop(edge_id2)
-        self.edges[edge_id2] = popped_edge_id1
-        self.edges[edge_id1] = popped_edge_id2
+        popped_edge_id1 = self.__edges.pop(edge_id1)
+        popped_edge_id2 = self.__edges.pop(edge_id2)
+        self.__edges[edge_id2] = popped_edge_id1
+        self.__edges[edge_id1] = popped_edge_id2
 
 
 class StateTransitionGraph(Topology):
