@@ -29,7 +29,7 @@ from expertsystem.data import (
     ParticleCollection,
     Spin,
 )
-from expertsystem.topology import StateTransitionGraph
+from expertsystem.topology import StateTransitionGraph, Topology
 
 
 StateWithSpins = Tuple[str, Sequence[float]]
@@ -460,7 +460,7 @@ class CompareGraphElementPropertiesFunctor:
 
 
 def initialize_graph(  # pylint: disable=too-many-locals
-    empty_topology: StateTransitionGraph,
+    topology: Topology,
     particles: ParticleCollection,
     initial_state: Sequence[StateDefinition],
     final_state: Sequence[StateDefinition],
@@ -475,8 +475,8 @@ def initialize_graph(  # pylint: disable=too-many-locals
                 f"(len({state_definitions}) != len({edge_ids})"
             )
 
-    is_edges = empty_topology.get_initial_state_edges()
-    fs_edges = empty_topology.get_final_state_edges()
+    is_edges = topology.get_initial_state_edges()
+    fs_edges = topology.get_final_state_edges()
     assert_number_of_states(initial_state, is_edges)
     assert_number_of_states(final_state, fs_edges)
 
@@ -488,16 +488,14 @@ def initialize_graph(  # pylint: disable=too-many-locals
     )
 
     attached_is_edges = [
-        empty_topology.get_originating_initial_state_edges(i)
-        for i in empty_topology.nodes
+        topology.get_originating_initial_state_edges(i) for i in topology.nodes
     ]
     is_edge_particle_pairs = __calculate_combinatorics(
         is_edges, initial_state_with_projections, attached_is_edges
     )
 
     attached_fs_edges = [
-        empty_topology.get_originating_final_state_edges(i)
-        for i in empty_topology.nodes
+        topology.get_originating_final_state_edges(i) for i in topology.nodes
     ]
     fs_edge_particle_pairs = __calculate_combinatorics(
         fs_edges,
@@ -512,7 +510,7 @@ def initialize_graph(  # pylint: disable=too-many-locals
             merged_dicts = initial_state_pair.copy()
             merged_dicts.update(fs_pair)
             new_graphs.extend(
-                __initialize_edges(empty_topology, merged_dicts, particles)
+                __initialize_edges(topology, merged_dicts, particles)
             )
 
     return new_graphs
@@ -621,10 +619,11 @@ def __initialize_external_edge_lists(
 
 
 def __initialize_edges(
-    graph: StateTransitionGraph,
+    topology: Topology,
     edge_particle_dict: Dict[int, StateWithSpins],
     particle_db: ParticleCollection,
 ) -> List[StateTransitionGraph]:
+    graph = StateTransitionGraph.from_topology(topology)
     for edge_id, state_particle in edge_particle_dict.items():
         particle_name = state_particle[0]
         particle = particle_db[particle_name]

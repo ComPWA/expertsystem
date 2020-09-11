@@ -41,22 +41,23 @@ class Edge:
         raise NotImplementedError
 
 
-class StateTransitionGraph:
-    """Graph class that contains edges and nodes.
+class Topology:
+    """Directed graph for a state transition.
 
-    Similar to feynman graphs. The graphs are directed, meaning the edges are
-    ingoing and outgoing to specific nodes (since feynman graphs also have a
-    time axis) This class can contain the full information of a state
-    transition from a initial state to a final state. This information can be
-    attached to the nodes and edges via properties.
+    Forms the underlying topology of `StateTransitionGraph`.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        nodes: Optional[Set[int]] = None,
+        edges: Optional[Dict[int, Edge]] = None,
+    ) -> None:
         self.__nodes: Set[int] = set()
         self.edges: Dict[int, Edge] = {}
-        self.node_props: Dict[int, dict] = {}
-        self.edge_props: Dict[int, dict] = {}
-        self.graph_element_properties_comparator: Optional[Callable] = None
+        if nodes is not None:
+            self.__nodes = set(nodes)
+        if edges is not None:
+            self.edges = edges
 
     @property
     def nodes(self) -> Set[int]:
@@ -67,27 +68,11 @@ class StateTransitionGraph:
             f"{self.__class__.__name__}()"
             f"\n    nodes: {self.nodes}"
             f"\n    edges: {self.edges}"
-            f"\n    node props: {self.node_props}"
-            f"\n    node props: {self.edge_props}"
         )
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, StateTransitionGraph):
-            if set(self.__nodes) != set(other.nodes):
-                return False
-            if _dicts_unequal(self.edges, other.edges):
-                return False
-            if self.graph_element_properties_comparator is not None:
-                if not self.graph_element_properties_comparator(
-                    self.node_props, other.node_props
-                ):
-                    return False
-                return self.graph_element_properties_comparator(
-                    self.edge_props, other.edge_props
-                )
-            raise NotImplementedError(
-                "Graph element properties comparator is not set!"
-            )
+        if isinstance(other, Topology):
+            return self.nodes == other.nodes and self.edges == other.edges
         raise NotImplementedError
 
     def add_node(self, node_id: int) -> None:
@@ -169,22 +154,6 @@ class StateTransitionGraph:
             self.edges[edge_id].originating_node_id for edge_id in edge_ids
         ]
 
-    def swap_edges(self, edge_id1: int, edge_id2: int) -> None:
-        popped_edge_id1 = self.edges.pop(edge_id1)
-        popped_edge_id2 = self.edges.pop(edge_id2)
-        self.edges[edge_id2] = popped_edge_id1
-        self.edges[edge_id1] = popped_edge_id2
-        value1: Optional[dict] = None
-        value2: Optional[dict] = None
-        if edge_id1 in self.edge_props:
-            value1 = self.edge_props.pop(edge_id1)
-        if edge_id2 in self.edge_props:
-            value2 = self.edge_props.pop(edge_id2)
-        if value1 is not None:
-            self.edge_props[edge_id2] = value1
-        if value2 is not None:
-            self.edge_props[edge_id1] = value2
-
     def verify(self) -> bool:  # pylint: disable=no-self-use
         """Verify if the graph is connected.
 
@@ -192,7 +161,7 @@ class StateTransitionGraph:
         """
         return True
 
-    def is_isomorphic(self, other: "StateTransitionGraph") -> bool:
+    def is_isomorphic(self, other: "Topology") -> bool:
         """Check if two graphs are isomorphic.
 
         Returns:
@@ -290,6 +259,79 @@ class StateTransitionGraph:
             temp_edge_list = new_temp_edge_list
         return edge_list
 
+    def swap_edges(self, edge_id1: int, edge_id2: int) -> None:
+        popped_edge_id1 = self.edges.pop(edge_id1)
+        popped_edge_id2 = self.edges.pop(edge_id2)
+        self.edges[edge_id2] = popped_edge_id1
+        self.edges[edge_id1] = popped_edge_id2
+
+
+class StateTransitionGraph(Topology):
+    """Graph class that contains edges and nodes.
+
+    Similar to feynman graphs. The graphs are directed, meaning the edges are
+    ingoing and outgoing to specific nodes (since feynman graphs also have a
+    time axis) This class can contain the full information of a state
+    transition from a initial state to a final state. This information can be
+    attached to the nodes and edges via properties.
+    """
+
+    def __init__(
+        self,
+        nodes: Optional[Set[int]] = None,
+        edges: Optional[Dict[int, Edge]] = None,
+    ) -> None:
+        super().__init__(nodes, edges)
+        self.node_props: Dict[int, dict] = {}
+        self.edge_props: Dict[int, dict] = {}
+        self.graph_element_properties_comparator: Optional[Callable] = None
+
+    def __repr__(self) -> str:
+        return (
+            f"{self.__class__.__name__}()"
+            f"\n    nodes: {self.nodes}"
+            f"\n    edges: {self.edges}"
+            f"\n    node props: {self.node_props}"
+            f"\n    node props: {self.edge_props}"
+        )
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, StateTransitionGraph):
+            if self.nodes != other.nodes:
+                return False
+            if self.edges != other.edges:
+                return False
+            if self.graph_element_properties_comparator is not None:
+                if not self.graph_element_properties_comparator(
+                    self.node_props, other.node_props
+                ):
+                    return False
+                return self.graph_element_properties_comparator(
+                    self.edge_props, other.edge_props
+                )
+            raise NotImplementedError(
+                "Graph element properties comparator is not set!"
+            )
+        raise NotImplementedError
+
+    @staticmethod
+    def from_topology(topology: Topology) -> "StateTransitionGraph":
+        """Create a `StateTransitionGraph` from a `Topology`."""
+        return StateTransitionGraph(topology.nodes, topology.edges)
+
+    def swap_edges(self, edge_id1: int, edge_id2: int) -> None:
+        super().swap_edges(edge_id1, edge_id2)
+        value1: Optional[dict] = None
+        value2: Optional[dict] = None
+        if edge_id1 in self.edge_props:
+            value1 = self.edge_props.pop(edge_id1)
+        if edge_id2 in self.edge_props:
+            value2 = self.edge_props.pop(edge_id2)
+        if value1 is not None:
+            self.edge_props[edge_id2] = value1
+        if value2 is not None:
+            self.edge_props[edge_id1] = value2
+
 
 class InteractionNode:  # pylint: disable=too-few-public-methods
     """Struct-like definition of an interaction node."""
@@ -330,7 +372,7 @@ class SimpleStateTransitionTopologyBuilder:
 
     def build_graphs(
         self, number_of_initial_edges: int, number_of_final_edges: int
-    ) -> List[StateTransitionGraph]:
+    ) -> List[Topology]:
         number_of_initial_edges = int(number_of_initial_edges)
         number_of_final_edges = int(number_of_final_edges)
         if number_of_initial_edges < 1:
@@ -342,7 +384,7 @@ class SimpleStateTransitionTopologyBuilder:
         # result list
         graph_tuple_list = []
         # create seed graph
-        seed_graph = StateTransitionGraph()
+        seed_graph = Topology()
         current_open_end_edges = list(range(number_of_initial_edges))
         seed_graph.add_edges(current_open_end_edges)
         extendable_graph_list = [(seed_graph, current_open_end_edges)]
@@ -381,9 +423,9 @@ class SimpleStateTransitionTopologyBuilder:
         return result_graph_list
 
     def extend_graph(
-        self, graph: Tuple[StateTransitionGraph, Sequence[int]]
-    ) -> List[Tuple[StateTransitionGraph, List[int]]]:
-        extended_graph_list: List[Tuple[StateTransitionGraph, List[int]]] = []
+        self, graph: Tuple[Topology, Sequence[int]]
+    ) -> List[Tuple[Topology, List[int]]]:
+        extended_graph_list: List[Tuple[Topology, List[int]]] = []
 
         current_open_end_edges = graph[1]
 
@@ -417,10 +459,10 @@ class SimpleStateTransitionTopologyBuilder:
 
 
 def attach_node_to_edges(
-    graph: Tuple[StateTransitionGraph, Sequence[int]],
+    graph: Tuple[Topology, Sequence[int]],
     interaction_node: InteractionNode,
     ingoing_edge_ids: Sequence[int],
-) -> Tuple[StateTransitionGraph, List[int]]:
+) -> Tuple[Topology, List[int]]:
     temp_graph = copy.deepcopy(graph[0])
     new_open_end_lines = list(copy.deepcopy(graph[1]))
 
