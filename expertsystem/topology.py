@@ -40,28 +40,6 @@ class Edge:
         raise NotImplementedError
 
 
-class InteractionNode:  # pylint: disable=too-few-public-methods
-    """Struct-like definition of an interaction node."""
-
-    def __init__(
-        self,
-        type_name: str,
-        number_of_ingoing_edges: int,
-        number_of_outgoing_edges: int,
-    ) -> None:
-        if not isinstance(number_of_ingoing_edges, int):
-            raise TypeError("NumberOfIngoingEdges must be an integer")
-        if not isinstance(number_of_outgoing_edges, int):
-            raise TypeError("NumberOfOutgoingEdges must be an integer")
-        if number_of_ingoing_edges < 1:
-            raise ValueError("NumberOfIngoingEdges has to be larger than 0")
-        if number_of_outgoing_edges < 1:
-            raise ValueError("NumberOfOutgoingEdges has to be larger than 0")
-        self.type_name = str(type_name)
-        self.number_of_ingoing_edges = int(number_of_ingoing_edges)
-        self.number_of_outgoing_edges = int(number_of_outgoing_edges)
-
-
 class StateTransitionGraph:
     """Graph class that contains edges and nodes.
 
@@ -311,6 +289,28 @@ class StateTransitionGraph:
                     )
             temp_edge_list = new_temp_edge_list
         return edge_list
+
+
+class InteractionNode:  # pylint: disable=too-few-public-methods
+    """Struct-like definition of an interaction node."""
+
+    def __init__(
+        self,
+        type_name: str,
+        number_of_ingoing_edges: int,
+        number_of_outgoing_edges: int,
+    ) -> None:
+        if not isinstance(number_of_ingoing_edges, int):
+            raise TypeError("NumberOfIngoingEdges must be an integer")
+        if not isinstance(number_of_outgoing_edges, int):
+            raise TypeError("NumberOfOutgoingEdges must be an integer")
+        if number_of_ingoing_edges < 1:
+            raise ValueError("NumberOfIngoingEdges has to be larger than 0")
+        if number_of_outgoing_edges < 1:
+            raise ValueError("NumberOfOutgoingEdges has to be larger than 0")
+        self.type_name = str(type_name)
+        self.number_of_ingoing_edges = int(number_of_ingoing_edges)
+        self.number_of_outgoing_edges = int(number_of_outgoing_edges)
 
 
 class SimpleStateTransitionTopologyBuilder:
