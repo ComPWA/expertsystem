@@ -62,11 +62,6 @@ class StateTransitionGraph:
     def nodes(self) -> Set[int]:
         return self.__nodes
 
-    def set_graph_element_properties_comparator(
-        self, comparator: Optional[Callable]
-    ) -> None:
-        self.graph_element_properties_comparator = comparator
-
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}()"

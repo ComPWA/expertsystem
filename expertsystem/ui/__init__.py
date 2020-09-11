@@ -205,7 +205,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         # initialize the graph edges (initial and final state)
         init_graphs: List[StateTransitionGraph] = []
         for topology_graph in topology_graphs:
-            topology_graph.set_graph_element_properties_comparator(
+            topology_graph.graph_element_properties_comparator = (
                 CompareGraphElementPropertiesFunctor()
             )
             initialized_graphs = initialize_graph(
