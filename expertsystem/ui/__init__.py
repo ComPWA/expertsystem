@@ -202,9 +202,9 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
     def _create_seed_graphs(
         self, topology_graphs: List[Topology]
-    ) -> List[StateTransitionGraph]:
+    ) -> List[StateTransitionGraph[dict]]:
         # initialize the graph edges (initial and final state)
-        init_graphs: List[StateTransitionGraph] = []
+        init_graphs: List[StateTransitionGraph[dict]] = []
         for topology_graph in topology_graphs:
             initialized_graphs = initialize_graph(
                 topology=topology_graph,

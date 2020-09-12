@@ -14,12 +14,14 @@ from dataclasses import dataclass
 from typing import (
     Callable,
     Dict,
+    Generic,
     Iterable,
     List,
     Optional,
     Sequence,
     Set,
     Tuple,
+    TypeVar,
 )
 
 
@@ -260,7 +262,10 @@ class Topology:
         self.__edges[edge_id1] = popped_edge_id2
 
 
-class StateTransitionGraph(Topology):
+EdgeType = TypeVar("EdgeType")
+
+
+class StateTransitionGraph(Topology, Generic[EdgeType]):
     """Graph class that contains edges and nodes.
 
     Similar to feynman graphs. The graphs are directed, meaning the edges are
@@ -277,7 +282,7 @@ class StateTransitionGraph(Topology):
     ) -> None:
         super().__init__(nodes, edges)
         self.node_props: Dict[int, dict] = {}
-        self.edge_props: Dict[int, dict] = {}
+        self.edge_props: Dict[int, EdgeType] = {}
         self.graph_element_properties_comparator: Optional[Callable] = None
 
     def __repr__(self) -> str:
@@ -315,8 +320,8 @@ class StateTransitionGraph(Topology):
 
     def swap_edges(self, edge_id1: int, edge_id2: int) -> None:
         super().swap_edges(edge_id1, edge_id2)
-        value1: Optional[dict] = None
-        value2: Optional[dict] = None
+        value1: Optional[EdgeType] = None
+        value2: Optional[EdgeType] = None
         if edge_id1 in self.edge_props:
             value1 = self.edge_props.pop(edge_id1)
         if edge_id2 in self.edge_props:

@@ -465,7 +465,7 @@ def initialize_graph(  # pylint: disable=too-many-locals
     initial_state: Sequence[StateDefinition],
     final_state: Sequence[StateDefinition],
     final_state_groupings: Optional[List[List[List[str]]]] = None,
-) -> List[StateTransitionGraph]:
+) -> List[StateTransitionGraph[dict]]:
     def assert_number_of_states(
         state_definitions: Sequence, edge_ids: Sequence[int]
     ) -> None:
@@ -504,7 +504,7 @@ def initialize_graph(  # pylint: disable=too-many-locals
         final_state_groupings,
     )
 
-    new_graphs: List[StateTransitionGraph] = list()
+    new_graphs: List[StateTransitionGraph[dict]] = list()
     for initial_state_pair in is_edge_particle_pairs:
         for fs_pair in fs_edge_particle_pairs:
             merged_dicts = initial_state_pair.copy()
@@ -622,8 +622,10 @@ def __initialize_edges(
     topology: Topology,
     edge_particle_dict: Dict[int, StateWithSpins],
     particle_db: ParticleCollection,
-) -> List[StateTransitionGraph]:
-    graph = StateTransitionGraph.from_topology(topology)
+) -> List[StateTransitionGraph[dict]]:
+    graph: StateTransitionGraph[dict] = StateTransitionGraph.from_topology(
+        topology
+    )
     for edge_id, state_particle in edge_particle_dict.items():
         particle_name = state_particle[0]
         particle = particle_db[particle_name]
@@ -631,7 +633,7 @@ def __initialize_edges(
         graph.edge_props[edge_id] = particle_properties
 
     # now add more quantum numbers given by user (spin_projection)
-    new_graphs: List[StateTransitionGraph] = [graph]
+    new_graphs: List[StateTransitionGraph[dict]] = [graph]
     for edge_id, state_particle in edge_particle_dict.items():
         if isinstance(state_particle, str):
             continue
@@ -649,10 +651,10 @@ def __initialize_edges(
 
 
 def __populate_edge_with_spin_projections(
-    graph: StateTransitionGraph,
+    graph: StateTransitionGraph[dict],
     edge_id: int,
     spin_projections: Sequence[float],
-) -> List[StateTransitionGraph]:
+) -> List[StateTransitionGraph[dict]]:
     qns_label = Labels.QuantumNumber.name
     type_label = Labels.Type.name
     class_label = Labels.Class.name
@@ -683,9 +685,9 @@ def __populate_edge_with_spin_projections(
 
 
 def initialize_graphs_with_particles(
-    graphs: List[StateTransitionGraph],
+    graphs: List[StateTransitionGraph[dict]],
     allowed_particle_list: List[Dict[str, Any]],
-) -> List[StateTransitionGraph]:
+) -> List[StateTransitionGraph[dict]]:
     initialized_graphs = []
 
     for graph in graphs:

@@ -110,7 +110,7 @@ def test_external_edge_initialization(
 
 
 def make_ls_test_graph(angular_momentum_magnitude, coupled_spin_magnitude):
-    graph = StateTransitionGraph()
+    graph = StateTransitionGraph[dict]()
     graph.graph_element_properties_comparator = (
         CompareGraphElementPropertiesFunctor()
     )
@@ -137,7 +137,7 @@ def make_ls_test_graph(angular_momentum_magnitude, coupled_spin_magnitude):
 def make_ls_test_graph_scrambled(
     angular_momentum_magnitude, coupled_spin_magnitude
 ):
-    graph = StateTransitionGraph()
+    graph = StateTransitionGraph[dict]()
     graph.graph_element_properties_comparator = (
         CompareGraphElementPropertiesFunctor()
     )
