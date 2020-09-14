@@ -1,5 +1,6 @@
 # pylint: disable=redefined-outer-name
 
+from copy import deepcopy
 from math import factorial
 
 import pytest
@@ -7,11 +8,13 @@ import pytest
 from expertsystem.state.particle import (
     _safe_set_spin_projections,
     generate_outer_edge_permutations,
+    get_kinematic_representation,
     initialize_graph,
 )
 from expertsystem.topology import (
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
+    StateTransitionGraph,
     Topology,
 )
 
@@ -69,3 +72,34 @@ def test_generate_outer_edge_permutations(
     n_permutations_initial_state = factorial(len(initial_state))
     n_permutations = n_permutations_final_state * n_permutations_initial_state
     assert len(list_of_permutations) == n_permutations
+
+
+class TestKinematicRepresentation:
+    @staticmethod
+    def test_from_graph(three_body_decay):
+        graph1 = StateTransitionGraph.from_topology(three_body_decay)
+        graph1.edge_props[0] = "J/psi"
+        graph1.edge_props[2] = "pi0"
+        graph1.edge_props[3] = "pi0"
+        graph1.edge_props[4] = "gamma"
+        kinematic_representation1 = get_kinematic_representation(graph1)
+        assert kinematic_representation1.initial_state == [
+            ["J/psi"],
+            ["J/psi"],
+        ]
+        assert kinematic_representation1.final_state == [
+            ["gamma", "pi0"],
+            ["gamma", "pi0", "pi0"],
+        ]
+
+        graph2 = deepcopy(graph1)
+        graph2.edge_props[3] = "gamma"
+        graph2.edge_props[4] = "pi0"
+        kinematic_representation2 = get_kinematic_representation(graph2)
+        assert kinematic_representation1 == kinematic_representation2
+
+        graph3 = deepcopy(graph1)
+        graph3.edge_props[2] = "pi0"
+        graph3.edge_props[3] = "gamma"
+        kinematic_representation3 = get_kinematic_representation(graph3)
+        assert kinematic_representation2 != kinematic_representation3

@@ -15,6 +15,7 @@ from enum import Enum, auto
 from itertools import permutations
 from typing import (
     Any,
+    Callable,
     Dict,
     Generator,
     List,
@@ -1005,3 +1006,103 @@ def _create_edge_id_particle_mapping(
         i: graph.edge_props[i][name_label]
         for i in getattr(graph, external_edge_getter_function)()
     }
+
+
+class KinematicRepresentation:
+    def __init__(
+        self,
+        initial_state: Sequence[List[Any]],
+        final_state: Sequence[List[Any]],
+    ) -> None:
+        self.__initial_state: List[List[Any]] = self.__sort(initial_state)
+        self.__final_state: List[List[Any]] = self.__sort(final_state)
+
+    @property
+    def initial_state(self) -> List[List[Any]]:
+        return self.__initial_state
+
+    @property
+    def final_state(self) -> List[List[Any]]:
+        return self.__final_state
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, KinematicRepresentation):
+            return (
+                self.initial_state == other.initial_state
+                and self.final_state == other.final_state
+            )
+        raise ValueError(
+            f"Cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
+        )
+
+    @staticmethod
+    def __sort(nested_list: Sequence[Sequence[Any]]) -> List[List[Any]]:
+        return sorted([sorted(sub_list) for sub_list in nested_list])
+
+
+def get_kinematic_representation(
+    graph: StateTransitionGraph[StateWithSpins],
+) -> KinematicRepresentation:
+    r"""Group final or initial states by node, sorted by length of the group.
+
+    The resulting sorted groups can be used to check whether two
+    `.StateTransitionGraph` instances are kinematically identical. For
+    instance, the following two graphs:
+
+    .. code-block::
+
+        J/psi -- 0 -- pi0
+                  \
+                   1 -- gamma
+                    \
+                     2 -- gamma
+                      \
+                       pi0
+
+        J/psi -- 0 -- pi0
+                  \
+                   1 -- gamma
+                    \
+                     2 -- pi0
+                      \
+                       gamma
+
+    both result in:
+
+    .. code-block::
+
+        kinematic_representation.final_state == \
+            [["gamma", "gamma"], ["gamma", "gamma", "pi0"], \
+             ["gamma", "gamma", "pi0", "pi0"]]
+        kinematic_representation.initial_state == \
+            [["J/psi"], ["J/psi"]]
+
+    and are therefore kinematically identical. The nested lists are sorted (by
+    `list` length and element content) for comparisons.
+
+    Note: more precisely, the states represented here by a `str` only also have
+    a list of allowed spin projections, for instance, :code:`("J/psi", [-1,
+    +1])`. Note that a `tuple` is also sortable.
+    """
+
+    def get_state_groupings(
+        edge_per_node_getter: Callable[[int], List[int]]
+    ) -> List[List[int]]:
+        return [edge_per_node_getter(i) for i in graph.nodes]
+
+    def fill_groupings(grouping_with_ids: List[List[Any]]) -> List[List[Any]]:
+        return [
+            [graph.edge_props[edge_id] for edge_id in group]
+            for group in grouping_with_ids
+        ]
+
+    initial_state_edge_groups = fill_groupings(
+        get_state_groupings(graph.get_originating_initial_state_edges)
+    )
+    final_state_edge_groups = fill_groupings(
+        get_state_groupings(graph.get_originating_final_state_edges)
+    )
+    return KinematicRepresentation(
+        initial_state=initial_state_edge_groups,
+        final_state=final_state_edge_groups,
+    )
