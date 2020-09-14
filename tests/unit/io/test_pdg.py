@@ -53,8 +53,4 @@ def test_pdg_entries(pdg, particle_database):
             continue
         internal_particle = particle_database[name]
         pdg_particle = pdg[name]
-        assert pdg_particle.name == internal_particle.name
-        assert pdg_particle.pid == internal_particle.pid
-        assert pdg_particle.state == internal_particle.state
-        assert pdg_particle.mass == pytest.approx(internal_particle.mass)
-        assert pdg_particle.width == pytest.approx(internal_particle.width)
+        assert pdg_particle == internal_particle

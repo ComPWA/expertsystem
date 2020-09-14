@@ -20,7 +20,7 @@ def test_script():
             "phi(1020)",
         ],
     )
-    stm.number_of_threads = 1
+    stm.number_of_threads = 2
 
     graph_interaction_settings_groups = stm.prepare_graphs()
     solutions, _ = stm.find_solutions(graph_interaction_settings_groups)
