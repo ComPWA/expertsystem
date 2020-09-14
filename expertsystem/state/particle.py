@@ -520,6 +520,51 @@ def initialize_graph(  # pylint: disable=too-many-locals
     return new_graphs
 
 
+def generate_kinematic_permutations(
+    topology: Topology,
+    particles: ParticleCollection,
+    initial_state: Sequence[StateDefinition],
+    final_state: Sequence[StateDefinition],
+) -> List[StateTransitionGraph[StateWithSpins]]:
+    def assert_number_of_states(
+        state_definitions: Sequence, edge_ids: Sequence[int]
+    ) -> None:
+        if len(state_definitions) != len(edge_ids):
+            raise ValueError(
+                "Number of state definitions is not same as number of edge IDs:"
+                f"(len({state_definitions}) != len({edge_ids})"
+            )
+
+    is_edges = topology.get_initial_state_edges()
+    fs_edges = topology.get_final_state_edges()
+    assert_number_of_states(initial_state, is_edges)
+    assert_number_of_states(final_state, fs_edges)
+
+    initial_state_with_projections = _safe_set_spin_projections(
+        initial_state, particles
+    )
+    final_state_with_projections = _safe_set_spin_projections(
+        final_state, particles
+    )
+
+    graphs: List[StateTransitionGraph[StateWithSpins]] = list()
+    kinematic_representations: List[KinematicRepresentation] = list()
+    for permutation in generate_outer_edge_permutations(
+        topology, initial_state_with_projections, final_state_with_projections,
+    ):
+        graph: StateTransitionGraph[
+            StateWithSpins
+        ] = StateTransitionGraph.from_topology(topology)
+        graph.edge_props.update(permutation)
+        kinematic_representation = get_kinematic_representation(graph)
+        if kinematic_representation in kinematic_representations:
+            continue
+        kinematic_representations.append(kinematic_representation)
+        graphs.append(graph)
+
+    return graphs
+
+
 def _safe_set_spin_projections(
     list_of_states: Sequence[StateDefinition], particle_db: ParticleCollection,
 ) -> Sequence[StateWithSpins]:
@@ -545,7 +590,7 @@ def _safe_set_spin_projections(
 
 
 def generate_outer_edge_permutations(
-    topology: StateTransitionGraph,
+    topology: Topology,
     initial_state: Sequence[StateWithSpins],
     final_state: Sequence[StateWithSpins],
 ) -> Generator[Dict[int, StateWithSpins], None, None]:
