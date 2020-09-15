@@ -115,14 +115,17 @@ class Spin(abc.Hashable):
 class Particle:  # pylint: disable=too-many-instance-attributes
     """Immutable container of data defining a physical particle.
 
-    Can **only** contain info that the `PDG <http://pdg.lbl.gov/>`_ would list.
-    Particles do NOT contain spin projection information.
+    A Particle is defined by the minimum set of the quantum numbers that every
+    possible instances of that particle have in common (the "static" quantum
+    numbers of the particle). A "non-static" quantum number is the spin
+    projection. Hence Particles do NOT contain spin projection information.
     """
 
     name: str
     pid: int
-    energy: complex
     spin: float
+    mass: float
+    width: float = 0.0
     charge: int = 0
     isospin: Optional[Spin] = None
     strangeness: int = 0
@@ -138,12 +141,8 @@ class Particle:  # pylint: disable=too-many-instance-attributes
     g_parity: Optional[Parity] = None
 
     @property
-    def mass(self) -> float:
-        return self.energy.real
-
-    @property
-    def width(self) -> float:
-        return self.energy.imag
+    def energy(self) -> complex:
+        return complex(self.mass, self.width)
 
     def __post_init__(self) -> None:
         if (
@@ -353,10 +352,8 @@ def create_particle(  # pylint: disable=too-many-arguments,too-many-locals
     return Particle(
         name=name if name else template_particle.name,
         pid=pid if pid else template_particle.pid,
-        energy=complex(
-            mass if mass else template_particle.mass,
-            width if width else template_particle.width,
-        ),
+        mass=mass if mass else template_particle.mass,
+        width=width if width else template_particle.width,
         spin=spin if spin else template_particle.spin,
         charge=charge if charge else template_particle.charge,
         strangeness=strangeness
@@ -405,7 +402,8 @@ def create_antiparticle(
     return Particle(
         name=new_name if new_name else "anti-" + template_particle.name,
         pid=-template_particle.pid,
-        energy=complex(template_particle.mass, template_particle.width),
+        mass=template_particle.mass,
+        width=template_particle.width,
         charge=-template_particle.charge,
         spin=template_particle.spin,
         isospin=isospin,

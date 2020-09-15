@@ -11,7 +11,8 @@ from expertsystem.data import Particle, Spin
         Particle(
             name="jpsi",
             pid=1234,
-            energy=complex(3.0969, 9.29e-05),
+            mass=3.0969,
+            width=9.29e-05,
             spin=1,
             charge=0,
         ),
@@ -27,7 +28,8 @@ def test_immutability():
         test_state = Particle(
             "MyParticle",
             123,
-            complex(1.2, 0.1),
+            mass=1.2,
+            width=0.1,
             spin=1,
             charge=0,
             isospin=Spin(1, 0),
@@ -38,20 +40,22 @@ def test_immutability():
 def test_complex_energy_equality():
     with pytest.raises(AssertionError):
         assert Particle(
-            "MyParticle", pid=123, energy=complex(1.5, 0.1), spin=1,
-        ) == Particle("MyParticle", pid=123, energy=complex(1.5, 0.2), spin=1)
+            "MyParticle", pid=123, mass=1.5, width=0.1, spin=1,
+        ) == Particle("MyParticle", pid=123, mass=1.5, width=0.2, spin=1)
 
     assert Particle(
         "MyParticle",
         123,
-        complex(1.2, 0.1),
+        mass=1.2,
+        width=0.1,
         spin=1,
         charge=0,
         isospin=Spin(1, 0),
     ) == Particle(
         "MyParticle",
         123,
-        complex(1.2, 0.1),
+        mass=1.2,
+        width=0.1,
         spin=1,
         charge=0,
         isospin=Spin(1, 0),

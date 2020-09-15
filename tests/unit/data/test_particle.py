@@ -15,7 +15,8 @@ from expertsystem.data import (
 J_PSI = Particle(
     name="J/psi(1S)",
     pid=443,
-    energy=complex(3.0969, 9.29e-05),
+    mass=3.0969,
+    width=9.29e-05,
     spin=1,
     charge=0,
     parity=Parity(-1),
@@ -124,8 +125,8 @@ class TestGellmannNishijima:
             Particle(
                 "p1",
                 1,
-                complex(1, 0),
                 spin=0.0,
+                mass=1,
                 charge=1,
                 isospin=Spin(1.0, 0.0),
                 strangeness=2,
@@ -133,8 +134,8 @@ class TestGellmannNishijima:
             Particle(
                 "p1",
                 1,
-                complex(1, 0),
                 spin=1.0,
+                mass=1,
                 charge=1,
                 isospin=Spin(1.5, 0.5),
                 charmness=1,
@@ -142,8 +143,8 @@ class TestGellmannNishijima:
             Particle(
                 "p1",
                 1,
-                complex(1, 0),
                 spin=0.5,
+                mass=1,
                 charge=1.5,  # type: ignore
                 isospin=Spin(1.0, 1.0),
                 baryon_number=1,
@@ -166,9 +167,7 @@ class TestGellmannNishijima:
 
     @staticmethod
     def test_isospin_none():
-        state = Particle(
-            "p1", 1, complex(1, 0), spin=0.0, charge=1, isospin=None
-        )
+        state = Particle("p1", 1, mass=1, spin=0.0, charge=1, isospin=None)
         assert GellmannNishijima.compute_charge(state) is None
 
     @staticmethod
@@ -178,7 +177,7 @@ class TestGellmannNishijima:
                 Particle(
                     name="Fails Gell-Mann–Nishijima formula",
                     pid=666,
-                    energy=complex(0.0, 0.0),
+                    mass=0.0,
                     spin=1,
                     charge=0,
                     parity=Parity(-1),

@@ -60,10 +60,8 @@ def __convert_pdg_instance(pdg_particle: PdgDatabase) -> Particle:
     return Particle(
         name=str(pdg_particle.name),
         pid=int(pdg_particle.pdgid),
-        energy=complex(
-            convert_mass_width(pdg_particle.mass),
-            convert_mass_width(pdg_particle.width),
-        ),
+        mass=convert_mass_width(pdg_particle.mass),
+        width=convert_mass_width(pdg_particle.width),
         charge=int(pdg_particle.charge),
         spin=float(pdg_particle.J),
         strangeness=quark_numbers[0],

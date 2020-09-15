@@ -29,9 +29,8 @@ def build_particle(name: str, definition: dict) -> Particle:
     return Particle(
         name=name,
         pid=int(definition["PID"]),
-        energy=complex(
-            float(definition["Mass"]), float(definition.get("Width", 0.0))
-        ),
+        mass=float(definition["Mass"]),
+        width=float(definition.get("Width", 0.0)),
         charge=int(qn_def["Charge"]),
         spin=float(qn_def["Spin"]),
         strangeness=int(qn_def.get("Strangeness", 0)),

@@ -48,9 +48,8 @@ def build_particle(definition: dict) -> Particle:
     return Particle(
         name=str(definition["Name"]),
         pid=int(definition["Pid"]),
-        energy=complex(
-            float(definition["Parameter"]["Value"]), _xml_to_width(definition)
-        ),
+        mass=float(definition["Parameter"]["Value"]),
+        width=_xml_to_width(definition),
         charge=int(qn_defs["Charge"]),
         spin=float(qn_defs["Spin"]),
         isospin=qn_defs.get("IsoSpin", None),

@@ -45,12 +45,3 @@ def test_missing_in_pdg(pdg, particle_database):
     assert missing_in_pdg == {
         "Y(4260)",
     }
-
-
-def test_pdg_entries(pdg, particle_database):
-    for name in particle_database:
-        if name not in pdg:
-            continue
-        internal_particle = particle_database[name]
-        pdg_particle = pdg[name]
-        assert pdg_particle == internal_particle

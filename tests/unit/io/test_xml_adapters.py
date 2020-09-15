@@ -11,7 +11,8 @@ def test_particle():
     state = Particle(
         "MyParticle",
         pid=123,
-        energy=complex(2.5, 0.3),
+        mass=2.5,
+        width=0.3,
         spin=1.5,
         isospin=Spin(1.0, -1.0),
         charge=-1,
