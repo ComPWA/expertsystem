@@ -30,6 +30,7 @@ from numpy import arange
 
 from expertsystem import io
 from expertsystem.data import (
+    Particle,
     ParticleCollection,
     Spin,
 )
@@ -38,6 +39,7 @@ from expertsystem.topology import StateTransitionGraph, Topology
 
 StateWithSpins = Tuple[str, Sequence[float]]
 StateDefinition = Union[str, StateWithSpins]
+ParticleWithSpin = Tuple[Particle, float]
 
 
 class Labels(Enum):
@@ -606,6 +608,46 @@ def generate_outer_edge_permutations(
             )
 
 
+def generate_spin_permutations(
+    graph: StateTransitionGraph[StateWithSpins],
+    particle_db: ParticleCollection,
+) -> List[StateTransitionGraph[ParticleWithSpin]]:
+    def populate_edge_with_spin_projections(
+        uninitialized_graph: StateTransitionGraph[ParticleWithSpin],
+        edge_id: int,
+        state: StateWithSpins,
+    ) -> List[StateTransitionGraph[ParticleWithSpin]]:
+        particle_name, spin_projections = state
+        particle = particle_db[particle_name]
+        output_graph = []
+        for projection in spin_projections:
+            graph_copy = deepcopy(uninitialized_graph)
+            graph_copy.edge_props[edge_id] = (particle, projection)
+            output_graph.append(graph_copy)
+        return output_graph
+
+    edge_particle_dict = {
+        edge_id: graph.edge_props[edge_id]
+        for edge_id in graph.get_initial_state_edges()
+        + graph.get_final_state_edges()
+    }
+
+    # now add more quantum numbers given by user (spin_projection)
+    uninitialized_graph = StateTransitionGraph.from_topology(graph)
+    output_graphs: List[StateTransitionGraph[ParticleWithSpin]] = [
+        uninitialized_graph
+    ]
+    for edge_id, state in edge_particle_dict.items():
+        temp_graphs = output_graphs
+        output_graphs = []
+        for temp_graph in temp_graphs:
+            output_graphs.extend(
+                populate_edge_with_spin_projections(temp_graph, edge_id, state)
+            )
+
+    return output_graphs
+
+
 def __calculate_combinatorics(
     edges: List[int],
     state_particles: Sequence[StateWithSpins],
@@ -741,6 +783,7 @@ def __populate_edge_with_spin_projections(
     ]
     if index_list:
         for spin_proj in spin_projections:
+
             graph_copy = deepcopy(graph)
             graph_copy.edge_props[edge_id][qns_label][index_list[0]][
                 Labels.Projection.name

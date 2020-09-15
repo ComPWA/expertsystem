@@ -9,6 +9,7 @@ from expertsystem.state.particle import (
     _safe_set_spin_projections,
     generate_kinematic_permutations,
     generate_outer_edge_permutations,
+    generate_spin_permutations,
     get_kinematic_representation,
     initialize_graph,
 )
@@ -106,7 +107,7 @@ class TestKinematicRepresentation:
         assert kinematic_representation2 != kinematic_representation3
 
 
-def test_generate_kinematic_permutations(three_body_decay, particle_database):
+def test_generate_permutations(three_body_decay, particle_database):
     graphs = generate_kinematic_permutations(
         three_body_decay,
         initial_state=[("J/psi(1S)", [-1, +1])],
@@ -130,3 +131,13 @@ def test_generate_kinematic_permutations(three_body_decay, particle_database):
         ("gamma", [-1, 1]),
         ("pi0", [0]),
     ]
+
+    graph0 = graphs[0]
+    output_graphs0 = generate_spin_permutations(graph0, particle_database)
+    assert len(output_graphs0) == 4
+    assert output_graphs0[0].edge_props[0][1] == -1
+    assert output_graphs0[0].edge_props[2][1] == -1
+    assert output_graphs0[1].edge_props[0][1] == -1
+    assert output_graphs0[1].edge_props[2][1] == +1
+    assert output_graphs0[2].edge_props[0][1] == +1
+    assert output_graphs0[3].edge_props[0][1] == +1
