@@ -79,6 +79,17 @@ def test_generate_outer_edge_permutations(
 
 class TestKinematicRepresentation:
     @staticmethod
+    def test_constructor():
+        representation = KinematicRepresentation(
+            initial_state=["J/psi"], final_state=["gamma", "pi0"],  # type: ignore
+        )
+        assert representation.initial_state == [["J/psi"]]
+        assert representation.final_state == [["gamma", "pi0"]]
+        representation = KinematicRepresentation([["gamma", "pi0"]])
+        assert representation.initial_state is None
+        assert representation.final_state == [["gamma", "pi0"]]
+
+    @staticmethod
     def test_from_graph(three_body_decay):
         graph1 = StateTransitionGraph.from_topology(three_body_decay)
         graph1.edge_props[0] = "J/psi"

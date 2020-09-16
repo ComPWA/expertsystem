@@ -1136,6 +1136,8 @@ class KinematicRepresentation:
 
     @staticmethod
     def __sort(nested_list: Sequence[Sequence[Any]]) -> List[List[Any]]:
+        if len(nested_list) == 0 or not isinstance(nested_list[0], list):
+            nested_list = [nested_list]
         return sorted([sorted(sub_list) for sub_list in nested_list])
 
 
