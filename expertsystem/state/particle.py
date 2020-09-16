@@ -264,6 +264,162 @@ QNClassConverterMapping = {
 }
 
 
+class KinematicRepresentation:
+    def __init__(
+        self,
+        final_state: Optional[Sequence[List[Any]]] = None,
+        initial_state: Optional[Sequence[List[Any]]] = None,
+    ) -> None:
+        self.__initial_state: Optional[List[List[Any]]] = None
+        self.__final_state: Optional[List[List[Any]]] = None
+        if initial_state is not None:
+            self.__initial_state = self.__sort(initial_state)
+        if final_state is not None:
+            self.__final_state = self.__sort(final_state)
+
+    @property
+    def initial_state(self) -> Optional[List[List[Any]]]:
+        return self.__initial_state
+
+    @property
+    def final_state(self) -> Optional[List[List[Any]]]:
+        return self.__final_state
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, KinematicRepresentation):
+            return (
+                self.initial_state == other.initial_state
+                and self.final_state == other.final_state
+            )
+        raise ValueError(
+            f"Cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"{self.__class__.__name__}("
+            f"initial_state={self.initial_state}, "
+            f"final_state={self.final_state})"
+        )
+
+    def __contains__(self, other: object) -> bool:
+        """Check if a `KinematicRepresentation` is contained within another.
+
+        You can also compare with a `list` of `list` instances, such as:
+
+        .. code-block::
+
+            [["gamma", "pi0"], ["gamma", "pi0", "pi0"]]
+
+        This list will be compared **only** with the
+        `~KinematicRepresentation.final_state`!
+        """
+
+        def is_sublist(
+            sub_representation: Optional[List[List[Any]]],
+            main_representation: Optional[List[List[Any]]],
+        ) -> bool:
+            if main_representation is None:
+                if sub_representation is None:
+                    return True
+                return False
+            if sub_representation is None:
+                return True
+            for group in sub_representation:
+                if group not in main_representation:
+                    return False
+            return True
+
+        if isinstance(other, KinematicRepresentation):
+            return is_sublist(
+                other.initial_state, self.initial_state
+            ) and is_sublist(other.final_state, self.final_state)
+        if isinstance(other, list):
+            for item in other:
+                if not isinstance(item, list):
+                    raise ValueError(
+                        "Comparison representation needs to be a list of lists"
+                    )
+            return is_sublist(other, self.final_state)
+        raise ValueError(
+            f"Cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
+        )
+
+    @staticmethod
+    def __sort(nested_list: Sequence[Sequence[Any]]) -> List[List[Any]]:
+        if len(nested_list) == 0 or not isinstance(nested_list[0], list):
+            nested_list = [nested_list]
+        return sorted([sorted(sub_list) for sub_list in nested_list])
+
+
+def get_kinematic_representation(
+    graph: StateTransitionGraph[StateWithSpins],
+) -> KinematicRepresentation:
+    r"""Group final or initial states by node, sorted by length of the group.
+
+    The resulting sorted groups can be used to check whether two
+    `.StateTransitionGraph` instances are kinematically identical. For
+    instance, the following two graphs:
+
+    .. code-block::
+
+        J/psi -- 0 -- pi0
+                  \
+                   1 -- gamma
+                    \
+                     2 -- gamma
+                      \
+                       pi0
+
+        J/psi -- 0 -- pi0
+                  \
+                   1 -- gamma
+                    \
+                     2 -- pi0
+                      \
+                       gamma
+
+    both result in:
+
+    .. code-block::
+
+        kinematic_representation.final_state == \
+            [["gamma", "gamma"], ["gamma", "gamma", "pi0"], \
+             ["gamma", "gamma", "pi0", "pi0"]]
+        kinematic_representation.initial_state == \
+            [["J/psi"], ["J/psi"]]
+
+    and are therefore kinematically identical. The nested lists are sorted (by
+    `list` length and element content) for comparisons.
+
+    Note: more precisely, the states represented here by a `str` only also have
+    a list of allowed spin projections, for instance, :code:`("J/psi", [-1,
+    +1])`. Note that a `tuple` is also sortable.
+    """
+
+    def get_state_groupings(
+        edge_per_node_getter: Callable[[int], List[int]]
+    ) -> List[List[int]]:
+        return [edge_per_node_getter(i) for i in graph.nodes]
+
+    def fill_groupings(grouping_with_ids: List[List[Any]]) -> List[List[Any]]:
+        return [
+            [graph.edge_props[edge_id] for edge_id in group]
+            for group in grouping_with_ids
+        ]
+
+    initial_state_edge_groups = fill_groupings(
+        get_state_groupings(graph.get_originating_initial_state_edges)
+    )
+    final_state_edge_groups = fill_groupings(
+        get_state_groupings(graph.get_originating_final_state_edges)
+    )
+    return KinematicRepresentation(
+        initial_state=initial_state_edge_groups,
+        final_state=final_state_edge_groups,
+    )
+
+
 def is_boson(qn_dict: Dict[StateQuantumNumberNames, Any]) -> bool:
     spin_label = StateQuantumNumberNames.Spin
     return abs(qn_dict[spin_label].magnitude % 1) < 0.01
@@ -1094,159 +1250,3 @@ def _create_edge_id_particle_mapping(
         i: graph.edge_props[i][name_label]
         for i in getattr(graph, external_edge_getter_function)()
     }
-
-
-class KinematicRepresentation:
-    def __init__(
-        self,
-        final_state: Optional[Sequence[List[Any]]] = None,
-        initial_state: Optional[Sequence[List[Any]]] = None,
-    ) -> None:
-        self.__initial_state: Optional[List[List[Any]]] = None
-        self.__final_state: Optional[List[List[Any]]] = None
-        if initial_state is not None:
-            self.__initial_state = self.__sort(initial_state)
-        if final_state is not None:
-            self.__final_state = self.__sort(final_state)
-
-    @property
-    def initial_state(self) -> Optional[List[List[Any]]]:
-        return self.__initial_state
-
-    @property
-    def final_state(self) -> Optional[List[List[Any]]]:
-        return self.__final_state
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, KinematicRepresentation):
-            return (
-                self.initial_state == other.initial_state
-                and self.final_state == other.final_state
-            )
-        raise ValueError(
-            f"Cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}("
-            f"initial_state={self.initial_state}, "
-            f"final_state={self.final_state})"
-        )
-
-    def __contains__(self, other: object) -> bool:
-        """Check if a `KinematicRepresentation` is contained within another.
-
-        You can also compare with a `list` of `list` instances, such as:
-
-        .. code-block::
-
-            [["gamma", "pi0"], ["gamma", "pi0", "pi0"]]
-
-        This list will be compared **only** with the
-        `~KinematicRepresentation.final_state`!
-        """
-
-        def is_sublist(
-            sub_representation: Optional[List[List[Any]]],
-            main_representation: Optional[List[List[Any]]],
-        ) -> bool:
-            if main_representation is None:
-                if sub_representation is None:
-                    return True
-                return False
-            if sub_representation is None:
-                return True
-            for group in sub_representation:
-                if group not in main_representation:
-                    return False
-            return True
-
-        if isinstance(other, KinematicRepresentation):
-            return is_sublist(
-                other.initial_state, self.initial_state
-            ) and is_sublist(other.final_state, self.final_state)
-        if isinstance(other, list):
-            for item in other:
-                if not isinstance(item, list):
-                    raise ValueError(
-                        "Comparison representation needs to be a list of lists"
-                    )
-            return is_sublist(other, self.final_state)
-        raise ValueError(
-            f"Cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
-        )
-
-    @staticmethod
-    def __sort(nested_list: Sequence[Sequence[Any]]) -> List[List[Any]]:
-        if len(nested_list) == 0 or not isinstance(nested_list[0], list):
-            nested_list = [nested_list]
-        return sorted([sorted(sub_list) for sub_list in nested_list])
-
-
-def get_kinematic_representation(
-    graph: StateTransitionGraph[StateWithSpins],
-) -> KinematicRepresentation:
-    r"""Group final or initial states by node, sorted by length of the group.
-
-    The resulting sorted groups can be used to check whether two
-    `.StateTransitionGraph` instances are kinematically identical. For
-    instance, the following two graphs:
-
-    .. code-block::
-
-        J/psi -- 0 -- pi0
-                  \
-                   1 -- gamma
-                    \
-                     2 -- gamma
-                      \
-                       pi0
-
-        J/psi -- 0 -- pi0
-                  \
-                   1 -- gamma
-                    \
-                     2 -- pi0
-                      \
-                       gamma
-
-    both result in:
-
-    .. code-block::
-
-        kinematic_representation.final_state == \
-            [["gamma", "gamma"], ["gamma", "gamma", "pi0"], \
-             ["gamma", "gamma", "pi0", "pi0"]]
-        kinematic_representation.initial_state == \
-            [["J/psi"], ["J/psi"]]
-
-    and are therefore kinematically identical. The nested lists are sorted (by
-    `list` length and element content) for comparisons.
-
-    Note: more precisely, the states represented here by a `str` only also have
-    a list of allowed spin projections, for instance, :code:`("J/psi", [-1,
-    +1])`. Note that a `tuple` is also sortable.
-    """
-
-    def get_state_groupings(
-        edge_per_node_getter: Callable[[int], List[int]]
-    ) -> List[List[int]]:
-        return [edge_per_node_getter(i) for i in graph.nodes]
-
-    def fill_groupings(grouping_with_ids: List[List[Any]]) -> List[List[Any]]:
-        return [
-            [graph.edge_props[edge_id] for edge_id in group]
-            for group in grouping_with_ids
-        ]
-
-    initial_state_edge_groups = fill_groupings(
-        get_state_groupings(graph.get_originating_initial_state_edges)
-    )
-    final_state_edge_groups = fill_groupings(
-        get_state_groupings(graph.get_originating_final_state_edges)
-    )
-    return KinematicRepresentation(
-        initial_state=initial_state_edge_groups,
-        final_state=final_state_edge_groups,
-    )
