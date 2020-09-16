@@ -1099,18 +1099,22 @@ def _create_edge_id_particle_mapping(
 class KinematicRepresentation:
     def __init__(
         self,
-        initial_state: Sequence[List[Any]],
-        final_state: Sequence[List[Any]],
+        initial_state: Optional[Sequence[List[Any]]] = None,
+        final_state: Optional[Sequence[List[Any]]] = None,
     ) -> None:
-        self.__initial_state: List[List[Any]] = self.__sort(initial_state)
-        self.__final_state: List[List[Any]] = self.__sort(final_state)
+        self.__initial_state: Optional[List[List[Any]]] = None
+        self.__final_state: Optional[List[List[Any]]] = None
+        if initial_state is not None:
+            self.__initial_state = self.__sort(initial_state)
+        if final_state is not None:
+            self.__final_state = self.__sort(final_state)
 
     @property
-    def initial_state(self) -> List[List[Any]]:
+    def initial_state(self) -> Optional[List[List[Any]]]:
         return self.__initial_state
 
     @property
-    def final_state(self) -> List[List[Any]]:
+    def final_state(self) -> Optional[List[List[Any]]]:
         return self.__final_state
 
     def __eq__(self, other: object) -> bool:
