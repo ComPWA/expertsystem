@@ -1123,6 +1123,13 @@ class KinematicRepresentation:
             f"Cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
         )
 
+    def __repr__(self) -> str:
+        return (
+            f"{self.__class__.__name__}("
+            f"initial_state={self.initial_state}, "
+            f"final_state={self.final_state})"
+        )
+
     @staticmethod
     def __sort(nested_list: Sequence[Sequence[Any]]) -> List[List[Any]]:
         return sorted([sorted(sub_list) for sub_list in nested_list])

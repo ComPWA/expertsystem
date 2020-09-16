@@ -6,6 +6,7 @@ from math import factorial
 import pytest
 
 from expertsystem.state.particle import (
+    KinematicRepresentation,
     _safe_set_spin_projections,
     generate_kinematic_permutations,
     generate_outer_edge_permutations,
@@ -105,6 +106,17 @@ class TestKinematicRepresentation:
         graph3.edge_props[3] = "gamma"
         kinematic_representation3 = get_kinematic_representation(graph3)
         assert kinematic_representation2 != kinematic_representation3
+
+    @staticmethod
+    def test_repr_and_equality():
+        kinematic_representation = KinematicRepresentation(
+            initial_state=[["J/psi"]],
+            final_state=[["gamma", "pi0"], ["gamma", "pi0", "pi0"]],
+        )
+        constructed_from_repr = eval(  # pylint: disable=eval-used
+            str(kinematic_representation)
+        )
+        assert constructed_from_repr == kinematic_representation
 
 
 def test_generate_permutations(three_body_decay, particle_database):
