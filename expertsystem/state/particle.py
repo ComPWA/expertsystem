@@ -1134,6 +1134,49 @@ class KinematicRepresentation:
             f"final_state={self.final_state})"
         )
 
+    def __contains__(self, other: object) -> bool:
+        """Check if a `KinematicRepresentation` is contained within another.
+
+        You can also compare with a `list` of `list` instances, such as:
+
+        .. code-block::
+
+            [["gamma", "pi0"], ["gamma", "pi0", "pi0"]]
+
+        This list will be compared **only** with the
+        `~KinematicRepresentation.final_state`!
+        """
+
+        def is_sublist(
+            sub_representation: Optional[List[List[Any]]],
+            main_representation: Optional[List[List[Any]]],
+        ) -> bool:
+            if main_representation is None:
+                if sub_representation is None:
+                    return True
+                return False
+            if sub_representation is None:
+                return True
+            for group in sub_representation:
+                if group not in main_representation:
+                    return False
+            return True
+
+        if isinstance(other, KinematicRepresentation):
+            return is_sublist(
+                other.initial_state, self.initial_state
+            ) and is_sublist(other.final_state, self.final_state)
+        if isinstance(other, list):
+            for item in other:
+                if not isinstance(item, list):
+                    raise ValueError(
+                        "Comparison representation needs to be a list of lists"
+                    )
+            return is_sublist(other, self.final_state)
+        raise ValueError(
+            f"Cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
+        )
+
     @staticmethod
     def __sort(nested_list: Sequence[Sequence[Any]]) -> List[List[Any]]:
         if len(nested_list) == 0 or not isinstance(nested_list[0], list):

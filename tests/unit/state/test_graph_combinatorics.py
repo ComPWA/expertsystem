@@ -129,6 +129,22 @@ class TestKinematicRepresentation:
         )
         assert constructed_from_repr == kinematic_representation
 
+    @staticmethod
+    def test_in_operator():
+        kinematic_representation = KinematicRepresentation(
+            [["gamma", "pi0"], ["gamma", "pi0", "pi0"]],
+        )
+        subset_representation = KinematicRepresentation(
+            [["gamma", "pi0", "pi0"]],
+        )
+        assert subset_representation in kinematic_representation
+        assert [["J/psi"]] not in kinematic_representation
+        assert [["gamma", "pi0"]] in kinematic_representation
+        with pytest.raises(ValueError):
+            assert float() in kinematic_representation
+        with pytest.raises(ValueError):
+            assert ["should be nested list"] in kinematic_representation
+
 
 def test_generate_permutations(three_body_decay, particle_database):
     graphs = generate_kinematic_permutations(
