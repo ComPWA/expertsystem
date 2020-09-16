@@ -1099,8 +1099,8 @@ def _create_edge_id_particle_mapping(
 class KinematicRepresentation:
     def __init__(
         self,
-        initial_state: Optional[Sequence[List[Any]]] = None,
         final_state: Optional[Sequence[List[Any]]] = None,
+        initial_state: Optional[Sequence[List[Any]]] = None,
     ) -> None:
         self.__initial_state: Optional[List[List[Any]]] = None
         self.__final_state: Optional[List[List[Any]]] = None
