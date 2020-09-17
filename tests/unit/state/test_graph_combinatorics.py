@@ -5,6 +5,7 @@ from math import factorial
 
 import pytest
 
+from expertsystem import io
 from expertsystem.state.particle import (
     KinematicRepresentation,
     _safe_set_spin_projections,
@@ -90,11 +91,12 @@ class TestKinematicRepresentation:
         assert representation.final_state == [["gamma", "pi0"]]
 
     @staticmethod
-    def test_from_graph(three_body_decay):
+    def test_from_graph(three_body_decay, particle_database):
         graph1 = StateTransitionGraph.from_topology(three_body_decay)
-        graph1.edge_props[0] = "J/psi"
-        graph1.edge_props[2] = "pi0"
-        graph1.edge_props[3] = "pi0"
+        pion = particle_database["pi0"]
+        graph1.edge_props[0] = ("J/psi", [-1, +1])
+        graph1.edge_props[2] = particle_database["pi0"]
+        graph1.edge_props[3] = io.xml.object_to_dict(pion)
         graph1.edge_props[4] = "gamma"
         kinematic_representation1 = get_kinematic_representation(graph1)
         assert kinematic_representation1.initial_state == [

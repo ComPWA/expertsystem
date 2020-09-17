@@ -273,9 +273,9 @@ class KinematicRepresentation:
         self.__initial_state: Optional[List[List[Any]]] = None
         self.__final_state: Optional[List[List[Any]]] = None
         if initial_state is not None:
-            self.__initial_state = self.__sort(initial_state)
+            self.__initial_state = self.__import(initial_state)
         if final_state is not None:
-            self.__final_state = self.__sort(final_state)
+            self.__final_state = self.__import(final_state)
 
     @property
     def initial_state(self) -> Optional[List[List[Any]]]:
@@ -345,13 +345,38 @@ class KinematicRepresentation:
             f"Cannot compare {self.__class__.__name__} with {other.__class__.__name__}"
         )
 
-    @staticmethod
-    def __sort(
-        nested_list: Union[Sequence[Sequence[Any]], Sequence[Any]]
+    def __import(
+        self, nested_list: Union[Sequence[Sequence[Any]], Sequence[Any]]
+    ) -> List[List[Any]]:
+        return self.__sort(self.__prepare(nested_list))
+
+    def __prepare(
+        self, nested_list: Union[Sequence[Sequence[Any]], Sequence[Any]]
     ) -> List[List[Any]]:
         if len(nested_list) == 0 or not isinstance(nested_list[0], list):
             nested_list = [nested_list]
+        return [
+            [self.__extract_particle_name(item) for item in sub_list]
+            for sub_list in nested_list
+        ]
+
+    @staticmethod
+    def __sort(nested_list: List[List[Any]]) -> List[List[Any]]:
         return sorted([sorted(sub_list) for sub_list in nested_list])
+
+    @staticmethod
+    def __extract_particle_name(item: object) -> str:
+        if isinstance(item, str):
+            return item
+        if isinstance(item, (tuple, list)) and isinstance(item[0], str):
+            return item[0]
+        if isinstance(item, Particle):
+            return item.name
+        if isinstance(item, dict) and "Name" in item:
+            return str(item["Name"])
+        raise ValueError(
+            f"Cannot extract particle name from {item.__class__.__name__}"
+        )
 
 
 def get_kinematic_representation(
