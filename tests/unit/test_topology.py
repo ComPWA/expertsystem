@@ -57,8 +57,6 @@ class TestTopology:
     @staticmethod
     def test_constructor_exceptions():
         with pytest.raises(ValueError):
-            assert Topology(nodes={0})
-        with pytest.raises(ValueError):
             assert Topology(edges={0: Edge(None, 1)})
         with pytest.raises(ValueError):
             assert Topology(edges={0: Edge(None, None)})

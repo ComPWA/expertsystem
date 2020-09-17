@@ -170,22 +170,6 @@ class Topology:
                     f"{edge} (ID: {edge_id}) has non-existing node IDs.\n"
                     f"Available node IDs: {self.nodes}"
                 )
-        ending_node_ids = {
-            edge.ending_node_id
-            for edge in self.edges.values()
-            if edge.ending_node_id is not None
-        }
-        originating_node_ids = {
-            edge.originating_node_id
-            for edge in self.edges.values()
-            if edge.originating_node_id is not None
-        }
-        node_ids_in_edges = ending_node_ids | originating_node_ids
-        dangling_nodes = self.nodes & node_ids_in_edges ^ self.nodes
-        if dangling_nodes:
-            raise ValueError(
-                f"Topology has unattached nodes: {dangling_nodes}"
-            )
         self.check_isolated_nodes()
 
     def check_isolated_nodes(self) -> None:
