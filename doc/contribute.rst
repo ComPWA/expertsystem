@@ -60,6 +60,20 @@ run into persistent linting errors, this may mean we need to further specify
 our conventions. In that case, it's best to create an issue and propose a
 policy change that can then be formulated in the config files.
 
+.. tip::
+
+  If you have Node.js (:code:`npm`) on your system, you can run a few
+  additional checks. Install these packages as follows (possibly with
+  administrator rights):
+
+  .. code-block:: bash
+
+    npm install -g cspell markdownlint-cli
+
+  Normally, these packages are only run in the :ref:`CI <contribute:Continuous
+  Integration>`, but if you have them installed, they are also run when you run
+  :ref:`tox <contribute:Testing>` (local CI).
+
 
 Pre-commit
 ----------
