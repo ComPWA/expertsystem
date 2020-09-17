@@ -14,36 +14,6 @@ from expertsystem.topology import (  # noqa: F401, because of eval
 )
 
 
-class TestInteractionNode:
-    @staticmethod
-    def test_constructor_exceptions():
-        dummy_type_name = "type_name"
-        with pytest.raises(TypeError):
-            assert InteractionNode(
-                dummy_type_name,
-                number_of_ingoing_edges="has to be int",  # type: ignore
-                number_of_outgoing_edges=2,
-            )
-        with pytest.raises(TypeError):
-            assert InteractionNode(
-                dummy_type_name,
-                number_of_outgoing_edges="has to be int",  # type: ignore
-                number_of_ingoing_edges=2,
-            )
-        with pytest.raises(ValueError):
-            assert InteractionNode(
-                dummy_type_name,
-                number_of_outgoing_edges=0,
-                number_of_ingoing_edges=1,
-            )
-        with pytest.raises(ValueError):
-            assert InteractionNode(
-                dummy_type_name,
-                number_of_outgoing_edges=1,
-                number_of_ingoing_edges=0,
-            )
-
-
 def create_dummy_topology() -> Topology:
     r"""Create a dummy `Topology`.
 
@@ -113,6 +83,36 @@ def test_initialize_graph(  # pylint: disable=unused-argument
     )
     assert len(graphs) == 8
     return graphs
+
+
+class TestInteractionNode:
+    @staticmethod
+    def test_constructor_exceptions():
+        dummy_type_name = "type_name"
+        with pytest.raises(TypeError):
+            assert InteractionNode(
+                dummy_type_name,
+                number_of_ingoing_edges="has to be int",  # type: ignore
+                number_of_outgoing_edges=2,
+            )
+        with pytest.raises(TypeError):
+            assert InteractionNode(
+                dummy_type_name,
+                number_of_outgoing_edges="has to be int",  # type: ignore
+                number_of_ingoing_edges=2,
+            )
+        with pytest.raises(ValueError):
+            assert InteractionNode(
+                dummy_type_name,
+                number_of_outgoing_edges=0,
+                number_of_ingoing_edges=1,
+            )
+        with pytest.raises(ValueError):
+            assert InteractionNode(
+                dummy_type_name,
+                number_of_outgoing_edges=1,
+                number_of_ingoing_edges=0,
+            )
 
 
 def visualize_graphs():
