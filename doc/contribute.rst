@@ -120,7 +120,12 @@ It's especially recommended to *run tox before submitting a pull request!*
 
 More specialized :code:`tox` tests are defined in the `tox.ini
 <https://github.com/ComPWA/expertsystem/blob/master/tox.ini>`__ file, under
-each :code:`testenv`.
+each :code:`testenv`. You can list all environments, along with a description
+of what they do, by running:
+
+.. code-block:: shell
+
+  tox -av
 
 Try to keep test coverage high. You can compute current coverage by running
 
