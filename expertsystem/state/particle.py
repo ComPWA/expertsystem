@@ -267,8 +267,8 @@ QNClassConverterMapping = {
 class KinematicRepresentation:
     def __init__(
         self,
-        final_state: Optional[Sequence[List[Any]]] = None,
-        initial_state: Optional[Sequence[List[Any]]] = None,
+        final_state: Optional[Union[Sequence[List[Any]], List[Any]]] = None,
+        initial_state: Optional[Union[Sequence[List[Any]], List[Any]]] = None,
     ) -> None:
         self.__initial_state: Optional[List[List[Any]]] = None
         self.__final_state: Optional[List[List[Any]]] = None
@@ -346,7 +346,9 @@ class KinematicRepresentation:
         )
 
     @staticmethod
-    def __sort(nested_list: Sequence[Sequence[Any]]) -> List[List[Any]]:
+    def __sort(
+        nested_list: Union[Sequence[Sequence[Any]], Sequence[Any]]
+    ) -> List[List[Any]]:
         if len(nested_list) == 0 or not isinstance(nested_list[0], list):
             nested_list = [nested_list]
         return sorted([sorted(sub_list) for sub_list in nested_list])
