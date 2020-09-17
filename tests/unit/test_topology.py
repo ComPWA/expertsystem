@@ -74,7 +74,18 @@ class TestTopology:
         topology.add_edges([5])
         assert not topology.is_valid()
         topology.attach_edges_to_node_ingoing([5], 2)
-        assert topology.is_valid()
+        assert not topology.is_valid()
+
+    @staticmethod
+    def test_check_isolated_nodes(dummy_topology):
+        topology = deepcopy(dummy_topology)
+        topology.add_node(2)
+        topology.add_edges([5])
+        topology.attach_edges_to_node_ingoing([5], 2)
+        with pytest.raises(ValueError):
+            assert topology.check_isolated_nodes() is None
+        topology.attach_edges_to_node_ingoing([3], 2)
+        assert topology.check_isolated_nodes() is None
 
     @staticmethod
     def test_repr_and_eq(dummy_topology):

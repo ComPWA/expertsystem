@@ -186,6 +186,18 @@ class Topology:
             raise ValueError(
                 f"Topology has unattached nodes: {dangling_nodes}"
             )
+        self.check_isolated_nodes()
+
+    def check_isolated_nodes(self) -> None:
+        if len(self.nodes) < 2:
+            return
+        for node_id in self.nodes:
+            surrounding_nodes = self.get_surrounding_nodes(node_id)
+            surrounding_nodes.discard(node_id)
+            if not surrounding_nodes:
+                raise ValueError(
+                    f"Node {node_id} is unconnected to any other node"
+                )
 
     def is_valid(self) -> bool:
         try:
