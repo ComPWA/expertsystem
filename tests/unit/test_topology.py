@@ -1,5 +1,3 @@
-# pylint: disable=redefined-outer-name
-
 from copy import deepcopy
 
 import pytest
@@ -100,8 +98,9 @@ class TestInteractionNode:
             )
 
 
-class TestSimpleStateTransitionTopologyBuilder:  # pylint: disable=no-self-use
-    def test_two_body_states(self):
+class TestSimpleStateTransitionTopologyBuilder:
+    @staticmethod
+    def test_two_body_states():
         two_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
 
         simple_builder = SimpleStateTransitionTopologyBuilder(
