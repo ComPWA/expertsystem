@@ -9,4 +9,3 @@ def test_initialize_graph(dummy_topology, particle_database):
         particles=particle_database,
     )
     assert len(graphs) == 8
-    return graphs
