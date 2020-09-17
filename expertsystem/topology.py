@@ -264,10 +264,10 @@ class Topology:
         self.__edges[edge_id1] = popped_edge_id2
 
 
-EdgeType = TypeVar("EdgeType")
+_EdgeType = TypeVar("_EdgeType")
 
 
-class StateTransitionGraph(Topology, Generic[EdgeType]):
+class StateTransitionGraph(Topology, Generic[_EdgeType]):
     """Graph class that contains edges and nodes.
 
     Similar to feynman graphs. The graphs are directed, meaning the edges are
@@ -284,7 +284,7 @@ class StateTransitionGraph(Topology, Generic[EdgeType]):
     ) -> None:
         super().__init__(nodes, edges)
         self.node_props: Dict[int, dict] = {}
-        self.edge_props: Dict[int, EdgeType] = {}
+        self.edge_props: Dict[int, _EdgeType] = {}
         self.graph_element_properties_comparator: Optional[Callable] = None
 
     def __repr__(self) -> str:
@@ -322,8 +322,8 @@ class StateTransitionGraph(Topology, Generic[EdgeType]):
 
     def swap_edges(self, edge_id1: int, edge_id2: int) -> None:
         super().swap_edges(edge_id1, edge_id2)
-        value1: Optional[EdgeType] = None
-        value2: Optional[EdgeType] = None
+        value1: Optional[_EdgeType] = None
+        value2: Optional[_EdgeType] = None
         if edge_id1 in self.edge_props:
             value1 = self.edge_props.pop(edge_id1)
         if edge_id2 in self.edge_props:
