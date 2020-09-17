@@ -23,7 +23,7 @@
   },
   "git.rebaseWhenSync": true,
   "python.formatting.provider": "black",
-  "python.languageServer": "Jedi",
+  "python.languageServer": "Pylance",
   "python.linting.flake8Enabled": true,
   "python.linting.mypyEnabled": true,
   "python.linting.pydocstyleEnabled": true,
