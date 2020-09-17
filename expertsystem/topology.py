@@ -294,6 +294,14 @@ class Topology:
             temp_edge_list = new_temp_edge_list
         return edge_list
 
+    def get_surrounding_nodes(self, node_id: int) -> Set[int]:
+        surrounding_nodes = set()
+        for edge in self.edges.values():
+            connected_nodes = edge.get_connected_nodes()
+            if node_id in connected_nodes:
+                surrounding_nodes |= connected_nodes
+        return surrounding_nodes
+
     def swap_edges(self, edge_id1: int, edge_id2: int) -> None:
         popped_edge_id1 = self.__edges.pop(edge_id1)
         popped_edge_id2 = self.__edges.pop(edge_id2)

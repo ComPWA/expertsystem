@@ -83,6 +83,11 @@ class TestTopology:
         with pytest.raises(NotImplementedError):
             assert topology == float()
 
+    @staticmethod
+    def test_get_surrounding_nodes(dummy_topology):
+        assert dummy_topology.get_surrounding_nodes(0) == dummy_topology.nodes
+        assert dummy_topology.get_surrounding_nodes(1) == dummy_topology.nodes
+
 
 class TestStateTransitionGraph:
     @staticmethod
