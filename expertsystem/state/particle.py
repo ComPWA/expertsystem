@@ -710,6 +710,9 @@ def generate_kinematic_permutations(
     particles: ParticleCollection,
     initial_state: Sequence[StateDefinition],
     final_state: Sequence[StateDefinition],
+    allowed_kinematic_groupings: Optional[
+        List[KinematicRepresentation]
+    ] = None,
 ) -> List[StateTransitionGraph[StateWithSpins]]:
     def assert_number_of_states(
         state_definitions: Sequence, edge_ids: Sequence[int]
@@ -720,10 +723,18 @@ def generate_kinematic_permutations(
                 f"(len({state_definitions}) != len({edge_ids})"
             )
 
-    is_edges = topology.get_initial_state_edges()
-    fs_edges = topology.get_final_state_edges()
-    assert_number_of_states(initial_state, is_edges)
-    assert_number_of_states(final_state, fs_edges)
+    assert_number_of_states(initial_state, topology.get_initial_state_edges())
+    assert_number_of_states(final_state, topology.get_final_state_edges())
+
+    def is_allowed_grouping(
+        kinematic_representation: KinematicRepresentation,
+    ) -> bool:
+        if allowed_kinematic_groupings is None:
+            return True
+        for allowed_kinematic_grouping in allowed_kinematic_groupings:
+            if allowed_kinematic_grouping in kinematic_representation:
+                return True
+        return False
 
     initial_state_with_projections = _safe_set_spin_projections(
         initial_state, particles
@@ -743,6 +754,8 @@ def generate_kinematic_permutations(
         graph.edge_props.update(permutation)
         kinematic_representation = get_kinematic_representation(graph)
         if kinematic_representation in kinematic_representations:
+            continue
+        if not is_allowed_grouping(kinematic_representation):
             continue
         kinematic_representations.append(kinematic_representation)
         graphs.append(graph)

@@ -154,6 +154,15 @@ def test_generate_permutations(three_body_decay, particle_database):
         initial_state=[("J/psi(1S)", [-1, +1])],
         final_state=["gamma", "pi0", "pi0"],
         particles=particle_database,
+        allowed_kinematic_groupings=[KinematicRepresentation(["pi0", "pi0"])],
+    )
+    assert len(graphs) == 1
+
+    graphs = generate_kinematic_permutations(
+        three_body_decay,
+        initial_state=[("J/psi(1S)", [-1, +1])],
+        final_state=["gamma", "pi0", "pi0"],
+        particles=particle_database,
     )
     assert len(graphs) == 2
     graph0_final_state_node1 = [
