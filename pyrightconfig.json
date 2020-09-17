@@ -1,0 +1,4 @@
+{
+  "ignore": ["expertsystem/solvers/constraint/compat.py"],
+  "reportUnboundVariable": false
+}
