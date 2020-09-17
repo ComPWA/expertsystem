@@ -368,7 +368,9 @@ will ensure that you have the right developer settings for this repository. In
 addition, VSCode will automatically recommend you to install a number of
 extensions that we use when working on this code base (they are `defined
 <https://code.visualstudio.com/updates/v1_6#_workspace-extension-recommendations>`__
-:file:`.vscode/extensions.json` file).
+in the `.vscode/extensions.json
+<https://github.com/ComPWA/expertsystem/blob/master/.vscode/extensions.json>`_
+file).
 
 You can still specify your own settings in `either the user or encompassing
 workspace settings <https://code.visualstudio.com/docs/getstarted/settings>`_,
