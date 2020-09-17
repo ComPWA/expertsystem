@@ -464,7 +464,7 @@ def initialize_graph(  # pylint: disable=too-many-locals
     particles: ParticleCollection,
     initial_state: Sequence[StateDefinition],
     final_state: Sequence[StateDefinition],
-    final_state_groupings: Optional[List[List[str]]] = None,
+    final_state_groupings: Optional[List[List[List[str]]]] = None,
 ) -> List[StateTransitionGraph]:
     is_edges = empty_topology.get_initial_state_edges()
     if len(initial_state) != len(is_edges):
@@ -540,7 +540,7 @@ def __calculate_combinatorics(
     edges: List[int],
     state_particles: Sequence[StateWithSpins],
     attached_external_edges_per_node: List[List[int]],
-    allowed_particle_groupings: Optional[List[List[str]]] = None,
+    allowed_particle_groupings: Optional[List[List[List[str]]]] = None,
 ) -> List[
     Dict[int, StateWithSpins]
 ]:  # pylint: disable=too-many-branches,too-many-locals
