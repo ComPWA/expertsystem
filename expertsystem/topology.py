@@ -148,11 +148,44 @@ class Topology:
             self.edges[edge_id].originating_node_id for edge_id in edge_ids
         ]
 
-    def verify(self) -> bool:  # pylint: disable=no-self-use
-        """Verify if the graph is connected.
+    def verify(self) -> None:
+        """Verify if there are no dangling edges or nodes."""
+        node_ids = self.nodes | {None}  # trick to ignore None
+        for edge_id, edge in self.edges.items():
+            if (
+                edge.originating_node_id is None
+                and edge.ending_node_id is None
+            ):
+                raise ValueError(
+                    f"Edge nr. {edge_id} is not connected to any node ({edge})"
+                )
+            if not {edge.originating_node_id, edge.ending_node_id} <= node_ids:
+                raise ValueError(
+                    f"{edge} (ID: {edge_id}) has non-existing node IDs.\n"
+                    f"Available node IDs: {self.nodes}"
+                )
+        ending_node_ids = {
+            edge.ending_node_id
+            for edge in self.edges.values()
+            if edge.ending_node_id is not None
+        }
+        originating_node_ids = {
+            edge.originating_node_id
+            for edge in self.edges.values()
+            if edge.originating_node_id is not None
+        }
+        node_ids_in_edges = ending_node_ids | originating_node_ids
+        dangling_nodes = self.nodes & node_ids_in_edges ^ self.nodes
+        if dangling_nodes:
+            raise ValueError(
+                f"Topology has unattached nodes: {dangling_nodes}"
+            )
 
-        So that no dangling parts which are not connected.
-        """
+    def is_valid(self) -> bool:
+        try:
+            self.verify()
+        except ValueError:
+            return False
         return True
 
     def is_isomorphic(self, other: "Topology") -> bool:
@@ -395,7 +428,7 @@ class SimpleStateTransitionTopologyBuilder:
                     len(active_graph[1]) == number_of_final_edges
                     and len(active_graph[0].nodes) > 0
                 ):
-                    if active_graph[0].verify():
+                    if active_graph[0].is_valid():
                         graph_tuple_list.append(active_graph)
                     continue
 

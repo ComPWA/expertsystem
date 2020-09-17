@@ -1,5 +1,7 @@
 # pylint: disable=redefined-outer-name
 
+from copy import deepcopy
+
 import pytest
 
 from expertsystem import io
@@ -70,6 +72,17 @@ def dummy_topology():
 
 
 class TestTopology:
+    @staticmethod
+    def test_is_valid(dummy_topology):
+        topology = deepcopy(dummy_topology)
+        assert topology.is_valid()
+        topology.add_node(2)
+        assert not topology.is_valid()
+        topology.add_edges([5])
+        assert not topology.is_valid()
+        topology.attach_edges_to_node_ingoing([5], 2)
+        assert topology.is_valid()
+
     @staticmethod
     def test_repr_and_eq(dummy_topology):
         topology = eval(str(dummy_topology))  # pylint: disable=eval-used
