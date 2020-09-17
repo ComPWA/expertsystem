@@ -59,6 +59,8 @@ class TestTopology:
         with pytest.raises(ValueError):
             assert Topology(edges={0: Edge(None, 1)})
         with pytest.raises(ValueError):
+            assert Topology(nodes={0}, edges={0: Edge(1, None)})
+        with pytest.raises(ValueError):
             assert Topology(edges={0: Edge(None, None)})
         topology = Topology(nodes={0}, edges={0: Edge(0, None)})
         assert len(topology.nodes) == 1
