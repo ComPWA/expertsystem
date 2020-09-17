@@ -52,6 +52,7 @@ class Topology:
             self.__nodes = set(nodes)
         if edges is not None:
             self.__edges = edges
+        self.verify()
 
     @property
     def nodes(self) -> Set[int]:

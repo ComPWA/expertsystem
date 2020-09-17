@@ -73,6 +73,17 @@ def dummy_topology():
 
 class TestTopology:
     @staticmethod
+    def test_constructor_exceptions():
+        with pytest.raises(ValueError):
+            assert Topology(nodes={0})
+        with pytest.raises(ValueError):
+            assert Topology(edges={0: Edge(None, 1)})
+        with pytest.raises(ValueError):
+            assert Topology(edges={0: Edge(None, None)})
+        topology = Topology(nodes={0}, edges={0: Edge(0, None)})
+        assert len(topology.nodes) == 1
+
+    @staticmethod
     def test_is_valid(dummy_topology):
         topology = deepcopy(dummy_topology)
         assert topology.is_valid()
