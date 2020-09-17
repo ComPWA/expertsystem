@@ -4,40 +4,12 @@ from copy import deepcopy
 
 import pytest
 
-from expertsystem.state.particle import initialize_graph
 from expertsystem.topology import (
     Edge,
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
     Topology,
 )
-
-
-def create_dummy_topology() -> Topology:
-    r"""Create a dummy `Topology`.
-
-    Has the following shape:
-
-    .. code-block::
-
-        e0 -- (N0) -- e1 -- (N1) -- e3
-                \             \
-                 e2            e4
-    """
-    topology = Topology()
-    topology.add_node(0)
-    topology.add_node(1)
-    topology.add_edges([0, 1, 2, 3, 4])
-    topology.attach_edges_to_node_ingoing([0], 0)
-    topology.attach_edges_to_node_ingoing([1], 1)
-    topology.attach_edges_to_node_outgoing([1, 2], 0)
-    topology.attach_edges_to_node_outgoing([3, 4], 1)
-    return topology
-
-
-@pytest.fixture(scope="package")
-def dummy_topology():
-    return create_dummy_topology()
 
 
 class TestEdge:
@@ -96,21 +68,6 @@ class TestTopology:
     def test_get_surrounding_nodes(dummy_topology):
         assert dummy_topology.get_surrounding_nodes(0) == dummy_topology.nodes
         assert dummy_topology.get_surrounding_nodes(1) == dummy_topology.nodes
-
-
-class TestStateTransitionGraph:
-    @staticmethod
-    def test_initialize_graph(  # pylint: disable=unused-argument
-        dummy_topology, particle_database
-    ):
-        graphs = initialize_graph(
-            dummy_topology,
-            initial_state=[("J/psi(1S)", [-1, +1])],
-            final_state=["gamma", "pi0", "pi0"],
-            particles=particle_database,
-        )
-        assert len(graphs) == 8
-        return graphs
 
 
 class TestInteractionNode:
