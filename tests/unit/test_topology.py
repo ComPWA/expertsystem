@@ -4,8 +4,6 @@ from copy import deepcopy
 
 import pytest
 
-from expertsystem import io
-from expertsystem import ui
 from expertsystem.state.particle import initialize_graph
 from expertsystem.topology import (
     Edge,
@@ -156,17 +154,3 @@ class TestSimpleStateTransitionTopologyBuilder:  # pylint: disable=no-self-use
         all_graphs = simple_builder.build_graphs(1, 3)
 
         assert len(all_graphs) == 1
-
-
-def visualize_graphs():
-    """Render graphs when running this file directly."""
-    ui.load_default_particles()
-    topology = create_dummy_topology()
-    graphs = TestStateTransitionGraph.test_initialize_graph(
-        topology, io.load_pdg()
-    )
-    io.write(graphs, "jpsi_to_gamma_pi0_pi0.gv")
-
-
-if __name__ == "__main__":
-    visualize_graphs()
