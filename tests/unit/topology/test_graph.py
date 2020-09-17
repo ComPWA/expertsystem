@@ -72,17 +72,19 @@ class TestTopology:
             assert topology == float()
 
 
-def test_initialize_graph(  # pylint: disable=unused-argument
-    dummy_topology, particle_database
-):
-    graphs = initialize_graph(
-        dummy_topology,
-        initial_state=[("J/psi(1S)", [-1, +1])],
-        final_state=["gamma", "pi0", "pi0"],
-        particles=particle_database,
-    )
-    assert len(graphs) == 8
-    return graphs
+class TestStateTransitionGraph:
+    @staticmethod
+    def test_initialize_graph(  # pylint: disable=unused-argument
+        dummy_topology, particle_database
+    ):
+        graphs = initialize_graph(
+            dummy_topology,
+            initial_state=[("J/psi(1S)", [-1, +1])],
+            final_state=["gamma", "pi0", "pi0"],
+            particles=particle_database,
+        )
+        assert len(graphs) == 8
+        return graphs
 
 
 class TestInteractionNode:
@@ -119,7 +121,9 @@ def visualize_graphs():
     """Render graphs when running this file directly."""
     ui.load_default_particles()
     topology = create_dummy_topology()
-    graphs = test_initialize_graph(topology, io.load_pdg())
+    graphs = TestStateTransitionGraph.test_initialize_graph(
+        topology, io.load_pdg()
+    )
     io.write(graphs, "jpsi_to_gamma_pi0_pi0.gv")
 
 
