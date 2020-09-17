@@ -244,7 +244,9 @@ class Topology:
             if edge.ending_node_id == node_id
         ]
 
-    def get_edges_outgoing_to_node(self, node_id: Optional[int]) -> List[int]:
+    def get_edges_outgoing_from_node(
+        self, node_id: Optional[int]
+    ) -> List[int]:
         return [
             edge_id
             for edge_id, edge in self.edges.items()
@@ -256,7 +258,7 @@ class Topology:
     ) -> List[int]:
         fs_edges = self.get_final_state_edges()
         edge_list = []
-        temp_edge_list = self.get_edges_outgoing_to_node(node_id)
+        temp_edge_list = self.get_edges_outgoing_from_node(node_id)
         while temp_edge_list:
             new_temp_edge_list = []
             for edge_id in temp_edge_list:
@@ -265,7 +267,7 @@ class Topology:
                 else:
                     new_node_id = self.edges[edge_id].ending_node_id
                     new_temp_edge_list.extend(
-                        self.get_edges_outgoing_to_node(new_node_id)
+                        self.get_edges_outgoing_from_node(new_node_id)
                     )
             temp_edge_list = new_temp_edge_list
         return edge_list
