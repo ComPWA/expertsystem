@@ -68,11 +68,14 @@ policy change that can then be formulated in the config files.
 
   .. code-block:: bash
 
-    npm install -g cspell markdownlint-cli
+    npm install -g cspell markdownlint-cli pyright
 
   Normally, these packages are only run in the :ref:`CI <contribute:Continuous
   Integration>`, but if you have them installed, they are also run when you run
   :ref:`tox <contribute:Testing>` (local CI).
+
+  Note that :code:`pyright` requires Node.js v12.x (see install instructions
+  `here <https://nodejs.org/en/download/package-manager>`__).
 
 
 Pre-commit
