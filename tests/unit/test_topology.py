@@ -7,8 +7,8 @@ import pytest
 from expertsystem import io
 from expertsystem import ui
 from expertsystem.state.particle import initialize_graph
-from expertsystem.topology import (  # noqa: F401, because of eval
-    Edge,  # type: ignore  # for pylance
+from expertsystem.topology import (
+    Edge,
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
     Topology,
@@ -40,6 +40,17 @@ def create_dummy_topology() -> Topology:
 @pytest.fixture(scope="package")
 def dummy_topology():
     return create_dummy_topology()
+
+
+class TestEdge:
+    @staticmethod
+    def test_get_connected_nodes():
+        edge = Edge(1, 2)
+        assert edge.get_connected_nodes() == {1, 2}
+        edge = Edge(originating_node_id=3)
+        assert edge.get_connected_nodes() == {3}
+        edge = Edge(ending_node_id=4)
+        assert edge.get_connected_nodes() == {4}
 
 
 class TestTopology:
