@@ -447,6 +447,15 @@ def get_kinematic_representation(
     )
 
 
+def particle_with_spin_projection_to_dict(instance: ParticleWithSpin) -> dict:
+    particle, spin_projection = instance
+    output = io.xml.object_to_dict(particle)
+    for item in output["QuantumNumber"]:
+        if item["Type"] == "Spin":
+            item["Projection"] = spin_projection
+    return output
+
+
 def is_boson(qn_dict: Dict[StateQuantumNumberNames, Any]) -> bool:
     spin_label = StateQuantumNumberNames.Spin
     return abs(qn_dict[spin_label].magnitude % 1) < 0.01
@@ -653,56 +662,38 @@ def initialize_graph(  # pylint: disable=too-many-locals
     particles: ParticleCollection,
     initial_state: Sequence[StateDefinition],
     final_state: Sequence[StateDefinition],
-    final_state_groupings: Optional[List[List[List[str]]]] = None,
-) -> List[StateTransitionGraph[dict]]:
-    def assert_number_of_states(
-        state_definitions: Sequence, edge_ids: Sequence[int]
-    ) -> None:
-        if len(state_definitions) != len(edge_ids):
-            raise ValueError(
-                "Number of state definitions is not same as number of edge IDs:"
-                f"(len({state_definitions}) != len({edge_ids})"
-            )
+    final_state_groupings: Optional[
+        Union[List[List[List[str]]], List[List[str]], List[str]]
+    ] = None,
+) -> List[StateTransitionGraph[ParticleWithSpin]]:
+    def embed_in_list(some_list: List[Any]) -> List[List[Any]]:
+        if not isinstance(some_list[0], list):
+            return [some_list]
+        return some_list
 
-    is_edges = topology.get_initial_state_edges()
-    fs_edges = topology.get_final_state_edges()
-    assert_number_of_states(initial_state, is_edges)
-    assert_number_of_states(final_state, fs_edges)
+    allowed_kinematic_groupings = None
+    if final_state_groupings is not None:
+        final_state_groupings = embed_in_list(final_state_groupings)
+        final_state_groupings = embed_in_list(final_state_groupings)
+        allowed_kinematic_groupings = [
+            KinematicRepresentation(final_state=grouping)
+            for grouping in final_state_groupings
+        ]
 
-    initial_state_with_projections = _safe_set_spin_projections(
-        initial_state, particles
+    kinematic_permutation_graphs = generate_kinematic_permutations(
+        topology=topology,
+        particles=particles,
+        initial_state=initial_state,
+        final_state=final_state,
+        allowed_kinematic_groupings=allowed_kinematic_groupings,
     )
-    final_state_with_projections = _safe_set_spin_projections(
-        final_state, particles
-    )
-
-    attached_is_edges = [
-        topology.get_originating_initial_state_edges(i) for i in topology.nodes
-    ]
-    is_edge_particle_pairs = __calculate_combinatorics(
-        is_edges, initial_state_with_projections, attached_is_edges
-    )
-
-    attached_fs_edges = [
-        topology.get_originating_final_state_edges(i) for i in topology.nodes
-    ]
-    fs_edge_particle_pairs = __calculate_combinatorics(
-        fs_edges,
-        final_state_with_projections,
-        attached_fs_edges,
-        final_state_groupings,
-    )
-
-    new_graphs: List[StateTransitionGraph[dict]] = list()
-    for initial_state_pair in is_edge_particle_pairs:
-        for fs_pair in fs_edge_particle_pairs:
-            merged_dicts = initial_state_pair.copy()
-            merged_dicts.update(fs_pair)
-            new_graphs.extend(
-                __initialize_edges(topology, merged_dicts, particles)
-            )
-
-    return new_graphs
+    output_graphs = list()
+    for kinematic_permutation in kinematic_permutation_graphs:
+        spin_permutations = generate_spin_permutations(
+            kinematic_permutation, particles
+        )
+        output_graphs.extend(spin_permutations)
+    return output_graphs
 
 
 def generate_kinematic_permutations(

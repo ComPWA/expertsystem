@@ -106,6 +106,9 @@ def test_external_edge_initialization(
     init_graphs = stm._create_seed_graphs(  # pylint: disable=protected-access
         topology_graphs
     )
+    init_graphs = stm._convert_edges_to_dict(  # pylint: disable=protected-access
+        init_graphs
+    )  # type: ignore
     assert len(init_graphs) == result_graph_count
 
 
@@ -279,6 +282,9 @@ def test_edge_swap(particle_database, initial_state, final_state):
     init_graphs = stm._create_seed_graphs(  # pylint: disable=protected-access
         topology_graphs
     )
+    init_graphs = stm._convert_edges_to_dict(  # pylint: disable=protected-access
+        init_graphs
+    )  # type: ignore
 
     for graph in init_graphs:
         ref_mapping = _create_edge_id_particle_mapping(
@@ -328,6 +334,9 @@ def test_match_external_edges(particle_database, initial_state, final_state):
     init_graphs = stm._create_seed_graphs(  # pylint: disable=protected-access
         topology_graphs
     )
+    init_graphs = stm._convert_edges_to_dict(  # pylint: disable=protected-access
+        init_graphs
+    )  # type: ignore
 
     match_external_edges(init_graphs)
 
@@ -408,6 +417,9 @@ def test_external_edge_identical_particle_combinatorics(
     init_graphs = stm._create_seed_graphs(  # pylint: disable=protected-access
         topology_graphs
     )
+    init_graphs = stm._convert_edges_to_dict(  # pylint: disable=protected-access
+        init_graphs
+    )  # type: ignore
     match_external_edges(init_graphs)
 
     comb_graphs = []

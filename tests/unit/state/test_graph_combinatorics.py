@@ -34,7 +34,15 @@ def three_body_decay() -> Topology:
 
 
 @pytest.mark.parametrize(
-    "final_state_groupings", [[[["pi0", "pi0"]]], [[["gamma", "pi0"]]],],
+    "final_state_groupings",
+    [
+        ["pi0", "pi0"],
+        [["pi0", "pi0"]],
+        [[["pi0", "pi0"]]],
+        ["gamma", "pi0"],
+        [["gamma", "pi0"]],
+        [[["gamma", "pi0"]]],
+    ],
 )
 def test_initialize_graph(
     final_state_groupings, three_body_decay, particle_database
