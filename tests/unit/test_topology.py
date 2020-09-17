@@ -10,6 +10,7 @@ from expertsystem.state.particle import initialize_graph
 from expertsystem.topology import (  # noqa: F401, because of eval
     Edge,  # type: ignore  # for pylance
     InteractionNode,
+    SimpleStateTransitionTopologyBuilder,
     Topology,
 )
 
@@ -115,6 +116,19 @@ class TestInteractionNode:
                 number_of_outgoing_edges=1,
                 number_of_ingoing_edges=0,
             )
+
+
+class TestSimpleStateTransitionTopologyBuilder:  # pylint: disable=no-self-use
+    def test_two_body_states(self):
+        two_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
+
+        simple_builder = SimpleStateTransitionTopologyBuilder(
+            [two_body_decay_node]
+        )
+
+        all_graphs = simple_builder.build_graphs(1, 3)
+
+        assert len(all_graphs) == 1
 
 
 def visualize_graphs():
