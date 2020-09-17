@@ -34,9 +34,11 @@ class Edge:
 
 
 class Topology:
-    """Directed graph for a state transition.
+    """Directed Feynman-like graph for a state transition.
 
-    Forms the underlying topology of `StateTransitionGraph`.
+    Forms the underlying topology of `StateTransitionGraph`. Note that a
+    `Topology` is not strictly speaking a graph from graph theory, because it
+    allows open edges, like a Feynman-diagram.
     """
 
     def __init__(
