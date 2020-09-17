@@ -62,11 +62,7 @@ class Topology:
         return self.__edges
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}()"
-            f"\n    nodes: {self.nodes}"
-            f"\n    edges: {self.__edges}"
-        )
+        return f"{self.__class__.__name__}{(self.nodes, self.edges)}"
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Topology):

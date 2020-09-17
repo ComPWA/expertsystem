@@ -5,7 +5,8 @@ import pytest
 from expertsystem import io
 from expertsystem import ui
 from expertsystem.state.particle import initialize_graph
-from expertsystem.topology import (
+from expertsystem.topology import (  # noqa: F401, because of eval
+    Edge,  # type: ignore  # for pylance
     InteractionNode,
     Topology,
 )
@@ -66,6 +67,15 @@ def create_dummy_topology() -> Topology:
 @pytest.fixture(scope="package")
 def dummy_topology():
     return create_dummy_topology()
+
+
+class TestTopology:
+    @staticmethod
+    def test_repr_and_eq(dummy_topology):
+        topology = eval(str(dummy_topology))  # pylint: disable=eval-used
+        assert topology == dummy_topology
+        with pytest.raises(NotImplementedError):
+            assert topology == float()
 
 
 def test_initialize_graph(  # pylint: disable=unused-argument
