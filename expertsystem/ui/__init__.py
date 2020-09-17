@@ -101,7 +101,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 formalism_type
             )
         self.interaction_determinators = [LeptonCheck(), GammaCheck()]
-        self.final_state_groupings: List[List[List[str]]] = list()
+        self.final_state_groupings: Optional[List[List[List[str]]]] = None
         self.allowed_interaction_types: List[InteractionTypes] = [
             InteractionTypes.Strong,
             InteractionTypes.EM,
@@ -162,6 +162,8 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 "The final state grouping has to be of type list."
             )
         if len(fs_group) > 0:
+            if self.final_state_groupings is None:
+                self.final_state_groupings = list()
             if not isinstance(fs_group[0], list):
                 fs_group = [fs_group]  # type: ignore
             self.final_state_groupings.append(fs_group)  # type: ignore
