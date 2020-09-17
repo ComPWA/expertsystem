@@ -237,9 +237,9 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 if not isinstance(edge_property, dict):
                     graph.edge_props[
                         edge_id
-                    ] = particle_with_spin_projection_to_dict(
+                    ] = particle_with_spin_projection_to_dict(  # type: ignore
                         edge_property
-                    )  # type: ignore
+                    )
         return graphs  # type: ignore
 
     def _determine_node_settings(
