@@ -57,7 +57,7 @@ class Topology:
             self.__nodes = set(nodes)
         if edges is not None:
             self.__edges = edges
-        self.__verify()
+        self.verify()
 
     @property
     def nodes(self) -> Set[int]:
@@ -154,7 +154,7 @@ class Topology:
             self.edges[edge_id].originating_node_id for edge_id in edge_ids
         ]
 
-    def __verify(self) -> None:
+    def verify(self) -> None:
         """Verify if there are no dangling edges or nodes."""
         for edge_id, edge in self.edges.items():
             if not edge.get_connected_nodes():
@@ -178,13 +178,6 @@ class Topology:
                 raise ValueError(
                     f"Node {node_id} is unconnected to any other node"
                 )
-
-    def is_valid(self) -> bool:
-        try:
-            self.__verify()
-        except ValueError:
-            return False
-        return True
 
     def is_isomorphic(self, other: "Topology") -> bool:
         """Check if two graphs are isomorphic.
@@ -436,8 +429,8 @@ class SimpleStateTransitionTopologyBuilder:
                     len(active_graph[1]) == number_of_final_edges
                     and len(active_graph[0].nodes) > 0
                 ):
-                    if active_graph[0].is_valid():
-                        graph_tuple_list.append(active_graph)
+                    active_graph[0].verify()
+                    graph_tuple_list.append(active_graph)
                     continue
 
                 extendable_graph_list.extend(self.extend_graph(active_graph))

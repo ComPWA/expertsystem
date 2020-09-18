@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 import pytest
 
 from expertsystem.topology import (
@@ -32,19 +30,6 @@ class TestTopology:
             assert Topology(edges={0: Edge(None, None)})
         topology = Topology(nodes={0}, edges={0: Edge(0, None)})
         assert len(topology.nodes) == 1
-
-    @staticmethod
-    def test_is_valid(dummy_topology):
-        topology = deepcopy(dummy_topology)
-        assert topology.is_valid()
-        topology.add_node(2)
-        assert not topology.is_valid()
-        topology.add_edges([5])
-        assert not topology.is_valid()
-        topology.attach_edges_to_node_ingoing([5], 2)
-        assert not topology.is_valid()
-        topology.attach_edges_to_node_ingoing([3], 2)
-        assert topology.is_valid()
 
     @staticmethod
     def test_repr_and_eq(dummy_topology):
