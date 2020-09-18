@@ -14,30 +14,30 @@ from expertsystem.topology import (
 
 
 @pytest.fixture(scope="package")
-def four_body_decay() -> Topology:
+def two_to_three_decay() -> Topology:
     r"""Create a dummy `Topology`.
 
     Has the following shape:
 
     .. code-block::
 
-        e0 -- (N0) -- e1 -- (N1) -- e3 -- (N2) -- e5
-                \             \             \
-                 e2            e4            e6
+        e0 -- (N0) -- e2 -- (N1) -- e3 -- (N2) -- e6
+              /               \             \
+            e1                 e4            e5
     """
     topology = Topology(
         nodes={0, 1, 2},
         edges={
             0: Edge(0, None),
-            1: Edge(1, 0),
-            2: Edge(None, 0),
+            1: Edge(0, None),
+            2: Edge(1, 0),
             3: Edge(2, 1),
             4: Edge(None, 1),
             5: Edge(None, 2),
             6: Edge(None, 2),
         },
     )
-    io.dot.write(topology, "four_body_decay.gv")
+    io.dot.write(topology, "two_to_three_decay.gv")
     return topology
 
 
@@ -105,15 +105,15 @@ class TestTopology:
             assert Topology(nodes=nodes, edges=edges)
 
     @staticmethod
-    def test_repr_and_eq(four_body_decay):
-        topology = eval(str(four_body_decay))  # pylint: disable=eval-used
-        assert topology == four_body_decay
+    def test_repr_and_eq(two_to_three_decay):
+        topology = eval(str(two_to_three_decay))  # pylint: disable=eval-used
+        assert topology == two_to_three_decay
         with pytest.raises(NotImplementedError):
             assert topology == float()
 
     @staticmethod
-    def test_add_and_attach(four_body_decay):
-        topology = deepcopy(four_body_decay)
+    def test_add_and_attach(two_to_three_decay):
+        topology = deepcopy(two_to_three_decay)
         topology.add_node(3)
         topology.add_edges([7, 8])
         topology.attach_edges_to_node_outgoing([7, 8], 3)
@@ -124,30 +124,30 @@ class TestTopology:
         io.write(topology, "five_body_decay.gv")
 
     @staticmethod
-    def test_add_exceptions(four_body_decay):
+    def test_add_exceptions(two_to_three_decay):
         with pytest.raises(ValueError):
-            four_body_decay.add_node(0)
+            two_to_three_decay.add_node(0)
         with pytest.raises(ValueError):
-            four_body_decay.add_edges([0])
+            two_to_three_decay.add_edges([0])
         with pytest.raises(ValueError):
-            four_body_decay.attach_edges_to_node_ingoing([0], 0)
+            two_to_three_decay.attach_edges_to_node_ingoing([0], 0)
         with pytest.raises(ValueError):
-            four_body_decay.attach_edges_to_node_ingoing([7], 2)
+            two_to_three_decay.attach_edges_to_node_ingoing([7], 2)
         with pytest.raises(ValueError):
-            four_body_decay.attach_edges_to_node_outgoing([6], 2)
+            two_to_three_decay.attach_edges_to_node_outgoing([6], 2)
         with pytest.raises(ValueError):
-            four_body_decay.attach_edges_to_node_outgoing([7], 2)
+            two_to_three_decay.attach_edges_to_node_outgoing([7], 2)
 
     @staticmethod
-    def test_getters(four_body_decay):
-        topology: Topology = four_body_decay  # shorter name
+    def test_getters(two_to_three_decay):
+        topology: Topology = two_to_three_decay  # shorter name
         assert topology.get_originating_node_list([0]) == [None]
         assert topology.get_originating_node_list([5, 6]) == [2, 2]
-        assert topology.get_initial_state_edges() == [0]
-        assert topology.get_final_state_edges() == [2, 4, 5, 6]
-        assert topology.get_intermediate_state_edges() == [1, 3]
-        assert topology.get_edges_ingoing_to_node(0) == [0]
-        assert topology.get_edges_outgoing_from_node(0) == [1, 2]
+        assert topology.get_initial_state_edges() == [0, 1]
+        assert topology.get_final_state_edges() == [4, 5, 6]
+        assert topology.get_intermediate_state_edges() == [2, 3]
+        assert topology.get_edges_ingoing_to_node(0) == [0, 1]
+        assert topology.get_edges_outgoing_from_node(0) == [2]
         assert (
             topology.get_edges_outgoing_from_node(None)
             == topology.get_initial_state_edges()
@@ -156,16 +156,18 @@ class TestTopology:
             topology.get_edges_ingoing_to_node(None)
             == topology.get_final_state_edges()
         )
-        assert topology.get_originating_initial_state_edges(0) == [0]
-        assert topology.get_originating_final_state_edges(0) == [2, 4, 5, 6]
+        assert topology.get_originating_initial_state_edges(0) == [0, 1]
+        assert topology.get_originating_final_state_edges(2) == [5, 6]
 
     @staticmethod
-    def test_swap(four_body_decay):
-        topology = deepcopy(four_body_decay)
+    def test_swap(two_to_three_decay):
+        topology = deepcopy(two_to_three_decay)
+        topology.swap_edges(0, 1)
+        assert topology == two_to_three_decay
         topology.swap_edges(5, 6)
-        assert topology == four_body_decay
+        assert topology == two_to_three_decay
         topology.swap_edges(4, 6)
-        assert topology != four_body_decay
+        assert topology != two_to_three_decay
 
 
 class TestInteractionNode:
