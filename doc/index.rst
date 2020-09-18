@@ -1,5 +1,5 @@
-Welcome to PWA Expert System!
-=============================
+Welcome to the PWA Expert System!
+=================================
 
 .. list-table::
 
