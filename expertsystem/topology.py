@@ -170,9 +170,9 @@ class Topology:
                     f"{edge} (ID: {edge_id}) has non-existing node IDs.\n"
                     f"Available node IDs: {self.nodes}"
                 )
-        self.check_isolated_nodes()
+        self.__check_isolated_nodes()
 
-    def check_isolated_nodes(self) -> None:
+    def __check_isolated_nodes(self) -> None:
         if len(self.nodes) < 2:
             return
         for node_id in self.nodes:
