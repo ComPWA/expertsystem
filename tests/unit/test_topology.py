@@ -1,3 +1,5 @@
+# pylint: disable=no-self-use
+
 import pytest
 
 from expertsystem.topology import (
@@ -20,16 +22,56 @@ class TestEdge:
 
 
 class TestTopology:
-    @staticmethod
-    def test_constructor_exceptions():
+    @pytest.mark.parametrize(
+        "nodes, edges",
+        [
+            (None, None),
+            ({1}, None),
+            (
+                {0, 1},
+                {
+                    0: Edge(None, 0),
+                    1: Edge(0, 1),
+                    2: Edge(1, None),
+                    3: Edge(1, None),
+                },
+            ),
+            (
+                {0, 1, 2},
+                {
+                    0: Edge(None, 0),
+                    1: Edge(0, 1),
+                    2: Edge(0, 2),
+                    3: Edge(1, None),
+                    4: Edge(1, None),
+                    5: Edge(2, None),
+                    6: Edge(2, None),
+                },
+            ),
+        ],
+    )
+    def test_constructor(self, nodes, edges):
+        topology = Topology(nodes=nodes, edges=edges)
+        if nodes is None:
+            nodes = set()
+        if edges is None:
+            edges = dict()
+        assert topology.nodes == nodes
+        assert topology.edges == edges
+
+    @pytest.mark.parametrize(
+        "nodes, edges",
+        [
+            (None, {0: Edge()}),
+            (None, {0: Edge(None, 1)}),
+            ({0}, {0: Edge(1, None)}),
+            (None, {0: Edge(1, None)}),
+            ({0, 1}, {0: Edge(0, None), 1: Edge(None, 1)}),
+        ],
+    )
+    def test_constructor_exceptions(self, nodes, edges):
         with pytest.raises(ValueError):
-            assert Topology(edges={0: Edge(None, 1)})
-        with pytest.raises(ValueError):
-            assert Topology(nodes={0}, edges={0: Edge(1, None)})
-        with pytest.raises(ValueError):
-            assert Topology(edges={0: Edge(None, None)})
-        topology = Topology(nodes={0}, edges={0: Edge(0, None)})
-        assert len(topology.nodes) == 1
+            assert Topology(nodes=nodes, edges=edges)
 
     @staticmethod
     def test_repr_and_eq(dummy_topology):
