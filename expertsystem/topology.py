@@ -172,7 +172,7 @@ class Topology:
         if len(self.nodes) < 2:
             return
         for node_id in self.nodes:
-            surrounding_nodes = self.get_surrounding_nodes(node_id)
+            surrounding_nodes = self.__get_surrounding_nodes(node_id)
             if not surrounding_nodes:
                 raise ValueError(
                     f"Node {node_id} is unconnected to any other node"
@@ -278,7 +278,7 @@ class Topology:
             temp_edge_list = new_temp_edge_list
         return edge_list
 
-    def get_surrounding_nodes(self, node_id: int) -> Set[int]:
+    def __get_surrounding_nodes(self, node_id: int) -> Set[int]:
         surrounding_nodes = set()
         for edge in self.edges.values():
             connected_nodes = edge.get_connected_nodes()
