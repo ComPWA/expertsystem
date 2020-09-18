@@ -100,6 +100,10 @@ html_theme_options = {
     "use_edit_page_button": True,
     "use_issues_button": True,
     "use_repository_button": True,
+    "launch_buttons": {
+        "binderhub_url": "https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples",
+        "notebook_interface": "jupyterlab",
+    },
 }
 pygments_style = "sphinx"
 todo_include_todos = False
