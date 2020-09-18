@@ -1,5 +1,7 @@
 # pylint: disable=no-self-use, redefined-outer-name
 
+from copy import deepcopy
+
 import pytest
 
 from expertsystem import io
@@ -108,6 +110,18 @@ class TestTopology:
         assert topology == four_body_decay
         with pytest.raises(NotImplementedError):
             assert topology == float()
+
+    @staticmethod
+    def test_add_and_attach(four_body_decay):
+        topology = deepcopy(four_body_decay)
+        topology.add_node(3)
+        topology.add_edges([7, 8])
+        topology.attach_edges_to_node_outgoing([7, 8], 3)
+        with pytest.raises(ValueError):
+            topology.verify()
+        topology.attach_edges_to_node_ingoing([6], 3)
+        assert topology.verify() is None
+        io.write(topology, "five_body_decay.gv")
 
     @staticmethod
     def test_add_exceptions(four_body_decay):
