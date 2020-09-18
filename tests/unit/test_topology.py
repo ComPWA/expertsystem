@@ -2,6 +2,7 @@
 
 import pytest
 
+from expertsystem import io
 from expertsystem.topology import (
     Edge,
     InteractionNode,
@@ -11,25 +12,30 @@ from expertsystem.topology import (
 
 
 @pytest.fixture(scope="package")
-def three_body_decay() -> Topology:
+def four_body_decay() -> Topology:
     r"""Create a dummy `Topology`.
 
     Has the following shape:
 
     .. code-block::
 
-        e0 -- (N0) -- e1 -- (N1) -- e3
-                \             \
-                 e2            e4
+        e0 -- (N0) -- e1 -- (N1) -- e3 -- (N2) -- e5
+                \             \             \
+                 e2            e4            e6
     """
-    topology = Topology()
-    topology.add_node(0)
-    topology.add_node(1)
-    topology.add_edges([0, 1, 2, 3, 4])
-    topology.attach_edges_to_node_ingoing([0], 0)
-    topology.attach_edges_to_node_ingoing([1], 1)
-    topology.attach_edges_to_node_outgoing([1, 2], 0)
-    topology.attach_edges_to_node_outgoing([3, 4], 1)
+    topology = Topology(
+        nodes={0, 1, 2},
+        edges={
+            0: Edge(0, None),
+            1: Edge(1, 0),
+            2: Edge(None, 0),
+            3: Edge(2, 1),
+            4: Edge(None, 1),
+            5: Edge(None, 2),
+            6: Edge(None, 2),
+        },
+    )
+    io.dot.write(topology, "four_body_decay.gv")
     return topology
 
 
@@ -97,26 +103,26 @@ class TestTopology:
             assert Topology(nodes=nodes, edges=edges)
 
     @staticmethod
-    def test_repr_and_eq(three_body_decay):
-        topology = eval(str(three_body_decay))  # pylint: disable=eval-used
-        assert topology == three_body_decay
+    def test_repr_and_eq(four_body_decay):
+        topology = eval(str(four_body_decay))  # pylint: disable=eval-used
+        assert topology == four_body_decay
         with pytest.raises(NotImplementedError):
             assert topology == float()
 
     @staticmethod
-    def test_add_exceptions(three_body_decay):
+    def test_add_exceptions(four_body_decay):
         with pytest.raises(ValueError):
-            three_body_decay.add_node(0)
+            four_body_decay.add_node(0)
         with pytest.raises(ValueError):
-            three_body_decay.add_edges([0])
+            four_body_decay.add_edges([0])
         with pytest.raises(ValueError):
-            three_body_decay.attach_edges_to_node_ingoing([0], 0)
+            four_body_decay.attach_edges_to_node_ingoing([0], 0)
         with pytest.raises(ValueError):
-            three_body_decay.attach_edges_to_node_ingoing([5], 1)
+            four_body_decay.attach_edges_to_node_ingoing([7], 2)
         with pytest.raises(ValueError):
-            three_body_decay.attach_edges_to_node_outgoing([4], 1)
+            four_body_decay.attach_edges_to_node_outgoing([6], 2)
         with pytest.raises(ValueError):
-            three_body_decay.attach_edges_to_node_outgoing([5], 1)
+            four_body_decay.attach_edges_to_node_outgoing([7], 2)
 
 
 class TestInteractionNode:
@@ -152,10 +158,10 @@ class TestInteractionNode:
 class TestSimpleStateTransitionTopologyBuilder:
     @staticmethod
     def test_two_body_states():
-        three_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
+        four_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
 
         simple_builder = SimpleStateTransitionTopologyBuilder(
-            [three_body_decay_node]
+            [four_body_decay_node]
         )
 
         all_graphs = simple_builder.build_graphs(1, 3)
