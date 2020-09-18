@@ -33,9 +33,9 @@ class Edge:
     originating_node_id: Optional[int] = None
 
     def get_connected_nodes(self) -> Set[int]:
-        connected_edges = {self.ending_node_id, self.originating_node_id}
-        connected_edges.discard(None)
-        return connected_edges  # type: ignore
+        connected_nodes = {self.ending_node_id, self.originating_node_id}
+        connected_nodes.discard(None)
+        return connected_nodes  # type: ignore
 
 
 class Topology:
