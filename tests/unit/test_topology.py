@@ -138,6 +138,27 @@ class TestTopology:
         with pytest.raises(ValueError):
             four_body_decay.attach_edges_to_node_outgoing([7], 2)
 
+    @staticmethod
+    def test_getters(four_body_decay):
+        topology: Topology = four_body_decay  # shorter name
+        assert topology.get_originating_node_list([0]) == [None]
+        assert topology.get_originating_node_list([5, 6]) == [2, 2]
+        assert topology.get_initial_state_edges() == [0]
+        assert topology.get_final_state_edges() == [2, 4, 5, 6]
+        assert topology.get_intermediate_state_edges() == [1, 3]
+        assert topology.get_edges_ingoing_to_node(0) == [0]
+        assert topology.get_edges_outgoing_from_node(0) == [1, 2]
+        assert (
+            topology.get_edges_outgoing_from_node(None)
+            == topology.get_initial_state_edges()
+        )
+        assert (
+            topology.get_edges_ingoing_to_node(None)
+            == topology.get_final_state_edges()
+        )
+        assert topology.get_originating_initial_state_edges(0) == [0]
+        assert topology.get_originating_final_state_edges(0) == [2, 4, 5, 6]
+
 
 class TestInteractionNode:
     @staticmethod
