@@ -16,7 +16,8 @@ If you have installed the `expertsystem` in :ref:`install:Development mode`, it
 is easy to tweak the source code and try out new ideas immediately, because the
 source code is considered the 'installation'.
 
-.. note::
+.. admonition:: Conda and VSCode
+  :class: dropdown
 
   The easiest way to contribute, is by using :ref:`Conda <install:Conda
   environment>` and :ref:`contribute:Visual Studio code`. In that case, the
@@ -143,7 +144,7 @@ Gutters
 extension (for this you need to run :code:`pytest` with the flag
 :code:`--cov-report=xml`).
 
-.. note::
+.. tip::
 
   To get an idea of performance per component, run :command:`pytest
   --profile-svg` and check the stats and the :file:`prof/combined.svg` output
