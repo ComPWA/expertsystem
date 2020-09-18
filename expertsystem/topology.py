@@ -156,16 +156,12 @@ class Topology:
 
     def __verify(self) -> None:
         """Verify if there are no dangling edges or nodes."""
-        node_ids = self.nodes | {None}  # trick to ignore None
         for edge_id, edge in self.edges.items():
-            if (
-                edge.originating_node_id is None
-                and edge.ending_node_id is None
-            ):
+            if not edge.get_connected_nodes():
                 raise ValueError(
                     f"Edge nr. {edge_id} is not connected to any node ({edge})"
                 )
-            if not {edge.originating_node_id, edge.ending_node_id} <= node_ids:
+            if not edge.get_connected_nodes() <= self.nodes:
                 raise ValueError(
                     f"{edge} (ID: {edge_id}) has non-existing node IDs.\n"
                     f"Available node IDs: {self.nodes}"
