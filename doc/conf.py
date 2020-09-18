@@ -88,7 +88,7 @@ autodoc_default_options = {
     "show-inheritance": True,
     "special-members": "__call__, __eq__",
 }
-html_copy_source = False  # do not copy rst files
+html_copy_source = True  # needed for download notebook button
 html_show_copyright = False
 html_show_sourcelink = False
 html_show_sphinx = False
@@ -104,6 +104,7 @@ html_theme_options = {
         "binderhub_url": "https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples",
         "notebook_interface": "jupyterlab",
     },
+    "expand_sections": ["usage"],
 }
 pygments_style = "sphinx"
 todo_include_todos = False
