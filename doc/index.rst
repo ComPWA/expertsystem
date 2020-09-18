@@ -105,44 +105,44 @@ Workflow of the Expert System
 
 1. Preparation
 
-   1.1. Build all possible topologies. A **topology** is represented by a
-   :ref:`graph <index:1. State Transition Graphs>`, in which the edges and
-   nodes are empty (no particle information).
+  1.1. Build all possible topologies. A **topology** is represented by a
+  :ref:`graph <index:1. State Transition Graphs>`, in which the edges and nodes
+  are empty (no particle information).
 
-   1.2. Fill the topology graphs with the user provided information. Typically
-   these are the graph's ingoing edges (initial state) and outgoing edges
-   (final state).
+  1.2. Fill the topology graphs with the user provided information. Typically
+  these are the graph's ingoing edges (initial state) and outgoing edges (final
+  state).
 
 2. Solving
 
-   2.1. *Propagate* quantum number information through the complete graph while
-   respecting the specified conservation laws. Information like mass is not
-   used in this first solving step.
+  2.1. *Propagate* quantum number information through the complete graph while
+  respecting the specified conservation laws. Information like mass is not used
+  in this first solving step.
 
-   2.2. *Clone* graphs while inserting concrete matching particles for the
-   intermediate edges (mainly adds the mass variable).
+  2.2. *Clone* graphs while inserting concrete matching particles for the
+  intermediate edges (mainly adds the mass variable).
 
-   2.3. *Validate* the complete graphs, so run all conservation law check that
-   were postponed from the first step.
+  2.3. *Validate* the complete graphs, so run all conservation law check that
+  were postponed from the first step.
 
 3. Generate an amplitude model, e.g. helicity or canonical amplitude.
 
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Table of Contents
+  :maxdepth: 2
+  :caption: Table of Contents
 
-   install
-   usage
-   contribute
+  install
+  usage
+  contribute
 
 
 .. toctree::
-   :maxdepth: 1
-   :hidden:
+  :maxdepth: 1
+  :hidden:
 
-   api
-   adr
+  api
+  adr
 
 
 expertsystem API
