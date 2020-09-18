@@ -11,7 +11,7 @@ from expertsystem.topology import (
 
 
 @pytest.fixture(scope="package")
-def two_body_decay() -> Topology:
+def three_body_decay() -> Topology:
     two_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
     simple_builder = SimpleStateTransitionTopologyBuilder(
         [two_body_decay_node]
@@ -24,10 +24,10 @@ def two_body_decay() -> Topology:
     "final_state_groupings", [[[["pi0", "pi0"]]], [[["gamma", "pi0"]]],],
 )
 def test_initialize_graph(
-    final_state_groupings, two_body_decay, particle_database
+    final_state_groupings, three_body_decay, particle_database
 ):
     graphs = initialize_graph(
-        two_body_decay,
+        three_body_decay,
         initial_state=[("J/psi(1S)", [-1, +1])],
         final_state=["gamma", "pi0", "pi0"],
         particles=particle_database,
