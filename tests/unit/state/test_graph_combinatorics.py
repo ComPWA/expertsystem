@@ -8,10 +8,10 @@ import pytest
 from expertsystem import io
 from expertsystem.state.particle import (
     KinematicRepresentation,
+    _generate_kinematic_permutations,
+    _generate_outer_edge_permutations,
+    _generate_spin_permutations,
     _safe_set_spin_projections,
-    generate_kinematic_permutations,
-    generate_outer_edge_permutations,
-    generate_spin_permutations,
     get_kinematic_representation,
     initialize_graph,
 )
@@ -76,7 +76,7 @@ def test_generate_outer_edge_permutations(
         final_state, particle_database
     )
     list_of_permutations = list(
-        generate_outer_edge_permutations(
+        _generate_outer_edge_permutations(
             three_body_decay, initial_state_with_spins, final_state_with_spins,
         )
     )
@@ -157,7 +157,7 @@ class TestKinematicRepresentation:
 
 
 def test_generate_permutations(three_body_decay, particle_database):
-    graphs = generate_kinematic_permutations(
+    graphs = _generate_kinematic_permutations(
         three_body_decay,
         initial_state=[("J/psi(1S)", [-1, +1])],
         final_state=["gamma", "pi0", "pi0"],
@@ -166,7 +166,7 @@ def test_generate_permutations(three_body_decay, particle_database):
     )
     assert len(graphs) == 1
 
-    graphs = generate_kinematic_permutations(
+    graphs = _generate_kinematic_permutations(
         three_body_decay,
         initial_state=[("J/psi(1S)", [-1, +1])],
         final_state=["gamma", "pi0", "pi0"],
@@ -191,7 +191,7 @@ def test_generate_permutations(three_body_decay, particle_database):
     ]
 
     graph0 = graphs[0]
-    output_graphs0 = generate_spin_permutations(graph0, particle_database)
+    output_graphs0 = _generate_spin_permutations(graph0, particle_database)
     assert len(output_graphs0) == 4
     assert output_graphs0[0].edge_props[0][1] == -1
     assert output_graphs0[0].edge_props[2][1] == -1

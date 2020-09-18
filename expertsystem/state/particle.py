@@ -680,7 +680,7 @@ def initialize_graph(  # pylint: disable=too-many-locals
             for grouping in final_state_groupings
         ]
 
-    kinematic_permutation_graphs = generate_kinematic_permutations(
+    kinematic_permutation_graphs = _generate_kinematic_permutations(
         topology=topology,
         particles=particles,
         initial_state=initial_state,
@@ -689,14 +689,14 @@ def initialize_graph(  # pylint: disable=too-many-locals
     )
     output_graphs = list()
     for kinematic_permutation in kinematic_permutation_graphs:
-        spin_permutations = generate_spin_permutations(
+        spin_permutations = _generate_spin_permutations(
             kinematic_permutation, particles
         )
         output_graphs.extend(spin_permutations)
     return output_graphs
 
 
-def generate_kinematic_permutations(
+def _generate_kinematic_permutations(
     topology: Topology,
     particles: ParticleCollection,
     initial_state: Sequence[StateDefinition],
@@ -736,7 +736,7 @@ def generate_kinematic_permutations(
 
     graphs: List[StateTransitionGraph[StateWithSpins]] = list()
     kinematic_representations: List[KinematicRepresentation] = list()
-    for permutation in generate_outer_edge_permutations(
+    for permutation in _generate_outer_edge_permutations(
         topology, initial_state_with_projections, final_state_with_projections,
     ):
         graph: StateTransitionGraph[
@@ -778,7 +778,7 @@ def _safe_set_spin_projections(
     ]
 
 
-def generate_outer_edge_permutations(
+def _generate_outer_edge_permutations(
     topology: Topology,
     initial_state: Sequence[StateWithSpins],
     final_state: Sequence[StateWithSpins],
@@ -795,7 +795,7 @@ def generate_outer_edge_permutations(
             )
 
 
-def generate_spin_permutations(
+def _generate_spin_permutations(
     graph: StateTransitionGraph[StateWithSpins],
     particle_db: ParticleCollection,
 ) -> List[StateTransitionGraph[ParticleWithSpin]]:
