@@ -173,7 +173,6 @@ class Topology:
             return
         for node_id in self.nodes:
             surrounding_nodes = self.get_surrounding_nodes(node_id)
-            surrounding_nodes.discard(node_id)
             if not surrounding_nodes:
                 raise ValueError(
                     f"Node {node_id} is unconnected to any other node"
@@ -285,6 +284,7 @@ class Topology:
             connected_nodes = edge.get_connected_nodes()
             if node_id in connected_nodes:
                 surrounding_nodes |= connected_nodes
+        surrounding_nodes.discard(node_id)
         return surrounding_nodes
 
     def swap_edges(self, edge_id1: int, edge_id2: int) -> None:

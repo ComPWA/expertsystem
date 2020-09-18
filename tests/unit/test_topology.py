@@ -82,8 +82,8 @@ class TestTopology:
 
     @staticmethod
     def test_get_surrounding_nodes(dummy_topology):
-        assert dummy_topology.get_surrounding_nodes(0) == dummy_topology.nodes
-        assert dummy_topology.get_surrounding_nodes(1) == dummy_topology.nodes
+        assert dummy_topology.get_surrounding_nodes(0) == {1}
+        assert dummy_topology.get_surrounding_nodes(1) == {0}
 
     @staticmethod
     def test_add_exceptions(dummy_topology):
