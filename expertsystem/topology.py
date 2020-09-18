@@ -163,6 +163,15 @@ class Topology:
                     f"Node {node_id} is unconnected to any other node"
                 )
 
+    def __get_surrounding_nodes(self, node_id: int) -> Set[int]:
+        surrounding_nodes = set()
+        for edge in self.edges.values():
+            connected_nodes = edge.get_connected_nodes()
+            if node_id in connected_nodes:
+                surrounding_nodes |= connected_nodes
+        surrounding_nodes.discard(node_id)
+        return surrounding_nodes
+
     def is_isomorphic(self, other: "Topology") -> bool:
         """Check if two graphs are isomorphic.
 
@@ -278,15 +287,6 @@ class Topology:
                     )
             temp_edge_list = new_temp_edge_list
         return edge_list
-
-    def __get_surrounding_nodes(self, node_id: int) -> Set[int]:
-        surrounding_nodes = set()
-        for edge in self.edges.values():
-            connected_nodes = edge.get_connected_nodes()
-            if node_id in connected_nodes:
-                surrounding_nodes |= connected_nodes
-        surrounding_nodes.discard(node_id)
-        return surrounding_nodes
 
     def swap_edges(self, edge_id1: int, edge_id2: int) -> None:
         popped_edge_id1 = self.__edges.pop(edge_id1)
