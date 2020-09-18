@@ -159,6 +159,14 @@ class TestTopology:
         assert topology.get_originating_initial_state_edges(0) == [0]
         assert topology.get_originating_final_state_edges(0) == [2, 4, 5, 6]
 
+    @staticmethod
+    def test_swap(four_body_decay):
+        topology = deepcopy(four_body_decay)
+        topology.swap_edges(5, 6)
+        assert topology == four_body_decay
+        topology.swap_edges(4, 6)
+        assert topology != four_body_decay
+
 
 class TestInteractionNode:
     @staticmethod
