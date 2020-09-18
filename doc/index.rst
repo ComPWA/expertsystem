@@ -128,9 +128,11 @@ Workflow of the Expert System
 3. Generate an amplitude model, e.g. helicity or canonical amplitude.
 
 
+Table of Contents
+-----------------
+
 .. toctree::
   :maxdepth: 2
-  :caption: Table of Contents
 
   install
   usage
@@ -144,10 +146,4 @@ Workflow of the Expert System
   api
   adr
 
-
-expertsystem API
-================
-
-* :ref:`General Index <genindex>`
-* :ref:`Python Modules Index <modindex>`
-* :ref:`Search <search>`
+* :ref:`Python API <modindex>`
