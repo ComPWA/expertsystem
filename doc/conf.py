@@ -93,6 +93,14 @@ html_show_copyright = False
 html_show_sourcelink = False
 html_show_sphinx = False
 html_theme = "sphinx_book_theme"
+html_theme_options = {
+    "repository_url": "https://github.com/ComPWA/expertsystem",
+    "repository_branch": "master",
+    "path_to_docs": "doc",
+    "use_edit_page_button": True,
+    "use_issues_button": True,
+    "use_repository_button": True,
+}
 pygments_style = "sphinx"
 todo_include_todos = False
 viewcode_follow_imported_members = True
