@@ -6,7 +6,7 @@ Welcome to the PWA Expert System!
   * - .. image:: https://readthedocs.org/projects/expertsystem/badge/?version=latest
         :alt: Documentation build status
         :target: https://expertsystem.readthedocs.io
-      .. image:: https://mybinder.org/badge_logo.svg
+      .. image:: https://static.mybinder.org/badge_logo.svg
         :alt: Try out Jupyter notebooks
         :target: https://mybinder.org/v2/gh/ComPWA/expertsystem/master?filepath=examples
       .. image:: https://img.shields.io/badge/License-GPLv3+-blue.svg

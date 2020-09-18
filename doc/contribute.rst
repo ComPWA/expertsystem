@@ -323,8 +323,8 @@ Commit conventions
   summary based on the separate commits that constitute this PR. Leave the
   relevant commits in as bullet points. See the `commit history
   <https://github.com/ComPWA/expertsystem/commits/master>`_ for examples. This
-  comes in especially handy when `drafting a release <contribute:Milestones and
-  releases>`_!
+  comes in especially handy when :ref:`drafting a release
+  <contribute:Milestones and releases>`!
 
 
 Milestones and releases
