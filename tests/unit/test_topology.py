@@ -4,7 +4,6 @@ from copy import deepcopy
 
 import pytest
 
-from expertsystem import io
 from expertsystem.topology import (
     Edge,
     InteractionNode,
@@ -37,7 +36,6 @@ def two_to_three_decay() -> Topology:
             6: Edge(None, 2),
         },
     )
-    io.dot.write(topology, "two_to_three_decay.gv")
     return topology
 
 
@@ -121,7 +119,6 @@ class TestTopology:
             topology.verify()
         topology.attach_edges_to_node_ingoing([6], 3)
         assert topology.verify() is None
-        io.write(topology, "five_body_decay.gv")
 
     @staticmethod
     def test_add_exceptions(two_to_three_decay):
