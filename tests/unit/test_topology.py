@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, redefined-outer-name
 
 import pytest
 
@@ -8,6 +8,29 @@ from expertsystem.topology import (
     SimpleStateTransitionTopologyBuilder,
     Topology,
 )
+
+
+@pytest.fixture(scope="package")
+def three_body_decay() -> Topology:
+    r"""Create a dummy `Topology`.
+
+    Has the following shape:
+
+    .. code-block::
+
+        e0 -- (N0) -- e1 -- (N1) -- e3
+                \             \
+                 e2            e4
+    """
+    topology = Topology()
+    topology.add_node(0)
+    topology.add_node(1)
+    topology.add_edges([0, 1, 2, 3, 4])
+    topology.attach_edges_to_node_ingoing([0], 0)
+    topology.attach_edges_to_node_ingoing([1], 1)
+    topology.attach_edges_to_node_outgoing([1, 2], 0)
+    topology.attach_edges_to_node_outgoing([3, 4], 1)
+    return topology
 
 
 class TestEdge:
@@ -74,26 +97,26 @@ class TestTopology:
             assert Topology(nodes=nodes, edges=edges)
 
     @staticmethod
-    def test_repr_and_eq(dummy_topology):
-        topology = eval(str(dummy_topology))  # pylint: disable=eval-used
-        assert topology == dummy_topology
+    def test_repr_and_eq(three_body_decay):
+        topology = eval(str(three_body_decay))  # pylint: disable=eval-used
+        assert topology == three_body_decay
         with pytest.raises(NotImplementedError):
             assert topology == float()
 
     @staticmethod
-    def test_add_exceptions(dummy_topology):
+    def test_add_exceptions(three_body_decay):
         with pytest.raises(ValueError):
-            dummy_topology.add_node(0)
+            three_body_decay.add_node(0)
         with pytest.raises(ValueError):
-            dummy_topology.add_edges([0])
+            three_body_decay.add_edges([0])
         with pytest.raises(ValueError):
-            dummy_topology.attach_edges_to_node_ingoing([0], 0)
+            three_body_decay.attach_edges_to_node_ingoing([0], 0)
         with pytest.raises(ValueError):
-            dummy_topology.attach_edges_to_node_ingoing([5], 1)
+            three_body_decay.attach_edges_to_node_ingoing([5], 1)
         with pytest.raises(ValueError):
-            dummy_topology.attach_edges_to_node_outgoing([4], 1)
+            three_body_decay.attach_edges_to_node_outgoing([4], 1)
         with pytest.raises(ValueError):
-            dummy_topology.attach_edges_to_node_outgoing([5], 1)
+            three_body_decay.attach_edges_to_node_outgoing([5], 1)
 
 
 class TestInteractionNode:
@@ -129,10 +152,10 @@ class TestInteractionNode:
 class TestSimpleStateTransitionTopologyBuilder:
     @staticmethod
     def test_two_body_states():
-        two_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
+        three_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
 
         simple_builder = SimpleStateTransitionTopologyBuilder(
-            [two_body_decay_node]
+            [three_body_decay_node]
         )
 
         all_graphs = simple_builder.build_graphs(1, 3)
