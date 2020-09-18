@@ -138,22 +138,6 @@ class Topology:
         for edge_id in outgoing_edge_ids:
             self.__edges[edge_id].originating_node_id = node_id
 
-    def get_originating_node_list(
-        self, edge_ids: Iterable[int]
-    ) -> List[Optional[int]]:
-        """Get list of node ids from which the supplied edges originate from.
-
-        Args:
-            edge_ids ([int]): list of edge ids for which the origin node is
-                searched for
-
-        Returns:
-            [int]: a list of node ids
-        """
-        return [
-            self.edges[edge_id].originating_node_id for edge_id in edge_ids
-        ]
-
     def verify(self) -> None:
         """Verify if there are no dangling edges or nodes."""
         for edge_id, edge in self.edges.items():
@@ -198,6 +182,22 @@ class Topology:
         #    CurrentEdges = []
 
         # check if the mapping is still valid and can be extended
+
+    def get_originating_node_list(
+        self, edge_ids: Iterable[int]
+    ) -> List[Optional[int]]:
+        """Get list of node ids from which the supplied edges originate from.
+
+        Args:
+            edge_ids ([int]): list of edge ids for which the origin node is
+                searched for
+
+        Returns:
+            [int]: a list of node ids
+        """
+        return [
+            self.edges[edge_id].originating_node_id for edge_id in edge_ids
+        ]
 
     def get_initial_state_edges(self) -> List[int]:
         return sorted(
