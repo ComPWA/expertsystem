@@ -85,6 +85,21 @@ class TestTopology:
         assert dummy_topology.get_surrounding_nodes(0) == dummy_topology.nodes
         assert dummy_topology.get_surrounding_nodes(1) == dummy_topology.nodes
 
+    @staticmethod
+    def test_add_exceptions(dummy_topology):
+        with pytest.raises(ValueError):
+            dummy_topology.add_node(0)
+        with pytest.raises(ValueError):
+            dummy_topology.add_edges([0])
+        with pytest.raises(ValueError):
+            dummy_topology.attach_edges_to_node_ingoing([0], 0)
+        with pytest.raises(ValueError):
+            dummy_topology.attach_edges_to_node_ingoing([5], 1)
+        with pytest.raises(ValueError):
+            dummy_topology.attach_edges_to_node_outgoing([4], 1)
+        with pytest.raises(ValueError):
+            dummy_topology.attach_edges_to_node_outgoing([5], 1)
+
 
 class TestInteractionNode:
     @staticmethod
