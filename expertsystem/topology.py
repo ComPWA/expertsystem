@@ -57,7 +57,7 @@ class Topology:
             self.__nodes = set(nodes)
         if edges is not None:
             self.__edges = edges
-        self.verify()
+        self.__verify()
 
     @property
     def nodes(self) -> Set[int]:
@@ -154,7 +154,7 @@ class Topology:
             self.edges[edge_id].originating_node_id for edge_id in edge_ids
         ]
 
-    def verify(self) -> None:
+    def __verify(self) -> None:
         """Verify if there are no dangling edges or nodes."""
         node_ids = self.nodes | {None}  # trick to ignore None
         for edge_id, edge in self.edges.items():
@@ -185,7 +185,7 @@ class Topology:
 
     def is_valid(self) -> bool:
         try:
-            self.verify()
+            self.__verify()
         except ValueError:
             return False
         return True
