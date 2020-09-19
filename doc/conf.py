@@ -108,6 +108,7 @@ html_theme_options = {
     },
     "expand_sections": ["usage"],
 }
+html_title = "PWA Expert System"
 pygments_style = "sphinx"
 todo_include_todos = False
 viewcode_follow_imported_members = True

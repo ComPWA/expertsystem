@@ -1,3 +1,5 @@
+.. title:: Welcome
+
 Welcome to the PWA Expert System!
 =================================
 
