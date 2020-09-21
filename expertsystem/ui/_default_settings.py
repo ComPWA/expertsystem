@@ -73,7 +73,7 @@ CONSERVATION_LAW_PRIORITIES = {
 
 
 def create_default_interaction_settings(
-    formalism_type: str, use_mass_conservation: bool = True
+    formalism_type: str, nbody_topology: bool = False
 ) -> Dict[InteractionTypes, InteractionNodeSettings]:
     """Create a container that holds the settings for the various interactions.
 
@@ -96,7 +96,7 @@ def create_default_interaction_settings(
             ),
         }
     elif formalism_type == "canonical":
-        formalism_conservation_laws = [SpinConservation()]
+        formalism_conservation_laws = [SpinConservation(not nbody_topology)]
         formalism_qn_domains = {
             InteractionQuantumNumberNames.L: create_spin_domain([0, 1, 2]),
             InteractionQuantumNumberNames.S: create_spin_domain(
@@ -107,7 +107,7 @@ def create_default_interaction_settings(
         formalism_conservation_laws.append(
             ClebschGordanCheckHelicityToCanonical()
         )
-    if use_mass_conservation:
+    if not nbody_topology:
         formalism_conservation_laws.append(MassConservation(5))
 
     weak_settings = InteractionNodeSettings()

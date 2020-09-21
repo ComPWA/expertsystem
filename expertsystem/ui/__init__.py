@@ -134,7 +134,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             # particle is present
             if len(initial_state) > 1:
                 self.interaction_type_settings = create_default_interaction_settings(
-                    formalism_type, False
+                    formalism_type, True
                 )
         self.topology_builder = SimpleStateTransitionTopologyBuilder(int_nodes)
 

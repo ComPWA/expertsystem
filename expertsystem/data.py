@@ -19,6 +19,7 @@ from typing import (
     ItemsView,
     Iterator,
     KeysView,
+    NewType,
     Optional,
     Union,
     ValuesView,
@@ -109,6 +110,47 @@ class Spin(abc.Hashable):
 
     def __hash__(self) -> int:
         return hash(repr(self))
+
+
+@dataclass(frozen=True, init=False)
+class EdgeQuantumNumbers:  # pylint: disable=too-many-instance-attributes
+    """Definition of quantum numbers for edges."""
+
+    pid = NewType("pid", int)
+    energy = NewType("energy", complex)
+    mass = NewType("mass", float)
+    width = NewType("width", float)
+    spin = NewType("spin", Spin)
+    spin_magnitude = NewType("spin_magnitude", float)
+    spin_projection = NewType("spin_projection", float)
+    charge = NewType("charge", int)
+    isospin = NewType("isospin", Spin)
+    isospin_magnitude = NewType("isospin_magnitude", float)
+    isospin_projection = NewType("isospin_projection", float)
+    strangeness = NewType("strangeness", int)
+    charmness = NewType("charmness", int)
+    bottomness = NewType("bottomness", int)
+    topness = NewType("topness", int)
+    baryon_number = NewType("baryon_number", int)
+    electron_lepton_number = NewType("electron_lepton_number", int)
+    muon_lepton_number = NewType("muon_lepton_number", int)
+    tau_lepton_number = NewType("tau_lepton_number", int)
+    parity = NewType("parity", Parity)
+    c_parity = NewType("c_parity", Parity)
+    g_parity = NewType("g_parity", Parity)
+
+
+@dataclass(frozen=True, init=False)
+class NodeQuantumNumbers:
+    """Definition of quantum numbers for interaction nodes."""
+
+    l_ = NewType("l_", Spin)
+    l_magnitude = NewType("l_magnitude", float)
+    l_projection = NewType("l_projection", float)
+    s_ = NewType("s_", Spin)
+    s_magnitude = NewType("s_magnitude", float)
+    s_projection = NewType("s_projection", float)
+    parity_prefactor = NewType("parity_prefactor", float)
 
 
 @dataclass(frozen=True)

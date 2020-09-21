@@ -456,9 +456,8 @@ def particle_with_spin_projection_to_dict(instance: ParticleWithSpin) -> dict:
     return output
 
 
-def is_boson(qn_dict: Dict[StateQuantumNumberNames, Any]) -> bool:
-    spin_label = StateQuantumNumberNames.Spin
-    return abs(qn_dict[spin_label].magnitude % 1) < 0.01
+def is_boson(spin_magnitude: float) -> bool:
+    return abs(spin_magnitude % 1) < 0.01
 
 
 def get_particle_property(

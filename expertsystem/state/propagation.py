@@ -11,8 +11,10 @@ import logging
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from copy import deepcopy
+from dataclasses import fields
 from enum import Enum, auto
 
+from expertsystem.data import EdgeQuantumNumbers, NodeQuantumNumbers, Parity
 from expertsystem.solvers.constraint import (
     BacktrackingSolver,
     Constraint,
@@ -199,6 +201,209 @@ class FullPropagator:
         return full_particle_graphs
 
 
+def _is_optional(class_field):
+    if "__args__" in class_field.__dict__:
+        if type(None) in class_field.__args__:
+            return True
+    return False
+
+
+_qn_mapping = {
+    EdgeQuantumNumbers.pid.__name__: ParticlePropertyNames.Pid,
+    EdgeQuantumNumbers.energy.__name__: (
+        ParticlePropertyNames.Mass,
+        ParticleDecayPropertyNames.Width,
+    ),
+    EdgeQuantumNumbers.mass.__name__: ParticlePropertyNames.Mass,
+    EdgeQuantumNumbers.width.__name__: ParticleDecayPropertyNames.Width,
+    EdgeQuantumNumbers.spin.__name__: StateQuantumNumberNames.Spin,
+    EdgeQuantumNumbers.spin_magnitude.__name__: StateQuantumNumberNames.Spin,
+    EdgeQuantumNumbers.spin_projection.__name__: StateQuantumNumberNames.Spin,
+    EdgeQuantumNumbers.charge.__name__: StateQuantumNumberNames.Charge,
+    EdgeQuantumNumbers.isospin.__name__: StateQuantumNumberNames.IsoSpin,
+    EdgeQuantumNumbers.isospin_magnitude.__name__: StateQuantumNumberNames.IsoSpin,
+    EdgeQuantumNumbers.isospin_projection.__name__: StateQuantumNumberNames.IsoSpin,
+    EdgeQuantumNumbers.strangeness.__name__: StateQuantumNumberNames.Strangeness,
+    EdgeQuantumNumbers.charmness.__name__: StateQuantumNumberNames.Charmness,
+    EdgeQuantumNumbers.bottomness.__name__: StateQuantumNumberNames.Bottomness,
+    EdgeQuantumNumbers.topness.__name__: StateQuantumNumberNames.Topness,
+    EdgeQuantumNumbers.baryon_number.__name__: StateQuantumNumberNames.BaryonNumber,
+    EdgeQuantumNumbers.electron_lepton_number.__name__: StateQuantumNumberNames.ElectronLN,
+    EdgeQuantumNumbers.muon_lepton_number.__name__: StateQuantumNumberNames.MuonLN,
+    EdgeQuantumNumbers.tau_lepton_number.__name__: StateQuantumNumberNames.TauLN,
+    EdgeQuantumNumbers.parity.__name__: StateQuantumNumberNames.Parity,
+    EdgeQuantumNumbers.c_parity.__name__: StateQuantumNumberNames.CParity,
+    EdgeQuantumNumbers.g_parity.__name__: StateQuantumNumberNames.GParity,
+    NodeQuantumNumbers.l_.__name__: InteractionQuantumNumberNames.L,
+    NodeQuantumNumbers.l_magnitude.__name__: InteractionQuantumNumberNames.L,
+    NodeQuantumNumbers.l_projection.__name__: InteractionQuantumNumberNames.L,
+    NodeQuantumNumbers.s_.__name__: InteractionQuantumNumberNames.S,
+    NodeQuantumNumbers.s_magnitude.__name__: InteractionQuantumNumberNames.S,
+    NodeQuantumNumbers.s_projection.__name__: InteractionQuantumNumberNames.S,
+    NodeQuantumNumbers.parity_prefactor.__name__: InteractionQuantumNumberNames.ParityPrefactor,
+}
+
+
+def _init_class(class_type, props):
+    return class_type(
+        **{
+            class_field.name: _extract_value(props, class_field.type)
+            for class_field in fields(class_type)
+            if not _is_optional(class_field.type)
+            or _qn_mapping[class_field.type.__args__[0].__name__] in props
+        }
+    )
+
+
+def _extract_value(props, obj_type):
+    if _is_optional(obj_type):
+        obj_type = obj_type.__args__[0]
+
+    qn_name = obj_type.__name__
+    value = props[_qn_mapping[qn_name]]
+    if "projection" in qn_name:
+        value = value.projection
+    elif "magnitude" in qn_name:
+        value = value.magnitude
+
+    if (
+        "__supertype__" in obj_type.__dict__
+        and obj_type.__supertype__ == Parity
+    ):
+        return obj_type.__supertype__(value)
+    return obj_type(value)
+
+
+def _check_arg_requirements(class_type, props):
+    if "__dataclass_fields__" in class_type.__dict__:
+        return all(
+            [
+                bool(_qn_mapping[class_field.type.__name__] in props)
+                for class_field in fields(class_type)
+                if not _is_optional(class_field.type)
+            ]
+        )
+
+    return _qn_mapping[class_type.__name__] in props
+
+
+def _check_requirements(rule, in_edge_props, out_edge_props, node_props):
+    # TODO: move type annotations check somewhere more statically (rule constructor)
+    if not hasattr(rule.__class__.__call__, "__annotations__"):
+        raise TypeError(
+            f"missing type annotations for __call__ of rule {rule.__name__}"
+        )
+    arg_counter = 1
+    for arg_type, props in zip(
+        rule.__class__.__call__.__annotations__.values(),
+        (in_edge_props, out_edge_props, node_props),
+    ):
+        if arg_counter == 3:
+            if not _check_arg_requirements(arg_type, props):
+                return False
+        else:
+            if not all(
+                [
+                    _check_arg_requirements(arg_type.__args__[0], x)
+                    for x in props
+                ]
+            ):
+                return False
+        arg_counter += 1
+
+    return True
+
+
+def _create_rule_edge_arg(input_type, edge_props):
+    if not isinstance(edge_props, (list, tuple)):
+        raise TypeError("edge_props are incompatible...")
+    if not (type(input_type) is list or type(input_type) is tuple):
+        raise TypeError("input type is incompatible...")
+    in_list_type = input_type[0]
+
+    if "__dataclass_fields__" in in_list_type.__dict__:
+        # its a composite type -> create new class type here
+        return [_init_class(in_list_type, x) for x in edge_props]
+    return [_extract_value(x, in_list_type) for x in edge_props]
+
+
+def _create_rule_node_arg(input_type, node_props):
+    if isinstance(node_props, (list, tuple)):
+        raise TypeError("node_props is incompatible...")
+    if type(input_type) is list or type(input_type) is tuple:
+        raise TypeError("input type is incompatible...")
+
+    if "__dataclass_fields__" in input_type.__dict__:
+        # its a composite type -> create new class type here
+        return _init_class(input_type, node_props)
+    return _extract_value(node_props, input_type)
+
+
+def _create_rule_args(rule, in_edge_props, out_edge_props, node_props) -> list:
+    if not hasattr(rule.__class__.__call__, "__annotations__"):
+        raise TypeError(
+            f"missing type annotations for __call__ of rule {rule.__name__}"
+        )
+    args = []
+    arg_counter = 0
+    rule_annotations = list(rule.__class__.__call__.__annotations__.values())
+    if len(rule_annotations) == 4:
+        # strip return annotation
+        rule_annotations = rule_annotations[:-1]
+    ordered_props = (in_edge_props, out_edge_props, node_props)
+    for arg_type in rule_annotations:
+        if arg_counter == 2:
+            args.append(
+                _create_rule_node_arg(arg_type, ordered_props[arg_counter])
+            )
+        else:
+            args.append(
+                _create_rule_edge_arg(
+                    arg_type.__args__, ordered_props[arg_counter]
+                )
+            )
+        arg_counter += 1
+    if arg_counter == 2:
+        # the rule does not use the third argument, just add None
+        args.append(None)
+
+    return args
+
+
+def _get_required_qn_names(rule):
+    if not hasattr(rule.__class__.__call__, "__annotations__"):
+        raise TypeError(
+            f"missing type annotations for __call__ of rule {rule.__name__}"
+        )
+
+    qn_set = set()
+
+    rule_annotations = list(rule.__class__.__call__.__annotations__.values())
+    if len(rule_annotations) == 4:
+        # strip return annotation
+        rule_annotations = rule_annotations[:-1]
+    for input_type in rule_annotations:
+        class_type = input_type
+        if "__origin__" in input_type.__dict__ and (
+            input_type.__origin__ is list or input_type.__origin__ is tuple
+        ):
+            class_type = input_type.__args__[0]
+
+        if "__dataclass_fields__" in class_type.__dict__:
+            for class_field in fields(class_type):
+                qn_set.add(
+                    _qn_mapping[
+                        class_field.type.__args__[0].__name__
+                        if _is_optional(class_field.type)
+                        else class_field.type.__name__
+                    ]
+                )
+        else:
+            qn_set.add(_qn_mapping[class_type.__name__])
+
+    return list(qn_set)
+
+
 class ParticleStateTransitionGraphValidator(AbstractPropagator):
     """Validate particle states in a transition graph."""
 
@@ -208,16 +413,24 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
             for cons_law in cons_laws:
                 # get the needed qns for this conservation law
                 # for all edges and the node
-                var_containers = self.create_variable_containers(
+                var_containers = self.__create_variable_containers(
                     node_id, cons_law
                 )
                 # check the requirements
-                if cons_law.check_requirements(
-                    var_containers[0], var_containers[1], var_containers[2]
+                if _check_requirements(
+                    cons_law,
+                    var_containers[0],
+                    var_containers[1],
+                    var_containers[2],
                 ):
                     # and run the rule check
                     if not cons_law(
-                        var_containers[0], var_containers[1], var_containers[2]
+                        *_create_rule_args(
+                            cons_law,
+                            var_containers[0],
+                            var_containers[1],
+                            var_containers[2],
+                        )
                     ):
                         self.node_non_satisfied_laws[node_id].append(cons_law)
                 else:
@@ -232,12 +445,12 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
             return []
         return [self.graph]
 
-    def create_variable_containers(self, node_id, cons_law):
+    def __create_variable_containers(self, node_id, cons_law):
         in_edges = self.graph.get_edges_ingoing_to_node(node_id)
         out_edges = self.graph.get_edges_outgoing_from_node(node_id)
 
-        qn_names = cons_law.get_required_qn_names()
-        qn_list = self.prepare_qns(
+        qn_names = _get_required_qn_names(cons_law)
+        qn_list = self.__prepare_qns(
             qn_names,
             (
                 StateQuantumNumberNames,
@@ -245,20 +458,21 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
                 ParticleDecayPropertyNames,
             ),
         )
-        in_edges_vars = self.create_edge_variables(in_edges, qn_list)
-        out_edges_vars = self.create_edge_variables(out_edges, qn_list)
+        in_edges_vars = self.__create_edge_variables(in_edges, qn_list)
+        out_edges_vars = self.__create_edge_variables(out_edges, qn_list)
 
-        node_vars = self.create_node_variables(
-            node_id, self.prepare_qns(qn_names, InteractionQuantumNumberNames)
+        node_vars = self.__create_node_variables(
+            node_id,
+            self.__prepare_qns(qn_names, InteractionQuantumNumberNames),
         )
 
         return (in_edges_vars, out_edges_vars, node_vars)
 
     @staticmethod
-    def prepare_qns(qn_names, type_to_filter):
+    def __prepare_qns(qn_names, type_to_filter):
         return [x for x in qn_names if isinstance(x, type_to_filter)]
 
-    def create_node_variables(self, node_id, qn_list):
+    def __create_node_variables(self, node_id, qn_list):
         """Create variables for the quantum numbers of the specified node."""
         variables = {}
         type_label = particle.Labels.Type.name
@@ -278,7 +492,7 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
                     variables[qn_name] = value
         return variables
 
-    def create_edge_variables(self, edge_ids, qn_list):
+    def __create_edge_variables(self, edge_ids, qn_list):
         """Create variables for the quantum numbers of the specified edges.
 
         Initial and final state edges just get a single domain value.
@@ -380,6 +594,7 @@ class CSPPropagator(AbstractPropagator):
     def find_solutions(self):
         self.initialize_constraints()
         solutions = self.problem.getSolutions()
+
         solution_graphs = self.apply_solutions_to_graph(solutions)
         for constraint in self.constraints:
             if (
@@ -412,7 +627,7 @@ class CSPPropagator(AbstractPropagator):
             for cons_law in new_cons_laws:
                 variable_mapping = {}
                 # from cons law and graph determine needed var lists
-                qn_names = cons_law.get_required_qn_names()
+                qn_names = _get_required_qn_names(cons_law)
 
                 # create needed variables for edges state qns
                 part_qn_dict = self.prepare_qns(
@@ -743,13 +958,19 @@ class ConservationLawConstraintWrapper(Constraint):
         missing = [name for (name, val) in params if val is _unassigned]
         if missing:
             return True
+
         self.update_variable_lists(params)
-        if not self.rule.check_requirements(
-            self.part_in, self.part_out, self.interaction_qns
+        if not _check_requirements(
+            self.rule, self.part_in, self.part_out, self.interaction_qns
         ):
             self.conditions_never_met = True
             return True
-        passed = self.rule(self.part_in, self.part_out, self.interaction_qns)
+
+        passed = self.rule(
+            *_create_rule_args(
+                self.rule, self.part_in, self.part_out, self.interaction_qns
+            )
+        )
 
         # before returning gather statistics about the rule
         if passed:
