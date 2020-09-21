@@ -138,17 +138,49 @@ class FullPropagator:
         logging.debug(
             "Number of solutions after propagator: %s", len(solutions)
         )
-        if not solutions:
-            self.node_non_satisfied_laws = (
+        if solutions:
+            if self.propagator.node_postponed_conservation_laws:
+                run_validation = True
+        else:
+            self.node_non_satisfied_laws = deepcopy(
                 self.propagator.node_non_satisfied_laws
             )
-            if not self.node_non_satisfied_laws:
+            # special case: no solutions were found but propagation mode is set
+            # to "full". Then just rerun with postponed rules
+            if (
+                self.propagator.node_postponed_conservation_laws
+                and self.propagation_mode == "full"
+            ):
+                # rerun the solution finding with postponed rules
+                last_postponed_rules = []
+                while set(
+                    self.propagator.node_postponed_conservation_laws
+                ) != set(last_postponed_rules):
+                    graph = self.propagator.graph
+                    allowed_intermediate_particles = (
+                        self.propagator.allowed_intermediate_particles
+                    )
+                    last_postponed_rules = (
+                        self.propagator.node_postponed_conservation_laws
+                    )
+                    interaction_settings = self.propagator.node_settings
+                    for node_id, cons_laws in last_postponed_rules.items():
+                        interaction_settings[
+                            node_id
+                        ].conservation_laws = cons_laws
+                    self.propagator = CSPPropagator(
+                        graph, allowed_intermediate_particles
+                    )
+                    for node_id, int_settings in interaction_settings.items():
+                        self.assign_settings_to_node(node_id, int_settings)
+                    self.propagator.find_solutions()
+                    for (
+                        key,
+                        value,
+                    ) in self.propagator.node_non_satisfied_laws.items():
+                        self.node_non_satisfied_laws[key].extend(value)
+            if self.propagator.node_postponed_conservation_laws:
                 run_validation = True
-            else:
-                logging.debug(
-                    "violated rules: %s", str(self.node_non_satisfied_laws)
-                )
-                logging.debug(self.propagator.graph)
 
         full_particle_graphs = initialize_graphs_with_particles(
             solutions, self.propagator.allowed_intermediate_particles
@@ -157,37 +189,36 @@ class FullPropagator:
             "Number of fully initialized graphs: %d", len(full_particle_graphs)
         )
 
-        if self.propagator.node_postponed_conservation_laws:
-            logging.debug("validating graphs")
-            if (
-                self.propagation_mode == "full"
-                and not full_particle_graphs
-                or run_validation
-            ):
-                graph = self.propagator.graph
+        if run_validation:
+            if not full_particle_graphs:
+                full_particle_graphs = [
+                    self.propagator.graph,
+                ]
+            temp_solution_graphs = full_particle_graphs
+            full_particle_graphs = []
+            additional_violated_laws = defaultdict(list)
+            validation_failed = True
+            for graph in temp_solution_graphs:
                 validator = ParticleStateTransitionGraphValidator(graph)
                 postponed_rules = (
                     self.propagator.node_postponed_conservation_laws
                 )
                 for node_id, cons_laws in postponed_rules.items():
                     validator.assign_settings_to_node(node_id, cons_laws)
-                full_particle_graphs.extend(validator.find_solutions())
-                for key, value in validator.node_non_satisfied_laws.items():
-                    self.node_non_satisfied_laws[key].extend(value)
-            else:
-                temp_solution_graphs = full_particle_graphs
-                full_particle_graphs = []
-                for graph in temp_solution_graphs:
-                    validator = ParticleStateTransitionGraphValidator(graph)
-                    postponed_rules = (
-                        self.propagator.node_postponed_conservation_laws
-                    )
-                    for node_id, cons_laws in postponed_rules.items():
-                        validator.assign_settings_to_node(node_id, cons_laws)
+                if not self.node_non_satisfied_laws:
                     full_particle_graphs.extend(validator.find_solutions())
-                    self.node_non_satisfied_laws.update(
-                        validator.node_non_satisfied_laws
-                    )
+                else:
+                    validator.find_solutions()
+                if (
+                    not validator.node_non_satisfied_laws
+                    and not self.node_non_satisfied_laws
+                ):
+                    validation_failed = False
+                for (key, value) in validator.node_non_satisfied_laws.items():
+                    additional_violated_laws[key].extend(value)
+            if validation_failed:
+                for (key, value) in additional_violated_laws.items():
+                    self.node_non_satisfied_laws[key].extend(value)
 
         logging.debug(
             "Number of solutions after full propagator: %d",

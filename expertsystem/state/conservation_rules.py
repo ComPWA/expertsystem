@@ -141,9 +141,11 @@ class ParityConservation(Rule):
         ang_mom: NodeQuantumNumbers.l_magnitude,
     ):
         r"""Implement :math:`P_{in} = P_{out} \cdot (-1)^L`."""
-        parity_in = reduce(lambda x, y: x * y.value, ingoing_edge_qns, 1,)
-        parity_out = reduce(lambda x, y: x * y.value, outgoing_edge_qns, 1)
-        return parity_in == (parity_out * (-1) ** ang_mom)
+        if len(ingoing_edge_qns) == 1 and len(outgoing_edge_qns) == 2:
+            parity_in = reduce(lambda x, y: x * y.value, ingoing_edge_qns, 1,)
+            parity_out = reduce(lambda x, y: x * y.value, outgoing_edge_qns, 1)
+            return parity_in == (parity_out * (-1) ** ang_mom)
+        return True
 
 
 @dataclass(frozen=True)

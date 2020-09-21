@@ -15,11 +15,11 @@ from expertsystem.ui import (
         ((["eta"], ["gamma", "gamma"]), []),
         ((["Sigma0"], ["Lambda", "pi0"]), ["MassConservation"]),
         ((["Sigma-"], ["n", "pi-"]), []),
-        # ((["e+", "e-"], ["mu+", "mu-"]), []),
-        # (
-        #     (["mu-"], ["e-", "nu(e)~"]),
-        #     ["MuonLNConservation", "SpinConservation"],
-        # ),
+        ((["e+", "e-"], ["mu+", "mu-"]), []),
+        (
+            (["mu-"], ["e-", "nu(e)~"]),
+            ["MuonLNConservation", "SpinConservation"],
+        ),
         # this is just an additional lepton number test
         (
             (["mu-"], ["e-", "nu(e)"]),
@@ -30,18 +30,18 @@ from expertsystem.ui import (
             ],
         ),
         ((["Delta(1232)+"], ["p", "pi0"]), []),
-        # ((["nu(e)~", "p"], ["n", "e+"]), []),
+        ((["nu(e)~", "p"], ["n", "e+"]), []),
         (
             (["e-", "p"], ["nu(e)", "pi0"]),
             ["BaryonNumberConservation", "SpinConservation"],
         ),
-        # ((["p", "p"], ["Sigma+", "n", "K~0", "pi+", "pi0"]), []),
+        ((["p", "p"], ["Sigma+", "n", "K~0", "pi+", "pi0"]), []),
         (
             (["p"], ["e+", "gamma"]),
             ["ElectronLNConservation", "BaryonNumberConservation"],
         ),
-        # ((["p", "p"], ["p", "p", "p", "p~"]), []),
-        # ((["n", "n~"], ["pi+", "pi-", "pi0"]), []),
+        ((["p", "p"], ["p", "p", "p", "p~"]), []),
+        ((["n", "n~"], ["pi+", "pi-", "pi0"]), []),
         ((["pi+", "n"], ["pi-", "p"]), ["ChargeConservation"]),
         ((["K-"], ["pi-", "pi0"]), []),
         ((["Sigma+", "n"], ["Sigma-", "p"]), ["ChargeConservation"]),
@@ -49,14 +49,14 @@ from expertsystem.ui import (
         ((["Xi-"], ["Lambda", "pi-"]), []),
         ((["Xi0"], ["p", "pi-"]), []),
         ((["pi-", "p"], ["Lambda", "K~0"]), []),
-        # ((["pi0"], ["gamma", "gamma"]), []),
-        # ((["pi0"], ["gamma", "gamma", "gamma"]), []),
-        # ((["Sigma-"], ["n", "e-", "nu(e)~"]), []),
-        # ((["rho(770)0"], ["pi0", "pi0"]), ["IdenticalParticleSymmetrization"]),
-        # ((["rho(770)0"], ["gamma", "gamma"]), []),
-        # ((["J/psi(1S)"], ["pi0", "eta"]), []),
-        # ((["J/psi(1S)"], ["rho(770)0", "rho(770)0"]), []),
-        # ((["K~0"], ["pi+", "pi-", "pi0"]), []),
+        ((["pi0"], ["gamma", "gamma"]), []),
+        ((["pi0"], ["gamma", "gamma", "gamma"]), []),
+        ((["Sigma-"], ["n", "e-", "nu(e)~"]), []),
+        ((["rho(770)0"], ["pi0", "pi0"]), ["IdenticalParticleSymmetrization"]),
+        ((["rho(770)0"], ["gamma", "gamma"]), []),
+        ((["J/psi(1S)"], ["pi0", "eta"]), []),
+        ((["J/psi(1S)"], ["rho(770)0", "rho(770)0"]), []),
+        ((["K~0"], ["pi+", "pi-", "pi0"]), []),
     ],
 )
 def test_general_reaction(test_input, expected):
@@ -67,8 +67,11 @@ def test_general_reaction(test_input, expected):
         initial_state=test_input[0],
         final_state=test_input[1],
         formalism_type="canonical",
-        topology_building="nbody",
+        topology_building="nbody"
+        if len(test_input[0]) > 1 or len(test_input[1]) > 2
+        else "isobar",
         propagation_mode="full",
+        number_of_threads=1,
     )
 
     graph_interaction_settings = stm.prepare_graphs()
@@ -106,7 +109,9 @@ def test_em_reactions(test_input, expected):
         initial_state=test_input[0],
         final_state=test_input[1],
         formalism_type="canonical",
-        topology_building="nbody",
+        topology_building="nbody"
+        if len(test_input[0]) > 1 or len(test_input[1]) > 2
+        else "isobar",
         propagation_mode="full",
     )
 
@@ -136,7 +141,9 @@ def test_strong_reactions(test_input, expected):
         initial_state=test_input[0],
         final_state=test_input[1],
         formalism_type="canonical",
-        topology_building="nbody",
+        topology_building="nbody"
+        if len(test_input[0]) > 1 or len(test_input[1]) > 2
+        else "isobar",
         propagation_mode="full",
     )
 
