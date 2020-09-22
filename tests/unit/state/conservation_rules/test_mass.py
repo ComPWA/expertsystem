@@ -1,5 +1,6 @@
 import pytest
 
+from expertsystem.data import EdgeQuantumNumbers
 from expertsystem.state.conservation_rules import (
     MassConservation,
     MassEdgeInput,
@@ -13,8 +14,16 @@ from expertsystem.state.conservation_rules import (
         # units are always in GeV
         (
             (
-                [MassEdgeInput(mass=energy[0], width=energy[1])],
-                [MassEdgeInput(0.139), MassEdgeInput(0.139)],
+                [
+                    MassEdgeInput(
+                        mass=EdgeQuantumNumbers.mass(energy[0]),
+                        width=EdgeQuantumNumbers.width(energy[1]),
+                    )
+                ],
+                [
+                    MassEdgeInput(EdgeQuantumNumbers.mass(0.139)),
+                    MassEdgeInput(EdgeQuantumNumbers.mass(0.139)),
+                ],
             ),
             expected,
         )

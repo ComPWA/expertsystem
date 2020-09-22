@@ -2,7 +2,11 @@ from itertools import product
 
 import pytest
 
-from expertsystem.data import Parity
+from expertsystem.data import (
+    EdgeQuantumNumbers,
+    NodeQuantumNumbers,
+    Parity,
+)
 from expertsystem.state.conservation_rules import (
     CParityConservation,
     CParityEdgeInput,
@@ -15,10 +19,24 @@ from expertsystem.state.conservation_rules import (
     [
         (
             (
-                [CParityEdgeInput(spin_mag=0.0, pid=1, c_parity=Parity(-1))],
                 [
-                    CParityEdgeInput(spin_mag=0.0, pid=1, c_parity=Parity(-1)),
-                    CParityEdgeInput(spin_mag=0.0, pid=1, c_parity=Parity(1)),
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0.0),
+                        pid=EdgeQuantumNumbers.pid(1),
+                        c_parity=EdgeQuantumNumbers.c_parity(Parity(-1)),
+                    )
+                ],
+                [
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0.0),
+                        pid=EdgeQuantumNumbers.pid(1),
+                        c_parity=EdgeQuantumNumbers.c_parity(Parity(-1)),
+                    ),
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0.0),
+                        pid=EdgeQuantumNumbers.pid(1),
+                        c_parity=EdgeQuantumNumbers.c_parity(Parity(1)),
+                    ),
                 ],
                 None,
             ),
@@ -26,10 +44,24 @@ from expertsystem.state.conservation_rules import (
         ),
         (
             (
-                [CParityEdgeInput(spin_mag=0.0, pid=1, c_parity=Parity(1))],
                 [
-                    CParityEdgeInput(spin_mag=0.0, pid=1, c_parity=Parity(-1)),
-                    CParityEdgeInput(spin_mag=0.0, pid=1, c_parity=Parity(1)),
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0.0),
+                        pid=EdgeQuantumNumbers.pid(1),
+                        c_parity=EdgeQuantumNumbers.c_parity(Parity(1)),
+                    )
+                ],
+                [
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0.0),
+                        pid=EdgeQuantumNumbers.pid(1),
+                        c_parity=EdgeQuantumNumbers.c_parity(Parity(-1)),
+                    ),
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0.0),
+                        pid=EdgeQuantumNumbers.pid(1),
+                        c_parity=EdgeQuantumNumbers.c_parity(Parity(1)),
+                    ),
                 ],
                 None,
             ),
@@ -50,14 +82,25 @@ def test_c_parity_all_defined(rule_input, expected):
             (
                 [
                     CParityEdgeInput(
-                        spin_mag=0, pid=123, c_parity=Parity(c_parity)
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0),
+                        pid=EdgeQuantumNumbers.pid(123),
+                        c_parity=EdgeQuantumNumbers.c_parity(Parity(c_parity)),
                     )
                 ],
                 [
-                    CParityEdgeInput(spin_mag=0, pid=100),
-                    CParityEdgeInput(spin_mag=0, pid=-100),
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0),
+                        pid=EdgeQuantumNumbers.pid(100),
+                    ),
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0),
+                        pid=EdgeQuantumNumbers.pid(-100),
+                    ),
                 ],
-                CParityNodeInput(l_mag=l_mag, s_mag=0),
+                CParityNodeInput(
+                    l_mag=NodeQuantumNumbers.l_magnitude(l_mag),
+                    s_mag=NodeQuantumNumbers.s_magnitude(0),
+                ),
             ),
             (-1) ** l_mag == c_parity,
         )
@@ -77,14 +120,25 @@ def test_c_parity_multiparticle_boson(rule_input, expected):
             (
                 [
                     CParityEdgeInput(
-                        spin_mag=0, pid=123, c_parity=Parity(c_parity)
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0),
+                        pid=EdgeQuantumNumbers.pid(123),
+                        c_parity=EdgeQuantumNumbers.c_parity(Parity(c_parity)),
                     )
                 ],
                 [
-                    CParityEdgeInput(spin_mag=0.5, pid=100),
-                    CParityEdgeInput(spin_mag=0.5, pid=-100),
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0.5),
+                        pid=EdgeQuantumNumbers.pid(100),
+                    ),
+                    CParityEdgeInput(
+                        spin_mag=EdgeQuantumNumbers.spin_magnitude(0.5),
+                        pid=EdgeQuantumNumbers.pid(-100),
+                    ),
                 ],
-                CParityNodeInput(l_mag=l_mag, s_mag=s_mag),
+                CParityNodeInput(
+                    l_mag=NodeQuantumNumbers.l_magnitude(l_mag),
+                    s_mag=NodeQuantumNumbers.s_magnitude(s_mag),
+                ),
             ),
             (s_mag + l_mag) % 2 == abs(c_parity - 1) / 2,
         )
