@@ -39,16 +39,9 @@ def test_immutability():
 
 def test_complex_energy_equality():
     with pytest.raises(AssertionError):
-        assert (
-            Particle(
-                "MyParticle",
-                pid=123,
-                mass=1.5,
-                width=0.1,
-                spin=1,
-            )
-            == Particle("MyParticle", pid=123, mass=1.5, width=0.2, spin=1)
-        )
+        assert Particle(
+            "MyParticle", pid=123, mass=1.5, width=0.1, spin=1
+        ) == Particle("MyParticle", pid=123, mass=1.5, width=0.2, spin=1)
 
     assert Particle(
         "MyParticle",
