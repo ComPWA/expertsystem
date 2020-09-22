@@ -182,10 +182,6 @@ class Particle:  # pylint: disable=too-many-instance-attributes
     c_parity: Optional[Parity] = None
     g_parity: Optional[Parity] = None
 
-    @property
-    def energy(self) -> complex:
-        return complex(self.mass, self.width)
-
     def __post_init__(self) -> None:
         if (
             self.isospin is not None
