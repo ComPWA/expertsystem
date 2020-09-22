@@ -1,10 +1,10 @@
 """Collection of quantum number conservation rules for particle reactions.
 
-This module forms the core of the `expertsystem`. It is the place where the
+This module is part of the core of the `expertsystem`. It is the place where the
 'expert' defines the rules that govern `.propagation` of quantum numbers are
 defined here. The module therefore is strongly typed (both for the reader of
 the code and for type checking with :doc:`mypy <mypy:index>`). An example is
-`.HelcityParityEdgeInput`, which has been defined to provide type checks on
+`.HelicityParityEdgeInput`, which has been defined to provide type checks on
 `.ParityConservationHelicity`.
 
 See more information under `Rule`.
@@ -162,7 +162,7 @@ class ParityConservation(Rule):
 
 
 @dataclass(frozen=True)
-class HelcityParityEdgeInput:
+class HelicityParityEdgeInput:
     parity: Optional[EdgeQuantumNumbers.parity]
     spin_mag: EdgeQuantumNumbers.spin_magnitude
     spin_proj: EdgeQuantumNumbers.spin_projection
@@ -171,8 +171,8 @@ class HelcityParityEdgeInput:
 class ParityConservationHelicity(Rule):
     def __call__(
         self,
-        ingoing_edge_qns: List[HelcityParityEdgeInput],
-        outgoing_edge_qns: List[HelcityParityEdgeInput],
+        ingoing_edge_qns: List[HelicityParityEdgeInput],
+        outgoing_edge_qns: List[HelicityParityEdgeInput],
         parity_prefactor: NodeQuantumNumbers.parity_prefactor,
     ) -> bool:
         r"""Implements parity conservation for helicity formalism.
