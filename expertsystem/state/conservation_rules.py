@@ -1,7 +1,13 @@
 """Collection of quantum number conservation rules for particle reactions.
 
-Contains:
-- Functors for quantum number condition checks.
+This module forms the core of the `expertsystem`. It is the place where the
+'expert' defines the rules that govern `.propagation` of quantum numbers are
+defined here. The module therefore is strongly typed (both for the reader of
+the code and for type checking with :doc:`mypy <mypy:index>`). An example is
+`.HelcityParityEdgeInput`, which has been defined to provide type checks on
+`.ParityConservationHelicity`.
+
+See more information under `Rule`.
 """
 
 # pylint: disable=abstract-method

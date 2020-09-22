@@ -103,7 +103,14 @@ class Spin(abc.Hashable):
 
 @dataclass(frozen=True, init=False)
 class EdgeQuantumNumbers:  # pylint: disable=too-many-instance-attributes
-    """Definition of quantum numbers for edges."""
+    """Definition of quantum numbers for edges.
+
+    This class defines the types that are used in the `.conservation_rules`,
+    for instance in `.additive_quantum_number_rule`. You can also create
+    `dataclasses` with data members that are typed as the data members of
+    `EdgeQuantumNumbers` (see for example `.HelcityParityEdgeInput`) and use
+    them in conservation rules that derive from `.Rule`.
+    """
 
     pid = NewType("pid", int)
     mass = NewType("mass", float)
