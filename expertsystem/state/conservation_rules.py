@@ -97,7 +97,7 @@ def additive_quantum_number_rule(
         setattr(rule_class, "__call__", new_call)
         rule_class.__doc__ = (
             f"""Decorated via `{additive_quantum_number_rule.__name__}`.\n\n"""
-            f"""Check for `.{quantum_number.__name__}` conservation."""
+            f"""Check for `~.EdgeQuantumNumbers.{quantum_number.__name__}` conservation."""
         )
         return rule_class
 
