@@ -420,17 +420,16 @@ def _is_clebsch_gordan_coefficient_zero(
     j_2 = spin2.magnitude
     proj = spin_coupled.projection
     mag = spin_coupled.magnitude
-    is_zero = False
     if (j_1 == j_2 and m_1 == m_2) or (m_1 == 0.0 and m_2 == 0.0):
         if abs(mag - j_1 - j_2) % 2 == 1:
-            is_zero = True
-    elif j_1 == mag and m_1 == -proj:
+            return True
+    if j_1 == mag and m_1 == -proj:
         if abs(j_2 - j_1 - mag) % 2 == 1:
-            is_zero = True
-    elif j_2 == mag and m_2 == -proj:
+            return True
+    if j_2 == mag and m_2 == -proj:
         if abs(j_1 - j_2 - mag) % 2 == 1:
-            is_zero = True
-    return is_zero
+            return True
+    return False
 
 
 @dataclass(frozen=True)
