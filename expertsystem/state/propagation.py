@@ -244,10 +244,6 @@ def _is_optional(class_field):
 
 _qn_mapping = {
     EdgeQuantumNumbers.pid.__name__: ParticlePropertyNames.Pid,
-    EdgeQuantumNumbers.energy.__name__: (
-        ParticlePropertyNames.Mass,
-        ParticleDecayPropertyNames.Width,
-    ),
     EdgeQuantumNumbers.mass.__name__: ParticlePropertyNames.Mass,
     EdgeQuantumNumbers.width.__name__: ParticleDecayPropertyNames.Width,
     EdgeQuantumNumbers.spin_magnitude.__name__: StateQuantumNumberNames.Spin,

@@ -106,7 +106,6 @@ class EdgeQuantumNumbers:  # pylint: disable=too-many-instance-attributes
     """Definition of quantum numbers for edges."""
 
     pid = NewType("pid", int)
-    energy = NewType("energy", complex)
     mass = NewType("mass", float)
     width = NewType("width", float)
     spin_magnitude = NewType("spin_magnitude", float)

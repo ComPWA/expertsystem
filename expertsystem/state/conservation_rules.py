@@ -24,7 +24,9 @@ from numpy import arange
 
 from expertsystem.data import EdgeQuantumNumbers, NodeQuantumNumbers, Spin
 
-from .particle import is_boson
+
+def is_boson(spin_magnitude: float) -> bool:
+    return abs(spin_magnitude % 1) < 0.01
 
 
 def is_particle_antiparticle_pair(pid1: int, pid2: int) -> bool:
@@ -454,7 +456,7 @@ def _check_spin_couplings(
 ) -> bool:
     in_tot_spins = __calculate_total_spins(in_part, interaction_qns)
     out_tot_spins = __calculate_total_spins(out_part, interaction_qns)
-    matching_spins = in_tot_spins.intersection(out_tot_spins)
+    matching_spins = in_tot_spins & out_tot_spins
     if len(matching_spins) > 0:
         return True
     return False
