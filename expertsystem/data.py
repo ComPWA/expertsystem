@@ -108,7 +108,7 @@ class EdgeQuantumNumbers:  # pylint: disable=too-many-instance-attributes
     This class defines the types that are used in the `.conservation_rules`,
     for instance in `.additive_quantum_number_rule`. You can also create
     `dataclasses` with data members that are typed as the data members of
-    `EdgeQuantumNumbers` (see for example `.HelcityParityEdgeInput`) and use
+    `EdgeQuantumNumbers` (see for example `.HelicityParityEdgeInput`) and use
     them in conservation rules that derive from `.Rule`.
     """
 
