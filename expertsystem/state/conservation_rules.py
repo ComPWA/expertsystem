@@ -14,7 +14,6 @@ from typing import (
     Callable,
     List,
     Optional,
-    Sequence,
     Set,
     Tuple,
     Type,
@@ -434,13 +433,6 @@ def _is_clebsch_gordan_coefficient_zero(
     return is_zero
 
 
-def _check_projections(
-    in_spin_projections: Sequence[float],
-    out_spin_projections: Sequence[float],
-) -> bool:
-    return sum(in_spin_projections) == sum(out_spin_projections)
-
-
 @dataclass(frozen=True)
 class SpinNodeInput:
     l_magnitude: NodeQuantumNumbers.l_magnitude
@@ -481,7 +473,7 @@ def _check_magnitude(
         if len(magnitudes) == 1:
             return set(magnitudes)
 
-        coupled_magnitudes = set([magnitudes[0],])
+        coupled_magnitudes = set([magnitudes[0]])
         for mag in magnitudes[1:]:
             temp_set = coupled_magnitudes
             coupled_magnitudes = set()
@@ -591,9 +583,8 @@ class IsoSpinConservation(Rule):
         outgoing_isospins: List[IsoSpinEdgeInput],
         _=None,
     ) -> bool:
-        if not _check_projections(
-            [x.isospin_proj for x in ingoing_isospins],
-            [x.isospin_proj for x in outgoing_isospins],
+        if not sum([x.isospin_proj for x in ingoing_isospins]) == sum(
+            [x.isospin_proj for x in outgoing_isospins]
         ):
             return False
         return _check_spin_couplings(
