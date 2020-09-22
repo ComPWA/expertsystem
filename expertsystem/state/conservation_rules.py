@@ -11,11 +11,13 @@ from dataclasses import dataclass
 from functools import reduce
 from typing import (
     Any,
+    Callable,
     List,
     Optional,
     Sequence,
     Set,
     Tuple,
+    Type,
 )
 
 from numpy import arange
@@ -25,7 +27,7 @@ from expertsystem.data import EdgeQuantumNumbers, NodeQuantumNumbers, Spin
 from .particle import is_boson
 
 
-def is_particle_antiparticle_pair(pid1, pid2):
+def is_particle_antiparticle_pair(pid1: int, pid2: int) -> bool:
     # we just check if the pid is opposite in sign
     # this is a requirement of the pid numbers of course
     return pid1 == -pid2
@@ -65,7 +67,9 @@ class Rule:
         raise NotImplementedError
 
 
-def additive_quantum_number_rule(quantum_number: Any):
+def additive_quantum_number_rule(
+    quantum_number: type,
+) -> Callable[[Type[Rule]], Type[Rule]]:
     r"""Class decorator for creating an additive conservation `Rule`.
 
     Use this decorator to create a conservation `Rule` for a quantum number
@@ -78,16 +82,16 @@ def additive_quantum_number_rule(quantum_number: Any):
             want to apply the additive conservation check.
     """
 
-    def decorator(rule_class):
-        def new_call(
-            self,
-            ingoing_edge_qns: List[quantum_number],
-            outgoing_edge_qns: List[quantum_number],
+    def decorator(rule_class: Type[Rule]) -> Type[Rule]:
+        def new_call(  # type: ignore
+            self,  # pylint: disable=unused-argument
+            ingoing_edge_qns: List[quantum_number],  # type: ignore
+            outgoing_edge_qns: List[quantum_number],  # type: ignore
             _=None,
-        ):  # pylint: disable=unused-argument
+        ) -> bool:
             return sum(ingoing_edge_qns) == sum(outgoing_edge_qns)
 
-        rule_class.__call__ = new_call
+        setattr(rule_class, "__call__", new_call)
         rule_class.__doc__ = (
             f"""Decorated via `{additive_quantum_number_rule.__name__}`.\n\n"""
             f"""Check for `.{quantum_number.__name__}` conservation."""
@@ -138,7 +142,7 @@ class ParityConservation(Rule):
         ingoing_edge_qns: List[EdgeQuantumNumbers.parity],
         outgoing_edge_qns: List[EdgeQuantumNumbers.parity],
         l_mag: NodeQuantumNumbers.l_magnitude,
-    ):
+    ) -> bool:
         r"""Implement :math:`P_{in} = P_{out} \cdot (-1)^L`."""
         if len(ingoing_edge_qns) == 1 and len(outgoing_edge_qns) == 2:
             parity_in = reduce(lambda x, y: x * y.value, ingoing_edge_qns, 1,)
@@ -160,7 +164,7 @@ class ParityConservationHelicity(Rule):
         ingoing_edge_qns: List[HelcityParityEdgeInput],
         outgoing_edge_qns: List[HelcityParityEdgeInput],
         parity_prefactor: NodeQuantumNumbers.parity_prefactor,
-    ):
+    ) -> bool:
         r"""Implements parity conservation for helicity formalism.
 
         Check the following:
@@ -219,7 +223,7 @@ class CParityConservation(Rule):
 
         def _get_c_parity_multiparticle(
             part_qns: List[CParityEdgeInput], interaction_qns: CParityNodeInput
-        ):
+        ) -> Optional[int]:
             c_parities_part = [
                 x.c_parity.value for x in part_qns if x.c_parity
             ]
@@ -235,9 +239,13 @@ class CParityConservation(Rule):
                     ang_mom = interaction_qns.l_mag
                     # if boson
                     if is_boson(part_qns[0].spin_mag):
-                        return (-1) ** ang_mom
+                        return (-1) ** int(ang_mom)
                     coupled_spin = interaction_qns.s_mag
-                    return (-1) ** (ang_mom + coupled_spin)
+                    if (
+                        isinstance(coupled_spin, int)
+                        or coupled_spin.is_integer()
+                    ):
+                        return (-1) ** int(ang_mom + coupled_spin)
             return None
 
         c_parity_in = _get_c_parity_multiparticle(
@@ -275,7 +283,7 @@ class GParityConservation(Rule):
         ingoing_edge_qns: List[GParityEdgeInput],
         outgoing_edge_qns: List[GParityEdgeInput],
         interaction_qns: GParityNodeInput,
-    ):
+    ) -> bool:
         """Check for :math:`G`-parity conservation.
 
         Implements for :math:`G_{in} = G_{out}`.
@@ -304,22 +312,27 @@ class GParityConservation(Rule):
         def check_multistate_g_parity(
             isospin: EdgeQuantumNumbers.isospin_magnitude,
             double_state_qns: Tuple[GParityEdgeInput, GParityEdgeInput],
-        ):
+        ) -> Optional[int]:
             if is_particle_antiparticle_pair(
                 double_state_qns[0].pid, double_state_qns[1].pid
             ):
                 ang_mom = interaction_qns.l_mag
-                # if boson
-                if is_boson(double_state_qns[0].spin_mag):
-                    return (-1) ** (ang_mom + isospin)
-                coupled_spin = interaction_qns.s_mag
-                return (-1) ** (ang_mom + coupled_spin + isospin)
+                if isinstance(isospin, int) or isospin.is_integer():
+                    # if boson
+                    if is_boson(double_state_qns[0].spin_mag):
+                        return (-1) ** int(ang_mom + isospin)
+                    coupled_spin = interaction_qns.s_mag
+                    if (
+                        isinstance(coupled_spin, int)
+                        or coupled_spin.is_integer()
+                    ):
+                        return (-1) ** int(ang_mom + coupled_spin + isospin)
             return None
 
         def check_g_parity_isobar(
             single_state: GParityEdgeInput,
             couple_state: Tuple[GParityEdgeInput, GParityEdgeInput],
-        ):
+        ) -> bool:
             couple_state_g_parity = check_multistate_g_parity(
                 single_state.isospin, (couple_state[0], couple_state[1]),
             )
@@ -357,17 +370,17 @@ class IdenticalParticleSymmetryEdgeInput:
 
 
 class IdenticalParticleSymmetrization(Rule):
-    def __call__(
+    def __call__(  # type: ignore
         self,
         ingoing_edge_qns: List[IdenticalParticleSymmetryEdgeInput],
         outgoing_edge_qns: List[IdenticalParticleSymmetryEdgeInput],
-        _,
-    ):
+        _=None,
+    ) -> bool:
         """Implementation of particle symmetrization."""
 
         def _check_particles_identical(
             particles: List[IdenticalParticleSymmetryEdgeInput],
-        ):
+        ) -> bool:
             """Check if pids and spins match."""
             reference_pid = particles[0].pid
             reference_spin_proj = particles[0].spin_projection
@@ -379,7 +392,6 @@ class IdenticalParticleSymmetrization(Rule):
             return True
 
         if _check_particles_identical(outgoing_edge_qns):
-
             if is_boson(outgoing_edge_qns[0].spin_magnitude):
                 # we have a boson, check if parity of mother is even
                 parity = ingoing_edge_qns[0].parity
@@ -397,7 +409,7 @@ class IdenticalParticleSymmetrization(Rule):
 
 def _is_clebsch_gordan_coefficient_zero(
     spin1: Spin, spin2: Spin, spin_coupled: Spin
-):
+) -> bool:
     m_1 = spin1.projection
     j_1 = spin1.magnitude
     m_2 = spin2.projection
@@ -420,7 +432,7 @@ def _is_clebsch_gordan_coefficient_zero(
 def _check_projections(
     in_spin_projections: Sequence[float],
     out_spin_projections: Sequence[float],
-):
+) -> bool:
     return sum(in_spin_projections) == sum(out_spin_projections)
 
 
@@ -433,8 +445,10 @@ class SpinNodeInput:
 
 
 def _check_spin_couplings(
-    in_part: List[Spin], out_part: List[Spin], interaction_qns
-):
+    in_part: List[Spin],
+    out_part: List[Spin],
+    interaction_qns: Optional[SpinNodeInput],
+) -> bool:
     in_tot_spins = __calculate_total_spins(in_part, interaction_qns)
     out_tot_spins = __calculate_total_spins(out_part, interaction_qns)
     matching_spins = in_tot_spins.intersection(out_tot_spins)
@@ -447,7 +461,7 @@ def _check_magnitude(
     in_part: List[float],
     out_part: List[float],
     interaction_qns: Optional[SpinNodeInput],
-):
+) -> bool:
     def couple_mags(j_1: float, j_2: float) -> List[float]:
         return [
             x / 2.0
@@ -458,7 +472,7 @@ def _check_magnitude(
 
     def couple_magnitudes(
         magnitudes: List[float], interaction_qns: Optional[SpinNodeInput]
-    ):
+    ) -> Set[float]:
         if len(magnitudes) == 1:
             return set(magnitudes)
 
@@ -491,7 +505,7 @@ def _check_magnitude(
 
 def __calculate_total_spins(
     spins: List[Spin], interaction_qns: Optional[SpinNodeInput] = None,
-):
+) -> Set[Spin]:
     total_spins = set()
     if len(spins) == 1:
         return set(spins)
@@ -511,7 +525,7 @@ def __calculate_total_spins(
     return total_spins
 
 
-def __create_coupled_spins(spins: List[Spin]):
+def __create_coupled_spins(spins: List[Spin]) -> Set[Spin]:
     """Creates all combinations of coupled spins."""
     spins_daughters_coupled: Set[Spin] = set()
     spin_list = deepcopy(spins)
@@ -529,7 +543,7 @@ def __create_coupled_spins(spins: List[Spin]):
     return spins_daughters_coupled
 
 
-def __spin_couplings(spin1, spin2):
+def __spin_couplings(spin1: Spin, spin2: Spin) -> Set[Spin]:
     r"""Implement the coupling of two spins.
 
     :math:`|S_1 - S_2| \leq S \leq |S_1 + S_2|` and :math:`M_1 + M_2 = M`
@@ -538,14 +552,14 @@ def __spin_couplings(spin1, spin2):
     s_2 = spin2.magnitude
 
     sum_proj = spin1.projection + spin2.projection
-    return [
+    return set(
         Spin(x, sum_proj)
-        for x in arange(abs(s_1 - s_2), s_1 + s_2 + 1, 1).tolist()
+        for x in arange(abs(s_1 - s_2), s_1 + s_2 + 1, 1.0).tolist()  # type: ignore
         if x >= abs(sum_proj)
         and not _is_clebsch_gordan_coefficient_zero(
             spin1, spin2, Spin(x, sum_proj)
         )
-    ]
+    )
 
 
 @dataclass
@@ -566,12 +580,12 @@ class IsoSpinConservation(Rule):
     coefficients are all 0.
     """
 
-    def __call__(
+    def __call__(  # type: ignore
         self,
         ingoing_isospins: List[IsoSpinEdgeInput],
         outgoing_isospins: List[IsoSpinEdgeInput],
         _=None,
-    ):
+    ) -> bool:
         if not _check_projections(
             [x.isospin_proj for x in ingoing_isospins],
             [x.isospin_proj for x in outgoing_isospins],
@@ -607,7 +621,7 @@ class SpinConservation(Rule):
     are all 0.
     """
 
-    def __init__(self, use_projection=True):
+    def __init__(self, use_projection: bool = True):
         self.__use_projection = use_projection
         super().__init__()
 
@@ -616,7 +630,7 @@ class SpinConservation(Rule):
         ingoing_spins: List[SpinEdgeInput],
         outgoing_spins: List[SpinEdgeInput],
         interaction_qns: SpinNodeInput,
-    ):
+    ) -> bool:
         # L and S can only be used if one side is a single state
         # and the other side contains of two states (isobar)
         # So do a full check if this is the case
@@ -658,7 +672,7 @@ class ClebschGordanCheckHelicityToCanonical(Rule):
         ingoing_spins: List[SpinEdgeInput],
         outgoing_spins: List[SpinEdgeInput],
         interaction_qns: SpinNodeInput,
-    ):
+    ) -> bool:
         """Implement Clebsch-Gordan checks.
 
         For :math:`S_1, S_2` to :math:`S` and the :math:`L,S` to :math:`J` coupling
@@ -698,12 +712,12 @@ class ClebschGordanCheckHelicityToCanonical(Rule):
 
 
 class HelicityConservation(Rule):
-    def __call__(
+    def __call__(  # type: ignore
         self,
         ingoing_spin_mags: List[EdgeQuantumNumbers.spin_magnitude],
         outgoing_helicities: List[EdgeQuantumNumbers.spin_projection],
-        _,
-    ):
+        _=None,
+    ) -> bool:
         r"""Implementation of helicity conservation.
 
         Check for :math:`|\lambda_2-\lambda_3| \leq S_1`.
@@ -733,18 +747,20 @@ class GellMannNishijimaEdgeInput:
 
 
 class GellMannNishijimaRule(Rule):
-    def __call__(
+    def __call__(  # type: ignore
         self,
         ingoing_edge_qns: List[GellMannNishijimaEdgeInput],
         outgoing_edge_qns: List[GellMannNishijimaEdgeInput],
-        _,
-    ):
+        _=None,
+    ) -> bool:
         r"""Check the Gell-Mann–Nishijima formula.
 
         :math:`Q=I_3+\frac{Y}{2}` for each particle.
         """
 
-        def calculate_hypercharge(particle: GellMannNishijimaEdgeInput):
+        def calculate_hypercharge(
+            particle: GellMannNishijimaEdgeInput,
+        ) -> float:
             """Calculate the hypercharge :math:`Y=S+C+B+T+B`."""
             return sum(
                 [
@@ -782,16 +798,16 @@ class MassEdgeInput:
 class MassConservation(Rule):
     """Mass conservation rule."""
 
-    def __init__(self, width_factor):
+    def __init__(self, width_factor: float):
         self.__width_factor = width_factor
         super().__init__()
 
-    def __call__(
+    def __call__(  # type: ignore
         self,
         ingoing_edge_qns: List[MassEdgeInput],
         outgoing_edge_qns: List[MassEdgeInput],
         _=None,
-    ):
+    ) -> bool:
         r"""Implements mass conservation.
 
         :math:`M_{out} - N \cdot W_{out} < M_{in} + N \cdot W_{in}`

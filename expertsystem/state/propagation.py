@@ -323,9 +323,11 @@ def _check_requirements(rule, in_edge_props, out_edge_props, node_props):
             f"missing type annotations for __call__ of rule {rule.__name__}"
         )
     arg_counter = 1
+    rule_annotations = _remove_return_annotation(
+        list(rule.__class__.__call__.__annotations__.values())
+    )
     for arg_type, props in zip(
-        rule.__class__.__call__.__annotations__.values(),
-        (in_edge_props, out_edge_props, node_props),
+        rule_annotations, (in_edge_props, out_edge_props, node_props),
     ):
         if arg_counter == 3:
             if not _check_arg_requirements(arg_type, props):
@@ -378,9 +380,8 @@ def _create_rule_args(rule, in_edge_props, out_edge_props, node_props) -> list:
     args = []
     arg_counter = 0
     rule_annotations = list(rule.__class__.__call__.__annotations__.values())
-    if len(rule_annotations) == 4:
-        # strip return annotation
-        rule_annotations = rule_annotations[:-1]
+    rule_annotations = _remove_return_annotation(rule_annotations)
+
     ordered_props = (in_edge_props, out_edge_props, node_props)
     for arg_type in rule_annotations:
         if arg_counter == 2:
@@ -401,6 +402,11 @@ def _create_rule_args(rule, in_edge_props, out_edge_props, node_props) -> list:
     return args
 
 
+def _remove_return_annotation(rule_annotations):
+    # this assumes that all rules have also the return type defined
+    return rule_annotations[:-1]
+
+
 def _get_required_qn_names(rule):
     if not hasattr(rule.__class__.__call__, "__annotations__"):
         raise TypeError(
@@ -410,9 +416,8 @@ def _get_required_qn_names(rule):
     qn_set = set()
 
     rule_annotations = list(rule.__class__.__call__.__annotations__.values())
-    if len(rule_annotations) == 4:
-        # strip return annotation
-        rule_annotations = rule_annotations[:-1]
+    rule_annotations = _remove_return_annotation(rule_annotations)
+
     for input_type in rule_annotations:
         class_type = input_type
         if "__origin__" in input_type.__dict__ and (
