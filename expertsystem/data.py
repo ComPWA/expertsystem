@@ -1,15 +1,5 @@
 """A collection of data containers."""
 
-__all__ = [  # fix order in API
-    "ParticleCollection",
-    "Particle",
-    "Parity",
-    "Spin",
-    "create_antiparticle",
-    "create_particle",
-    "GellmannNishijima",
-]
-
 
 import logging
 from collections import abc
@@ -153,10 +143,14 @@ class NodeQuantumNumbers:
 class Particle:  # pylint: disable=too-many-instance-attributes
     """Immutable container of data defining a physical particle.
 
-    A Particle is defined by the minimum set of the quantum numbers that every
-    possible instances of that particle have in common (the "static" quantum
-    numbers of the particle). A "non-static" quantum number is the spin
+    A `Particle` is defined by the minimum set of the quantum numbers that
+    every possible instances of that particle have in common (the "static"
+    quantum numbers of the particle). A "non-static" quantum number is the spin
     projection. Hence Particles do NOT contain spin projection information.
+
+    As opposed to classes such as `EdgeQuantumNumbers` and `NodeQuantumNumbers`
+    the `Particle` class serves as an interface to the user (see
+    :doc:`/usage/particles`).
     """
 
     name: str

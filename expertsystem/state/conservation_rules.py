@@ -34,23 +34,25 @@ def is_particle_antiparticle_pair(pid1: int, pid2: int) -> bool:
 
 
 class Rule:
-    """Interface for rules.
+    """Interface for conservation rules.
 
-    A `Rule` performs checks on an `.InteractionNode` and its attached `.Edge` s.
-    The `__call__` method contains actual rule logic and has to be overwritten.
+    A `Rule` performs checks on an `.InteractionNode` and its attached `.Edge`
+    instances. The `__call__` method contains actual rule logic and has to be
+    overwritten.
 
-    For additive quantum numbers the decorator `additive_quantum_number_rule`
+    For additive quantum numbers, the decorator `additive_quantum_number_rule`
     can simplify the constrution of the appropriate `Rule`.
 
     Besides the rule logic itself, a `Rule` also has the responsibility of
     stating its run conditions. These run conditions **MUST** be stated by the
     type annotations of the `.__call__` function.
+
     Generally, the conditions can be separated into two categories:
 
     * variable conditions
     * toplogical conditions
 
-    Note: currently only variable conditions are being used. Topological
+    Note: currently, only variable conditions are being used. Topological
     conditions could be created in the form of `~typing.Tuple` instead of
     `~typing.List`.
     """
@@ -78,8 +80,9 @@ def additive_quantum_number_rule(
     .. math:: \sum q_{in} = \sum q_{out}
 
     Args:
-        quantum_number: Quantum number to which you
-            want to apply the additive conservation check.
+        quantum_number: Quantum number to which you want to apply the additive
+            conservation check. An example would be
+            `.EdgeQuantumNumbers.charge`.
     """
 
     def decorator(rule_class: Type[Rule]) -> Type[Rule]:
