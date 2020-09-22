@@ -138,7 +138,7 @@ Table of Contents
 
   install
   usage
-  widgets
+  interactive
   contribute
 
 

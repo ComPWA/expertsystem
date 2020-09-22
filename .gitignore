@@ -41,3 +41,8 @@ prof/
 # Settings
 .idea/
 **.code-workspace
+
+# Hide 'trick' files from file navigation
+/doc/tox.ini
+/expertsystem/solvers/constraint/tox.ini
+/tests/tox.ini
