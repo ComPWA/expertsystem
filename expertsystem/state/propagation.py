@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+
 """Functions to propagate quantum numbers through a `.StateTransitionGraph`.
 
 This module is responsible for propagating the quantum numbers of the initial
@@ -133,6 +135,7 @@ class FullPropagator:
         return self.node_non_satisfied_laws
 
     def find_solutions(self):
+        # pylint: disable=too-many-branches, too-many-locals
         run_validation = False
         solutions = self.propagator.find_solutions()
         logging.debug(
@@ -247,11 +250,9 @@ _qn_mapping = {
     ),
     EdgeQuantumNumbers.mass.__name__: ParticlePropertyNames.Mass,
     EdgeQuantumNumbers.width.__name__: ParticleDecayPropertyNames.Width,
-    EdgeQuantumNumbers.spin.__name__: StateQuantumNumberNames.Spin,
     EdgeQuantumNumbers.spin_magnitude.__name__: StateQuantumNumberNames.Spin,
     EdgeQuantumNumbers.spin_projection.__name__: StateQuantumNumberNames.Spin,
     EdgeQuantumNumbers.charge.__name__: StateQuantumNumberNames.Charge,
-    EdgeQuantumNumbers.isospin.__name__: StateQuantumNumberNames.IsoSpin,
     EdgeQuantumNumbers.isospin_magnitude.__name__: StateQuantumNumberNames.IsoSpin,
     EdgeQuantumNumbers.isospin_projection.__name__: StateQuantumNumberNames.IsoSpin,
     EdgeQuantumNumbers.strangeness.__name__: StateQuantumNumberNames.Strangeness,
@@ -265,10 +266,8 @@ _qn_mapping = {
     EdgeQuantumNumbers.parity.__name__: StateQuantumNumberNames.Parity,
     EdgeQuantumNumbers.c_parity.__name__: StateQuantumNumberNames.CParity,
     EdgeQuantumNumbers.g_parity.__name__: StateQuantumNumberNames.GParity,
-    NodeQuantumNumbers.l_.__name__: InteractionQuantumNumberNames.L,
     NodeQuantumNumbers.l_magnitude.__name__: InteractionQuantumNumberNames.L,
     NodeQuantumNumbers.l_projection.__name__: InteractionQuantumNumberNames.L,
-    NodeQuantumNumbers.s_.__name__: InteractionQuantumNumberNames.S,
     NodeQuantumNumbers.s_magnitude.__name__: InteractionQuantumNumberNames.S,
     NodeQuantumNumbers.s_projection.__name__: InteractionQuantumNumberNames.S,
     NodeQuantumNumbers.parity_prefactor.__name__: InteractionQuantumNumberNames.ParityPrefactor,
@@ -319,7 +318,6 @@ def _check_arg_requirements(class_type, props):
 
 
 def _check_requirements(rule, in_edge_props, out_edge_props, node_props):
-    # TODO: move type annotations check somewhere more statically (rule constructor)
     if not hasattr(rule.__class__.__call__, "__annotations__"):
         raise TypeError(
             f"missing type annotations for __call__ of rule {rule.__name__}"
@@ -346,6 +344,7 @@ def _check_requirements(rule, in_edge_props, out_edge_props, node_props):
 
 
 def _create_rule_edge_arg(input_type, edge_props):
+    # pylint: disable=unidiomatic-typecheck
     if not isinstance(edge_props, (list, tuple)):
         raise TypeError("edge_props are incompatible...")
     if not (type(input_type) is list or type(input_type) is tuple):
@@ -359,6 +358,7 @@ def _create_rule_edge_arg(input_type, edge_props):
 
 
 def _create_rule_node_arg(input_type, node_props):
+    # pylint: disable=unidiomatic-typecheck
     if isinstance(node_props, (list, tuple)):
         raise TypeError("node_props is incompatible...")
     if type(input_type) is list or type(input_type) is tuple:

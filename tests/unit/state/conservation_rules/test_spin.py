@@ -1,21 +1,61 @@
+from typing import List, Tuple
+
 import pytest
 
-from expertsystem.data import Spin
+from expertsystem.data import EdgeQuantumNumbers, NodeQuantumNumbers, Spin
 from expertsystem.state.conservation_rules import (
     IsoSpinConservation,
+    IsoSpinEdgeInput,
     SpinConservation,
+    SpinEdgeInput,
     SpinNodeInput,
 )
+
+
+_SpinRuleInputType = Tuple[
+    List[SpinEdgeInput], List[SpinEdgeInput], SpinNodeInput
+]
+
+
+def __create_two_body_decay_spin_data(
+    in_spin: Spin = Spin(0, 0),
+    out_spin1: Spin = Spin(0, 0),
+    out_spin2: Spin = Spin(0, 0),
+    angular_momentum: Spin = Spin(0, 0),
+    coupled_spin: Spin = Spin(0, 0),
+) -> _SpinRuleInputType:
+    return (
+        [
+            SpinEdgeInput(
+                EdgeQuantumNumbers.spin_magnitude(in_spin.magnitude),
+                EdgeQuantumNumbers.spin_projection(in_spin.projection),
+            )
+        ],
+        [
+            SpinEdgeInput(
+                EdgeQuantumNumbers.spin_magnitude(out_spin1.magnitude),
+                EdgeQuantumNumbers.spin_projection(out_spin1.projection),
+            ),
+            SpinEdgeInput(
+                EdgeQuantumNumbers.spin_magnitude(out_spin2.magnitude),
+                EdgeQuantumNumbers.spin_projection(out_spin2.projection),
+            ),
+        ],
+        SpinNodeInput(
+            NodeQuantumNumbers.l_magnitude(angular_momentum.magnitude),
+            NodeQuantumNumbers.l_projection(angular_momentum.projection),
+            NodeQuantumNumbers.s_magnitude(coupled_spin.magnitude),
+            NodeQuantumNumbers.s_projection(coupled_spin.projection),
+        ),
+    )
 
 
 @pytest.mark.parametrize(
     "rule_input, expected",
     [
         (
-            (
-                [Spin(0, 0)],
-                [Spin(0, 0), Spin(0, 0)],
-                SpinNodeInput(l_=Spin(ang_mom_mag, 0.0), s_=Spin(0, 0)),
+            __create_two_body_decay_spin_data(
+                angular_momentum=Spin(ang_mom_mag, 0)
             ),
             expected,
         )
@@ -28,10 +68,8 @@ from expertsystem.state.conservation_rules import (
     ]
     + [
         (
-            (
-                [Spin(spin_mag, 0)],
-                [Spin(0, 0), Spin(0, 0)],
-                SpinNodeInput(l_=Spin(spin_mag, 0), s_=Spin(0, 0)),
+            __create_two_body_decay_spin_data(
+                in_spin=Spin(spin_mag, 0), angular_momentum=Spin(spin_mag, 0)
             ),
             expected,
         )
@@ -39,10 +77,12 @@ from expertsystem.state.conservation_rules import (
     ]
     + [
         (
-            (
-                [Spin(spin_mag, 0)],
-                [Spin(1, -1), Spin(1, 1)],
-                SpinNodeInput(l_=Spin(1, 0), s_=Spin(spin_mag, 0)),
+            __create_two_body_decay_spin_data(
+                in_spin=Spin(spin_mag, 0),
+                out_spin1=Spin(1, -1),
+                out_spin2=Spin(1, 1),
+                angular_momentum=Spin(1, 0),
+                coupled_spin=Spin(spin_mag, 0),
             ),
             expected,
         )
@@ -55,24 +95,28 @@ from expertsystem.state.conservation_rules import (
     ]
     + [
         (
-            (
-                [Spin(1, -1)],
-                [Spin(0, 0), Spin(1, -1)],
-                SpinNodeInput(l_=Spin(0, 0), s_=Spin(1, -1)),
+            __create_two_body_decay_spin_data(
+                in_spin=Spin(1, -1),
+                out_spin2=Spin(1, -1),
+                coupled_spin=Spin(1, -1),
             ),
             True,
         ),
         (
-            (
-                [Spin(1, 0)],
-                [Spin(1, 1), Spin(1, -1)],
-                SpinNodeInput(l_=Spin(1, 0), s_=Spin(2, 0)),
+            __create_two_body_decay_spin_data(
+                in_spin=Spin(1, 0),
+                out_spin1=Spin(1, 1),
+                out_spin2=Spin(1, -1),
+                angular_momentum=Spin(1, 0),
+                coupled_spin=Spin(2, 0),
             ),
             True,
         ),
     ],
 )
-def test_spin_all_defined(rule_input, expected):
+def test_spin_all_defined(
+    rule_input: _SpinRuleInputType, expected: bool
+) -> None:
     spin_rule = SpinConservation(use_projection=True)
 
     assert spin_rule(*rule_input) is expected
@@ -82,12 +126,12 @@ def test_spin_all_defined(rule_input, expected):
     "rule_input, expected",
     [
         (
-            (
-                [Spin(1, 1)],
-                [Spin(spin2_mag, 0), Spin(1, -1),],
-                SpinNodeInput(
-                    l_=Spin(ang_mom_mag, 0), s_=Spin(coupled_spin_mag, -1)
-                ),
+            __create_two_body_decay_spin_data(
+                in_spin=Spin(1, 1),
+                out_spin1=Spin(spin2_mag, 0),
+                out_spin2=Spin(1, -1),
+                angular_momentum=Spin(ang_mom_mag, 0),
+                coupled_spin=Spin(coupled_spin_mag, -1),
             ),
             True,
         )
@@ -97,12 +141,12 @@ def test_spin_all_defined(rule_input, expected):
     ]
     + [
         (
-            (
-                [Spin(1, 1)],
-                [Spin(spin2_mag, 0), Spin(1, -1),],
-                SpinNodeInput(
-                    l_=Spin(ang_mom_mag, 0), s_=Spin(coupled_spin_mag, 0)
-                ),
+            __create_two_body_decay_spin_data(
+                in_spin=Spin(1, 1),
+                out_spin1=Spin(spin2_mag, 0),
+                out_spin2=Spin(1, -1),
+                angular_momentum=Spin(ang_mom_mag, 0),
+                coupled_spin=Spin(coupled_spin_mag, 0),
             ),
             False,
         )
@@ -111,7 +155,9 @@ def test_spin_all_defined(rule_input, expected):
         )
     ],
 )
-def test_spin_ignore_z_component(rule_input, expected):
+def test_spin_ignore_z_component(
+    rule_input: _SpinRuleInputType, expected: bool
+) -> None:
     spin_rule = SpinConservation(False)
 
     assert spin_rule(*rule_input) is expected
@@ -131,14 +177,20 @@ def test_spin_ignore_z_component(rule_input, expected):
     ],
 )
 def test_isospin_clebsch_gordan_zeros(
-    coupled_isospin_mag, isospin_mag1, isospin_mag2, expected
-):
+    coupled_isospin_mag: int,
+    isospin_mag1: int,
+    isospin_mag2: int,
+    expected: bool,
+) -> None:
     isospin_rule = IsoSpinConservation()
 
     assert (
         isospin_rule(
-            [Spin(coupled_isospin_mag, 0)],
-            [Spin(isospin_mag1, 0), Spin(isospin_mag2, 0)],
+            [IsoSpinEdgeInput(coupled_isospin_mag, 0)],  # type: ignore
+            [
+                IsoSpinEdgeInput(isospin_mag1, 0),  # type: ignore
+                IsoSpinEdgeInput(isospin_mag2, 0),  # type: ignore
+            ],
         )
         is expected
     )

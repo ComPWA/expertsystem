@@ -16,7 +16,6 @@ from typing import (
     Sequence,
     Set,
     Tuple,
-    Union,
 )
 
 from numpy import arange
@@ -138,13 +137,13 @@ class ParityConservation(Rule):
         self,
         ingoing_edge_qns: List[EdgeQuantumNumbers.parity],
         outgoing_edge_qns: List[EdgeQuantumNumbers.parity],
-        ang_mom: NodeQuantumNumbers.l_magnitude,
+        l_mag: NodeQuantumNumbers.l_magnitude,
     ):
         r"""Implement :math:`P_{in} = P_{out} \cdot (-1)^L`."""
         if len(ingoing_edge_qns) == 1 and len(outgoing_edge_qns) == 2:
             parity_in = reduce(lambda x, y: x * y.value, ingoing_edge_qns, 1,)
             parity_out = reduce(lambda x, y: x * y.value, outgoing_edge_qns, 1)
-            return parity_in == (parity_out * (-1) ** ang_mom)
+            return parity_in == (parity_out * (-1) ** l_mag)
         return True
 
 
@@ -175,7 +174,7 @@ class ParityConservationHelicity(Rule):
         if len(ingoing_edge_qns) == 1 and len(outgoing_edge_qns) == 2:
             out_spins = [x.spin_mag for x in outgoing_edge_qns]
             parity_product = reduce(
-                lambda x, y: x * y.parity.value,
+                lambda x, y: x * y.parity.value if y.parity else x,
                 ingoing_edge_qns + outgoing_edge_qns,
                 1,
             )
@@ -221,10 +220,12 @@ class CParityConservation(Rule):
         def _get_c_parity_multiparticle(
             part_qns: List[CParityEdgeInput], interaction_qns: CParityNodeInput
         ):
-            no_c_parity_part = [x for x in part_qns if x.c_parity is None]
+            c_parities_part = [
+                x.c_parity.value for x in part_qns if x.c_parity
+            ]
             # if all states have C parity defined, then just multiply them
-            if not no_c_parity_part:
-                return reduce(lambda x, y: x * y.c_parity.value, part_qns, 1)
+            if len(c_parities_part) == len(part_qns):
+                return reduce(lambda x, y: x * y, c_parities_part, 1)
 
             # two particle case
             if len(part_qns) == 2:
@@ -301,7 +302,7 @@ class GParityConservation(Rule):
 
         # two particle case
         def check_multistate_g_parity(
-            isospin: int,
+            isospin: EdgeQuantumNumbers.isospin_magnitude,
             double_state_qns: Tuple[GParityEdgeInput, GParityEdgeInput],
         ):
             if is_particle_antiparticle_pair(
@@ -350,7 +351,8 @@ class GParityConservation(Rule):
 @dataclass(frozen=True)
 class IdenticalParticleSymmetryEdgeInput:
     parity: EdgeQuantumNumbers.parity
-    spin: EdgeQuantumNumbers.spin
+    spin_magnitude: EdgeQuantumNumbers.spin_magnitude
+    spin_projection: EdgeQuantumNumbers.spin_projection
     pid: EdgeQuantumNumbers.pid
 
 
@@ -368,17 +370,17 @@ class IdenticalParticleSymmetrization(Rule):
         ):
             """Check if pids and spins match."""
             reference_pid = particles[0].pid
-            reference_spin_proj = particles[0].spin.projection
+            reference_spin_proj = particles[0].spin_projection
             for particle in particles[1:]:
                 if particle.pid != reference_pid:
                     return False
-                if particle.spin.projection != reference_spin_proj:
+                if particle.spin_projection != reference_spin_proj:
                     return False
             return True
 
         if _check_particles_identical(outgoing_edge_qns):
 
-            if is_boson(outgoing_edge_qns[0].spin.magnitude):
+            if is_boson(outgoing_edge_qns[0].spin_magnitude):
                 # we have a boson, check if parity of mother is even
                 parity = ingoing_edge_qns[0].parity
                 if parity == -1:
@@ -415,24 +417,24 @@ def _is_clebsch_gordan_coefficient_zero(
     return is_zero
 
 
-_SpinType = Union[Spin, EdgeQuantumNumbers.spin, EdgeQuantumNumbers.isospin]
-
-
 def _check_projections(
-    in_spins: Sequence[_SpinType], out_spins: Sequence[_SpinType]
+    in_spin_projections: Sequence[float],
+    out_spin_projections: Sequence[float],
 ):
-    return sum([x.projection for x in in_spins]) == sum(
-        [x.projection for x in out_spins]
-    )
+    return sum(in_spin_projections) == sum(out_spin_projections)
 
 
 @dataclass(frozen=True)
 class SpinNodeInput:
-    l_: NodeQuantumNumbers.l_
-    s_: NodeQuantumNumbers.s_
+    l_magnitude: NodeQuantumNumbers.l_magnitude
+    l_projection: NodeQuantumNumbers.l_projection
+    s_magnitude: NodeQuantumNumbers.s_magnitude
+    s_projection: NodeQuantumNumbers.s_projection
 
 
-def _check_spin_couplings(in_part, out_part, interaction_qns):
+def _check_spin_couplings(
+    in_part: List[Spin], out_part: List[Spin], interaction_qns
+):
     in_tot_spins = __calculate_total_spins(in_part, interaction_qns)
     out_tot_spins = __calculate_total_spins(out_part, interaction_qns)
     matching_spins = in_tot_spins.intersection(out_tot_spins)
@@ -468,11 +470,11 @@ def _check_magnitude(
                 coupled_magnitudes.update(couple_mags(mag, ref_mag))
 
         if interaction_qns:
-            if interaction_qns.s_.magnitude in coupled_magnitudes:
+            if interaction_qns.s_magnitude in coupled_magnitudes:
                 return set(
                     couple_mags(
-                        interaction_qns.s_.magnitude,
-                        interaction_qns.l_.magnitude,
+                        interaction_qns.s_magnitude,
+                        interaction_qns.l_magnitude,
                     )
                 )
             return set()  # in case there the spin coupling fails
@@ -495,8 +497,16 @@ def __calculate_total_spins(
         return set(spins)
     total_spins = __create_coupled_spins(spins)
     if interaction_qns:
-        if interaction_qns.s_ in total_spins:
-            return __spin_couplings(interaction_qns.s_, interaction_qns.l_)
+        coupled_spin = Spin(
+            interaction_qns.s_magnitude, interaction_qns.s_projection
+        )
+        if coupled_spin in total_spins:
+            return __spin_couplings(
+                coupled_spin,
+                Spin(
+                    interaction_qns.l_magnitude, interaction_qns.l_projection
+                ),
+            )
 
     return total_spins
 
@@ -524,21 +534,24 @@ def __spin_couplings(spin1, spin2):
 
     :math:`|S_1 - S_2| \leq S \leq |S_1 + S_2|` and :math:`M_1 + M_2 = M`
     """
-    j_1 = spin1.magnitude
-    j_2 = spin2.magnitude
+    s_1 = spin1.magnitude
+    s_2 = spin2.magnitude
 
     sum_proj = spin1.projection + spin2.projection
-    possible_spins = [
+    return [
         Spin(x, sum_proj)
-        for x in arange(abs(j_1 - j_2), j_1 + j_2 + 1, 1).tolist()
+        for x in arange(abs(s_1 - s_2), s_1 + s_2 + 1, 1).tolist()
         if x >= abs(sum_proj)
+        and not _is_clebsch_gordan_coefficient_zero(
+            spin1, spin2, Spin(x, sum_proj)
+        )
     ]
 
-    return [
-        x
-        for x in possible_spins
-        if not _is_clebsch_gordan_coefficient_zero(spin1, spin2, x)
-    ]
+
+@dataclass
+class IsoSpinEdgeInput:
+    isospin_mag: EdgeQuantumNumbers.isospin_magnitude
+    isospin_proj: EdgeQuantumNumbers.isospin_projection
 
 
 class IsoSpinConservation(Rule):
@@ -555,13 +568,26 @@ class IsoSpinConservation(Rule):
 
     def __call__(
         self,
-        ingoing_isospins: List[EdgeQuantumNumbers.isospin],
-        outgoing_isospins: List[EdgeQuantumNumbers.isospin],
+        ingoing_isospins: List[IsoSpinEdgeInput],
+        outgoing_isospins: List[IsoSpinEdgeInput],
         _=None,
     ):
-        if not _check_projections(ingoing_isospins, outgoing_isospins):
+        if not _check_projections(
+            [x.isospin_proj for x in ingoing_isospins],
+            [x.isospin_proj for x in outgoing_isospins],
+        ):
             return False
-        return _check_spin_couplings(ingoing_isospins, outgoing_isospins, None)
+        return _check_spin_couplings(
+            [Spin(x.isospin_mag, x.isospin_proj) for x in ingoing_isospins],
+            [Spin(x.isospin_mag, x.isospin_proj) for x in outgoing_isospins],
+            None,
+        )
+
+
+@dataclass
+class SpinEdgeInput:
+    spin_magnitude: EdgeQuantumNumbers.spin_magnitude
+    spin_projection: EdgeQuantumNumbers.spin_projection
 
 
 class SpinConservation(Rule):
@@ -587,8 +613,8 @@ class SpinConservation(Rule):
 
     def __call__(
         self,
-        ingoing_spins: List[EdgeQuantumNumbers.spin],
-        outgoing_spins: List[EdgeQuantumNumbers.spin],
+        ingoing_spins: List[SpinEdgeInput],
+        outgoing_spins: List[SpinEdgeInput],
         interaction_qns: SpinNodeInput,
     ):
         # L and S can only be used if one side is a single state
@@ -599,28 +625,38 @@ class SpinConservation(Rule):
         ):
             if self.__use_projection:
                 return _check_spin_couplings(
-                    ingoing_spins, outgoing_spins, interaction_qns
+                    [
+                        Spin(x.spin_magnitude, x.spin_projection)
+                        for x in ingoing_spins
+                    ],
+                    [
+                        Spin(x.spin_magnitude, x.spin_projection)
+                        for x in outgoing_spins
+                    ],
+                    interaction_qns,
                 )
 
             return _check_magnitude(
-                [x.magnitude for x in ingoing_spins],
-                [x.magnitude for x in outgoing_spins],
+                [x.spin_magnitude for x in ingoing_spins],
+                [x.spin_magnitude for x in outgoing_spins],
                 interaction_qns,
             )
 
         # otherwise don't use S and L and just check magnitude
         # are integral or non integral on both sides
         return (
-            sum([x.magnitude for x in ingoing_spins]).is_integer()
-            == sum([x.magnitude for x in outgoing_spins]).is_integer()
+            sum([float(x.spin_magnitude) for x in ingoing_spins]).is_integer()
+            == sum(
+                [float(x.spin_magnitude) for x in outgoing_spins]
+            ).is_integer()
         )
 
 
 class ClebschGordanCheckHelicityToCanonical(Rule):
     def __call__(
         self,
-        ingoing_spins: List[EdgeQuantumNumbers.spin],
-        outgoing_spins: List[EdgeQuantumNumbers.spin],
+        ingoing_spins: List[SpinEdgeInput],
+        outgoing_spins: List[SpinEdgeInput],
         interaction_qns: SpinNodeInput,
     ):
         """Implement Clebsch-Gordan checks.
@@ -629,22 +665,32 @@ class ClebschGordanCheckHelicityToCanonical(Rule):
         based on the conversion of helicity to canonical amplitude sums.
         """
         if len(ingoing_spins) == 1 and len(outgoing_spins) == 2:
-            out_spin1 = outgoing_spins[0]
-            out_spin2 = -outgoing_spins[1]
+            out_spin1 = Spin(
+                outgoing_spins[0].spin_magnitude,
+                outgoing_spins[0].spin_projection,
+            )
+            out_spin2 = Spin(
+                outgoing_spins[1].spin_magnitude,
+                -outgoing_spins[1].spin_projection,
+            )
 
             helicity_diff = out_spin1.projection + out_spin2.projection
-            ang_mom = interaction_qns.l_
-            coupled_spin: Spin = interaction_qns.s_
+            ang_mom = Spin(
+                interaction_qns.l_magnitude, interaction_qns.l_projection
+            )
+            coupled_spin = Spin(
+                interaction_qns.s_magnitude, interaction_qns.s_projection
+            )
             if coupled_spin.magnitude < abs(helicity_diff) or ingoing_spins[
                 0
-            ].magnitude < abs(helicity_diff):
+            ].spin_magnitude < abs(helicity_diff):
                 return False
             coupled_spin = Spin(coupled_spin.magnitude, helicity_diff)
             if _is_clebsch_gordan_coefficient_zero(
                 out_spin1, out_spin2, coupled_spin
             ):
                 return False
-            in_spin = Spin(ingoing_spins[0].magnitude, helicity_diff)
+            in_spin = Spin(ingoing_spins[0].spin_magnitude, helicity_diff)
             return not _is_clebsch_gordan_coefficient_zero(
                 ang_mom, coupled_spin, in_spin
             )
@@ -654,24 +700,26 @@ class ClebschGordanCheckHelicityToCanonical(Rule):
 class HelicityConservation(Rule):
     def __call__(
         self,
-        ingoing_spins: List[EdgeQuantumNumbers.spin],
-        outgoing_spins: List[EdgeQuantumNumbers.spin],
+        ingoing_spin_mags: List[EdgeQuantumNumbers.spin_magnitude],
+        outgoing_helicities: List[EdgeQuantumNumbers.spin_projection],
         _,
     ):
         r"""Implementation of helicity conservation.
 
         Check for :math:`|\lambda_2-\lambda_3| \leq S_1`.
         """
-        if len(ingoing_spins) == 1 and len(outgoing_spins) == 2:
-            mother_spin = ingoing_spins[0].magnitude
-            daughter_hel = [x.projection for x in outgoing_spins]
-            if mother_spin >= abs(daughter_hel[0] - daughter_hel[1]):
+        if len(ingoing_spin_mags) == 1 and len(outgoing_helicities) == 2:
+            mother_spin = ingoing_spin_mags[0]
+            if mother_spin >= abs(
+                outgoing_helicities[0] - outgoing_helicities[1]
+            ):
                 return True
         return False
 
 
 @dataclass(frozen=True)
 class GellMannNishijimaEdgeInput:
+    # pylint: disable=too-many-instance-attributes
     charge: EdgeQuantumNumbers.charge
     isospin_proj: Optional[EdgeQuantumNumbers.isospin_projection] = None
     strangeness: Optional[EdgeQuantumNumbers.strangeness] = None

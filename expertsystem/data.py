@@ -120,11 +120,9 @@ class EdgeQuantumNumbers:  # pylint: disable=too-many-instance-attributes
     energy = NewType("energy", complex)
     mass = NewType("mass", float)
     width = NewType("width", float)
-    spin = NewType("spin", Spin)
     spin_magnitude = NewType("spin_magnitude", float)
     spin_projection = NewType("spin_projection", float)
     charge = NewType("charge", int)
-    isospin = NewType("isospin", Spin)
     isospin_magnitude = NewType("isospin_magnitude", float)
     isospin_projection = NewType("isospin_projection", float)
     strangeness = NewType("strangeness", int)
@@ -144,10 +142,8 @@ class EdgeQuantumNumbers:  # pylint: disable=too-many-instance-attributes
 class NodeQuantumNumbers:
     """Definition of quantum numbers for interaction nodes."""
 
-    l_ = NewType("l_", Spin)
     l_magnitude = NewType("l_magnitude", float)
     l_projection = NewType("l_projection", float)
-    s_ = NewType("s_", Spin)
     s_magnitude = NewType("s_magnitude", float)
     s_projection = NewType("s_projection", float)
     parity_prefactor = NewType("parity_prefactor", float)
