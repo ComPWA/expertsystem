@@ -14,6 +14,10 @@ from expertsystem.state.conservation_rules import (
 )
 
 
+# Currently need to cast to the proper Edge/NodeQuantumNumber type, see
+# https://github.com/ComPWA/expertsystem/issues/255
+
+
 @pytest.mark.parametrize(
     "rule_input, expected",
     [
