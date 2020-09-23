@@ -163,6 +163,9 @@ extension (for this you need to run :code:`pytest` with the flag
   Similarly, bundle for `.ParticleCollection` under a
   :code:`TestParticleCollection` class.
 
+  If possible, also try to follow alphabetical order (that is, the order of the
+  :code:`import` statements).
+
 
 Documentation
 -------------

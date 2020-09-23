@@ -15,6 +15,60 @@ from expertsystem.data import (
 )
 
 
+class TestGellmannNishijima:
+    @staticmethod
+    @pytest.mark.parametrize(
+        "state",
+        [
+            Particle(
+                "p1",
+                1,
+                spin=0.0,
+                mass=1,
+                charge=1,
+                isospin=Spin(1.0, 0.0),
+                strangeness=2,
+            ),
+            Particle(
+                "p1",
+                1,
+                spin=1.0,
+                mass=1,
+                charge=1,
+                isospin=Spin(1.5, 0.5),
+                charmness=1,
+            ),
+            Particle(
+                "p1",
+                1,
+                spin=0.5,
+                mass=1,
+                charge=1.5,  # type: ignore
+                isospin=Spin(1.0, 1.0),
+                baryon_number=1,
+            ),
+        ],
+    )
+    def test_computations(state):
+        assert GellmannNishijima.compute_charge(state) == state.charge
+        assert (
+            GellmannNishijima.compute_isospin_projection(
+                charge=state.charge,
+                baryon_number=state.baryon_number,
+                strangeness=state.strangeness,
+                charmness=state.charmness,
+                bottomness=state.bottomness,
+                topness=state.topness,
+            )
+            == state.isospin.projection
+        )
+
+    @staticmethod
+    def test_isospin_none():
+        state = Particle("p1", 1, mass=1, spin=0.0, charge=1, isospin=None)
+        assert GellmannNishijima.compute_charge(state) is None
+
+
 class TestParity:
     @staticmethod
     def test_init_and_eq():
@@ -39,38 +93,6 @@ class TestParity:
     def test_exceptions():
         with pytest.raises(ValueError):
             Parity(1.2)
-
-
-class TestSpin:
-    @staticmethod
-    def test_init_and_eq():
-        isospin = Spin(1.5, -0.5)
-        assert isospin == 1.5
-        assert float(isospin) == 1.5
-        assert isospin.magnitude == 1.5
-        assert isospin.projection == -0.5
-
-    @staticmethod
-    def test_neg():
-        isospin = Spin(1.5, -0.5)
-        flipped_spin = -isospin
-        assert flipped_spin.magnitude == isospin.magnitude
-        assert flipped_spin.projection == -isospin.projection
-
-    @pytest.mark.parametrize("spin", [Spin(2.5, -0.5), Spin(1, 0)])
-    @staticmethod
-    def test_repr(spin):
-        from_repr = eval(repr(spin))  # pylint: disable=eval-used
-        assert from_repr == spin
-
-    @pytest.mark.parametrize(
-        "magnitude, projection",
-        [(0.3, 0.3), (1.0, 0.5), (0.5, 0.0), (-0.5, 0.5)],
-    )
-    @staticmethod
-    def test_exceptions(magnitude, projection):
-        with pytest.raises(ValueError):
-            print(Spin(magnitude, projection))
 
 
 class TestParticle:
@@ -161,60 +183,6 @@ class TestParticle:
         assert particle == same_particle
 
 
-class TestGellmannNishijima:
-    @staticmethod
-    @pytest.mark.parametrize(
-        "state",
-        [
-            Particle(
-                "p1",
-                1,
-                spin=0.0,
-                mass=1,
-                charge=1,
-                isospin=Spin(1.0, 0.0),
-                strangeness=2,
-            ),
-            Particle(
-                "p1",
-                1,
-                spin=1.0,
-                mass=1,
-                charge=1,
-                isospin=Spin(1.5, 0.5),
-                charmness=1,
-            ),
-            Particle(
-                "p1",
-                1,
-                spin=0.5,
-                mass=1,
-                charge=1.5,  # type: ignore
-                isospin=Spin(1.0, 1.0),
-                baryon_number=1,
-            ),
-        ],
-    )
-    def test_computations(state):
-        assert GellmannNishijima.compute_charge(state) == state.charge
-        assert (
-            GellmannNishijima.compute_isospin_projection(
-                charge=state.charge,
-                baryon_number=state.baryon_number,
-                strangeness=state.strangeness,
-                charmness=state.charmness,
-                bottomness=state.bottomness,
-                topness=state.topness,
-            )
-            == state.isospin.projection
-        )
-
-    @staticmethod
-    def test_isospin_none():
-        state = Particle("p1", 1, mass=1, spin=0.0, charge=1, isospin=None)
-        assert GellmannNishijima.compute_charge(state) is None
-
-
 class TestParticleCollection:
     @staticmethod
     def test_find(particle_database: ParticleCollection):
@@ -275,27 +243,36 @@ class TestParticleCollection:
             assert gamma_1 == "gamma"
 
 
-@pytest.mark.parametrize(
-    "particle_name",
-    ["p", "phi(1020)", "W-", "gamma"],
-)
-def test_create_particle(particle_database, particle_name):
-    template_particle = particle_database[particle_name]
-    new_particle = create_particle(
-        template_particle,
-        name="testparticle",
-        pid=89,
-        mass=1.5,
-        width=0.5,
+class TestSpin:
+    @staticmethod
+    def test_init_and_eq():
+        isospin = Spin(1.5, -0.5)
+        assert isospin == 1.5
+        assert float(isospin) == 1.5
+        assert isospin.magnitude == 1.5
+        assert isospin.projection == -0.5
+
+    @staticmethod
+    def test_neg():
+        isospin = Spin(1.5, -0.5)
+        flipped_spin = -isospin
+        assert flipped_spin.magnitude == isospin.magnitude
+        assert flipped_spin.projection == -isospin.projection
+
+    @pytest.mark.parametrize("spin", [Spin(2.5, -0.5), Spin(1, 0)])
+    @staticmethod
+    def test_repr(spin):
+        from_repr = eval(repr(spin))  # pylint: disable=eval-used
+        assert from_repr == spin
+
+    @pytest.mark.parametrize(
+        "magnitude, projection",
+        [(0.3, 0.3), (1.0, 0.5), (0.5, 0.0), (-0.5, 0.5)],
     )
-    assert new_particle.name == "testparticle"
-    assert new_particle.pid == 89
-    assert new_particle.charge == template_particle.charge
-    assert new_particle.spin == template_particle.spin
-    assert new_particle.mass == 1.5
-    assert new_particle.width == 0.5
-    assert new_particle.baryon_number == template_particle.baryon_number
-    assert new_particle.strangeness == template_particle.strangeness
+    @staticmethod
+    def test_exceptions(magnitude, projection):
+        with pytest.raises(ValueError):
+            print(Spin(magnitude, projection))
 
 
 @pytest.mark.parametrize(
@@ -328,3 +305,26 @@ def test_create_antiparticle_tilde(particle_database: ParticleCollection):
         created_particle = create_antiparticle(anti_particle, particle_name)
 
         assert created_particle == particle_database[particle_name]
+
+
+@pytest.mark.parametrize(
+    "particle_name",
+    ["p", "phi(1020)", "W-", "gamma"],
+)
+def test_create_particle(particle_database, particle_name):
+    template_particle = particle_database[particle_name]
+    new_particle = create_particle(
+        template_particle,
+        name="testparticle",
+        pid=89,
+        mass=1.5,
+        width=0.5,
+    )
+    assert new_particle.name == "testparticle"
+    assert new_particle.pid == 89
+    assert new_particle.charge == template_particle.charge
+    assert new_particle.spin == template_particle.spin
+    assert new_particle.mass == 1.5
+    assert new_particle.width == 0.5
+    assert new_particle.baryon_number == template_particle.baryon_number
+    assert new_particle.strangeness == template_particle.strangeness
