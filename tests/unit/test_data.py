@@ -50,7 +50,6 @@ class TestParticle:
         assert jpsi.mass == 3.0969
         assert jpsi.width == 9.29e-05
         assert jpsi.bottomness == 0
-        assert not jpsi.is_lepton()
 
     @pytest.mark.parametrize(
         "name, is_lepton",
