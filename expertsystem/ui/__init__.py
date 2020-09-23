@@ -54,6 +54,7 @@ from ._system_control import (
     NodeSettings,
     SolutionMapping,
     ViolatedLaws,
+    _InteractionDeterminationFunctorInterface,
     analyse_solution_failure,
     create_interaction_setting_groups,
     filter_interaction_types,
@@ -99,7 +100,9 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         self.final_state = final_state
         self.interaction_type_settings = interaction_type_settings
 
-        self.interaction_determinators = [LeptonCheck(), GammaCheck()]
+        self.interaction_determinators: List[
+            _InteractionDeterminationFunctorInterface
+        ] = [LeptonCheck(), GammaCheck()]
         self.final_state_groupings: Optional[List[List[List[str]]]] = None
         self.allowed_interaction_types: List[InteractionTypes] = [
             InteractionTypes.Strong,
