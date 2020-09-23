@@ -96,6 +96,7 @@
         "codecov",
         "codemirror",
         "commitlint",
+        "doctest",
         "flatte",
         "gellmann",
         "genindex",

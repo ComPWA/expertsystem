@@ -4,6 +4,7 @@ import logging
 from collections import abc
 from dataclasses import dataclass, fields
 from typing import (
+    Callable,
     Dict,
     ItemsView,
     Iterable,
@@ -352,29 +353,28 @@ class ParticleCollection(abc.Mapping):
             f"Cannot search for a search term of type {type(search_term)}"
         )
 
-    def find_subset(
-        self, search_term: Union[int, str]
+    def filter(  # noqa: A003
+        self, function: Callable[[Particle], bool]
     ) -> "ParticleCollection":
-        """Perform a 'fuzzy' search for a particle by name or PID.
+        """Search by `Particle` properties using a :code:`lambda` function.
 
-        Like `~.ParticleCollection.find`, but returns several results in the
-        form of a new `.ParticleCollection`.
+        For example:
+
+        .. doctest::
+
+            >>> from expertsystem import io
+            >>> pdg = io.load_pdg()
+            >>> results = pdg.filter(
+            ...     lambda p: p.mass > 1.8
+            ...     and p.mass < 2.0
+            ...     and p.spin == 2
+            ...     and p.strangeness == 1
+            ... )
+            >>> set(results)
+            {'K(2)(1820)0', 'K(2)(1820)+'}
         """
-        if isinstance(search_term, str):
-            search_results = {
-                particle
-                for particle in self.values()
-                if search_term in particle.name
-            }
-            return ParticleCollection(search_results)
-        if isinstance(search_term, int):
-            pid = search_term
-            output = ParticleCollection()
-            particle = self.find(pid)
-            output.add(particle)
-            return output
-        raise NotImplementedError(
-            f"Cannot search for a search term of type {type(search_term)}"
+        return ParticleCollection(
+            {particle for particle in self.values() if function(particle)}
         )
 
     def items(self) -> ItemsView[str, Particle]:
