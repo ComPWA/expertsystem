@@ -15,11 +15,11 @@ from typing import (
 )
 
 from expertsystem.data import Spin
-from expertsystem.state import particle
 from expertsystem.state.conservation_rules import Rule
 from expertsystem.state.particle import (
     CompareGraphElementPropertiesFunctor,
     InteractionQuantumNumberNames,
+    Labels,
     ParticlePropertyNames,
     StateQuantumNumberNames,
     get_interaction_property,
@@ -106,7 +106,7 @@ class _InteractionDeterminationFunctorInterface(ABC):
 class GammaCheck(_InteractionDeterminationFunctorInterface):
     """Conservation check for photons."""
 
-    name_label = particle.Labels.Name.name
+    name_label = Labels.Name.name
 
     def check(
         self,
@@ -130,8 +130,8 @@ class LeptonCheck(_InteractionDeterminationFunctorInterface):
         StateQuantumNumberNames.MuonLN,
         StateQuantumNumberNames.TauLN,
     ]
-    name_label = particle.Labels.Name.name
-    qns_label = particle.Labels.QuantumNumber.name
+    name_label = Labels.Name.name
+    qns_label = Labels.QuantumNumber.name
 
     def check(
         self,
@@ -218,8 +218,8 @@ def _remove_qns_from_graph(  # pylint: disable=too-many-branches
         ]
     ],
 ) -> StateTransitionGraph:
-    qns_label = particle.Labels.QuantumNumber.name
-    type_label = particle.Labels.Type.name
+    qns_label = Labels.QuantumNumber.name
+    type_label = Labels.Type.name
 
     int_qns = [
         x for x in qn_list if isinstance(x, InteractionQuantumNumberNames)
@@ -375,7 +375,7 @@ def require_interaction_property(
 def _find_node_ids_with_ingoing_particle_name(
     graph: StateTransitionGraph, ingoing_particle_name: str
 ) -> List[int]:
-    name_label = particle.Labels.Name.name
+    name_label = Labels.Name.name
     found_node_ids = []
     for node_id in graph.nodes:
         edge_ids = graph.get_edges_ingoing_to_node(node_id)
