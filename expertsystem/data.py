@@ -262,10 +262,6 @@ class GellmannNishijima:
         """
         if state.isospin is None:
             return None
-        if state.isospin.projection is None:
-            raise ValueError(
-                "Isospin projection must be defined if a magnitude is defined!"
-            )
         computed_charge = state.isospin.projection + 0.5 * (
             state.baryon_number
             + state.strangeness
