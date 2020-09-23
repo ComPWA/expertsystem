@@ -1,4 +1,4 @@
-# pylint: disable=redefined-outer-name
+# pylint: disable=redefined-outer-name, no-self-use
 import pytest
 
 from expertsystem.data import (
@@ -12,93 +12,110 @@ from expertsystem.data import (
 )
 
 
-J_PSI = Particle(
-    name="J/psi(1S)",
-    pid=443,
-    mass=3.0969,
-    width=9.29e-05,
-    spin=1,
-    charge=0,
-    parity=Parity(-1),
-    c_parity=Parity(-1),
-    g_parity=Parity(-1),
-    isospin=Spin(0.0, 0.0),
-)
+class TestParticle:
+    @pytest.mark.parametrize(
+        "instance",
+        [Spin(2.5, -0.5), Parity(1)],
+    )
+    @staticmethod
+    def test_repr(instance):
+        from_repr = eval(repr(instance))  # pylint: disable=eval-used
+        assert from_repr == instance
+
+    @staticmethod
+    def test_repr_particle_collection(particle_database):
+        from_repr = eval(repr(particle_database))  # pylint: disable=eval-used
+        assert from_repr == particle_database
+
+    @staticmethod
+    def test_repr_particle(particle_database):
+        for particle in particle_database:
+            from_repr = eval(repr(particle))  # pylint: disable=eval-used
+            assert from_repr == particle
+
+    @staticmethod
+    def test_members():
+        jpsi = Particle(
+            name="J/psi(1S)",
+            pid=443,
+            mass=3.0969,
+            width=9.29e-05,
+            spin=1,
+            charge=0,
+            parity=Parity(-1),
+            c_parity=Parity(-1),
+            g_parity=Parity(-1),
+            isospin=Spin(0.0, 0.0),
+        )
+        assert jpsi.mass == 3.0969
+        assert jpsi.width == 9.29e-05
+        assert jpsi.bottomness == 0
+        assert not jpsi.is_lepton()
+
+    @pytest.mark.parametrize(
+        "name, is_lepton",
+        [
+            ("J/psi(1S)", False),
+            ("p", False),
+            ("e+", True),
+            ("e-", True),
+            ("nu(e)", True),
+            ("nu(tau)~", True),
+            ("tau+", True),
+        ],
+    )
+    def test_is_lepton(
+        self, name, is_lepton, particle_database: ParticleCollection
+    ):
+        assert particle_database[name].is_lepton() == is_lepton
 
 
-@pytest.mark.parametrize(
-    "instance",
-    [Spin(2.5, -0.5), Parity(1)],
-)
-def test_repr(instance):
-    copy_from_repr = eval(repr(instance))  # pylint: disable=eval-used
-    assert copy_from_repr == instance
+class TestParity:
+    @staticmethod
+    def test_init_exceptions():
+        with pytest.raises(ValueError):
+            Parity(1.2)
+
+    @staticmethod
+    def test_init_and_comparison():
+        parity = Parity(+1)
+        assert parity == +1
+        assert int(parity) == +1
+
+    @staticmethod
+    def test_neg():
+        parity = Parity(+1)
+        flipped_parity = -parity
+        assert flipped_parity.value == -parity.value
 
 
-def test_repr_particle_collection(particle_database):
-    copy_from_repr = eval(repr(particle_database))  # pylint: disable=eval-used
-    assert copy_from_repr == particle_database
+class TestSpin:
+    @staticmethod
+    def test_init_exceptions():
+        with pytest.raises(ValueError):
+            Spin(1, -2)
 
+    @staticmethod
+    def test_init_and_comparison():
+        isospin = Spin(1.5, -0.5)
+        assert isospin == 1.5
+        assert float(isospin) == 1.5
+        assert isospin.magnitude == 1.5
+        assert isospin.projection == -0.5
 
-def test_repr_particle(particle_database):
-    for particle in particle_database:
-        copy_from_repr = eval(repr(particle))  # pylint: disable=eval-used
-        assert copy_from_repr == particle
-
-
-def test_parity():
-    with pytest.raises(ValueError):
-        Parity(1.2)
-    parity = Parity(+1)
-    assert parity == +1
-    assert int(parity) == +1
-    flipped_parity = -parity
-    assert flipped_parity.value == -parity.value
-
-
-def test_spin():
-    with pytest.raises(ValueError):
-        Spin(1, -2)
-    isospin = Spin(1.5, -0.5)
-    assert isospin == 1.5
-    assert float(isospin) == 1.5
-    assert isospin.magnitude == 1.5
-    assert isospin.projection == -0.5
-
-    flipped_spin = -isospin
-    assert flipped_spin.magnitude == isospin.magnitude
-    assert flipped_spin.projection == -isospin.projection
-
-
-def test_particle():
-    assert J_PSI.mass == 3.0969
-    assert J_PSI.width == 9.29e-05
-    assert J_PSI.bottomness == 0
-
-
-@pytest.mark.parametrize(
-    "name, is_lepton",
-    [
-        ("J/psi(1S)", False),
-        ("p", False),
-        ("e+", True),
-        ("e-", True),
-        ("nu(e)", True),
-        ("nu(tau)~", True),
-        ("tau+", True),
-    ],
-)
-def test_is_lepton(name, is_lepton, particle_database: ParticleCollection):
-    assert particle_database[name].is_lepton() == is_lepton
+    @staticmethod
+    def test_neg():
+        isospin = Spin(1.5, -0.5)
+        flipped_spin = -isospin
+        assert flipped_spin.magnitude == isospin.magnitude
+        assert flipped_spin.projection == -isospin.projection
 
 
 @pytest.mark.parametrize(
     "particle_name",
     ["p", "phi(1020)", "W-", "gamma"],
 )
-def test_create_particle(
-    particle_database, particle_name  # pylint: disable=W0621
-):
+def test_create_particle(particle_database, particle_name):
     template_particle = particle_database[particle_name]
     new_particle = create_particle(
         template_particle,
@@ -107,7 +124,6 @@ def test_create_particle(
         mass=1.5,
         width=0.5,
     )
-
     assert new_particle.name == "testparticle"
     assert new_particle.pid == 89
     assert new_particle.charge == template_particle.charge
