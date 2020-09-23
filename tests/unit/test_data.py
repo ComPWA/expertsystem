@@ -102,24 +102,6 @@ class TestParticle:
             from_repr = eval(repr(particle))  # pylint: disable=eval-used
             assert from_repr == particle
 
-    @staticmethod
-    def test_members():
-        jpsi = Particle(
-            name="J/psi(1S)",
-            pid=443,
-            mass=3.0969,
-            width=9.29e-05,
-            spin=1,
-            charge=0,
-            parity=Parity(-1),
-            c_parity=Parity(-1),
-            g_parity=Parity(-1),
-            isospin=Spin(0.0, 0.0),
-        )
-        assert jpsi.mass == 3.0969
-        assert jpsi.width == 9.29e-05
-        assert jpsi.bottomness == 0
-
     @pytest.mark.parametrize(
         "name, is_lepton",
         [
