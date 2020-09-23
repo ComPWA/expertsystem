@@ -370,8 +370,8 @@ class ParticleCollection(abc.Mapping):
             ...     and p.spin == 2
             ...     and p.strangeness == 1
             ... )
-            >>> set(results)
-            {'K(2)(1820)0', 'K(2)(1820)+'}
+            >>> sorted(list(results))
+            ['K(2)(1820)+', 'K(2)(1820)0']
         """
         return ParticleCollection(
             {particle for particle in self.values() if function(particle)}
