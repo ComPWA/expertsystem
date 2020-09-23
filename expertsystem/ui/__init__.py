@@ -196,8 +196,8 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
     def prepare_graphs(self) -> GraphSettingsGroups:
         topology_graphs = self._build_topologies()
-        init_graphs = self._create_seed_graphs(topology_graphs)
-        init_graphs = self._convert_edges_to_dict(init_graphs)  # type: ignore
+        seed_graphs = self._create_seed_graphs(topology_graphs)
+        init_graphs = self._convert_edges_to_dict(seed_graphs)
         graph_node_setting_pairs = self._determine_node_settings(init_graphs)
         # create groups of settings ordered by "probability"
         graph_settings_groups = create_interaction_setting_groups(
@@ -250,7 +250,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         return graphs  # type: ignore
 
     def _determine_node_settings(
-        self, graphs: List[StateTransitionGraph]
+        self, graphs: List[StateTransitionGraph[dict]]
     ) -> List[Tuple[StateTransitionGraph, NodeSettings]]:
         # pylint: disable=too-many-locals
         graph_node_setting_pairs = []
