@@ -296,10 +296,14 @@ class ParticleCollection(abc.Mapping):
     def __init__(self, particles: Optional[Iterable[Particle]] = None) -> None:
         self.__particles: Dict[str, Particle] = dict()
         if particles is not None:
-            if isinstance(particles, (list, set, tuple)):
-                self.__particles.update(
-                    {particle.name: particle for particle in particles}
+            if not isinstance(particles, (list, set, tuple)):
+                raise ValueError(
+                    f"Cannot construct a {self.__class__.__name__} "
+                    f"from a {particles.__class__.__name__}"
                 )
+            self.__particles.update(
+                {particle.name: particle for particle in particles}
+            )
 
     def __getitem__(self, particle_name: str) -> Particle:
         return self.__particles[particle_name]

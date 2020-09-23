@@ -166,6 +166,14 @@ class TestParticle:
 
 class TestParticleCollection:
     @staticmethod
+    def test_init(particle_database):
+        new_pdg = ParticleCollection(list(particle_database.values()))
+        assert new_pdg is not particle_database
+        assert new_pdg == particle_database
+        with pytest.raises(ValueError):
+            ParticleCollection(1)  # type: ignore
+
+    @staticmethod
     def test_find(particle_database: ParticleCollection):
         f2_1950 = particle_database.find(9050225)
         assert f2_1950.name == "f(2)(1950)"
@@ -180,6 +188,11 @@ class TestParticleCollection:
     ):
         with pytest.raises(LookupError):
             particle_database.find(search_term)
+        gamma = particle_database["gamma"]
+        new_gamma = create_particle(gamma, name="new_gamma")
+        particles = ParticleCollection({gamma, new_gamma})
+        with pytest.raises(LookupError):
+            particles.find(22)
 
     @staticmethod
     def test_filter(particle_database: ParticleCollection):
@@ -223,6 +236,14 @@ class TestParticleCollection:
             particle_database += 3.14  # type: ignore
         with pytest.raises(AssertionError):
             assert gamma_1 == "gamma"
+
+    @pytest.mark.parametrize("name", ["gamma", "pi0", "K+"])
+    def test_contains(self, name, particle_database):
+        assert name in particle_database
+
+    @staticmethod
+    def test_keys(particle_database):
+        assert set(particle_database.keys()) == set(particle_database)
 
 
 class TestSpin:
