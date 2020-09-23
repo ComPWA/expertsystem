@@ -83,8 +83,7 @@ class TestParity:
         assert flipped_parity.value == -parity.value
 
     @pytest.mark.parametrize("value", [-1, +1])
-    @staticmethod
-    def test_repr(value):
+    def test_repr(self, value):
         parity = Parity(value)
         from_repr = eval(repr(parity))  # pylint: disable=eval-used
         assert from_repr == parity
@@ -176,8 +175,9 @@ class TestParticleCollection:
         assert pytest.approx(phi.width) == 0.004249
 
     @pytest.mark.parametrize("search_term", [666, "non-existing"])
-    @staticmethod
-    def test_find_fail(particle_database: ParticleCollection, search_term):
+    def test_find_fail(
+        self, particle_database: ParticleCollection, search_term
+    ):
         with pytest.raises(LookupError):
             particle_database.find(search_term)
 
@@ -242,8 +242,7 @@ class TestSpin:
         assert flipped_spin.projection == -isospin.projection
 
     @pytest.mark.parametrize("spin", [Spin(2.5, -0.5), Spin(1, 0)])
-    @staticmethod
-    def test_repr(spin):
+    def test_repr(self, spin):
         from_repr = eval(repr(spin))  # pylint: disable=eval-used
         assert from_repr == spin
 
@@ -251,8 +250,7 @@ class TestSpin:
         "magnitude, projection",
         [(0.3, 0.3), (1.0, 0.5), (0.5, 0.0), (-0.5, 0.5)],
     )
-    @staticmethod
-    def test_exceptions(magnitude, projection):
+    def test_exceptions(self, magnitude, projection):
         with pytest.raises(ValueError):
             print(Spin(magnitude, projection))
 
