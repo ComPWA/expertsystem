@@ -28,11 +28,16 @@ J_PSI = Particle(
 
 @pytest.mark.parametrize(
     "instance",
-    [ParticleCollection(), Spin(2.5, -0.5), Parity(1)],
+    [Spin(2.5, -0.5), Parity(1)],
 )
 def test_repr(instance):
     copy_from_repr = eval(repr(instance))  # pylint: disable=eval-used
     assert copy_from_repr == instance
+
+
+def test_repr_particle_collection(particle_database):
+    copy_from_repr = eval(repr(particle_database))  # pylint: disable=eval-used
+    assert copy_from_repr == particle_database
 
 
 def test_repr_particle(particle_database):
@@ -115,7 +120,7 @@ def test_create_antiparticle(
     assert anti_particle == comparison_particle
 
 
-def test_create_antiparticle_tilde(particle_database):
+def test_create_antiparticle_tilde(particle_database: ParticleCollection):
     anti_particles = particle_database.find_subset("~")
     assert len(anti_particles) == 166
     for anti_particle in anti_particles.values():

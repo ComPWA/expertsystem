@@ -6,6 +6,7 @@ from dataclasses import dataclass, fields
 from typing import (
     Dict,
     ItemsView,
+    Iterable,
     Iterator,
     KeysView,
     NewType,
@@ -288,13 +289,13 @@ class GellmannNishijima:
 class ParticleCollection(abc.Mapping):
     """Safe, `dict`-like collection of `.Particle` instances."""
 
-    def __init__(
-        self, particles: Optional[Dict[str, Particle]] = None
-    ) -> None:
+    def __init__(self, particles: Optional[Iterable[Particle]] = None) -> None:
         self.__particles: Dict[str, Particle] = dict()
         if particles is not None:
-            if isinstance(particles, dict):
-                self.__particles.update(particles)
+            if isinstance(particles, (list, set, tuple)):
+                self.__particles.update(
+                    {particle.name: particle for particle in particles}
+                )
 
     def __getitem__(self, particle_name: str) -> Particle:
         return self.__particles[particle_name]
@@ -320,7 +321,7 @@ class ParticleCollection(abc.Mapping):
         return self
 
     def __repr__(self) -> str:
-        return str(self.__particles)
+        return f"{self.__class__.__name__}({set(self.__particles.values())})"
 
     def add(self, particle: Particle) -> None:
         if particle.name in self.__particles:
@@ -361,7 +362,7 @@ class ParticleCollection(abc.Mapping):
         """
         if isinstance(search_term, str):
             search_results = {
-                particle.name: particle
+                particle
                 for particle in self.values()
                 if search_term in particle.name
             }
