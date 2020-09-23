@@ -33,9 +33,9 @@ set of quantum numbers.
   )
   sorted(list(results))
 
+.. thebe-button::
+
 The `~.ParticleCollection.filter` function can perform any type of search. For
 available search properties, have a look at properties of `.Particle` class.
 For more info on the search syntax, read more about `lambda functions in Python
 <https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions>`_.
-
-.. thebe-button::
