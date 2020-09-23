@@ -14,6 +14,56 @@ from expertsystem.data import (
 )
 
 
+class TestParity:
+    @staticmethod
+    def test_init_exceptions():
+        with pytest.raises(ValueError):
+            Parity(1.2)
+
+    @staticmethod
+    def test_init_and_comparison():
+        parity = Parity(+1)
+        assert parity == +1
+        assert int(parity) == +1
+
+    @staticmethod
+    def test_neg():
+        parity = Parity(+1)
+        flipped_parity = -parity
+        assert flipped_parity.value == -parity.value
+
+
+class TestSpin:
+    @staticmethod
+    def test_init_exceptions():
+        with pytest.raises(ValueError):
+            Spin(1, -2)
+
+    @staticmethod
+    def test_init_and_comparison():
+        isospin = Spin(1.5, -0.5)
+        assert isospin == 1.5
+        assert float(isospin) == 1.5
+        assert isospin.magnitude == 1.5
+        assert isospin.projection == -0.5
+
+    @staticmethod
+    def test_neg():
+        isospin = Spin(1.5, -0.5)
+        flipped_spin = -isospin
+        assert flipped_spin.magnitude == isospin.magnitude
+        assert flipped_spin.projection == -isospin.projection
+
+    @pytest.mark.parametrize(
+        "magnitude, projection",
+        [(0.3, 0.3), (1.0, 0.5), (0.5, 0.0), (-0.5, 0.5)],
+    )
+    @staticmethod
+    def test_spin_exceptions(magnitude, projection):
+        with pytest.raises(ValueError):
+            print(Spin(magnitude, projection))
+
+
 class TestParticle:
     @pytest.mark.parametrize(
         "instance",
@@ -108,111 +158,6 @@ class TestParticle:
             charge=0,
             isospin=Spin(1, 0),
         )
-
-
-class TestParity:
-    @staticmethod
-    def test_init_exceptions():
-        with pytest.raises(ValueError):
-            Parity(1.2)
-
-    @staticmethod
-    def test_init_and_comparison():
-        parity = Parity(+1)
-        assert parity == +1
-        assert int(parity) == +1
-
-    @staticmethod
-    def test_neg():
-        parity = Parity(+1)
-        flipped_parity = -parity
-        assert flipped_parity.value == -parity.value
-
-
-class TestSpin:
-    @staticmethod
-    def test_init_exceptions():
-        with pytest.raises(ValueError):
-            Spin(1, -2)
-
-    @staticmethod
-    def test_init_and_comparison():
-        isospin = Spin(1.5, -0.5)
-        assert isospin == 1.5
-        assert float(isospin) == 1.5
-        assert isospin.magnitude == 1.5
-        assert isospin.projection == -0.5
-
-    @staticmethod
-    def test_neg():
-        isospin = Spin(1.5, -0.5)
-        flipped_spin = -isospin
-        assert flipped_spin.magnitude == isospin.magnitude
-        assert flipped_spin.projection == -isospin.projection
-
-    @pytest.mark.parametrize(
-        "magnitude, projection",
-        [(0.3, 0.3), (1.0, 0.5), (0.5, 0.0), (-0.5, 0.5)],
-    )
-    @staticmethod
-    def test_spin_exceptions(magnitude, projection):
-        with pytest.raises(ValueError):
-            print(Spin(magnitude, projection))
-
-
-@pytest.mark.parametrize(
-    "particle_name",
-    ["p", "phi(1020)", "W-", "gamma"],
-)
-def test_create_particle(particle_database, particle_name):
-    template_particle = particle_database[particle_name]
-    new_particle = create_particle(
-        template_particle,
-        name="testparticle",
-        pid=89,
-        mass=1.5,
-        width=0.5,
-    )
-    assert new_particle.name == "testparticle"
-    assert new_particle.pid == 89
-    assert new_particle.charge == template_particle.charge
-    assert new_particle.spin == template_particle.spin
-    assert new_particle.mass == 1.5
-    assert new_particle.width == 0.5
-    assert new_particle.baryon_number == template_particle.baryon_number
-    assert new_particle.strangeness == template_particle.strangeness
-
-
-@pytest.mark.parametrize(
-    "particle_name, anti_particle_name",
-    [("D+", "D-"), ("mu+", "mu-"), ("W+", "W-")],
-)
-def test_create_antiparticle(
-    particle_database: ParticleCollection,
-    particle_name,
-    anti_particle_name,
-):
-    template_particle = particle_database[particle_name]
-    anti_particle = create_antiparticle(
-        template_particle, new_name=anti_particle_name
-    )
-    comparison_particle = particle_database[anti_particle_name]
-
-    assert anti_particle == comparison_particle
-
-
-def test_create_antiparticle_tilde(particle_database: ParticleCollection):
-    anti_particles = particle_database.filter(lambda p: "~" in p.name)
-    assert len(anti_particles) == 166
-    for anti_particle in anti_particles.values():
-        particle_name = anti_particle.name.replace("~", "")
-        if "+" in particle_name:
-            particle_name = particle_name.replace("+", "-")
-        elif "-" in particle_name:
-            particle_name = particle_name.replace("-", "+")
-        created_particle = create_antiparticle(anti_particle, particle_name)
-
-        assert created_particle == particle_database[particle_name]
 
 
 class TestGellmannNishijima:
@@ -340,3 +285,58 @@ class TestParticleCollection:
             particle_database += 3.14  # type: ignore
         with pytest.raises(AssertionError):
             assert gamma_1 == "gamma"
+
+
+@pytest.mark.parametrize(
+    "particle_name",
+    ["p", "phi(1020)", "W-", "gamma"],
+)
+def test_create_particle(particle_database, particle_name):
+    template_particle = particle_database[particle_name]
+    new_particle = create_particle(
+        template_particle,
+        name="testparticle",
+        pid=89,
+        mass=1.5,
+        width=0.5,
+    )
+    assert new_particle.name == "testparticle"
+    assert new_particle.pid == 89
+    assert new_particle.charge == template_particle.charge
+    assert new_particle.spin == template_particle.spin
+    assert new_particle.mass == 1.5
+    assert new_particle.width == 0.5
+    assert new_particle.baryon_number == template_particle.baryon_number
+    assert new_particle.strangeness == template_particle.strangeness
+
+
+@pytest.mark.parametrize(
+    "particle_name, anti_particle_name",
+    [("D+", "D-"), ("mu+", "mu-"), ("W+", "W-")],
+)
+def test_create_antiparticle(
+    particle_database: ParticleCollection,
+    particle_name,
+    anti_particle_name,
+):
+    template_particle = particle_database[particle_name]
+    anti_particle = create_antiparticle(
+        template_particle, new_name=anti_particle_name
+    )
+    comparison_particle = particle_database[anti_particle_name]
+
+    assert anti_particle == comparison_particle
+
+
+def test_create_antiparticle_tilde(particle_database: ParticleCollection):
+    anti_particles = particle_database.filter(lambda p: "~" in p.name)
+    assert len(anti_particles) == 166
+    for anti_particle in anti_particles.values():
+        particle_name = anti_particle.name.replace("~", "")
+        if "+" in particle_name:
+            particle_name = particle_name.replace("+", "-")
+        elif "-" in particle_name:
+            particle_name = particle_name.replace("-", "+")
+        created_particle = create_antiparticle(anti_particle, particle_name)
+
+        assert created_particle == particle_database[particle_name]
