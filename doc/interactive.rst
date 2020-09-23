@@ -21,19 +21,17 @@ set of quantum numbers.
   from expertsystem import io
   pdg = io.load_pdg()
 
-.. code-block:: python
-  :class: thebe, thebe-init
-
   pdg.find(22)  # by PID
   pdg.find("Delta(1920)++")  # by name
 
 .. code-block:: python
   :class: thebe, thebe-init
 
-  sorted(list(pdg.filter(lambda p:
+  results = pdg.filter(lambda p:
     p.spin in [2.5, 3.5, 4.5]
     and p.name.startswith("N")
-  )))
+  )
+  sorted(list(results))
 
 The `~.ParticleCollection.filter` function can perform any type of search. For
 available search properties, have a look at properties of `.Particle` class.
