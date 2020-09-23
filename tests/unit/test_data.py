@@ -1,4 +1,6 @@
 # pylint: disable=redefined-outer-name, no-self-use
+from dataclasses import FrozenInstanceError
+
 import pytest
 
 from expertsystem.data import (
@@ -68,6 +70,45 @@ class TestParticle:
     ):
         assert particle_database[name].is_lepton() == is_lepton
 
+    @staticmethod
+    def test_immutability():
+        with pytest.raises(FrozenInstanceError):
+            test_state = Particle(
+                "MyParticle",
+                123,
+                mass=1.2,
+                width=0.1,
+                spin=1,
+                charge=0,
+                isospin=Spin(1, 0),
+            )
+            test_state.charge = 1  # type: ignore
+
+    @staticmethod
+    def test_complex_energy_equality():
+        with pytest.raises(AssertionError):
+            assert Particle(
+                "MyParticle", pid=123, mass=1.5, width=0.1, spin=1
+            ) == Particle("MyParticle", pid=123, mass=1.5, width=0.2, spin=1)
+
+        assert Particle(
+            "MyParticle",
+            123,
+            mass=1.2,
+            width=0.1,
+            spin=1,
+            charge=0,
+            isospin=Spin(1, 0),
+        ) == Particle(
+            "MyParticle",
+            123,
+            mass=1.2,
+            width=0.1,
+            spin=1,
+            charge=0,
+            isospin=Spin(1, 0),
+        )
+
 
 class TestParity:
     @staticmethod
@@ -108,6 +149,15 @@ class TestSpin:
         flipped_spin = -isospin
         assert flipped_spin.magnitude == isospin.magnitude
         assert flipped_spin.projection == -isospin.projection
+
+    @pytest.mark.parametrize(
+        "magnitude, projection",
+        [(0.3, 0.3), (1.0, 0.5), (0.5, 0.0), (-0.5, 0.5)],
+    )
+    @staticmethod
+    def test_spin_exceptions(magnitude, projection):
+        with pytest.raises(ValueError):
+            print(Spin(magnitude, projection))
 
 
 @pytest.mark.parametrize(
