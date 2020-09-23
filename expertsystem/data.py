@@ -302,7 +302,11 @@ class ParticleCollection(abc.Mapping):
                     f"from a {particles.__class__.__name__}"
                 )
             self.__particles.update(
-                {particle.name: particle for particle in particles}
+                {
+                    particle.name: particle
+                    for particle in particles
+                    if isinstance(particle, Particle)
+                }
             )
 
     def __getitem__(self, particle_name: str) -> Particle:
