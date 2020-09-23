@@ -75,8 +75,8 @@ class TestSpin:
 
 class TestParticle:
     @staticmethod
-    def test_repr(particle_database):
-        for particle in particle_database:
+    def test_repr(particle_database: ParticleCollection):
+        for particle in particle_database.values():
             from_repr = eval(repr(particle))  # pylint: disable=eval-used
             assert from_repr == particle
 
