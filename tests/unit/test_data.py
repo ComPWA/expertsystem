@@ -1,4 +1,5 @@
 # pylint: disable=redefined-outer-name, no-self-use
+from copy import deepcopy
 from dataclasses import FrozenInstanceError
 
 import pytest
@@ -16,12 +17,7 @@ from expertsystem.data import (
 
 class TestParity:
     @staticmethod
-    def test_init_exceptions():
-        with pytest.raises(ValueError):
-            Parity(1.2)
-
-    @staticmethod
-    def test_init_and_comparison():
+    def test_init_and_eq():
         parity = Parity(+1)
         assert parity == +1
         assert int(parity) == +1
@@ -32,15 +28,22 @@ class TestParity:
         flipped_parity = -parity
         assert flipped_parity.value == -parity.value
 
+    @pytest.mark.parametrize("value", [-1, +1])
+    @staticmethod
+    def test_repr(value):
+        parity = Parity(value)
+        from_repr = eval(repr(parity))  # pylint: disable=eval-used
+        assert from_repr == parity
+
+    @staticmethod
+    def test_exceptions():
+        with pytest.raises(ValueError):
+            Parity(1.2)
+
 
 class TestSpin:
     @staticmethod
-    def test_init_exceptions():
-        with pytest.raises(ValueError):
-            Spin(1, -2)
-
-    @staticmethod
-    def test_init_and_comparison():
+    def test_init_and_eq():
         isospin = Spin(1.5, -0.5)
         assert isospin == 1.5
         assert float(isospin) == 1.5
@@ -54,33 +57,25 @@ class TestSpin:
         assert flipped_spin.magnitude == isospin.magnitude
         assert flipped_spin.projection == -isospin.projection
 
+    @pytest.mark.parametrize("spin", [Spin(2.5, -0.5), Spin(1, 0)])
+    @staticmethod
+    def test_repr(spin):
+        from_repr = eval(repr(spin))  # pylint: disable=eval-used
+        assert from_repr == spin
+
     @pytest.mark.parametrize(
         "magnitude, projection",
         [(0.3, 0.3), (1.0, 0.5), (0.5, 0.0), (-0.5, 0.5)],
     )
     @staticmethod
-    def test_spin_exceptions(magnitude, projection):
+    def test_exceptions(magnitude, projection):
         with pytest.raises(ValueError):
             print(Spin(magnitude, projection))
 
 
 class TestParticle:
-    @pytest.mark.parametrize(
-        "instance",
-        [Spin(2.5, -0.5), Parity(1)],
-    )
     @staticmethod
-    def test_repr(instance):
-        from_repr = eval(repr(instance))  # pylint: disable=eval-used
-        assert from_repr == instance
-
-    @staticmethod
-    def test_repr_particle_collection(particle_database):
-        from_repr = eval(repr(particle_database))  # pylint: disable=eval-used
-        assert from_repr == particle_database
-
-    @staticmethod
-    def test_repr_particle(particle_database):
+    def test_repr(particle_database):
         for particle in particle_database:
             from_repr = eval(repr(particle))  # pylint: disable=eval-used
             assert from_repr == particle
@@ -121,7 +116,7 @@ class TestParticle:
         assert particle_database[name].is_lepton() == is_lepton
 
     @staticmethod
-    def test_immutability():
+    def test_exceptions():
         with pytest.raises(FrozenInstanceError):
             test_state = Particle(
                 "MyParticle",
@@ -133,31 +128,37 @@ class TestParticle:
                 isospin=Spin(1, 0),
             )
             test_state.charge = 1  # type: ignore
+        with pytest.raises(ValueError):
+            Particle(
+                name="Fails Gell-Mann–Nishijima formula",
+                pid=666,
+                mass=0.0,
+                spin=1,
+                charge=0,
+                parity=Parity(-1),
+                c_parity=Parity(-1),
+                g_parity=Parity(-1),
+                isospin=Spin(0.0, 0.0),
+                charmness=1,
+            )
 
     @staticmethod
-    def test_complex_energy_equality():
-        with pytest.raises(AssertionError):
-            assert Particle(
-                "MyParticle", pid=123, mass=1.5, width=0.1, spin=1
-            ) == Particle("MyParticle", pid=123, mass=1.5, width=0.2, spin=1)
-
-        assert Particle(
-            "MyParticle",
-            123,
-            mass=1.2,
-            width=0.1,
-            spin=1,
-            charge=0,
-            isospin=Spin(1, 0),
-        ) == Particle(
-            "MyParticle",
-            123,
+    def test_eq():
+        particle = Particle(
+            name="MyParticle",
+            pid=123,
             mass=1.2,
             width=0.1,
             spin=1,
             charge=0,
             isospin=Spin(1, 0),
         )
+        assert particle != Particle(
+            "MyParticle", pid=123, mass=1.5, width=0.2, spin=1
+        )
+        same_particle = deepcopy(particle)
+        assert particle is not same_particle
+        assert particle == same_particle
 
 
 class TestGellmannNishijima:
@@ -213,24 +214,6 @@ class TestGellmannNishijima:
         state = Particle("p1", 1, mass=1, spin=0.0, charge=1, isospin=None)
         assert GellmannNishijima.compute_charge(state) is None
 
-    @staticmethod
-    def test_exceptions():
-        with pytest.raises(ValueError):
-            print(
-                Particle(
-                    name="Fails Gell-Mann–Nishijima formula",
-                    pid=666,
-                    mass=0.0,
-                    spin=1,
-                    charge=0,
-                    parity=Parity(-1),
-                    c_parity=Parity(-1),
-                    g_parity=Parity(-1),
-                    isospin=Spin(0.0, 0.0),
-                    charmness=1,
-                )
-            )
-
 
 class TestParticleCollection:
     @staticmethod
@@ -272,6 +255,11 @@ class TestParticleCollection:
             and p.strangeness == 1
         )
         assert set(filtered_result) == {"K(2)(1820)0", "K(2)(1820)+"}
+
+    @staticmethod
+    def test_repr(particle_database):
+        from_repr = eval(repr(particle_database))  # pylint: disable=eval-used
+        assert from_repr == particle_database
 
     @staticmethod
     def test_exceptions(particle_database):
