@@ -2,7 +2,7 @@
 
 import logging
 from collections import abc
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import (
     Dict,
     ItemsView,
@@ -206,6 +206,23 @@ class Particle:  # pylint: disable=too-many-instance-attributes
                 f" T[{self.strangeness}]"
                 ")"
             )
+
+    def __hash__(self) -> int:
+        return hash(str(self))
+
+    def __repr__(self) -> str:
+        output_string = f"{self.__class__.__name__}("
+        for field in fields(self):
+            value = getattr(self, field.name)
+            if value is None:
+                continue
+            if field.name not in ["mass", "spin", "isospin"] and value == 0:
+                continue
+            if isinstance(value, str):
+                value = f'"{value}"'
+            output_string += f"\n    {field.name}={value},"
+        output_string += "\n)"
+        return output_string
 
 
 class GellmannNishijima:

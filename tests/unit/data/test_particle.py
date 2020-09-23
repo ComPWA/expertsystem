@@ -28,11 +28,17 @@ J_PSI = Particle(
 
 @pytest.mark.parametrize(
     "instance",
-    [ParticleCollection(), Spin(2.5, -0.5), Parity(1), J_PSI],
+    [ParticleCollection(), Spin(2.5, -0.5), Parity(1)],
 )
 def test_repr(instance):
     copy_from_repr = eval(repr(instance))  # pylint: disable=eval-used
     assert copy_from_repr == instance
+
+
+def test_repr_particle(particle_database):
+    for particle in particle_database:
+        copy_from_repr = eval(repr(particle))  # pylint: disable=eval-used
+        assert copy_from_repr == particle
 
 
 def test_parity():
