@@ -30,10 +30,10 @@ set of quantum numbers.
 .. code-block:: python
   :class: thebe, thebe-init
 
-  pdg.filter(lambda p:
+  sorted(list(pdg.filter(lambda p:
     p.spin in [2.5, 3.5, 4.5]
     and p.name.startswith("N")
-  )
+  )))
 
 The `~.ParticleCollection.filter` function can perform any type of search. For
 available search properties, have a look at properties of `.Particle` class.
