@@ -226,6 +226,13 @@ class Particle:  # pylint: disable=too-many-instance-attributes
         output_string += "\n)"
         return output_string
 
+    def is_lepton(self) -> bool:
+        return (
+            self.electron_lepton_number != 0
+            or self.muon_lepton_number != 0
+            or self.tau_lepton_number != 0
+        )
+
 
 class GellmannNishijima:
     r"""Collection of conversion methods using Gell-Mann–Nishijima.

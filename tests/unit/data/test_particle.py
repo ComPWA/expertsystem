@@ -77,6 +77,22 @@ def test_particle():
 
 
 @pytest.mark.parametrize(
+    "name, is_lepton",
+    [
+        ("J/psi(1S)", False),
+        ("p", False),
+        ("e+", True),
+        ("e-", True),
+        ("nu(e)", True),
+        ("nu(tau)~", True),
+        ("tau+", True),
+    ],
+)
+def test_is_lepton(name, is_lepton, particle_database: ParticleCollection):
+    assert particle_database[name].is_lepton() == is_lepton
+
+
+@pytest.mark.parametrize(
     "particle_name",
     ["p", "phi(1020)", "W-", "gamma"],
 )
