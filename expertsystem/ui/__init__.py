@@ -200,9 +200,9 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
     def prepare_graphs(self) -> GraphSettingsGroups:
         topology_graphs = self._build_topologies()
         seed_graphs = self._create_seed_graphs(topology_graphs)
-        init_graphs = self._convert_edges_to_dict(seed_graphs)
-        graph_node_setting_pairs = self._determine_node_settings(init_graphs)
+        graph_node_setting_pairs = self._determine_node_settings(seed_graphs)
         # create groups of settings ordered by "probability"
+        self._convert_edges_to_dict(graph_node_setting_pairs)
         graph_settings_groups = create_interaction_setting_groups(
             graph_node_setting_pairs
         )
@@ -229,7 +229,6 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 final_state_groupings=self.final_state_groupings,
             )
             init_graphs.extend(initialized_graphs)
-        init_graphs = self._convert_edges_to_dict(init_graphs)  # type: ignore
         for graph in init_graphs:
             graph.graph_element_properties_comparator = (
                 CompareGraphElementPropertiesFunctor()
@@ -240,20 +239,33 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _convert_edges_to_dict(
-        graphs: List[StateTransitionGraph[ParticleWithSpin]],
-    ) -> List[StateTransitionGraph[dict]]:
-        for graph in graphs:
-            for edge_id, edge_property in graph.edge_props.items():
-                if not isinstance(edge_property, dict):
-                    graph.edge_props[
-                        edge_id
-                    ] = particle_with_spin_projection_to_dict(  # type: ignore
-                        edge_property
-                    )
-        return graphs  # type: ignore
+        instance: Union[
+            List[StateTransitionGraph[ParticleWithSpin]],
+            List[Tuple[StateTransitionGraph, NodeSettings]],
+            GraphSettingsGroups,
+        ],
+    ) -> None:
+        # https://github.com/ComPWA/expertsystem/issues/254
+        def convert_edges_in_graph(
+            graphs: List[StateTransitionGraph[ParticleWithSpin]],
+        ) -> None:
+            for graph in graphs:
+                for edge_id, edge_property in graph.edge_props.items():
+                    if not isinstance(edge_property, dict):
+                        graph.edge_props[
+                            edge_id
+                        ] = particle_with_spin_projection_to_dict(  # type: ignore
+                            edge_property
+                        )
+
+        if isinstance(instance, list) and len(instance) > 0:
+            if isinstance(instance[0], StateTransitionGraph):
+                convert_edges_in_graph(instance)  # type: ignore
+            elif isinstance(instance[0], tuple):
+                convert_edges_in_graph([g for g, _ in instance])  # type: ignore
 
     def _determine_node_settings(
-        self, graphs: List[StateTransitionGraph[dict]]
+        self, graphs: List[StateTransitionGraph[ParticleWithSpin]]
     ) -> List[Tuple[StateTransitionGraph, NodeSettings]]:
         # pylint: disable=too-many-locals
         graph_node_setting_pairs = []

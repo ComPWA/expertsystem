@@ -21,9 +21,9 @@ from expertsystem.state.particle import (
     InteractionQuantumNumberNames,
     Labels,
     ParticlePropertyNames,
+    ParticleWithSpin,
     StateQuantumNumberNames,
     get_interaction_property,
-    get_particle_property,
 )
 from expertsystem.state.propagation import (
     InteractionNodeSettings,
@@ -96,8 +96,8 @@ class _InteractionDeterminationFunctorInterface(ABC):
     @abstractmethod
     def check(
         self,
-        in_edge_props: List[dict],
-        out_edge_props: List[dict],
+        in_edge_props: List[ParticleWithSpin],
+        out_edge_props: List[ParticleWithSpin],
         node_props: dict,
     ) -> List[InteractionTypes]:
         pass
@@ -106,17 +106,15 @@ class _InteractionDeterminationFunctorInterface(ABC):
 class GammaCheck(_InteractionDeterminationFunctorInterface):
     """Conservation check for photons."""
 
-    name_label = Labels.Name.name
-
     def check(
         self,
-        in_edge_props: List[dict],
-        out_edge_props: List[dict],
+        in_edge_props: List[ParticleWithSpin],
+        out_edge_props: List[ParticleWithSpin],
         node_props: dict,
     ) -> List[InteractionTypes]:
         int_types = list(InteractionTypes)
-        for edge_props in in_edge_props + out_edge_props:
-            if "gamma" in edge_props[self.name_label]:
+        for particle, _ in in_edge_props + out_edge_props:
+            if "gamma" in particle.name:
                 int_types = [InteractionTypes.EM, InteractionTypes.Weak]
                 break
         return int_types
@@ -125,48 +123,24 @@ class GammaCheck(_InteractionDeterminationFunctorInterface):
 class LeptonCheck(_InteractionDeterminationFunctorInterface):
     """Conservation check lepton numbers."""
 
-    lepton_flavor_labels = [
-        StateQuantumNumberNames.ElectronLN,
-        StateQuantumNumberNames.MuonLN,
-        StateQuantumNumberNames.TauLN,
-    ]
-    name_label = Labels.Name.name
     qns_label = Labels.QuantumNumber.name
 
     def check(
         self,
-        in_edge_props: List[dict],
-        out_edge_props: List[dict],
+        in_edge_props: List[ParticleWithSpin],
+        out_edge_props: List[ParticleWithSpin],
         node_props: dict,
     ) -> List[InteractionTypes]:
         node_interaction_types = list(InteractionTypes)
-        for edge_props in in_edge_props + out_edge_props:
-            if sum(
-                [
-                    get_particle_property(edge_props, x)
-                    for x in self.lepton_flavor_labels
-                    if get_particle_property(edge_props, x) is not None
-                ]
-            ):
-                if [
-                    x
-                    for x in [
-                        "nu(e)",
-                        "nu(e)~",
-                        "nu(mu)",
-                        "nu(mu)~",
-                        "nu(tau)",
-                        "nu(tau)~",
-                    ]
-                    if x == edge_props[self.name_label]
-                ]:
+        for particle, _ in in_edge_props + out_edge_props:
+            if particle.is_lepton():
+                if particle.name.startswith("nu("):
                     node_interaction_types = [InteractionTypes.Weak]
                     break
-                if edge_props[self.qns_label] != 0:
-                    node_interaction_types = [
-                        InteractionTypes.EM,
-                        InteractionTypes.Weak,
-                    ]
+                node_interaction_types = [
+                    InteractionTypes.EM,
+                    InteractionTypes.Weak,
+                ]
         return node_interaction_types
 
 
