@@ -67,6 +67,14 @@ class Rule:
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}"
 
+    def __hash__(self) -> int:
+        return hash(self.__class__.__name__)
+
+    def __eq__(self, o: object) -> bool:
+        if isinstance(o, Rule):
+            return self.__class__.__name__ == str(o)
+        return False
+
     def __call__(
         self,
         ingoing_edge_qns: List[Any],
