@@ -22,14 +22,14 @@ from expertsystem.nested_dicts import (
     StateQuantumNumberNames,
 )
 from expertsystem.state.conservation_rules import Rule
-from expertsystem.state.particle import (
-    CompareGraphElementPropertiesFunctor,
-    ParticleWithSpin,
-    get_interaction_property,
-)
 from expertsystem.state.propagation import (
     InteractionNodeSettings,
     InteractionTypes,
+)
+from expertsystem.state.properties import (
+    CompareGraphElementPropertiesFunctor,
+    ParticleWithSpin,
+    get_interaction_property,
 )
 from expertsystem.topology import StateTransitionGraph
 

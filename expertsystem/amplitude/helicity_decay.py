@@ -18,7 +18,7 @@ from expertsystem.nested_dicts import (
     Labels,
     StateQuantumNumberNames,
 )
-from expertsystem.state.particle import (
+from expertsystem.state.properties import (
     get_interaction_property,
     perform_external_edge_identical_particle_combinatorics,
 )

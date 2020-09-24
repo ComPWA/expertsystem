@@ -3,9 +3,9 @@ import pytest
 from expertsystem.data import Spin
 from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
+    Labels,
     _SpinQNConverter,
 )
-from expertsystem.state import particle
 from expertsystem.state.conservation_rules import ParityConservationHelicity
 from expertsystem.ui import (
     InteractionTypes,
@@ -130,7 +130,7 @@ def test_canonical_clebsch_gordan_ls_coupling(  # pylint: disable=too-many-argum
 
     l_label = InteractionQuantumNumberNames.L
     s_label = InteractionQuantumNumberNames.S
-    qn_label = particle.Labels.QuantumNumber
+    qn_label = Labels.QuantumNumber
 
     spin_converter = _SpinQNConverter()
     node_props = {

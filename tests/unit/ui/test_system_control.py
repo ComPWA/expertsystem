@@ -8,7 +8,7 @@ from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
     Labels,
 )
-from expertsystem.state.particle import (
+from expertsystem.state.properties import (
     CompareGraphElementPropertiesFunctor,
     _create_edge_id_particle_mapping,
     create_spin_domain,

@@ -36,11 +36,11 @@ from expertsystem.state.conservation_rules import (
     StrangenessConservation,
     TauLNConservation,
 )
-from expertsystem.state.particle import create_spin_domain
 from expertsystem.state.propagation import (
     InteractionNodeSettings,
     InteractionTypes,
 )
+from expertsystem.state.properties import create_spin_domain
 
 
 EXPERT_SYSTEM_PATH = dirname(dirname(realpath(__file__)))

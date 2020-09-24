@@ -34,7 +34,7 @@ from expertsystem.solvers.constraint import (
     Unassigned,
 )
 from expertsystem.state.conservation_rules import Rule
-from expertsystem.state.particle import (
+from expertsystem.state.properties import (
     get_interaction_property,
     get_particle_candidates_for_state,
     get_particle_property,

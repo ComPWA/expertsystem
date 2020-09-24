@@ -4,7 +4,7 @@ import pytest
 
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.nested_dicts import InteractionQuantumNumberNames
-from expertsystem.state.particle import get_interaction_property
+from expertsystem.state.properties import get_interaction_property
 from expertsystem.ui import (
     InteractionTypes,
     StateTransitionManager,

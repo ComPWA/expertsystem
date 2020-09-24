@@ -6,7 +6,7 @@ from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
     StateQuantumNumberNames,
 )
-from expertsystem.state.particle import (
+from expertsystem.state.properties import (
     get_interaction_property,
     get_particle_property,
 )

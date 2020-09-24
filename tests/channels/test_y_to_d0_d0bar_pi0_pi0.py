@@ -10,7 +10,7 @@ import pytest
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.nested_dicts import InteractionQuantumNumberNames
-from expertsystem.state.particle import create_spin_domain
+from expertsystem.state.properties import create_spin_domain
 from expertsystem.ui import (
     InteractionTypes,
     StateDefinition,
