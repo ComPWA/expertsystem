@@ -14,7 +14,7 @@ from typing import (
     Union,
 )
 
-from expertsystem.data import Spin
+from expertsystem.data import ParticleWithSpin, Spin
 from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
     Labels,
@@ -28,7 +28,6 @@ from expertsystem.state.propagation import (
 )
 from expertsystem.state.properties import (
     CompareGraphElementPropertiesFunctor,
-    ParticleWithSpin,
     get_interaction_property,
 )
 from expertsystem.topology import StateTransitionGraph

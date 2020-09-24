@@ -28,6 +28,7 @@ from expertsystem import io
 from expertsystem.data import (
     Particle,
     ParticleCollection,
+    ParticleWithSpin,
     Spin,
 )
 from expertsystem.nested_dicts import (
@@ -47,7 +48,6 @@ from expertsystem.topology import StateTransitionGraph, Topology
 
 StateWithSpins = Tuple[str, Sequence[float]]
 StateDefinition = Union[str, StateWithSpins]
-ParticleWithSpin = Tuple[Particle, float]
 
 
 def create_spin_domain(

@@ -20,7 +20,7 @@ from progress.bar import IncrementalBar
 from expertsystem import io
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
-from expertsystem.data import ParticleCollection
+from expertsystem.data import ParticleCollection, ParticleWithSpin
 from expertsystem.nested_dicts import InteractionQuantumNumberNames
 from expertsystem.state.propagation import (
     FullPropagator,
@@ -29,7 +29,6 @@ from expertsystem.state.propagation import (
 )
 from expertsystem.state.properties import (
     CompareGraphElementPropertiesFunctor,
-    ParticleWithSpin,
     StateDefinition,
     filter_particles,
     initialize_graph,
