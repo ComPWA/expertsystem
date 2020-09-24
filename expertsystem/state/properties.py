@@ -250,15 +250,6 @@ def get_kinematic_representation(
     )
 
 
-def particle_with_spin_projection_to_dict(instance: ParticleWithSpin) -> dict:
-    particle, spin_projection = instance
-    output = io.xml.object_to_dict(particle)
-    for item in output["QuantumNumber"]:
-        if item["Type"] == "Spin":
-            item["Projection"] = spin_projection
-    return output
-
-
 def get_particle_property(
     particle_properties: Dict[str, Any],
     qn_name: Union[
