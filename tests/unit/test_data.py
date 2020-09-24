@@ -78,7 +78,9 @@ class TestParity:
 
     @staticmethod
     def test_hash():
-        assert {Parity(-1), Parity(-1), Parity(+1)} == {Parity(-1), Parity(+1)}
+        neg = Parity(-1)
+        pos = Parity(+1)
+        assert {pos, neg, deepcopy(pos)} == {neg, pos}
 
     @staticmethod
     def test_neg():
@@ -258,6 +260,15 @@ class TestSpin:
         assert float(isospin) == 1.5
         assert isospin.magnitude == 1.5
         assert isospin.projection == -0.5
+
+    @staticmethod
+    def test_hash():
+        spin1 = Spin(0.0, 0.0)
+        spin2 = Spin(1.5, -0.5)
+        assert {spin2, spin1, deepcopy(spin1), deepcopy(spin2)} == {
+            spin1,
+            spin2,
+        }
 
     @staticmethod
     def test_neg():
