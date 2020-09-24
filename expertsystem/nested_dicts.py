@@ -12,7 +12,11 @@ from typing import (
     Union,
 )
 
-from expertsystem.data import Spin
+from expertsystem.data import (
+    EdgeQuantumNumbers,
+    NodeQuantumNumbers,
+    Spin,
+)
 
 
 class Labels(Enum):
@@ -217,4 +221,31 @@ QNNameClassMapping = {
     ParticlePropertyNames.Pid: QuantumNumberClasses.Int,
     ParticlePropertyNames.Mass: QuantumNumberClasses.Float,
     ParticleDecayPropertyNames.Width: QuantumNumberClasses.Float,
+}
+
+edge_qn_to_enum = {
+    EdgeQuantumNumbers.pid.__name__: ParticlePropertyNames.Pid,
+    EdgeQuantumNumbers.mass.__name__: ParticlePropertyNames.Mass,
+    EdgeQuantumNumbers.width.__name__: ParticleDecayPropertyNames.Width,
+    EdgeQuantumNumbers.spin_magnitude.__name__: StateQuantumNumberNames.Spin,
+    EdgeQuantumNumbers.spin_projection.__name__: StateQuantumNumberNames.Spin,
+    EdgeQuantumNumbers.charge.__name__: StateQuantumNumberNames.Charge,
+    EdgeQuantumNumbers.isospin_magnitude.__name__: StateQuantumNumberNames.IsoSpin,
+    EdgeQuantumNumbers.isospin_projection.__name__: StateQuantumNumberNames.IsoSpin,
+    EdgeQuantumNumbers.strangeness.__name__: StateQuantumNumberNames.Strangeness,
+    EdgeQuantumNumbers.charmness.__name__: StateQuantumNumberNames.Charmness,
+    EdgeQuantumNumbers.bottomness.__name__: StateQuantumNumberNames.Bottomness,
+    EdgeQuantumNumbers.topness.__name__: StateQuantumNumberNames.Topness,
+    EdgeQuantumNumbers.baryon_number.__name__: StateQuantumNumberNames.BaryonNumber,
+    EdgeQuantumNumbers.electron_lepton_number.__name__: StateQuantumNumberNames.ElectronLN,
+    EdgeQuantumNumbers.muon_lepton_number.__name__: StateQuantumNumberNames.MuonLN,
+    EdgeQuantumNumbers.tau_lepton_number.__name__: StateQuantumNumberNames.TauLN,
+    EdgeQuantumNumbers.parity.__name__: StateQuantumNumberNames.Parity,
+    EdgeQuantumNumbers.c_parity.__name__: StateQuantumNumberNames.CParity,
+    EdgeQuantumNumbers.g_parity.__name__: StateQuantumNumberNames.GParity,
+    NodeQuantumNumbers.l_magnitude.__name__: InteractionQuantumNumberNames.L,
+    NodeQuantumNumbers.l_projection.__name__: InteractionQuantumNumberNames.L,
+    NodeQuantumNumbers.s_magnitude.__name__: InteractionQuantumNumberNames.S,
+    NodeQuantumNumbers.s_projection.__name__: InteractionQuantumNumberNames.S,
+    NodeQuantumNumbers.parity_prefactor.__name__: InteractionQuantumNumberNames.ParityPrefactor,
 }
