@@ -18,7 +18,7 @@ from typing import (
 )
 
 
-class Parity:
+class Parity(abc.Hashable):
     """Safe, immutable data container for parity."""
 
     def __init__(self, value: Union[float, int, str]) -> None:
@@ -37,6 +37,9 @@ class Parity:
 
     def __neg__(self) -> "Parity":
         return Parity(-self.value)
+
+    def __hash__(self) -> int:
+        return self.__value
 
     def __repr__(self) -> str:
         return (

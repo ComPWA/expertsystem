@@ -77,6 +77,10 @@ class TestParity:
         assert int(parity) == +1
 
     @staticmethod
+    def test_hash():
+        assert {Parity(-1), Parity(-1), Parity(+1)} == {Parity(-1), Parity(+1)}
+
+    @staticmethod
     def test_neg():
         parity = Parity(+1)
         flipped_parity = -parity
