@@ -11,6 +11,7 @@ from typing import (
     Dict,
     List,
     Optional,
+    Sequence,
     Tuple,
     Union,
 )
@@ -67,8 +68,8 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        initial_state: List[StateDefinition],
-        final_state: List[StateDefinition],
+        initial_state: Sequence[StateDefinition],
+        final_state: Sequence[StateDefinition],
         particles: ParticleCollection = ParticleCollection(),
         allowed_intermediate_particles: Optional[List[str]] = None,
         interaction_type_settings: Dict[
