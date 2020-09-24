@@ -15,14 +15,16 @@ from typing import (
 )
 
 from expertsystem.data import Spin
-from expertsystem.state.conservation_rules import Rule
-from expertsystem.state.particle import (
-    CompareGraphElementPropertiesFunctor,
+from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
     Labels,
     ParticlePropertyNames,
-    ParticleWithSpin,
     StateQuantumNumberNames,
+)
+from expertsystem.state.conservation_rules import Rule
+from expertsystem.state.particle import (
+    CompareGraphElementPropertiesFunctor,
+    ParticleWithSpin,
     get_interaction_property,
 )
 from expertsystem.state.propagation import (

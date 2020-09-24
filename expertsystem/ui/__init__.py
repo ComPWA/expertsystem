@@ -21,9 +21,9 @@ from expertsystem import io
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.data import ParticleCollection
+from expertsystem.nested_dicts import InteractionQuantumNumberNames
 from expertsystem.state.particle import (
     CompareGraphElementPropertiesFunctor,
-    InteractionQuantumNumberNames,
     ParticleWithSpin,
     StateDefinition,
     filter_particles,

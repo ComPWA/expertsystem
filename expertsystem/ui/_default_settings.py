@@ -12,6 +12,10 @@ from typing import (
     List,
 )
 
+from expertsystem.nested_dicts import (
+    InteractionQuantumNumberNames,
+    StateQuantumNumberNames,
+)
 from expertsystem.state.conservation_rules import (
     BaryonNumberConservation,
     CParityConservation,
@@ -32,11 +36,7 @@ from expertsystem.state.conservation_rules import (
     StrangenessConservation,
     TauLNConservation,
 )
-from expertsystem.state.particle import (
-    InteractionQuantumNumberNames,
-    StateQuantumNumberNames,
-    create_spin_domain,
-)
+from expertsystem.state.particle import create_spin_domain
 from expertsystem.state.propagation import (
     InteractionNodeSettings,
     InteractionTypes,

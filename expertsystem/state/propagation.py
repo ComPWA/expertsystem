@@ -17,21 +17,23 @@ from dataclasses import fields
 from enum import Enum, auto
 
 from expertsystem.data import EdgeQuantumNumbers, NodeQuantumNumbers, Parity
+from expertsystem.nested_dicts import (
+    InteractionQuantumNumberNames,
+    Labels,
+    ParticleDecayPropertyNames,
+    ParticlePropertyNames,
+    QNClassConverterMapping,
+    QNNameClassMapping,
+    StateQuantumNumberNames,
+)
 from expertsystem.solvers.constraint import (
     BacktrackingSolver,
     Constraint,
     Problem,
     Unassigned,
 )
-from expertsystem.state import particle
 from expertsystem.state.conservation_rules import Rule
 from expertsystem.state.particle import (
-    InteractionQuantumNumberNames,
-    ParticleDecayPropertyNames,
-    ParticlePropertyNames,
-    QNClassConverterMapping,
-    QNNameClassMapping,
-    StateQuantumNumberNames,
     get_interaction_property,
     get_particle_candidates_for_state,
     get_particle_property,
@@ -508,9 +510,9 @@ class ParticleStateTransitionGraphValidator(AbstractPropagator):
     def __create_node_variables(self, node_id, qn_list):
         """Create variables for the quantum numbers of the specified node."""
         variables = {}
-        type_label = particle.Labels.Type.name
+        type_label = Labels.Type.name
         if node_id in self.graph.node_props:
-            qns_label = particle.Labels.QuantumNumber.name
+            qns_label = Labels.QuantumNumber.name
             for qn_name in qn_list:
                 converter = QNClassConverterMapping[
                     QNNameClassMapping[qn_name]
@@ -866,7 +868,7 @@ class CSPPropagator(AbstractPropagator):
 def add_qn_to_graph_element(graph, var_info, value):
     if value is None:
         return
-    qns_label = particle.Labels.QuantumNumber.name
+    qns_label = Labels.QuantumNumber.name
 
     element_id = var_info.element_id
     qn_name = var_info.qn_name

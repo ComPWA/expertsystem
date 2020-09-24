@@ -1,12 +1,12 @@
 import pytest
 
 from expertsystem.data import Spin
-from expertsystem.state import particle
-from expertsystem.state.conservation_rules import ParityConservationHelicity
-from expertsystem.state.particle import (
+from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
     _SpinQNConverter,
 )
+from expertsystem.state import particle
+from expertsystem.state.conservation_rules import ParityConservationHelicity
 from expertsystem.ui import (
     InteractionTypes,
     StateTransitionManager,
