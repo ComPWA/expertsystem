@@ -3,6 +3,7 @@
 import logging
 from collections import abc
 from dataclasses import dataclass, fields
+from functools import total_ordering
 from typing import (
     Any,
     Callable,
@@ -19,6 +20,7 @@ from typing import (
 )
 
 
+@total_ordering
 class Parity(abc.Hashable):
     """Safe, immutable data container for parity."""
 
@@ -35,15 +37,6 @@ class Parity(abc.Hashable):
 
     def __gt__(self, other: Any) -> bool:
         return self.value > int(other)
-
-    def __ge__(self, other: Any) -> bool:
-        return self > other or self == other
-
-    def __lt__(self, other: Any) -> bool:
-        return other > self.value
-
-    def __le__(self, other: Any) -> bool:
-        return not self > other
 
     def __int__(self) -> int:
         return self.value
