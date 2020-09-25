@@ -77,6 +77,18 @@ class TestParity:
         assert int(parity) == +1
 
     @staticmethod
+    def test_comparison():
+        neg = Parity(-1)
+        pos = Parity(+1)
+        assert pos > 0
+        assert neg < 0
+        assert neg < pos
+        assert neg <= pos
+        assert pos > neg
+        assert pos >= neg
+        assert pos <= 1
+
+    @staticmethod
     def test_hash():
         neg = Parity(-1)
         pos = Parity(+1)

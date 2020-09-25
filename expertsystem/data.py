@@ -4,6 +4,7 @@ import logging
 from collections import abc
 from dataclasses import dataclass, fields
 from typing import (
+    Any,
     Callable,
     Dict,
     ItemsView,
@@ -31,6 +32,20 @@ class Parity(abc.Hashable):
         if isinstance(other, Parity):
             return self.__value == other.value
         return self.__value == other
+
+    def __gt__(self, other: Any) -> bool:
+        if isinstance(other, Parity):
+            return self.value > other.value
+        return self.value > int(other)
+
+    def __ge__(self, other: Any) -> bool:
+        return self > other or self == other
+
+    def __lt__(self, other: Any) -> bool:
+        return not self >= other
+
+    def __le__(self, other: Any) -> bool:
+        return not self > other
 
     def __int__(self) -> int:
         return self.value
