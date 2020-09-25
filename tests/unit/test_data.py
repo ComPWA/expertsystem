@@ -1,4 +1,5 @@
 # pylint: disable=redefined-outer-name, no-self-use
+import typing
 from copy import deepcopy
 from dataclasses import FrozenInstanceError
 
@@ -76,6 +77,7 @@ class TestParity:
         assert parity == +1
         assert int(parity) == +1
 
+    @typing.no_type_check  # https://github.com/python/mypy/issues/4610
     @staticmethod
     def test_comparison():
         neg = Parity(-1)
