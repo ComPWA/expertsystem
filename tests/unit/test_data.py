@@ -86,7 +86,9 @@ class TestParity:
         assert neg <= pos
         assert pos > neg
         assert pos >= neg
-        assert pos <= 1
+        assert pos >= 0
+        assert neg <= 0
+        assert 0 < pos  # pylint: disable=misplaced-comparison-constant
 
     @staticmethod
     def test_hash():

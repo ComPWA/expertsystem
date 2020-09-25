@@ -34,15 +34,13 @@ class Parity(abc.Hashable):
         return self.__value == other
 
     def __gt__(self, other: Any) -> bool:
-        if isinstance(other, Parity):
-            return self.value > other.value
         return self.value > int(other)
 
     def __ge__(self, other: Any) -> bool:
         return self > other or self == other
 
     def __lt__(self, other: Any) -> bool:
-        return not self >= other
+        return other > self.value
 
     def __le__(self, other: Any) -> bool:
         return not self > other
