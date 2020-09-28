@@ -47,5 +47,8 @@ from . import amplitude, io, particle, reaction
 generate_transitions = reaction.generate
 generate_transitions.__doc__ = """An alias to `.reaction.generate`."""
 
+check_reaction = reaction.check
+check_reaction.__doc__ = """An alias to `.reaction.check`."""
+
 generate_amplitudes = amplitude.generate
 generate_amplitudes.__doc__ = """An alias to `.amplitude.generate`."""

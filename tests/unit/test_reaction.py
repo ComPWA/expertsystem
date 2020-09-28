@@ -1,5 +1,6 @@
 import pytest
 
+import expertsystem as es
 from expertsystem.reaction import InteractionTypes as IT  # noqa: N817
 from expertsystem.reaction import (
     StateTransitionManager,
@@ -46,3 +47,31 @@ def test_determine_interaction_types(description, expected):
             assert _determine_interaction_types(description)
     else:
         assert _determine_interaction_types(description) == expected
+
+
+@pytest.mark.parametrize(
+    "initial_state, final_state, interaction_types, n_intermediate_states",
+    [
+        ("pi0", ["gamma", "gamma", "gamma"], "EM", ValueError),
+        ("pi0", ["gamma", "gamma"], "EM", 0),
+        ("pi0", ["e+", "e-"], "EM", 0),
+    ],
+)
+def test_check_reaction(
+    initial_state,
+    final_state,
+    interaction_types,
+    n_intermediate_states,
+):
+    if n_intermediate_states is ValueError:
+        with pytest.raises(ValueError):
+            es.reaction.check(initial_state, final_state, interaction_types)
+    else:
+        assert (
+            len(
+                es.reaction.check(
+                    initial_state, final_state, interaction_types
+                )
+            )
+            == n_intermediate_states
+        )
