@@ -6,8 +6,8 @@ Interactive examples
 This page exposes some of the functionality of the expertsystem as online
 utilities.
 
-Particle database
------------------
+Quantum number search
+---------------------
 
 The `.load_pdg` function creates a `.ParticleCollection` instance containing
 the latest PDG info. Its `~.ParticleCollection.find` and
