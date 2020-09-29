@@ -17,6 +17,14 @@ from dataclasses import dataclass, field, fields
 from enum import Enum, auto
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, Type, Union
 
+from constraint import (
+    BacktrackingSolver,
+    Constraint,
+    Problem,
+    Unassigned,
+    Variable,
+)
+
 from expertsystem.data import Parity, Spin
 from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
@@ -27,13 +35,6 @@ from expertsystem.nested_dicts import (
     QNNameClassMapping,
     StateQuantumNumberNames,
     edge_qn_to_enum,
-)
-from expertsystem.solvers.constraint import (
-    BacktrackingSolver,
-    Constraint,
-    Problem,
-    Unassigned,
-    Variable,
 )
 from expertsystem.state.conservation_rules import Rule
 from expertsystem.state.properties import (
@@ -168,8 +169,8 @@ class Solver(ABC):
         have to be complete.
 
         Args:
-          graph: a `StateTransitionGraph` which contains all of the known facts
-            quantum numbers of the problem.
+          graph: a `.StateTransitionGraph` which contains all of the known
+            facts quantum numbers of the problem.
           edge_settings: mapping of edge id's to `EdgeSettings`, that
             assigns specific rules and variable domains to an edge of the graph.
           node_settings: mapping of node id's to `NodeSettings`, that
@@ -988,6 +989,32 @@ class ConservationRuleConstraintWrapper(Constraint):
         forwardcheck: bool = False,
         _unassigned: Variable = Unassigned,
     ) -> bool:
+        """Perform the constraint checking.
+
+        If the forwardcheck parameter is not false, besides telling if the
+        constraint is currently broken or not, the constraint implementation
+        may choose to hide values from the domains of unassigned variables to
+        prevent them from being used, and thus prune the search space.
+
+        Args:
+            variables: Variables affected by that constraint, in the same order
+                provided by the user.
+
+            domains (dict): Dictionary mapping variables to their domains.
+
+            assignments (dict): Dictionary mapping assigned variables to their
+                current assumed value.
+
+            forwardcheck (bool): Boolean value stating whether forward checking
+                should be performed or not.
+
+            _unassigned: Can be left empty
+
+        Return:
+            bool:
+                Boolean value stating if this constraint is currently broken
+                or not.
+        """
         if self.conditions_never_met:
             return True
         params = [(x, assignments.get(x, _unassigned)) for x in variables]
