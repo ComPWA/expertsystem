@@ -65,6 +65,7 @@ class EdgeSettings:
     """Solver settings for a specific edge of a graph."""
 
     conservation_rules: Set[Rule] = field(default_factory=set)
+    rule_priorities: Dict[Type[Rule], int] = field(default_factory=dict)
     qn_domains: Dict[Any, Any] = field(default_factory=dict)
 
 
@@ -77,11 +78,13 @@ class NodeSettings:
     required for the solution finding, e.g:
 
       - set of conservation rules
+      - mapping of rules to priorities (optional)
       - mapping of quantum numbers to their domains
       - strength scale parameter (higher value means stronger force)
     """
 
     conservation_rules: Set[Rule] = field(default_factory=set)
+    rule_priorities: Dict[Type[Rule], int] = field(default_factory=dict)
     qn_domains: Dict[Any, Any] = field(default_factory=dict)
     interaction_strength: float = 1.0
 
@@ -638,14 +641,31 @@ class CSPSolver(Solver):
         """
         self.__clear()
 
+        def get_rules_by_priority(
+            node_settings: NodeSettings,
+        ) -> List[Rule]:
+            # first add priorities to the entries
+            priority_list = [
+                (x, node_settings.rule_priorities[type(x)])
+                if type(x) in node_settings.rule_priorities
+                else (x, 1)
+                for x in node_settings.conservation_rules
+            ]
+            # then sort according to priority
+            sorted_list = sorted(
+                priority_list, key=lambda x: x[1], reverse=True
+            )
+            # and strip away the priorities again
+            return [x[0] for x in sorted_list]
+
         for node_id in self.__graph.nodes:
             # currently we only have rules related to graph nodes
             # later on rules that are directly connected to edge can also be
             # defined (GellmannNishijimaRule can be changed to that)
-            for cons_law in graph_settings.node_settings[
-                node_id
-            ].conservation_rules:
-                variable_mapping: dict = {}
+            for cons_law in get_rules_by_priority(
+                graph_settings.node_settings[node_id]
+            ):
+                variable_mapping: Dict[str, Any] = {}
                 # from cons law and graph determine needed var lists
                 qn_names = _get_required_qn_names(cons_law)
 

@@ -6,7 +6,7 @@ from os.path import (
     join,
     realpath,
 )
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
@@ -48,25 +48,25 @@ DEFAULT_PARTICLE_LIST_PATH = join(
 
 # If a conservation law is not listed here, a default priority of 1 is assumed.
 # Higher number means higher priority
-# CONSERVATION_LAW_PRIORITIES = {
-#     "SpinConservation": 8,
-#     "HelicityConservation": 7,
-#     "MassConservation": 10,
-#     "GellMannNishijimaRule": 50,
-#     "ChargeConservation": 100,
-#     "ElectronLNConservation": 45,
-#     "MuonLNConservation": 44,
-#     "TauLNConservation": 43,
-#     "BaryonNumberConservation": 90,
-#     "IdenticalParticleSymmetrization": 2,
-#     "CharmConservation": 70,
-#     "StrangenessConservation": 69,
-#     "ParityConservation": 6,
-#     "CParityConservation": 5,
-#     "ParityConservationHelicity": 4,
-#     "IsoSpinConservation": 60,
-#     "GParityConservation": 3,
-# }
+CONSERVATION_LAW_PRIORITIES = {
+    SpinConservation: 8,
+    HelicityConservation: 7,
+    MassConservation: 10,
+    GellMannNishijimaRule: 50,
+    ChargeConservation: 100,
+    ElectronLNConservation: 45,
+    MuonLNConservation: 44,
+    TauLNConservation: 43,
+    BaryonNumberConservation: 90,
+    IdenticalParticleSymmetrization: 2,
+    CharmConservation: 70,
+    StrangenessConservation: 69,
+    ParityConservation: 6,
+    CParityConservation: 5,
+    ParityConservationHelicity: 4,
+    IsoSpinConservation: 60,
+    GParityConservation: 3,
+}
 
 
 def _get_spin_magnitudes(is_nbody: bool) -> List[float]:
@@ -96,7 +96,9 @@ def create_default_interaction_settings(
     """
     interaction_type_settings = {}
     formalism_edge_settings = EdgeSettings()
-    formalism_node_settings = NodeSettings()
+    formalism_node_settings = NodeSettings(
+        rule_priorities=CONSERVATION_LAW_PRIORITIES
+    )
 
     if "helicity" in formalism_type:
         formalism_node_settings.conservation_rules = {
@@ -207,29 +209,4 @@ def create_default_interaction_settings(
         strong_node_settings,
     )
 
-    # # reorder conservation laws according to priority
-    # weak_settings.conservation_laws = _reorder_list_by_priority(
-    #     weak_settings.conservation_laws, CONSERVATION_LAW_PRIORITIES
-    # )
-    # em_settings.conservation_laws = _reorder_list_by_priority(
-    #     em_settings.conservation_laws, CONSERVATION_LAW_PRIORITIES
-    # )
-    # strong_settings.conservation_laws = _reorder_list_by_priority(
-    #     strong_settings.conservation_laws, CONSERVATION_LAW_PRIORITIES
-    # )
-
     return interaction_type_settings
-
-
-def _reorder_list_by_priority(
-    some_list: List[Any], priority_mapping: Dict[str, Any]
-) -> List[Any]:
-    # first add priorities to the entries
-    priority_list = [
-        (x, priority_mapping[str(x)]) if str(x) in priority_mapping else (x, 1)
-        for x in some_list
-    ]
-    # then sort according to priority
-    sorted_list = sorted(priority_list, key=lambda x: x[1], reverse=True)
-    # and strip away the priorities again
-    return [x[0] for x in sorted_list]

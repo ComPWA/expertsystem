@@ -143,6 +143,7 @@ def test_em_reactions(test_input, expected):
         if len(test_input[0]) > 1 or len(test_input[1]) > 2
         else "isobar",
         propagation_mode=SolvingMode.Full,
+        number_of_threads=1,
     )
 
     stm.set_allowed_interaction_types([InteractionTypes.EM])
