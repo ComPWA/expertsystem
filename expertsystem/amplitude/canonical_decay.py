@@ -173,7 +173,7 @@ def __validate_spin_type(
     if interaction_property is None or not isinstance(
         interaction_property, Spin
     ):
-        raise ValueError(
+        raise TypeError(
             f"{interaction_property.__class__.__name__} is not of type {Spin.__name__}"
         )
     return interaction_property
