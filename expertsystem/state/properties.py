@@ -122,7 +122,7 @@ def get_interaction_property(
     interaction_properties: Dict[str, Any],
     qn_name: Union[InteractionQuantumNumberNames, StateQuantumNumberNames],
     converter: Optional[AbstractQNConverter] = None,
-) -> Optional[Dict[str, Any]]:
+) -> Optional[Any]:
     qns_label = Labels.QuantumNumber.name
     type_label = Labels.Type.name
 
