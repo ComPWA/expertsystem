@@ -9,6 +9,8 @@ import os
 import shutil
 import subprocess
 
+import sphobjinv as soi
+
 
 # -- Copy example notebooks ---------------------------------------------------
 print("Copy example notebook and data files")
@@ -39,6 +41,25 @@ subprocess.call(
     "-o api/ ../expertsystem/; ",
     shell=True,
 )
+
+# -- Convert sphinx object inventory -----------------------------------------
+inv = soi.Inventory()
+inv.project = "constraint"
+
+inv.objects.append(
+    soi.DataObjStr(
+        name="constraint.Constraint",
+        domain="py",
+        role="class",
+        priority="1",
+        uri="constraint.Constraint-class.html",
+        dispname="-",
+    )
+)
+
+text = inv.data_file(contract=True)
+ztext = soi.compress(text)
+soi.writebytes("constraint.inv", ztext)
 
 
 # -- Project information -----------------------------------------------------
@@ -131,11 +152,14 @@ nitpick_ignore = [
     ("py:class", "a set-like object providing a view on D's keys"),
     ("py:class", "_T"),
     ("py:class", "an object providing a view on D's values"),
-    ("py:class", "constraint.Constraint"),
 ]
 
 # Intersphinx settings
 intersphinx_mapping = {
+    "constraint": (
+        "https://labix.org/doc/constraint/public/",
+        "constraint.inv",
+    ),
     "graphviz": ("https://graphviz.readthedocs.io/en/stable/", None),
     "jsonschema": (
         "https://python-jsonschema.readthedocs.io/en/latest/",

@@ -581,8 +581,8 @@ def encode_variable_name(variable_info, delimiter):
 class CSPPropagator(AbstractPropagator):
     """Quantum number propagator reducing the problem to a CSP.
 
-    Quantum number propagator reducing the problem to a constraint satisfaction
-    problem and solving this with the python-constraint module.
+    Quantum number propagator reducing the problem to a Constraint Satisfaction
+    Problem and solving this with the python-constraint module.
 
     The variables are the quantum numbers of particles/edges, but also some
     composite quantum numbers which are attributed to the interaction nodes
