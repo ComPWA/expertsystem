@@ -88,7 +88,12 @@ autodoc_default_options = {
     "members": True,
     "undoc-members": True,
     "show-inheritance": True,
-    "special-members": "__call__, __eq__",
+    "special-members": ", ".join(
+        [
+            "__call__",
+            "__eq__",
+        ]
+    ),
 }
 html_copy_source = True  # needed for download notebook button
 html_show_copyright = False
