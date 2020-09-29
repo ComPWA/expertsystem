@@ -36,8 +36,7 @@ subprocess.call(
     "--no-toc "
     "--templatedir _templates "
     "--separate "
-    "-o api/ ../expertsystem/ "
-    "../expertsystem/solvers/constraint; ",
+    "-o api/ ../expertsystem/; ",
     shell=True,
 )
 
@@ -127,8 +126,7 @@ nitpick_ignore = [
     ("py:class", "a set-like object providing a view on D's keys"),
     ("py:class", "_T"),
     ("py:class", "an object providing a view on D's values"),
-    ("py:class", "expertsystem.solvers.constraint.Constraint"),
-    ("py:class", "expertsystem.state.propagation.GraphElementTypes"),
+    ("py:class", "constraint.Constraint"),
 ]
 
 # Intersphinx settings
