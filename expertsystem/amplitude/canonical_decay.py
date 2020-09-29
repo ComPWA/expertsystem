@@ -25,13 +25,13 @@ def generate_clebsch_gordan_string(
     graph: StateTransitionGraph, node_id: int
 ) -> str:
     node_props = graph.node_props[node_id]
-    ang_orb_mom = get_interaction_property(
-        node_props, InteractionQuantumNumberNames.L
+    ang_orb_mom = __validate_spin_type(
+        get_interaction_property(node_props, InteractionQuantumNumberNames.L)
     )
-    spin = get_interaction_property(
-        node_props, InteractionQuantumNumberNames.S
+    spin = __validate_spin_type(
+        get_interaction_property(node_props, InteractionQuantumNumberNames.S)
     )
-    return f"_L_{ang_orb_mom.magnitude}_S_{spin.magnitude}"  # type: ignore
+    return f"_L_{ang_orb_mom.magnitude}_S_{spin.magnitude}"
 
 
 class CanonicalAmplitudeNameGenerator(HelicityAmplitudeNameGenerator):
@@ -69,26 +69,16 @@ def _clebsch_gordan_decorator(
     def wrapper(  # pylint: disable=too-many-locals
         self: Any, graph: StateTransitionGraph, node_id: int
     ) -> dict:
-        def validate_spin_type(
-            interaction_property: Optional[Union[Spin, float]]
-        ) -> Spin:
-            if interaction_property is None or not isinstance(
-                interaction_property, Spin
-            ):
-                raise ValueError(
-                    f"{interaction_property.__class__.__name__} is not of type {Spin.__name__}"
-                )
-            return interaction_property
 
         spin_type = StateQuantumNumberNames.Spin
         partial_decay_dict = decay_generate_function(self, graph, node_id)
         node_props = graph.node_props[node_id]
-        ang_mom = validate_spin_type(
+        ang_mom = __validate_spin_type(
             get_interaction_property(
                 node_props, InteractionQuantumNumberNames.L
             )
         )
-        spin = validate_spin_type(
+        spin = __validate_spin_type(
             get_interaction_property(
                 node_props, InteractionQuantumNumberNames.S
             )
@@ -100,7 +90,7 @@ def _clebsch_gordan_decorator(
 
         in_edge_ids = graph.get_edges_ingoing_to_node(node_id)
 
-        parent_spin = validate_spin_type(
+        parent_spin = __validate_spin_type(
             get_particle_property(graph.edge_props[in_edge_ids[0]], spin_type)
         )
 
@@ -175,3 +165,15 @@ class CanonicalAmplitudeGenerator(HelicityAmplitudeGenerator):
         self, graph: StateTransitionGraph, node_id: Optional[int] = None
     ) -> dict:
         return super().generate_partial_decay(graph, node_id)
+
+
+def __validate_spin_type(
+    interaction_property: Optional[Union[Spin, float]]
+) -> Spin:
+    if interaction_property is None or not isinstance(
+        interaction_property, Spin
+    ):
+        raise ValueError(
+            f"{interaction_property.__class__.__name__} is not of type {Spin.__name__}"
+        )
+    return interaction_property
