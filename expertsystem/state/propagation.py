@@ -560,18 +560,17 @@ class CSPSolver(Solver):
     The variables are the quantum numbers of particles/edges, but also some
     composite quantum numbers which are attributed to the interaction nodes
     (such as angular momentum :math:`L`). The conservation rules serve as the
-    constraints and are wrapped with a special class
-    :class:`.ConservationRuleConstraintWrapper`.
+    constraints and a special wrapper class serves as an adapter.
     """
 
     def __init__(self, allowed_intermediate_particles: List[dict]):
         self.__graph = StateTransitionGraph[dict]()
         self.__variable_set: Set[str] = set()
         self.__constraints: Dict[
-            int, Set[ConservationRuleConstraintWrapper]
+            int, Set[_ConservationRuleConstraintWrapper]
         ] = defaultdict(set)
         self.__non_executable_constraints: Dict[
-            int, Set[ConservationRuleConstraintWrapper]
+            int, Set[_ConservationRuleConstraintWrapper]
         ] = defaultdict(set)
         self.__problem = Problem(BacktrackingSolver(True))
         self.__particle_variable_delimiter = "-*-"
@@ -707,7 +706,7 @@ class CSPSolver(Solver):
                 variable_mapping["interaction-fixed"] = int_node_vars[1]
                 var_list.extend(list(variable_mapping["interaction"]))
 
-                constraint = ConservationRuleConstraintWrapper(
+                constraint = _ConservationRuleConstraintWrapper(
                     cons_law,
                     variable_mapping,
                     self.__particle_variable_delimiter,
@@ -830,6 +829,31 @@ class CSPSolver(Solver):
         Returns:
             solution graphs ([:class:`.StateTransitionGraph`])
         """
+
+        def add_qn_to_graph_element(
+            graph: StateTransitionGraph[dict],
+            var_info: _VariableInfo,
+            value: Any,
+        ) -> None:
+            if value is None:
+                return
+            qns_label = Labels.QuantumNumber.name
+
+            element_id = var_info.element_id
+            qn_name = var_info.qn_name
+            graph_prop_dict = graph.edge_props
+            if var_info.graph_element_type is _GraphElementTypes.node:
+                graph_prop_dict = graph.node_props
+
+            converter = QNClassConverterMapping[QNNameClassMapping[qn_name]]
+
+            if element_id not in graph_prop_dict:
+                graph_prop_dict[element_id] = {qns_label: []}
+
+            graph_prop_dict[element_id][qns_label].append(
+                converter.convert_to_dict(qn_name, value)
+            )
+
         solution_graphs = []
         initial_edges = self.__graph.get_initial_state_edges()
         final_edges = self.__graph.get_final_state_edges()
@@ -887,30 +911,7 @@ class CSPSolver(Solver):
         return solution_graphs
 
 
-def add_qn_to_graph_element(
-    graph: StateTransitionGraph[dict], var_info: _VariableInfo, value: Any
-) -> None:
-    if value is None:
-        return
-    qns_label = Labels.QuantumNumber.name
-
-    element_id = var_info.element_id
-    qn_name = var_info.qn_name
-    graph_prop_dict = graph.edge_props
-    if var_info.graph_element_type is _GraphElementTypes.node:
-        graph_prop_dict = graph.node_props
-
-    converter = QNClassConverterMapping[QNNameClassMapping[qn_name]]
-
-    if element_id not in graph_prop_dict:
-        graph_prop_dict[element_id] = {qns_label: []}
-
-    graph_prop_dict[element_id][qns_label].append(
-        converter.convert_to_dict(qn_name, value)
-    )
-
-
-class ConservationRuleConstraintWrapper(Constraint):
+class _ConservationRuleConstraintWrapper(Constraint):
     """Wrapper class of the python-constraint Constraint class.
 
     This allows a customized definition of conservation rules, and hence a
