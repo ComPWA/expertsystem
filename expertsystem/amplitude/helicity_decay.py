@@ -162,7 +162,9 @@ def get_prefactor(graph: StateTransitionGraph) -> Optional[float]:
             temp_prefactor = get_interaction_property(
                 graph.node_props[node_id], prefactor_label
             )
-            if temp_prefactor is not None:
+            if temp_prefactor is not None and isinstance(
+                temp_prefactor, float
+            ):
                 if prefactor is None:
                     prefactor = temp_prefactor
                 else:
@@ -170,7 +172,7 @@ def get_prefactor(graph: StateTransitionGraph) -> Optional[float]:
             else:
                 prefactor = None
                 break
-    return prefactor  # type: ignore
+    return prefactor
 
 
 def generate_kinematics(graphs: List[StateTransitionGraph]) -> dict:

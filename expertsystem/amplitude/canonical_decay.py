@@ -1,7 +1,7 @@
 """Implementation of the canonical formalism for amplitude model generation."""
 
 from collections import OrderedDict
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from expertsystem.data import Spin
 from expertsystem.nested_dicts import (
@@ -69,29 +69,48 @@ def _clebsch_gordan_decorator(
     def wrapper(  # pylint: disable=too-many-locals
         self: Any, graph: StateTransitionGraph, node_id: int
     ) -> dict:
+        def validate_spin_type(
+            interaction_property: Optional[Union[Spin, float]]
+        ) -> Spin:
+            if interaction_property is None or not isinstance(
+                interaction_property, Spin
+            ):
+                raise ValueError(
+                    f"{interaction_property.__class__.__name__} is not of type {Spin.__name__}"
+                )
+            return interaction_property
+
         spin_type = StateQuantumNumberNames.Spin
         partial_decay_dict = decay_generate_function(self, graph, node_id)
         node_props = graph.node_props[node_id]
-        ang_mom: Spin = get_interaction_property(  # type: ignore
-            node_props, InteractionQuantumNumberNames.L
+        ang_mom = validate_spin_type(
+            get_interaction_property(
+                node_props, InteractionQuantumNumberNames.L
+            )
         )
-        spin: Spin = get_interaction_property(  # type: ignore
-            node_props, InteractionQuantumNumberNames.S
+        spin = validate_spin_type(
+            get_interaction_property(
+                node_props, InteractionQuantumNumberNames.S
+            )
         )
+        if not isinstance(spin, Spin):
+            raise ValueError(
+                f"{ang_mom.__class__.__name__} is not of type {Spin.__name__}"
+            )
 
         in_edge_ids = graph.get_edges_ingoing_to_node(node_id)
 
-        parent_spin: Spin = get_particle_property(  # type: ignore
-            graph.edge_props[in_edge_ids[0]], spin_type
+        parent_spin = validate_spin_type(
+            get_particle_property(graph.edge_props[in_edge_ids[0]], spin_type)
         )
 
         daughter_spins: List[Spin] = []
 
         for out_edge_id in graph.get_edges_outgoing_from_node(node_id):
-            daughter_spin: Spin = get_particle_property(  # type: ignore
+            daughter_spin = get_particle_property(
                 graph.edge_props[out_edge_id], spin_type
             )
-            if daughter_spin is not None:
+            if daughter_spin is not None and isinstance(daughter_spin, Spin):
                 daughter_spins.append(daughter_spin)
 
         decay_particle_lambda = (
