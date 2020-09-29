@@ -21,6 +21,7 @@ from constraint import (
     Constraint,
     Problem,
     Unassigned,
+    Variable,
 )
 
 from expertsystem.data import Parity
@@ -959,7 +960,7 @@ class ConservationLawConstraintWrapper(Constraint):
         domains,
         assignments,
         forwardcheck=False,
-        _unassigned=Unassigned,
+        _unassigned: Variable = Unassigned,
     ):
         """Perform the constraint checking.
 

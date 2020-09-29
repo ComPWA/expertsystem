@@ -46,16 +46,24 @@ subprocess.call(
 inv = soi.Inventory()
 inv.project = "constraint"
 
-inv.objects.append(
-    soi.DataObjStr(
-        name="constraint.Constraint",
-        domain="py",
-        role="class",
-        priority="1",
-        uri="constraint.Constraint-class.html",
-        dispname="-",
+constraint_object_names = [
+    "Constraint",
+    "Domain",
+    "Problem",
+    "Solver",
+    "Variable",
+]
+for object_name in constraint_object_names:
+    inv.objects.append(
+        soi.DataObjStr(
+            name=f"{inv.project}.{object_name}",
+            domain="py",
+            role="class",
+            priority="1",
+            uri=f"{inv.project}.{object_name}-class.html",
+            dispname="-",
+        )
     )
-)
 
 text = inv.data_file(contract=True)
 ztext = soi.compress(text)
