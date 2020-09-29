@@ -220,7 +220,7 @@ def _extract_value(props: Dict[Enum, Any], obj_type: Any) -> Any:
 
 
 def _check_arg_requirements(
-    class_type: Type[Rule], props: Dict[Enum, Any]
+    class_type: Type[Any], props: Dict[Enum, Any]
 ) -> bool:
     if "__dataclass_fields__" in class_type.__dict__:
         return all(
@@ -236,8 +236,8 @@ def _check_arg_requirements(
 
 def _check_requirements(
     rule: Rule,
-    in_edge_props: List[Dict[StateQuantumNumberNames, int]],
-    out_edge_props: List[Dict[StateQuantumNumberNames, int]],
+    in_edge_props: List[Dict[Enum, Any]],
+    out_edge_props: List[Dict[Enum, Any]],
     node_props: dict,
 ) -> bool:
     if not hasattr(rule.__class__.__call__, "__annotations__"):
@@ -253,7 +253,7 @@ def _check_requirements(
         (in_edge_props, out_edge_props, node_props),
     ):
         if arg_counter == 3:
-            if not _check_arg_requirements(arg_type, props):
+            if not _check_arg_requirements(arg_type, props):  # type: ignore
                 return False
         else:
             if not all(
@@ -268,7 +268,9 @@ def _check_requirements(
     return True
 
 
-def _create_rule_edge_arg(input_type, edge_props):
+def _create_rule_edge_arg(
+    input_type: Type[Any], edge_props: List[Dict[Enum, Any]]
+) -> List[Any]:
     # pylint: disable=unidiomatic-typecheck
     if not isinstance(edge_props, (list, tuple)):
         raise TypeError("edge_props are incompatible...")
@@ -282,7 +284,9 @@ def _create_rule_edge_arg(input_type, edge_props):
     return [_extract_value(x, in_list_type) for x in edge_props]
 
 
-def _create_rule_node_arg(input_type, node_props):
+def _create_rule_node_arg(
+    input_type: Type[Any], node_props: Dict[Enum, Any]
+) -> Any:
     # pylint: disable=unidiomatic-typecheck
     if isinstance(node_props, (list, tuple)):
         raise TypeError("node_props is incompatible...")
@@ -295,10 +299,15 @@ def _create_rule_node_arg(input_type, node_props):
     return _extract_value(node_props, input_type)
 
 
-def _create_rule_args(rule, in_edge_props, out_edge_props, node_props) -> list:
+def _create_rule_args(
+    rule: Rule,
+    in_edge_props: List[Dict[Enum, Any]],
+    out_edge_props: List[Dict[Enum, Any]],
+    node_props: Dict[Enum, Any],
+) -> list:
     if not hasattr(rule.__class__.__call__, "__annotations__"):
         raise TypeError(
-            f"missing type annotations for __call__ of rule {rule.__name__}"
+            f"missing type annotations for __call__ of rule {str(rule)}"
         )
     args = []
     arg_counter = 0
@@ -309,12 +318,12 @@ def _create_rule_args(rule, in_edge_props, out_edge_props, node_props) -> list:
     for arg_type in rule_annotations:
         if arg_counter == 2:
             args.append(
-                _create_rule_node_arg(arg_type, ordered_props[arg_counter])
+                _create_rule_node_arg(arg_type, ordered_props[arg_counter])  # type: ignore
             )
         else:
             args.append(
                 _create_rule_edge_arg(
-                    arg_type.__args__, ordered_props[arg_counter]
+                    arg_type.__args__, ordered_props[arg_counter]  # type: ignore
                 )
             )
         arg_counter += 1
@@ -325,7 +334,9 @@ def _create_rule_args(rule, in_edge_props, out_edge_props, node_props) -> list:
     return args
 
 
-def _remove_return_annotation(rule_annotations):
+def _remove_return_annotation(
+    rule_annotations: List[Type[Any]],
+) -> List[Type[Any]]:
     # this assumes that all rules have also the return type defined
     return rule_annotations[:-1]
 
@@ -485,7 +496,9 @@ def validate_fully_initialized_graph(
     ) -> List[Enum]:
         return [x for x in qn_names if isinstance(x, type_to_filter)]
 
-    def _create_variable_containers(node_id: int, cons_law):
+    def _create_variable_containers(
+        node_id: int, cons_law: Rule
+    ) -> Tuple[List[dict], List[dict], dict]:
         in_edges = graph.get_edges_ingoing_to_node(node_id)
         out_edges = graph.get_edges_outgoing_from_node(node_id)
 
@@ -790,7 +803,9 @@ class CSPSolver(Solver):
                         variables[0].add(key)
         return variables
 
-    def __add_variable(self, var_info: _VariableInfo, domain):
+    def __add_variable(
+        self, var_info: _VariableInfo, domain: List[Any]
+    ) -> str:
         key = _encode_variable_name(
             var_info, self.__particle_variable_delimiter
         )
@@ -800,8 +815,9 @@ class CSPSolver(Solver):
         return key
 
     def __apply_solutions_to_graph(
-        self, solutions
-    ):  # pylint: disable=too-many-locals
+        self, solutions: List[Dict[str, Any]]
+    ) -> List[StateTransitionGraph[dict]]:
+        # pylint: disable=too-many-locals
         """Apply the CSP solutions to the graph instance.
 
         In other words attach the solution quantum numbers as properties to the
@@ -848,7 +864,7 @@ class CSPSolver(Solver):
                         StateQuantumNumberNames.Parity,
                     )
                     found_jps.add(
-                        str(spin.magnitude)
+                        str(spin.magnitude)  # type: ignore
                         + ("-" if parity in (-1, -1.0) else "+")
                     )
                     # now do actual candidate finding
@@ -871,7 +887,9 @@ class CSPSolver(Solver):
         return solution_graphs
 
 
-def add_qn_to_graph_element(graph, var_info, value):
+def add_qn_to_graph_element(
+    graph: StateTransitionGraph[dict], var_info: _VariableInfo, value: Any
+) -> None:
     if value is None:
         return
     qns_label = Labels.QuantumNumber.name
@@ -901,7 +919,9 @@ class ConservationRuleConstraintWrapper(Constraint):
 
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, rule, variable_mapping, name_delimiter):
+    def __init__(
+        self, rule: Rule, variable_mapping: Dict[str, Any], name_delimiter: str
+    ) -> None:
         if not isinstance(rule, Rule):
             raise TypeError("rule has to be of type Rule!")
         self.rule = rule
@@ -914,17 +934,17 @@ class ConservationRuleConstraintWrapper(Constraint):
             "interaction-fixed"
         ]
         self.name_delimiter = name_delimiter
-        self.part_in = []
-        self.part_out = []
-        self.interaction_qns = {}
-        self.variable_name_decoding_map: Dict[str, Tuple[int, str]] = {}
+        self.part_in: List[Dict[Enum, Any]] = []
+        self.part_out: List[Dict[Enum, Any]] = []
+        self.interaction_qns: Dict[Enum, Any] = {}
+        self.variable_name_decoding_map: Dict[str, Tuple[int, Enum]] = {}
 
         self.initialize_particle_lists()
 
         self.conditions_never_met = False
         self.scenario_results = [0, 0]
 
-    def initialize_particle_lists(self):
+    def initialize_particle_lists(self) -> None:
         """Fill the name decoding map.
 
         Also initialize the in and out particle lists. The variable names
@@ -947,9 +967,12 @@ class ConservationRuleConstraintWrapper(Constraint):
             self.interaction_qns[qn_name] = value
 
     def initialize_particle_list(
-        self, variable_set, fixed_variables, list_to_init
-    ):
-        temp_var_dict = {}
+        self,
+        variable_set: Sequence[str],
+        fixed_variables: Dict[int, list],
+        list_to_init: List[dict],
+    ) -> None:
+        temp_var_dict: Dict[int, Any] = {}
         for var_name in variable_set:
             var_info = _decode_variable_name(var_name, self.name_delimiter)
             if var_info.element_id not in temp_var_dict:
