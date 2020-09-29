@@ -3,13 +3,14 @@
 import json
 import logging
 from copy import deepcopy
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import xmltodict
 
 import yaml
 
 from expertsystem import io
+from expertsystem.data import Spin
 from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
     Labels,
@@ -159,12 +160,12 @@ def get_prefactor(graph: StateTransitionGraph) -> Optional[float]:
     prefactor = None
     for node_id in graph.nodes:
         if node_id in graph.node_props:
-            temp_prefactor = get_interaction_property(
-                graph.node_props[node_id], prefactor_label
+            temp_prefactor = __validate_float_type(
+                get_interaction_property(
+                    graph.node_props[node_id], prefactor_label
+                )
             )
-            if temp_prefactor is not None and isinstance(
-                temp_prefactor, float
-            ):
+            if temp_prefactor is not None:
                 if prefactor is None:
                     prefactor = temp_prefactor
                 else:
@@ -744,3 +745,15 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
                 Dumper=IncreasedIndent,
                 default_flow_style=False,
             )
+
+
+def __validate_float_type(
+    interaction_property: Optional[Union[Spin, float]]
+) -> Optional[float]:
+    if interaction_property is not None and not isinstance(
+        interaction_property, (float, int)
+    ):
+        raise TypeError(
+            f"{interaction_property.__class__.__name__} is not of type {float.__name__}"
+        )
+    return interaction_property
