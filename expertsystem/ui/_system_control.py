@@ -27,7 +27,7 @@ from expertsystem.solving import (
     InteractionTypes,
     NodeSettings,
 )
-from expertsystem.state.conservation_rules import Rule
+from expertsystem.solving.conservation_rules import Rule
 from expertsystem.state.properties import (
     CompareGraphElementPropertiesFunctor,
     get_interaction_property,

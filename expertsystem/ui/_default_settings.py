@@ -17,7 +17,7 @@ from expertsystem.solving import (
     InteractionTypes,
     NodeSettings,
 )
-from expertsystem.state.conservation_rules import (
+from expertsystem.solving.conservation_rules import (
     BaryonNumberConservation,
     CParityConservation,
     ChargeConservation,
