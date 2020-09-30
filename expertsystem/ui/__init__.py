@@ -28,10 +28,7 @@ from expertsystem.data import (
     ParticleCollection,
     ParticleWithSpin,
 )
-from expertsystem.nested_dicts import (
-    InteractionQuantumNumberNames,
-    _convert_edges_to_dict,
-)
+from expertsystem.nested_dicts import InteractionQuantumNumberNames
 from expertsystem.solving import (
     CSPSolver,
     EdgeSettings,
@@ -228,7 +225,6 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             )
         # create groups of settings ordered by "probability"
         graph_settings_groups = group_by_strength(graph_setting_pairs)
-        _convert_edges_to_dict([x for x, _ in graph_setting_pairs])
         return graph_settings_groups
 
     def _build_topologies(self) -> List[Topology]:
@@ -398,7 +394,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
     def _solve(
         self,
         state_graph_node_settings_pair: Tuple[
-            StateTransitionGraph, GraphSettings
+            StateTransitionGraph[ParticleWithSpin], GraphSettings
         ],
     ) -> Result:
         solver = CSPSolver(self.__allowed_intermediate_particles)
