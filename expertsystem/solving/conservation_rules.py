@@ -55,9 +55,6 @@ class Rule:
         carry more information about the rule that is extracted *dynamically*
         by the `.solving` module.
 
-    For additive quantum numbers, the decorator `additive_quantum_number_rule`
-    can simplify the constrution of the appropriate `Rule`.
-
     Generally, the conditions can be separated into two categories:
 
     * variable conditions
@@ -65,6 +62,9 @@ class Rule:
 
     Currently, only variable conditions are being used. Topological conditions
     could be created in the form of `~typing.Tuple` instead of `~typing.List`.
+
+    For additive quantum numbers, the decorator `additive_quantum_number_rule`
+    can simplify the constrution of the appropriate `Rule`.
     """
 
     def __repr__(self) -> str:
