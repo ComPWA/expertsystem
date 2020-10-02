@@ -17,11 +17,6 @@ from expertsystem.state.properties import (
 )
 from expertsystem.topology import StateTransitionGraph, Topology
 
-from .abstract_generator import (
-    AbstractAmplitudeGenerator,
-    AbstractAmplitudeNameGenerator,
-)
-
 
 def group_graphs_same_initial_and_final(
     graphs: List[StateTransitionGraph[dict]],
@@ -243,7 +238,7 @@ def _get_name_hel_list(
     return sorted(name_hel_list, key=lambda entry: entry[0])
 
 
-class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
+class HelicityAmplitudeNameGenerator:
     """Parameter name generator for the helicity formalism."""
 
     def __init__(self) -> None:
@@ -423,19 +418,18 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
         )
 
 
-class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
+class HelicityAmplitudeGenerator:
     """Amplitude model generator for the helicity formalism."""
 
     def __init__(
         self,
         top_node_no_dynamics: bool = True,
-        name_generator: AbstractAmplitudeNameGenerator = HelicityAmplitudeNameGenerator(),
     ) -> None:
         self.particle_list: dict = {}
         self.helicity_amplitudes: dict = {}
         self.kinematics: dict = {}
         self.top_node_no_dynamics = top_node_no_dynamics
-        self.name_generator: AbstractAmplitudeNameGenerator = name_generator
+        self.name_generator = HelicityAmplitudeNameGenerator()
         self.fit_parameter_names: Set[str] = set()
 
     def generate(self, graphs: List[StateTransitionGraph[dict]]) -> dict:

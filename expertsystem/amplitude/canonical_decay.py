@@ -14,7 +14,6 @@ from expertsystem.state.properties import (
 )
 from expertsystem.topology import StateTransitionGraph
 
-from .abstract_generator import AbstractAmplitudeNameGenerator
 from .helicity_decay import (
     HelicityAmplitudeGenerator,
     HelicityAmplitudeNameGenerator,
@@ -153,12 +152,9 @@ class CanonicalAmplitudeGenerator(HelicityAmplitudeGenerator):
     Here, :math:`CG` stands for Clebsch-Gordan factor.
     """
 
-    def __init__(
-        self,
-        top_node_no_dynamics: bool = True,
-        name_generator: AbstractAmplitudeNameGenerator = CanonicalAmplitudeNameGenerator(),
-    ) -> None:
-        super().__init__(top_node_no_dynamics, name_generator=name_generator)
+    def __init__(self, top_node_no_dynamics: bool = True) -> None:
+        super().__init__(top_node_no_dynamics)
+        self.name_generator = CanonicalAmplitudeNameGenerator()
 
     @_clebsch_gordan_decorator
     def generate_partial_decay(  # type: ignore
