@@ -20,7 +20,7 @@ from expertsystem.state.properties import (
     get_interaction_property,
     perform_external_edge_identical_particle_combinatorics,
 )
-from expertsystem.topology import StateTransitionGraph
+from expertsystem.topology import StateTransitionGraph, Topology
 
 from . import _yaml_adapter
 from .abstract_generator import (
@@ -30,8 +30,8 @@ from .abstract_generator import (
 
 
 def group_graphs_same_initial_and_final(
-    graphs: List[StateTransitionGraph],
-) -> List[List[StateTransitionGraph]]:
+    graphs: List[StateTransitionGraph[dict]],
+) -> List[List[StateTransitionGraph[dict]]]:
     """Match final and initial states in groups.
 
     Each graph corresponds to a specific state transition amplitude.
@@ -40,7 +40,7 @@ def group_graphs_same_initial_and_final(
     individual amplitude parts.
     """
     graph_groups: Dict[
-        Tuple[tuple, tuple], List[StateTransitionGraph]
+        Tuple[tuple, tuple], List[StateTransitionGraph[dict]]
     ] = dict()
     for graph in graphs:
         ise = graph.get_final_state_edges()
@@ -58,7 +58,7 @@ def group_graphs_same_initial_and_final(
 
 
 def get_graph_group_unique_label(
-    graph_group: List[StateTransitionGraph],
+    graph_group: List[StateTransitionGraph[dict]],
 ) -> str:
     label = ""
     if graph_group:
@@ -75,7 +75,7 @@ def get_graph_group_unique_label(
 
 
 def determine_attached_final_state_string(
-    graph: StateTransitionGraph, edge_id: int
+    graph: Topology, edge_id: int
 ) -> str:
     edge_ids = determine_attached_final_state(graph, edge_id)
     fs_string = ""
@@ -84,9 +84,7 @@ def determine_attached_final_state_string(
     return fs_string[1:]
 
 
-def determine_attached_final_state(
-    graph: StateTransitionGraph, edge_id: int
-) -> List[int]:
+def determine_attached_final_state(graph: Topology, edge_id: int) -> List[int]:
     """Determine all final state particles of a graph.
 
     These are attached downward (forward in time) for a given edge (resembling
@@ -109,9 +107,7 @@ def determine_attached_final_state(
     return final_state_edge_ids
 
 
-def get_recoil_edge(
-    graph: StateTransitionGraph, edge_id: int
-) -> Optional[int]:
+def get_recoil_edge(graph: Topology, edge_id: int) -> Optional[int]:
     """Determine the id of the recoil edge for the specified edge of a graph."""
     node_id = graph.edges[edge_id].originating_node_id
     if node_id is None:
@@ -126,9 +122,7 @@ def get_recoil_edge(
     return outgoing_edges[0]
 
 
-def get_parent_recoil_edge(
-    graph: StateTransitionGraph, edge_id: int
-) -> Optional[int]:
+def get_parent_recoil_edge(graph: Topology, edge_id: int) -> Optional[int]:
     """Determine the id of the recoil edge of the parent edge."""
     node_id = graph.edges[edge_id].originating_node_id
     if node_id is None:
@@ -142,7 +136,7 @@ def get_parent_recoil_edge(
     return get_recoil_edge(graph, ingoing_edges[0])
 
 
-def get_prefactor(graph: StateTransitionGraph) -> Optional[float]:
+def get_prefactor(graph: StateTransitionGraph[dict]) -> Optional[float]:
     """Calculate the product of all prefactors defined in this graph."""
     prefactor_label = InteractionQuantumNumberNames.ParityPrefactor
     prefactor = None
@@ -164,7 +158,7 @@ def get_prefactor(graph: StateTransitionGraph) -> Optional[float]:
     return prefactor
 
 
-def generate_kinematics(graphs: List[StateTransitionGraph]) -> dict:
+def generate_kinematics(graphs: List[StateTransitionGraph[dict]]) -> dict:
     tempdict: dict = {
         "InitialState": {"Particle": []},
         "FinalState": {"Particle": []},
@@ -194,7 +188,7 @@ def generate_kinematics(graphs: List[StateTransitionGraph]) -> dict:
     return {"HelicityKinematics": tempdict}
 
 
-def generate_particle_list(graphs: List[StateTransitionGraph]) -> dict:
+def generate_particle_list(graphs: List[StateTransitionGraph[dict]]) -> dict:
     # create particle entries
     temp_particle_names = []
     particles = []
@@ -208,7 +202,7 @@ def generate_particle_list(graphs: List[StateTransitionGraph]) -> dict:
     return {"ParticleList": {"Particle": particles}}
 
 
-def _embed_dynamics(graphs: List[StateTransitionGraph]) -> None:
+def _embed_dynamics(graphs: List[StateTransitionGraph[dict]]) -> None:
     decay_info = {Labels.Type.name: "nonResonant"}
     decay_info_label = Labels.DecayInfo.name
     for graph in graphs:
@@ -237,7 +231,7 @@ def generate_particles_string(
 
 
 def _get_name_hel_list(
-    graph: StateTransitionGraph, edge_ids: List[int]
+    graph: StateTransitionGraph[dict], edge_ids: List[int]
 ) -> List[Tuple[str, float]]:
     name_label = Labels.Name.name
     name_hel_list = []
@@ -262,7 +256,7 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
         self.parity_partner_coefficient_mapping: Dict[str, str] = {}
 
     def _generate_amplitude_coefficient_couple(
-        self, graph: StateTransitionGraph, node_id: int
+        self, graph: StateTransitionGraph[dict], node_id: int
     ) -> Tuple[str, str, str]:
         (in_hel_info, out_hel_info) = self._retrieve_helicity_info(
             graph, node_id
@@ -286,7 +280,7 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
         return (par_name_suffix, pp_par_name_suffix, priority_name_suffix)
 
     def register_amplitude_coefficient_name(
-        self, graph: StateTransitionGraph
+        self, graph: StateTransitionGraph[dict]
     ) -> None:
         for node_id in graph.nodes:
             (
@@ -325,7 +319,7 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
                     ] = coefficient_suffix
 
     def generate_amplitude_coefficient_infos(
-        self, graph: StateTransitionGraph
+        self, graph: StateTransitionGraph[dict]
     ) -> dict:
         """Generate coefficient info for a sequential amplitude graph.
 
@@ -382,7 +376,7 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
         return amplitude_coefficient_infos
 
     def generate_unique_amplitude_name(
-        self, graph: StateTransitionGraph, node_id: Optional[int] = None
+        self, graph: StateTransitionGraph[dict], node_id: Optional[int] = None
     ) -> str:
         """Generates a unique name for the amplitude corresponding.
 
@@ -411,7 +405,7 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
 
     @staticmethod
     def _retrieve_helicity_info(
-        graph: StateTransitionGraph, node_id: int
+        graph: StateTransitionGraph[dict], node_id: int
     ) -> Tuple[List[Tuple[str, float]], List[Tuple[str, float]]]:
         in_edges = graph.get_edges_ingoing_to_node(node_id)
         out_edges = graph.get_edges_outgoing_from_node(node_id)
@@ -422,10 +416,10 @@ class HelicityAmplitudeNameGenerator(AbstractAmplitudeNameGenerator):
         return (in_names_hel_list, out_names_hel_list)
 
     def _generate_amplitude_coefficient_name(
-        self, graph: StateTransitionGraph, node_id: int
+        self, graph: StateTransitionGraph[dict], node_id: int
     ) -> str:
         """Generate partial amplitude coefficient name suffix."""
-        (in_hel_info, out_hel_info) = self._retrieve_helicity_info(
+        in_hel_info, out_hel_info = self._retrieve_helicity_info(
             graph, node_id
         )
         return (
@@ -450,7 +444,7 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
         self.name_generator: AbstractAmplitudeNameGenerator = name_generator
         self.fit_parameter_names: Set[str] = set()
 
-    def generate(self, graphs: List[StateTransitionGraph]) -> None:
+    def generate(self, graphs: List[StateTransitionGraph[dict]]) -> None:
         if len(graphs) <= 0:
             raise ValueError(
                 "Number of solution graphs is not larger than zero!"
@@ -476,14 +470,14 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
         """
 
     def create_parameter_couplings(
-        self, graph_groups: List[List[StateTransitionGraph]]
+        self, graph_groups: List[List[StateTransitionGraph[dict]]]
     ) -> None:
         for graph_group in graph_groups:
             for graph in graph_group:
                 self.name_generator.register_amplitude_coefficient_name(graph)
 
     def generate_amplitude_info(  # pylint: disable=too-many-locals
-        self, graph_groups: List[List[StateTransitionGraph]]
+        self, graph_groups: List[List[StateTransitionGraph[dict]]]
     ) -> None:
         class_label = Labels.Class.name
         name_label = Labels.Name.name
@@ -548,7 +542,9 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
             }
         }
 
-    def generate_sequential_decay(self, graph: StateTransitionGraph) -> dict:
+    def generate_sequential_decay(
+        self, graph: StateTransitionGraph[dict]
+    ) -> dict:
         # pylint: disable=too-many-locals
         class_label = Labels.Class.name
         name_label = Labels.Name.name
@@ -591,7 +587,7 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
 
     @staticmethod
     def generate_partial_decay(
-        graph: StateTransitionGraph, node_id: Optional[int] = None
+        graph: StateTransitionGraph[dict], node_id: Optional[int] = None
     ) -> Dict[str, Any]:
         class_label = Labels.Class.name
         name_label = Labels.Name.name
