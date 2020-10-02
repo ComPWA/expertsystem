@@ -2,7 +2,6 @@
 
 import json
 import logging
-from copy import deepcopy
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import xmltodict
@@ -14,8 +13,8 @@ from expertsystem.data import Spin
 from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
     Labels,
-    StateQuantumNumberNames,
     get_spin_projection,
+    remove_spin_projection,
 )
 from expertsystem.state.properties import (
     get_interaction_property,
@@ -207,21 +206,6 @@ def generate_particle_list(graphs: List[StateTransitionGraph]) -> dict:
                 particles.append(new_edge_props)
                 temp_particle_names.append(par_name)
     return {"ParticleList": {"Particle": particles}}
-
-
-def remove_spin_projection(edge_props: dict) -> dict:
-    qns_label = Labels.QuantumNumber.name
-    type_label = Labels.Type.name
-    spin_label = StateQuantumNumberNames.Spin.name
-    proj_label = Labels.Projection.name
-
-    new_edge_props = deepcopy(edge_props)
-
-    for qn_entry in new_edge_props[qns_label]:
-        if StateQuantumNumberNames[qn_entry[type_label]] is spin_label:
-            del qn_entry[proj_label]
-            break
-    return new_edge_props
 
 
 def generate_particles_string(
