@@ -21,6 +21,7 @@ from typing import (
 from progress.bar import IncrementalBar
 
 from expertsystem import io
+from expertsystem.amplitude import write_model
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.data import (
@@ -413,8 +414,8 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             amplitude_generator = HelicityAmplitudeGenerator()
         elif self.formalism_type in ["canonical-helicity", "canonical"]:
             amplitude_generator = CanonicalAmplitudeGenerator()
-        amplitude_generator.generate(solutions)
-        amplitude_generator.write_to_file(output_file)
+        recipe_dict = amplitude_generator.generate(solutions)
+        write_model(recipe_dict, output_file)
 
 
 def load_default_particles() -> ParticleCollection:

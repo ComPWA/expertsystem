@@ -38,9 +38,5 @@ class AbstractAmplitudeGenerator(ABC):
     """Abstract interface for an amplitude model generator."""
 
     @abstractmethod
-    def generate(self, graphs: List[StateTransitionGraph]) -> None:
-        pass
-
-    @abstractmethod
-    def write_to_file(self, filename: str) -> None:
+    def generate(self, graphs: List[StateTransitionGraph]) -> dict:
         pass

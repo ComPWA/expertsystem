@@ -4,11 +4,6 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
-import xmltodict
-
-import yaml
-
-from expertsystem import io
 from expertsystem.data import Spin
 from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
@@ -22,7 +17,6 @@ from expertsystem.state.properties import (
 )
 from expertsystem.topology import StateTransitionGraph, Topology
 
-from . import _yaml_adapter
 from .abstract_generator import (
     AbstractAmplitudeGenerator,
     AbstractAmplitudeNameGenerator,
@@ -444,7 +438,7 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
         self.name_generator: AbstractAmplitudeNameGenerator = name_generator
         self.fit_parameter_names: Set[str] = set()
 
-    def generate(self, graphs: List[StateTransitionGraph[dict]]) -> None:
+    def generate(self, graphs: List[StateTransitionGraph[dict]]) -> dict:
         if len(graphs) < 1:
             raise ValueError(
                 f"At least one {StateTransitionGraph.__name__} required to"
@@ -461,6 +455,11 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
         self.fix_parameters_unambiguously()
         self.create_parameter_couplings(graph_groups)
         self.generate_amplitude_info(graph_groups)
+
+        recipe_dict = self.particle_list
+        recipe_dict.update(self.kinematics)
+        recipe_dict.update(self.helicity_amplitudes)
+        return recipe_dict
 
     def fix_parameters_unambiguously(self) -> None:
         """Fix parameters, so that the total amplitude is unambiguous.
@@ -646,75 +645,6 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
     def get_fit_parameters(self) -> Set[str]:
         logging.info("Number of parameters: %d", len(self.fit_parameter_names))
         return self.fit_parameter_names
-
-    def write_to_file(self, filename: str) -> None:
-        file_extension = filename.lower().split(".")[-1]
-        recipe_dict = self._create_recipe_dict()
-        if file_extension in ["xml"]:
-            self._write_recipe_to_xml(recipe_dict, filename)
-        elif file_extension in ["yaml", "yml"]:
-            self._write_recipe_to_yml(recipe_dict, filename)
-        else:
-            raise NotImplementedError(
-                f'Cannot write to file type "{file_extension}"'
-            )
-
-    def _create_recipe_dict(self) -> Dict[str, Any]:
-        recipe_dict = self.particle_list
-        recipe_dict.update(self.kinematics)
-        recipe_dict.update(self.helicity_amplitudes)
-        return recipe_dict
-
-    @staticmethod
-    def _write_recipe_to_xml(
-        recipe_dict: Dict[str, Any], filename: str
-    ) -> None:
-        xmlstring = xmltodict.unparse(
-            {"root": recipe_dict}, pretty=True, indent="  "
-        )
-        with open(filename, mode="w") as xmlfile:
-            xmlfile.write(xmlstring)
-
-    @staticmethod
-    def _write_recipe_to_yml(
-        recipe_dict: Dict[str, Any], filename: str
-    ) -> None:
-        particle_dict = _yaml_adapter.to_particle_dict(recipe_dict)
-        parameter_list = _yaml_adapter.to_parameter_list(recipe_dict)
-        kinematics = _yaml_adapter.to_kinematics_dict(recipe_dict)
-        dynamics = _yaml_adapter.to_dynamics(recipe_dict)
-        intensity = _yaml_adapter.to_intensity(recipe_dict)
-
-        class IncreasedIndent(yaml.Dumper):
-            # pylint: disable=too-many-ancestors
-            def increase_indent(self, flow=False, indentless=False):  # type: ignore
-                return super(IncreasedIndent, self).increase_indent(
-                    flow, False
-                )
-
-            def write_line_break(self, data=None):  # type: ignore
-                """See https://stackoverflow.com/a/44284819."""
-                super().write_line_break(data)
-                if len(self.indents) == 1:
-                    super().write_line_break()
-
-        output_dict = {
-            "Kinematics": kinematics,
-            "Parameters": parameter_list,
-            "Intensity": intensity,
-            "ParticleList": particle_dict,
-            "Dynamics": dynamics,
-        }
-        io.yaml.validation.amplitude_model(output_dict)
-
-        with open(filename, "w") as output_stream:
-            yaml.dump(
-                output_dict,
-                output_stream,
-                sort_keys=False,
-                Dumper=IncreasedIndent,
-                default_flow_style=False,
-            )
 
 
 def __validate_float_type(
