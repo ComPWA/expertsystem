@@ -360,6 +360,25 @@ class HelicityAmplitudeNameGenerator:
             + generate_particles_string(out_hel_info)
         )
 
+    def generate_sequential_amplitude_suffix(
+        self, graph: StateTransitionGraph[dict]
+    ) -> str:
+        """Generate unique suffix for a sequential amplitude graph."""
+        output_suffix = ""
+        for node_id in graph.nodes:
+            raw_suffix = self.generate_amplitude_coefficient_name(
+                graph, node_id
+            )
+            if raw_suffix not in self.parity_partner_coefficient_mapping:
+                raise KeyError(
+                    f"Coefficient name {raw_suffix} not found in mapping!"
+                )
+            coefficient_suffix = self.parity_partner_coefficient_mapping[
+                raw_suffix
+            ]
+            output_suffix += coefficient_suffix + ";"
+        return output_suffix
+
 
 class HelicityAmplitudeGenerator:
     """Amplitude model generator for the helicity formalism."""
@@ -492,9 +511,7 @@ class HelicityAmplitudeGenerator:
         ]
 
         amp_name = self.name_generator.generate_unique_amplitude_name(graph)
-        amp_coefficient_infos = self.generate_amplitude_coefficient_infos(
-            graph
-        )
+        amp_coefficient_infos = self.generate_amplitude_coefficients(graph)
         sequential_amplitude_dict = {
             class_label: "SequentialAmplitude",
             "Amplitude": partial_decays,
@@ -580,7 +597,7 @@ class HelicityAmplitudeGenerator:
 
         return partial_decay_dict
 
-    def generate_amplitude_coefficient_infos(
+    def generate_amplitude_coefficients(
         self, graph: StateTransitionGraph[dict]
     ) -> dict:
         """Generate coefficient info for a sequential amplitude graph.
@@ -589,34 +606,9 @@ class HelicityAmplitudeGenerator:
         should check itself if it or a parity partner is already defined. If so
         a coupled coefficient is introduced.
         """
-        seq_par_suffix = ""
-        prefactor = get_prefactor(graph)
-        use_prefactor = False
-        # loop over decay nodes in time order
-        for node_id in graph.nodes:
-            raw_suffix = (
-                self.name_generator.generate_amplitude_coefficient_name(
-                    graph, node_id
-                )
-            )
-
-            if (
-                raw_suffix
-                not in self.name_generator.parity_partner_coefficient_mapping
-            ):
-                raise KeyError(
-                    f"Coefficient name {raw_suffix} " "not found in mapping!"
-                )
-
-            coefficient_suffix = (
-                self.name_generator.parity_partner_coefficient_mapping[
-                    raw_suffix
-                ]
-            )
-            if coefficient_suffix != raw_suffix:
-                use_prefactor = True
-
-            seq_par_suffix += coefficient_suffix + ";"
+        seq_par_suffix = (
+            self.name_generator.generate_sequential_amplitude_suffix(graph)
+        )
 
         par_label = Labels.Parameter.name
         amplitude_coefficient_infos: dict = {
@@ -639,9 +631,25 @@ class HelicityAmplitudeGenerator:
         }
 
         # add potential prefactor
-        if use_prefactor and prefactor != 1.0 and prefactor is not None:
-            prefactor_label = Labels.PreFactor.name
-            amplitude_coefficient_infos[prefactor_label] = {"Real": prefactor}
+        for node_id in graph.nodes:
+            raw_suffix = (
+                self.name_generator.generate_amplitude_coefficient_name(
+                    graph, node_id
+                )
+            )
+            coefficient_suffix = (
+                self.name_generator.parity_partner_coefficient_mapping[
+                    raw_suffix
+                ]
+            )
+            if coefficient_suffix != raw_suffix:
+                prefactor = get_prefactor(graph)
+                if prefactor != 1.0 and prefactor is not None:
+                    prefactor_label = Labels.PreFactor.name
+                    amplitude_coefficient_infos[prefactor_label] = {
+                        "Real": prefactor
+                    }
+
         return amplitude_coefficient_infos
 
     def get_fit_parameters(self) -> Set[str]:
