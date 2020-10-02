@@ -445,9 +445,10 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
         self.fit_parameter_names: Set[str] = set()
 
     def generate(self, graphs: List[StateTransitionGraph[dict]]) -> None:
-        if len(graphs) <= 0:
+        if len(graphs) < 1:
             raise ValueError(
-                "Number of solution graphs is not larger than zero!"
+                f"At least one {StateTransitionGraph.__name__} required to"
+                " genenerate an amplitude model!"
             )
         if self.top_node_no_dynamics:
             _embed_dynamics(graphs)
