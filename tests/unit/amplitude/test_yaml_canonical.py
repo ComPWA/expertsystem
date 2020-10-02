@@ -6,7 +6,7 @@ import pytest
 
 import yaml
 
-from expertsystem.amplitude import write_model
+from expertsystem import io
 
 
 SCRIPT_PATH = dirname(realpath(__file__))
@@ -15,7 +15,10 @@ SCRIPT_PATH = dirname(realpath(__file__))
 @pytest.fixture(scope="module")
 def imported_dict(jpsi_to_gamma_pi_pi_canonical_amplitude_model):
     output_filename = "JPsiToGammaPi0Pi0_cano_recipe.yml"
-    write_model(jpsi_to_gamma_pi_pi_canonical_amplitude_model, output_filename)
+    io.write(
+        instance=jpsi_to_gamma_pi_pi_canonical_amplitude_model,
+        filename=output_filename,
+    )
     with open(output_filename, "rb") as input_file:
         loaded_dict = yaml.load(input_file, Loader=yaml.FullLoader)
     return loaded_dict
@@ -30,9 +33,9 @@ def test_not_implemented_writer(
     jpsi_to_gamma_pi_pi_canonical_amplitude_model,
 ):
     with pytest.raises(NotImplementedError):
-        write_model(
-            jpsi_to_gamma_pi_pi_canonical_amplitude_model,
-            "JPsiToGammaPi0Pi0.csv",
+        io.write(
+            instance=jpsi_to_gamma_pi_pi_canonical_amplitude_model,
+            filename="JPsiToGammaPi0Pi0.csv",
         )
 
 

@@ -7,7 +7,7 @@ import pytest
 import yaml
 
 from expertsystem import io
-from expertsystem.amplitude import write_model
+
 
 SCRIPT_PATH = dirname(realpath(__file__))
 
@@ -17,8 +17,8 @@ def imported_dict(
     jpsi_to_gamma_pi_pi_helicity_amplitude_model: dict,
 ):
     output_filename = "JPsiToGammaPi0Pi0_heli_recipe.yml"
-    write_model(
-        amplitude_model=jpsi_to_gamma_pi_pi_helicity_amplitude_model,
+    io.write(
+        instance=jpsi_to_gamma_pi_pi_helicity_amplitude_model,
         filename=output_filename,
     )
     with open(output_filename, "rb") as input_file:
@@ -47,9 +47,9 @@ def test_not_implemented_writer(
     jpsi_to_gamma_pi_pi_helicity_amplitude_model,
 ):
     with pytest.raises(NotImplementedError):
-        write_model(
-            jpsi_to_gamma_pi_pi_helicity_amplitude_model,
-            "JPsiToGammaPi0Pi0.csv",
+        io.write(
+            instance=jpsi_to_gamma_pi_pi_helicity_amplitude_model,
+            filename="JPsiToGammaPi0Pi0.csv",
         )
 
 
