@@ -41,7 +41,7 @@ from expertsystem.solving.conservation_rules import Rule
 from expertsystem.state.properties import (
     get_interaction_property,
     get_particle_candidates_for_state,
-    get_particle_property,
+    get_particle_property_from_dict,
     initialize_graphs_with_particles,
 )
 from expertsystem.topology import StateTransitionGraph, Topology
@@ -488,7 +488,9 @@ def validate_fully_initialized_graph(
                 edge_vars = {}
                 edge_props = graph.edge_props[edge_id]
                 for qn_name in qn_list:
-                    value = get_particle_property(edge_props, qn_name)
+                    value = get_particle_property_from_dict(
+                        edge_props, qn_name
+                    )
                     if value is not None:
                         edge_vars[qn_name] = value
                 variables.append(edge_vars)
@@ -795,7 +797,7 @@ class CSPSolver(Solver):
                     for x in qn_names
                     if not isinstance(x, InteractionQuantumNumberNames)
                 ]:
-                    value = get_particle_property(edge_props, qn_name)  # type: ignore
+                    value = get_particle_property_from_dict(edge_props, qn_name)  # type: ignore
                     if value is not None:
                         variables[1][edge_id].append((qn_name, value))
             else:
@@ -886,11 +888,11 @@ class CSPSolver(Solver):
             if self.__allowed_intermediate_particles:
                 for int_edge_id in graph_copy.get_intermediate_state_edges():
                     # for documentation in case of failure
-                    spin = get_particle_property(
+                    spin = get_particle_property_from_dict(
                         graph_copy.edge_props[int_edge_id],
                         StateQuantumNumberNames.Spin,
                     )
-                    parity = get_particle_property(
+                    parity = get_particle_property_from_dict(
                         graph_copy.edge_props[int_edge_id],
                         StateQuantumNumberNames.Parity,
                     )

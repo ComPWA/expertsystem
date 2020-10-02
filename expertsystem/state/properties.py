@@ -22,7 +22,10 @@ from numpy import arange
 
 from expertsystem import io
 from expertsystem.data import (
+    EdgeQuantumNumbers,
+    Parity,
     ParticleCollection,
+    ParticleWithSpin,
     Spin,
 )
 from expertsystem.nested_dicts import (
@@ -58,6 +61,35 @@ def create_spin_domain(
 
 
 def get_particle_property(
+    edge_property: ParticleWithSpin, qn_type: type
+) -> Optional[Union[Parity, float, int]]:
+    """Convert a data member of `.Particle` into one of `.EdgeQuantumNumbers`.
+
+    The `.solving` model requires a list of 'flat' values, such as `int`,
+    `float`, and `.Parity`, and cannot handle `.Spin` (which contains
+    `~.Spin.magnitude` and `~.Spin.projection`). The `.solving` module also
+    works with spin projection, which a general `.Particle` instance does not
+    carry.
+    """
+    particle, spin_projection = edge_property
+    if qn_type is EdgeQuantumNumbers.spin_magnitude:
+        return particle.spin
+    if qn_type is EdgeQuantumNumbers.spin_projection:
+        return spin_projection
+    if qn_type in [
+        EdgeQuantumNumbers.isospin_magnitude,
+        EdgeQuantumNumbers.isospin_projection,
+    ]:
+        if particle.isospin is None:
+            return None
+        if qn_type is EdgeQuantumNumbers.isospin_magnitude:
+            return particle.isospin.magnitude
+        if qn_type is EdgeQuantumNumbers.isospin_projection:
+            return particle.isospin.projection
+    return getattr(particle, qn_type.__name__)
+
+
+def get_particle_property_from_dict(
     particle_properties: Dict[str, Any],
     qn_name: Union[
         ParticleDecayPropertyNames,  # width
