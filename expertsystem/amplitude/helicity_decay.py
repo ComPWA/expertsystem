@@ -208,6 +208,17 @@ def generate_particle_list(graphs: List[StateTransitionGraph]) -> dict:
     return {"ParticleList": {"Particle": particles}}
 
 
+def _embed_dynamics(graphs: List[StateTransitionGraph]) -> None:
+    decay_info = {Labels.Type.name: "nonResonant"}
+    decay_info_label = Labels.DecayInfo.name
+    for graph in graphs:
+        init_edges = graph.get_initial_state_edges()
+        if len(init_edges) > 1:
+            raise ValueError("Only a single initial state particle allowed")
+        edge_props = graph.edge_props[init_edges[0]]
+        edge_props[decay_info_label] = decay_info
+
+
 def generate_particles_string(
     name_hel_list: List[Tuple[str, float]],
     use_helicity: bool = True,
@@ -444,19 +455,8 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
             raise ValueError(
                 "Number of solution graphs is not larger than zero!"
             )
-
-        decay_info = {Labels.Type.name: "nonResonant"}
-        decay_info_label = Labels.DecayInfo.name
-        for graph in graphs:
-            if self.top_node_no_dynamics:
-                init_edges = graph.get_initial_state_edges()
-                if len(init_edges) > 1:
-                    raise ValueError(
-                        "Only a single initial state particle allowed"
-                    )
-                edge_props = graph.edge_props[init_edges[0]]
-                edge_props[decay_info_label] = decay_info
-
+        if self.top_node_no_dynamics:
+            _embed_dynamics(graphs)
         self.particle_list = generate_particle_list(graphs)
         self.kinematics = generate_kinematics(graphs)
 
