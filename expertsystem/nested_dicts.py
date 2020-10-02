@@ -250,6 +250,19 @@ edge_qn_to_enum = {
 }
 
 
+def get_spin_projection(edge_props: dict) -> float:
+    qns_label = Labels.QuantumNumber.name
+    type_label = Labels.Type.name
+    spin_label = StateQuantumNumberNames.Spin.name
+    proj_label = Labels.Projection.name
+    for quantum_number in edge_props[qns_label]:
+        if quantum_number[type_label] == spin_label:
+            return float(quantum_number[proj_label])
+    raise ValueError(
+        "Could not find spin projection quantum number in", edge_props
+    )
+
+
 def _convert_edges_to_dict(
     instance: List[StateTransitionGraph[ParticleWithSpin]],
 ) -> None:

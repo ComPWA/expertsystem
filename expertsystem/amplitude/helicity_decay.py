@@ -15,6 +15,7 @@ from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
     Labels,
     StateQuantumNumberNames,
+    get_spin_projection,
 )
 from expertsystem.state.properties import (
     get_interaction_property,
@@ -72,18 +73,6 @@ def get_graph_group_unique_label(
             + generate_particles_string(fs_names)
         )
     return label
-
-
-def get_helicity_from_edge_props(edge_props: dict) -> float:
-    qns_label = Labels.QuantumNumber.name
-    type_label = Labels.Type.name
-    spin_label = StateQuantumNumberNames.Spin.name
-    proj_label = Labels.Projection.name
-    for quantum_number in edge_props[qns_label]:
-        if quantum_number[type_label] == spin_label:
-            return quantum_number[proj_label]
-    logging.error(edge_props[qns_label])
-    raise ValueError("Could not find spin projection quantum number!")
 
 
 def determine_attached_final_state_string(
@@ -258,7 +247,7 @@ def _get_name_hel_list(
     name_label = Labels.Name.name
     name_hel_list = []
     for i in edge_ids:
-        temp_hel = float(get_helicity_from_edge_props(graph.edge_props[i]))
+        temp_hel = get_spin_projection(graph.edge_props[i])
         # remove .0
         if temp_hel % 1 == 0:
             temp_hel = int(temp_hel)
@@ -630,7 +619,7 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
                     "FinalState": determine_attached_final_state_string(
                         graph, out_edge_id
                     ),
-                    "Helicity": get_helicity_from_edge_props(
+                    "Helicity": get_spin_projection(
                         graph.edge_props[out_edge_id]
                     ),
                 }
@@ -664,7 +653,7 @@ class HelicityAmplitudeGenerator(AbstractAmplitudeGenerator):
             class_label: "HelicityDecay",
             "DecayParticle": {
                 name_label: dec_part[name_label],
-                "Helicity": get_helicity_from_edge_props(dec_part),
+                "Helicity": get_spin_projection(dec_part),
             },
             "DecayProducts": {"Particle": decay_products},
         }
