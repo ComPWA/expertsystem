@@ -184,7 +184,7 @@ def _dynamics_to_dict(dynamics: Dynamics) -> dict:
             )
         return {
             "Type": "NonDynamic",
-            **form_factor,
+            "FormFactor": form_factor,
         }
     raise NotImplementedError("No conversion for", dynamics)
 
