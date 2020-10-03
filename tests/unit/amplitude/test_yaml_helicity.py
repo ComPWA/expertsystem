@@ -139,8 +139,8 @@ def test_expected_recipe_shape(imported_dict, expected_dict, section):
         imported_items = list(imported_section.values())
         expected_items = list(expected_section.values())
     else:
-        expected_items = list(expected_section)
-        imported_items = list(imported_section)
+        expected_items = sorted(expected_section, key=lambda p: p["Name"])
+        imported_items = sorted(imported_section, key=lambda p: p["Name"])
     assert len(imported_items) == len(expected_items)
     for imported, expected in zip(imported_items, expected_items):
         assert imported == expected
