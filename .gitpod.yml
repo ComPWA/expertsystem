@@ -6,7 +6,7 @@ github:
     master: true
     branches: false
     pullRequests: true
-    pullRequestsFromForks: false
-    addComment: true
-    addBadge: false
-    addLabel: prebuilt-in-gitpod
+    pullRequestsFromForks: true
+    addComment: false
+    addBadge: true
+    addLabel: false
