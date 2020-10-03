@@ -42,6 +42,7 @@ def write(instance: object, filename: str) -> None:
         if missing_names:
             raise ValueError("Missing amplitude sections:", missing_names)
         output_dict = instance
+        validation.particle_list(output_dict)
     else:
         raise NotImplementedError(
             f"No XML writer for class {instance.__class__.__name__}"
