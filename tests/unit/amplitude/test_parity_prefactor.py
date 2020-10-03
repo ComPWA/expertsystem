@@ -1,4 +1,4 @@
-from typing import NamedTuple, Tuple
+from typing import NamedTuple
 
 import pytest
 
@@ -22,34 +22,26 @@ class Input(NamedTuple):
 
 
 @pytest.mark.parametrize(
-    "test_input, ingoing_state, related_component_names, relative_parity_prefactor",
+    "test_input, ingoing_state, relative_parity_prefactor",
     [
         (
             Input(
-                [("J/psi(1S)", [1])],
-                [("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
-                ["f(0)(980)"],
-                ["pi0", "pi0"],
+                initial_state=[("J/psi(1S)", [1])],
+                final_state=[("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
+                intermediate_states=["f(0)(980)"],
+                final_state_grouping=["pi0", "pi0"],
             ),
             "J/psi(1S)",
-            (
-                "J/psi(1S)_1_to_f(0)(980)_0+gamma_1;f(0)(980)_0_to_pi0_0+pi0_0;",
-                "J/psi(1S)_1_to_f(0)(980)_0+gamma_-1;f(0)(980)_0_to_pi0_0+pi0_0;",
-            ),
             1.0,
         ),
         (
             Input(
-                [("J/psi(1S)", [1])],
-                [("pi0", [0]), ("pi+", [0]), ("pi-", [0])],
-                ["rho(770)"],
-                ["pi+", "pi-"],
+                initial_state=[("J/psi(1S)", [1])],
+                final_state=[("pi0", [0]), ("pi+", [0]), ("pi-", [0])],
+                intermediate_states=["rho(770)"],
+                final_state_grouping=["pi+", "pi-"],
             ),
             "J/psi(1S)",
-            (
-                "J/psi(1S)_1_to_pi0_0+rho(770)0_1;rho(770)0_1_to_pi+_0+pi-_0;",
-                "J/psi(1S)_1_to_pi0_0+rho(770)0_-1;rho(770)0_-1_to_pi+_0+pi-_0;",
-            ),
             -1.0,
         ),
     ],
@@ -57,7 +49,6 @@ class Input(NamedTuple):
 def test_parity_prefactor(
     test_input: Input,
     ingoing_state: str,
-    related_component_names: Tuple[str, str],
     relative_parity_prefactor: float,
 ) -> None:
     stm = StateTransitionManager(
@@ -97,40 +88,11 @@ def test_parity_prefactor(
         filename=f'amplitude_model_prefactor_{"-".join(test_input.intermediate_states)}.xml',
     )
 
-    prefactor1 = extract_prefactor(amplitude_model, related_component_names[0])
-    prefactor2 = extract_prefactor(amplitude_model, related_component_names[1])
-
-    assert prefactor1 == relative_parity_prefactor * prefactor2
-
-
-def extract_prefactor(amplitude_dict, coefficient_amplitude_name):
-    dict_element_stack = [amplitude_dict]
-
-    while dict_element_stack:
-        element = dict_element_stack.pop()
-
-        if (
-            "Component" in element
-            and element["Component"] == coefficient_amplitude_name
-        ):
-            # we found what we are looking for, extract the prefactor
-            if "PreFactor" in element:
-                return element["PreFactor"]["Real"]
-            return 1.0
-
-        if "Intensity" in element:
-            sub_intensity = element["Intensity"]
-            if isinstance(sub_intensity, dict):
-                dict_element_stack.append(sub_intensity)
-            elif isinstance(sub_intensity, list):
-                for sub_intensity_dict in sub_intensity:
-                    dict_element_stack.append(sub_intensity_dict)
-        elif "Amplitude" in element:
-            sub_amplitude = element["Amplitude"]
-            if isinstance(sub_amplitude, dict):
-                dict_element_stack.append(sub_amplitude)
-            elif isinstance(sub_amplitude, list):
-                for sub_amplitude_dict in sub_amplitude:
-                    dict_element_stack.append(sub_amplitude_dict)
-
-    return None
+    prefactors = amplitude_model.parameters.filter(
+        lambda p: p.name.startswith("PreFactor")
+    )
+    if len(prefactors) > 0:
+        product = 1.0
+        for factor in prefactors.values():
+            product *= factor.value
+        assert relative_parity_prefactor == product

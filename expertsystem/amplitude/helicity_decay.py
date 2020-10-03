@@ -2,20 +2,50 @@
 
 import json
 import logging
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import (
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
-from expertsystem.data import Spin
+from expertsystem import io
+from expertsystem.data import (
+    ParticleCollection,
+    Spin,
+)
 from expertsystem.nested_dicts import (
     InteractionQuantumNumberNames,
     Labels,
     get_spin_projection,
-    remove_spin_projection,
 )
 from expertsystem.state.properties import (
     get_interaction_property,
     perform_external_edge_identical_particle_combinatorics,
 )
 from expertsystem.topology import StateTransitionGraph, Topology
+
+from .model import (
+    AmplitudeModel,
+    AmplitudeNode,
+    CoefficientAmplitude,
+    CoherentIntensity,
+    DecayNode,
+    DecayProduct,
+    FitParameter,
+    FitParameters,
+    HelicityDecay,
+    HelicityParticle,
+    IncoherentIntensity,
+    IntensityNode,
+    Kinematics,
+    NormalizedIntensity,
+    ParticleDynamics,
+    RecoilSystem,
+    SequentialAmplitude,
+    StrengthIntensity,
+)
 
 
 def group_graphs_same_initial_and_final(
@@ -147,59 +177,37 @@ def get_prefactor(graph: StateTransitionGraph[dict]) -> Optional[float]:
     return prefactor
 
 
-def generate_kinematics(graphs: List[StateTransitionGraph[dict]]) -> dict:
-    tempdict: dict = {
-        "InitialState": {"Particle": []},
-        "FinalState": {"Particle": []},
-    }
-    is_edge_ids = graphs[0].get_initial_state_edges()
-    counter = 0
-    for edge_id in is_edge_ids:
-        tempdict["InitialState"]["Particle"].append(
-            {
-                "Name": graphs[0].edge_props[edge_id]["Name"],
-                "Id": edge_id,
-                "PositionIndex": counter,
-            }
-        )
-        counter += 1
-    fs_edge_ids = graphs[0].get_final_state_edges()
-    counter = 0
-    for edge_id in fs_edge_ids:
-        tempdict["FinalState"]["Particle"].append(
-            {
-                "Name": graphs[0].edge_props[edge_id]["Name"],
-                "Id": edge_id,
-                "PositionIndex": counter,
-            }
-        )
-        counter += 1
-    return {"HelicityKinematics": tempdict}
-
-
-def generate_particle_list(graphs: List[StateTransitionGraph[dict]]) -> dict:
-    # create particle entries
-    temp_particle_names = []
-    particles = []
+def generate_particle_collection(
+    graphs: List[StateTransitionGraph[dict]],
+) -> ParticleCollection:
+    particles = ParticleCollection()
     for graph in graphs:
         for edge_props in graph.edge_props.values():
-            new_edge_props = remove_spin_projection(edge_props)
-            par_name = new_edge_props[Labels.Name.name]
-            if par_name not in temp_particle_names:
-                particles.append(new_edge_props)
-                temp_particle_names.append(par_name)
-    return {"ParticleList": {"Particle": particles}}
+            particle_name = edge_props[Labels.Name.name]
+            if particle_name not in particles:
+                particle = io.xml.dict_to_particle(edge_props)
+                particles.add(particle)
+    return particles
 
 
-def _embed_dynamics(graphs: List[StateTransitionGraph[dict]]) -> None:
-    decay_info = {Labels.Type.name: "nonResonant"}
-    decay_info_label = Labels.DecayInfo.name
-    for graph in graphs:
-        init_edges = graph.get_initial_state_edges()
-        if len(init_edges) > 1:
-            raise ValueError("Only a single initial state particle allowed")
-        edge_props = graph.edge_props[init_edges[0]]
-        edge_props[decay_info_label] = decay_info
+def generate_kinematics(
+    graph: StateTransitionGraph[dict], particles: ParticleCollection
+) -> Kinematics:
+    kinematics = Kinematics(particles)
+    initial_state: List[str] = [
+        graph.edge_props[edge_id][Labels.Name.name]
+        for edge_id in graph.get_initial_state_edges()
+    ]
+    final_state: List[str] = [
+        graph.edge_props[edge_id][Labels.Name.name]
+        for edge_id in graph.get_final_state_edges()
+    ]
+    kinematics.set_reaction(
+        initial_state=initial_state,
+        final_state=final_state,
+        intermediate_states=len(graph.get_intermediate_state_edges()),
+    )
+    return kinematics
 
 
 def generate_particles_string(
@@ -387,219 +395,186 @@ class HelicityAmplitudeGenerator:
         self,
         top_node_no_dynamics: bool = True,
     ) -> None:
-        self.particle_list: dict = {}
-        self.helicity_amplitudes: dict = {}
-        self.kinematics: dict = {}
         self.top_node_no_dynamics = top_node_no_dynamics
         self.name_generator = HelicityAmplitudeNameGenerator()
-        self.fit_parameter_names: Set[str] = set()
+        self.particles: Optional[ParticleCollection] = None
+        self.kinematics: Optional[Kinematics] = None
+        self.dynamics: Optional[ParticleDynamics] = None
+        self.intensities: Optional[IntensityNode] = None
+        self.fit_parameters: FitParameters = FitParameters()
 
-    def generate(self, graphs: List[StateTransitionGraph[dict]]) -> dict:
+    def generate(
+        self, graphs: List[StateTransitionGraph[dict]]
+    ) -> AmplitudeModel:
         if len(graphs) < 1:
             raise ValueError(
                 f"At least one {StateTransitionGraph.__name__} required to"
                 " genenerate an amplitude model!"
             )
-        if self.top_node_no_dynamics:
-            _embed_dynamics(graphs)
-        self.particle_list = generate_particle_list(graphs)
-        self.kinematics = generate_kinematics(graphs)
 
+        first_graph = graphs[0]
+        initial_state_ids = first_graph.get_initial_state_edges()
+        if len(initial_state_ids) != 1:
+            raise ValueError(
+                "Helicity amplitude model requires exactly one initial state"
+            )
+        initial_state_edge_id = initial_state_ids[0]
+        initial_state = first_graph.edge_props[initial_state_edge_id][
+            Labels.Name.name
+        ]
+
+        self.particles = generate_particle_collection(graphs)
+        self.kinematics = generate_kinematics(graphs[0], self.particles)
+        self.dynamics = ParticleDynamics(self.particles, self.fit_parameters)
+        if self.top_node_no_dynamics:
+            self.dynamics.set_non_dynamic(initial_state)
+        self.intensities = self.__generate_intensities(graphs)
+
+        return AmplitudeModel(
+            particles=self.particles,
+            kinematics=self.kinematics,
+            parameters=self.fit_parameters,
+            intensity=self.intensities,
+            dynamics=self.dynamics,
+        )
+
+    def __generate_intensities(
+        self, graphs: List[StateTransitionGraph[dict]]
+    ) -> IntensityNode:
         graph_groups = group_graphs_same_initial_and_final(graphs)
         logging.debug("There are %d graph groups", len(graph_groups))
 
-        self.fix_parameters_unambiguously()
-        self.create_parameter_couplings(graph_groups)
-        self.generate_amplitude_info(graph_groups)
+        self.__create_parameter_couplings(graph_groups)
+        incoherent_intensity = IncoherentIntensity()
+        for graph_group in graph_groups:
+            coherent_intensity = self.__generate_coherent_intensity(
+                graph_group
+            )
+            incoherent_intensity.intensities.append(coherent_intensity)
+        if len(incoherent_intensity.intensities) > 1:
+            intensity: IntensityNode = NormalizedIntensity(
+                incoherent_intensity
+            )
+        else:
+            intensity = incoherent_intensity.intensities[0]
+        strength_intensity = self.__prepend_strength(intensity)
+        return strength_intensity
 
-        recipe_dict = self.particle_list
-        recipe_dict.update(self.kinematics)
-        recipe_dict.update(self.helicity_amplitudes)
-        return recipe_dict
-
-    def fix_parameters_unambiguously(self) -> None:
-        """Fix parameters, so that the total amplitude is unambiguous.
-
-        "Ambiguous" means with regard to the fit parameters. In other words:
-        all fit parameters per graph, except one, will all be fixed. It's fine
-        if they are all already fixed.
-        """
-
-    def create_parameter_couplings(
+    def __create_parameter_couplings(
         self, graph_groups: List[List[StateTransitionGraph[dict]]]
     ) -> None:
         for graph_group in graph_groups:
             for graph in graph_group:
                 self.name_generator.register_amplitude_coefficient_name(graph)
 
-    def generate_amplitude_info(  # pylint: disable=too-many-locals
-        self, graph_groups: List[List[StateTransitionGraph[dict]]]
-    ) -> None:
-        class_label = Labels.Class.name
-        name_label = Labels.Name.name
-        component_label = Labels.Component.name
-        type_label = Labels.Type.name
-        parameter_label = Labels.Parameter.name
-
-        # for each graph group we create a coherent amplitude
-        coherent_intensities = []
-        for graph_group in graph_groups:
-            seq_partial_decays = []
-
-            for graph in graph_group:
-                sequential_graphs = (
-                    perform_external_edge_identical_particle_combinatorics(
-                        graph
-                    )
+    def __generate_coherent_intensity(
+        self,
+        graph_group: List[StateTransitionGraph[dict]],
+    ) -> CoherentIntensity:
+        coherent_amp_name = "coherent_" + get_graph_group_unique_label(
+            graph_group
+        )
+        coherent_intensity = CoherentIntensity(coherent_amp_name)
+        for graph in graph_group:
+            sequential_graphs = (
+                perform_external_edge_identical_particle_combinatorics(graph)
+            )
+            for seq_graph in sequential_graphs:
+                coherent_intensity.amplitudes.append(
+                    self.__generate_sequential_decay(seq_graph)
                 )
-                for seq_graph in sequential_graphs:
-                    seq_partial_decays.append(
-                        self.generate_sequential_decay(seq_graph)
-                    )
+        return coherent_intensity
 
-            # in each coherent amplitude we create a product of partial decays
-            coherent_amp_name = "coherent_" + get_graph_group_unique_label(
-                graph_group
-            )
-            coherent_intensities.append(
-                {
-                    class_label: "CoherentIntensity",
-                    component_label: coherent_amp_name,
-                    "Amplitude": seq_partial_decays,
-                }
-            )
+    def __prepend_strength(
+        self, intensity: IntensityNode
+    ) -> StrengthIntensity:
+        strength = self.__safe_register_parameter(
+            name="strength_incoherent",
+            value=1.0,
+            fix=True,
+        )
+        return StrengthIntensity(
+            component="incoherent_with_strength",
+            strength=strength,
+            intensity=intensity,
+        )
 
-        # now wrap it with an incoherent intensity
-        incoherent_amp_name = "incoherent"
-
-        if len(coherent_intensities) > 1:
-            coherent_intensities_dict = {
-                class_label: "IncoherentIntensity",
-                "Intensity": coherent_intensities,
-            }
-        else:
-            coherent_intensities_dict = coherent_intensities[0]
-
-        self.helicity_amplitudes = {
-            "Intensity": {
-                class_label: "StrengthIntensity",
-                component_label: incoherent_amp_name + "_with_strength",
-                parameter_label: {
-                    class_label: "Double",
-                    type_label: "Strength",
-                    name_label: "strength_" + incoherent_amp_name,
-                    "Value": 1,
-                    "Fix": True,
-                },
-                "Intensity": {
-                    class_label: "NormalizedIntensity",
-                    "Intensity": coherent_intensities_dict,
-                },
-            }
-        }
-
-    def generate_sequential_decay(
+    def __generate_sequential_decay(
         self, graph: StateTransitionGraph[dict]
-    ) -> dict:
-        # pylint: disable=too-many-locals
-        class_label = Labels.Class.name
-        name_label = Labels.Name.name
-        component_label = Labels.Component.name
-        partial_decays = [
-            self.generate_partial_decay(graph, node_id)
+    ) -> AmplitudeNode:
+        partial_decays: List[AmplitudeNode] = [
+            self._generate_partial_decay(graph, node_id)
             for node_id in graph.nodes
         ]
+        sequential_amplitudes = SequentialAmplitude(partial_decays)
 
         amp_name = self.name_generator.generate_unique_amplitude_name(graph)
-        amp_coefficient_infos = self.generate_amplitude_coefficients(graph)
-        sequential_amplitude_dict = {
-            class_label: "SequentialAmplitude",
-            "Amplitude": partial_decays,
-        }
-
-        par_label = Labels.Parameter.name
-        coefficient_amplitude_dict = {
-            class_label: "CoefficientAmplitude",
-            component_label: amp_name,
-            par_label: amp_coefficient_infos[par_label],
-            "Amplitude": sequential_amplitude_dict,
-        }
-
-        prefactor_label = Labels.PreFactor.name
-        if prefactor_label in amp_coefficient_infos:
-            coefficient_amplitude_dict.update(
-                {prefactor_label: amp_coefficient_infos[prefactor_label]}
-            )
-
-        self.fit_parameter_names.add(
-            amp_coefficient_infos[par_label][0][name_label]
-        )
-        self.fit_parameter_names.add(
-            amp_coefficient_infos[par_label][1][name_label]
+        magnitude, phase = self.__generate_amplitude_coefficient(graph)
+        prefactor = self.__generate_amplitude_prefactor(graph)
+        return CoefficientAmplitude(
+            component=amp_name,
+            magnitude=magnitude,
+            phase=phase,
+            amplitude=sequential_amplitudes,
+            prefactor=prefactor,
         )
 
-        return coefficient_amplitude_dict
+    def _generate_partial_decay(
+        self, graph: StateTransitionGraph[dict], node_id: Optional[int] = None
+    ) -> DecayNode:
+        def create_helicity_particle(edge_props: dict) -> HelicityParticle:
+            if self.particles is None:
+                raise ValueError(
+                    f"{ParticleCollection.__name__} not yet initialized!"
+                )
+            particle_name = edge_props[Labels.Name.name]
+            particle = self.particles[particle_name]
+            helicity = get_spin_projection(edge_props)
+            return HelicityParticle(particle, helicity)
 
-    @staticmethod
-    def generate_partial_decay(
-        graph: StateTransitionGraph[dict], node_id: Optional[int] = None
-    ) -> Dict[str, Any]:
-        class_label = Labels.Class.name
-        name_label = Labels.Name.name
-        decay_products = []
+        decay_products: List[DecayProduct] = list()
         for out_edge_id in graph.get_edges_outgoing_from_node(node_id):
+            edge_props = graph.edge_props[out_edge_id]
+            helicity_particle = create_helicity_particle(edge_props)
+            final_state_ids = determine_attached_final_state(
+                graph, out_edge_id
+            )
             decay_products.append(
-                {
-                    name_label: graph.edge_props[out_edge_id][name_label],
-                    "FinalState": determine_attached_final_state_string(
-                        graph, out_edge_id
-                    ),
-                    "Helicity": get_spin_projection(
-                        graph.edge_props[out_edge_id]
-                    ),
-                }
+                DecayProduct(
+                    helicity_particle.particle,
+                    helicity_particle.helicity,
+                    final_state_ids,
+                )
             )
 
         in_edge_ids = graph.get_edges_ingoing_to_node(node_id)
         if len(in_edge_ids) != 1:
             raise ValueError("This node does not represent a two body decay!")
-        dec_part = graph.edge_props[in_edge_ids[0]]
+        ingoing_edge_id = in_edge_ids[0]
+        edge_props = graph.edge_props[ingoing_edge_id]
+        helicity_particle = create_helicity_particle(edge_props)
+        helicity_decay = HelicityDecay(helicity_particle, decay_products)
 
-        recoil_edge_id = get_recoil_edge(graph, in_edge_ids[0])
-        parent_recoil_edge_id = get_parent_recoil_edge(graph, in_edge_ids[0])
-        recoil_system_dict = {}
+        recoil_edge_id = get_recoil_edge(graph, ingoing_edge_id)
         if recoil_edge_id is not None:
-            tempdict = {
-                "RecoilFinalState": determine_attached_final_state_string(
-                    graph, recoil_edge_id
-                )
-            }
+            helicity_decay.recoil_system = RecoilSystem(
+                determine_attached_final_state(graph, recoil_edge_id)
+            )
+            parent_recoil_edge_id = get_parent_recoil_edge(
+                graph, ingoing_edge_id
+            )
             if parent_recoil_edge_id is not None:
-                tempdict.update(
-                    {
-                        "ParentRecoilFinalState": determine_attached_final_state_string(
-                            graph, parent_recoil_edge_id
-                        )
-                    }
+                helicity_decay.recoil_system.parent_recoil_final_state = (
+                    determine_attached_final_state(
+                        graph, parent_recoil_edge_id
+                    )
                 )
-            recoil_system_dict["RecoilSystem"] = tempdict
 
-        partial_decay_dict: Dict[str, Any] = {
-            class_label: "HelicityDecay",
-            "DecayParticle": {
-                name_label: dec_part[name_label],
-                "Helicity": get_spin_projection(dec_part),
-            },
-            "DecayProducts": {"Particle": decay_products},
-        }
+        return helicity_decay
 
-        partial_decay_dict.update(recoil_system_dict)
-
-        return partial_decay_dict
-
-    def generate_amplitude_coefficients(
+    def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[dict]
-    ) -> dict:
+    ) -> Tuple[FitParameter, FitParameter]:
         """Generate coefficient info for a sequential amplitude graph.
 
         Generally, each partial amplitude of a sequential amplitude graph
@@ -609,28 +584,21 @@ class HelicityAmplitudeGenerator:
         seq_par_suffix = (
             self.name_generator.generate_sequential_amplitude_suffix(graph)
         )
+        magnitude = self.__safe_register_parameter(
+            name=f"Magnitude_{seq_par_suffix}", value=1.0, fix=False
+        )
+        phase = self.__safe_register_parameter(
+            name=f"Phase_{seq_par_suffix}", value=0.0, fix=False
+        )
+        return magnitude, phase
 
-        par_label = Labels.Parameter.name
-        amplitude_coefficient_infos: dict = {
-            par_label: [
-                {
-                    "Class": "Double",
-                    "Type": "Magnitude",
-                    "Name": "Magnitude_" + seq_par_suffix,
-                    "Value": 1.0,
-                    "Fix": False,
-                },
-                {
-                    "Class": "Double",
-                    "Type": "Phase",
-                    "Name": "Phase_" + seq_par_suffix,
-                    "Value": 0.0,
-                    "Fix": False,
-                },
-            ]
-        }
-
-        # add potential prefactor
+    def __generate_amplitude_prefactor(
+        self, graph: StateTransitionGraph[dict]
+    ) -> Optional[FitParameter]:
+        seq_par_suffix = (
+            self.name_generator.generate_sequential_amplitude_suffix(graph)
+        )
+        prefactor = get_prefactor(graph)
         for node_id in graph.nodes:
             raw_suffix = (
                 self.name_generator.generate_amplitude_coefficient_name(
@@ -643,14 +611,23 @@ class HelicityAmplitudeGenerator:
                 ]
             )
             if coefficient_suffix != raw_suffix:
-                prefactor = get_prefactor(graph)
                 if prefactor != 1.0 and prefactor is not None:
-                    prefactor_label = Labels.PreFactor.name
-                    amplitude_coefficient_infos[prefactor_label] = {
-                        "Real": prefactor
-                    }
+                    prefactor_parameter = self.__safe_register_parameter(
+                        name=f"PreFactor_{seq_par_suffix}",
+                        value=prefactor,
+                        fix=True,
+                    )
+                    return prefactor_parameter
+        return None
 
-        return amplitude_coefficient_infos
+    def __safe_register_parameter(
+        self, name: str, value: float, fix: bool = False
+    ) -> FitParameter:
+        if name in set(self.fit_parameters):
+            return self.fit_parameters[name]
+        return self.fit_parameters.register_parameter(
+            name=name, value=value, fix=fix
+        )
 
 
 def __validate_float_type(
