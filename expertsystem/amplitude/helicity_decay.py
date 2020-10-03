@@ -652,10 +652,6 @@ class HelicityAmplitudeGenerator:
 
         return amplitude_coefficient_infos
 
-    def get_fit_parameters(self) -> Set[str]:
-        logging.info("Number of parameters: %d", len(self.fit_parameter_names))
-        return self.fit_parameter_names
-
 
 def __validate_float_type(
     interaction_property: Optional[Union[Spin, float]]
