@@ -29,7 +29,7 @@ class FitParameter:
 
 class FitParameters(abc.Mapping):
     def __init__(
-        self, parameters: Optional[Iterable[Particle]] = None
+        self, parameters: Optional[Iterable[FitParameter]] = None
     ) -> None:
         self.__parameters: Dict[str, FitParameter] = dict()
         if parameters is not None:
