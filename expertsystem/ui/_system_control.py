@@ -223,6 +223,9 @@ def _remove_qns_from_graph(  # pylint: disable=too-many-branches
                         del props[qns_label][props[qns_label].index(qn_entry)]
                         break
 
+            # if int_qn in props:
+            #     del props[int_qn]
+
     for state_qn in state_qns:
         for props in graph_copy.edge_props.values():
             if qns_label in props:
