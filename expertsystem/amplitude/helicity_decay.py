@@ -594,10 +594,7 @@ class HelicityAmplitudeGenerator:
 
     def __generate_amplitude_prefactor(
         self, graph: StateTransitionGraph[dict]
-    ) -> Optional[FitParameter]:
-        seq_par_suffix = (
-            self.name_generator.generate_sequential_amplitude_suffix(graph)
-        )
+    ) -> Optional[float]:
         prefactor = get_prefactor(graph)
         for node_id in graph.nodes:
             raw_suffix = (
@@ -612,12 +609,7 @@ class HelicityAmplitudeGenerator:
             )
             if coefficient_suffix != raw_suffix:
                 if prefactor != 1.0 and prefactor is not None:
-                    prefactor_parameter = self.__safe_register_parameter(
-                        name=f"PreFactor_{seq_par_suffix}",
-                        value=prefactor,
-                        fix=True,
-                    )
-                    return prefactor_parameter
+                    return prefactor
         return None
 
     def __safe_register_parameter(

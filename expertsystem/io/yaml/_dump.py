@@ -225,7 +225,7 @@ def _intensity_to_dict(  # pylint: disable=too-many-return-statements
             "Component": node.component,
         }
         if node.prefactor is not None:
-            output_dict["PreFactor"] = node.prefactor.name
+            output_dict["PreFactor"] = node.prefactor
         output_dict["Magnitude"] = node.magnitude.name
         output_dict["Phase"] = node.phase.name
         output_dict["Amplitude"] = _intensity_to_dict(node.amplitude)

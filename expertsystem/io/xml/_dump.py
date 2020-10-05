@@ -233,14 +233,15 @@ def _intensity_to_dict(  # pylint: disable=too-many-return-statements
             _parameter_to_dict(node.magnitude),
             _parameter_to_dict(node.phase),
         ]
-        if node.prefactor is not None:
-            parameters.append(_parameter_to_dict(node.prefactor))
-        return {
+        output_dict = {
             "Class": "CoefficientAmplitude",
             "Component": node.component,
             "Parameter": parameters,
             "Amplitude": _intensity_to_dict(node.amplitude),
         }
+        if node.prefactor is not None:
+            output_dict["PreFactor"] = node.prefactor
+        return output_dict
     if isinstance(node, SequentialAmplitude):
         return {
             "Class": "SequentialAmplitude",

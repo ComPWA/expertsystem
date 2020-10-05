@@ -261,7 +261,7 @@ class CoefficientAmplitude(AmplitudeNode):
     magnitude: FitParameter
     phase: FitParameter
     amplitude: AmplitudeNode
-    prefactor: Optional[FitParameter] = None
+    prefactor: Optional[float] = None
 
 
 @dataclass
