@@ -15,6 +15,8 @@ def load_amplitude_model(filename: str) -> AmplitudeModel:
     file_extension = _get_file_extension(filename)
     if file_extension in ["yaml", "yml"]:
         return yaml.load_amplitude_model(filename)
+    if file_extension == "xml":
+        return xml.load_amplitude_model(filename)
     raise NotImplementedError(
         f'No parser parser defined for file type "{file_extension}"'
     )

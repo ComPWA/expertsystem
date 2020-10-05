@@ -4,7 +4,7 @@ from expertsystem import io
 from expertsystem.amplitude.model import AmplitudeModel
 
 
-@pytest.mark.parametrize("file_extension", ["yml"])
+@pytest.mark.parametrize("file_extension", ["xml", "yml"])
 @pytest.mark.parametrize("formalism", ["helicity", "canonical"])
 def test_write_load(
     file_extension: str,
