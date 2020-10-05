@@ -265,6 +265,9 @@ class TestParticleCollection:
     @pytest.mark.parametrize("name", ["gamma", "pi0", "K+"])
     def test_contains(self, name: str, particle_database: ParticleCollection):
         assert name in particle_database
+        particle = particle_database[name]
+        assert particle in particle_database
+        assert particle.pid in particle_database
 
     @staticmethod
     def test_key_error(particle_database: ParticleCollection):

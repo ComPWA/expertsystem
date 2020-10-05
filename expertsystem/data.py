@@ -320,8 +320,16 @@ class ParticleCollection(abc.Set):
                 }
             )
 
-    def __contains__(self, particle_name: object) -> bool:
-        return particle_name in self.__particles
+    def __contains__(self, instance: object) -> bool:
+        if isinstance(instance, str):
+            return instance in self.__particles
+        if isinstance(instance, Particle):
+            return instance in self.__particles.values()
+        if isinstance(instance, int):
+            return instance in {p.pid for p in self}
+        raise NotImplementedError(
+            f"Cannot search for type {instance.__class__.__name__}"
+        )
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, abc.Iterable):
