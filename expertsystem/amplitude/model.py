@@ -20,7 +20,7 @@ from typing import (
 from expertsystem.data import Particle, ParticleCollection
 
 
-@dataclass(unsafe_hash=True)
+@dataclass
 class FitParameter:
     name: str
     value: float = 0.0
@@ -70,7 +70,7 @@ class FitParameters(abc.Mapping):
     ) -> "FitParameters":
         """Search by `FitParameter` properties with a :code:`lambda` function."""
         return FitParameters(
-            {parameter for parameter in self.values() if function(parameter)}
+            [parameter for parameter in self.values() if function(parameter)]
         )
 
     def register_parameter(
