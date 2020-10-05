@@ -50,7 +50,7 @@ class TestGellmannNishijima:
             ),
         ],
     )
-    def test_computations(state):
+    def test_computations(state: Particle):
         assert GellmannNishijima.compute_charge(state) == state.charge
         assert (
             GellmannNishijima.compute_isospin_projection(
@@ -61,7 +61,7 @@ class TestGellmannNishijima:
                 bottomness=state.bottomness,
                 topness=state.topness,
             )
-            == state.isospin.projection
+            == state.isospin.projection  # type: ignore
         )
 
     @staticmethod
@@ -188,7 +188,7 @@ class TestParticle:
 
 class TestParticleCollection:
     @staticmethod
-    def test_init(particle_database):
+    def test_init(particle_database: ParticleCollection):
         new_pdg = ParticleCollection(list(particle_database.values()))
         assert new_pdg is not particle_database
         assert new_pdg == particle_database
@@ -242,12 +242,12 @@ class TestParticleCollection:
         assert set(filtered_result) == {"K(2)(1820)0", "K(2)(1820)+"}
 
     @staticmethod
-    def test_repr(particle_database):
+    def test_repr(particle_database: ParticleCollection):
         from_repr = eval(repr(particle_database))  # pylint: disable=eval-used
         assert from_repr == particle_database
 
     @staticmethod
-    def test_exceptions(particle_database):
+    def test_exceptions(particle_database: ParticleCollection):
         gamma_1 = create_particle(particle_database["gamma"], name="gamma_1")
         gamma_2 = create_particle(particle_database["gamma"], name="gamma_2")
         particle_database += gamma_1
@@ -260,7 +260,7 @@ class TestParticleCollection:
             assert gamma_1 == "gamma"
 
     @pytest.mark.parametrize("name", ["gamma", "pi0", "K+"])
-    def test_contains(self, name, particle_database):
+    def test_contains(self, name: str, particle_database: ParticleCollection):
         assert name in particle_database
 
     @staticmethod
@@ -275,7 +275,7 @@ class TestParticleCollection:
             assert error.args[-1] == candidates
 
     @staticmethod
-    def test_keys(particle_database):
+    def test_keys(particle_database: ParticleCollection):
         assert set(particle_database.keys()) == set(particle_database)
 
 
@@ -354,7 +354,9 @@ def test_create_antiparticle_tilde(particle_database: ParticleCollection):
     "particle_name",
     ["p", "phi(1020)", "W-", "gamma"],
 )
-def test_create_particle(particle_database, particle_name):
+def test_create_particle(
+    particle_database: ParticleCollection, particle_name: str
+):
     template_particle = particle_database[particle_name]
     new_particle = create_particle(
         template_particle,

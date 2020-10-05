@@ -4,10 +4,11 @@ from particle import Particle
 import pytest
 
 from expertsystem import io
+from expertsystem.data import ParticleCollection
 
 
 @pytest.fixture(scope="module")
-def pdg():
+def pdg() -> ParticleCollection:
     return io.load_pdg()
 
 
@@ -32,12 +33,15 @@ def test_maybe_qq():
     assert expected_maybe_qq == {item.name for item in maybe_qq_search_results}
 
 
-def test_pdg_size(pdg):
+def test_pdg_size(pdg: ParticleCollection):
     assert len(pdg) == 532
     assert len(pdg.filter(lambda p: "~" in p.name)) == 166
 
 
-def test_missing_in_pdg(pdg, particle_database):
+def test_missing_in_pdg(
+    pdg: ParticleCollection,
+    particle_database: ParticleCollection,
+):
     particle_list_names = set(particle_database)
     pdg_names = set(pdg)
     in_common = particle_list_names & pdg_names

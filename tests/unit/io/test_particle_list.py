@@ -10,7 +10,7 @@ YAML_FILE = "particle_list.yml"
 
 
 @pytest.fixture(scope="module")
-def particle_selection(particle_database):
+def particle_selection(particle_database: ParticleCollection):
     selection = ParticleCollection()
     selection += particle_database.filter(lambda p: "pi" in p.name)
     selection += particle_database.filter(lambda p: "K" in p.name)
@@ -24,7 +24,7 @@ def write_test_files(particle_selection):
     io.write(particle_selection, YAML_FILE)
 
 
-def test_not_implemented_errors(particle_selection):
+def test_not_implemented_errors(particle_selection: ParticleCollection):
     with pytest.raises(NotImplementedError):
         io.load_particle_collection(__file__)
     with pytest.raises(NotImplementedError):
@@ -36,7 +36,9 @@ def test_not_implemented_errors(particle_selection):
 
 
 @pytest.mark.parametrize("filename", [XML_FILE, YAML_FILE])
-def test_write_read_particle_collection(particle_selection, filename):
+def test_write_read_particle_collection(
+    particle_selection: ParticleCollection, filename: str
+):
     write_test_files(particle_selection)
     assert len(particle_selection) == 202
     imported_collection = io.load_particle_collection(filename)
@@ -45,7 +47,9 @@ def test_write_read_particle_collection(particle_selection, filename):
         assert particle_selection[name] == imported_collection[name]
 
 
-def test_equivalence_xml_yaml_particle_list(particle_selection):
+def test_equivalence_xml_yaml_particle_list(
+    particle_selection: ParticleCollection,
+):
     write_test_files(particle_selection)
     xml_particle_collection = io.load_particle_collection(XML_FILE)
     yml_particle_collection = io.load_particle_collection(YAML_FILE)
