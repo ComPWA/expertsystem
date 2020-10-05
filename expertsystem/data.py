@@ -301,13 +301,13 @@ class GellmannNishijima:
         )
 
 
-class ParticleCollection(abc.Mapping):
-    """Safe, `dict`-like collection of `.Particle` instances."""
+class ParticleCollection(abc.Set):
+    """Searchable collection of immutable `.Particle` instances."""
 
     def __init__(self, particles: Optional[Iterable[Particle]] = None) -> None:
         self.__particles: Dict[str, Particle] = dict()
         if particles is not None:
-            if not isinstance(particles, (list, set, tuple)):
+            if not isinstance(particles, abc.Iterable):
                 raise ValueError(
                     f"Cannot construct a {self.__class__.__name__} "
                     f"from a {particles.__class__.__name__}"
@@ -322,6 +322,13 @@ class ParticleCollection(abc.Mapping):
 
     def __contains__(self, particle_name: object) -> bool:
         return particle_name in self.__particles
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, abc.Iterable):
+            return set(self) == set(other)
+        raise NotImplementedError(
+            f"Cannot compare {self.__class__.__name__} with  {self.__class__.__name__}"
+        )
 
     def __getitem__(self, particle_name: str) -> Particle:
         if particle_name in self.__particles:
@@ -340,8 +347,8 @@ class ParticleCollection(abc.Mapping):
             )
         raise KeyError(error_message)
 
-    def __iter__(self) -> Iterator[str]:
-        return self.__particles.__iter__()
+    def __iter__(self) -> Iterator[Particle]:
+        return self.__particles.values().__iter__()
 
     def __len__(self) -> int:
         return len(self.__particles)
@@ -375,7 +382,7 @@ class ParticleCollection(abc.Mapping):
         if isinstance(search_term, int):
             pid = search_term
             search_results = [
-                particle for particle in self.values() if particle.pid == pid
+                particle for particle in self if particle.pid == pid
             ]
             if len(search_results) == 0:
                 raise LookupError(f"Could not find particle with PID {pid}")
@@ -406,15 +413,15 @@ class ParticleCollection(abc.Mapping):
             ...     and p.spin == 2
             ...     and p.strangeness == 1
             ... )
-            >>> sorted(list(results))
+            >>> sorted([p.name for p in results])
             ['K(2)(1820)+', 'K(2)(1820)0']
         """
         return ParticleCollection(
-            {particle for particle in self.values() if function(particle)}
+            {particle for particle in self if function(particle)}
         )
 
     def merge(self, other: "ParticleCollection") -> None:
-        for particle in other.values():
+        for particle in other:
             self.add(particle)
 
 

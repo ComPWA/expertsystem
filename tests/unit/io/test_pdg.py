@@ -46,6 +46,6 @@ def test_missing_in_pdg(
     pdg_names = set(pdg)
     in_common = particle_list_names & pdg_names
     missing_in_pdg = particle_list_names ^ in_common
-    assert missing_in_pdg == {
+    assert {p.name for p in missing_in_pdg} == {
         "Y(4260)",
     }

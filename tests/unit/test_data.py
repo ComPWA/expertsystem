@@ -119,7 +119,7 @@ class TestParity:
 class TestParticle:
     @staticmethod
     def test_repr(particle_database: ParticleCollection):
-        for particle in particle_database.values():
+        for particle in particle_database:
             from_repr = eval(repr(particle))  # pylint: disable=eval-used
             assert from_repr == particle
 
@@ -189,7 +189,7 @@ class TestParticle:
 class TestParticleCollection:
     @staticmethod
     def test_init(particle_database: ParticleCollection):
-        new_pdg = ParticleCollection(list(particle_database.values()))
+        new_pdg = ParticleCollection(particle_database)
         assert new_pdg is not particle_database
         assert new_pdg == particle_database
         with pytest.raises(ValueError):
@@ -239,7 +239,10 @@ class TestParticleCollection:
             and p.spin == 2
             and p.strangeness == 1
         )
-        assert set(filtered_result) == {"K(2)(1820)0", "K(2)(1820)+"}
+        assert {p.name for p in filtered_result} == {
+            "K(2)(1820)0",
+            "K(2)(1820)+",
+        }
 
     @staticmethod
     def test_repr(particle_database: ParticleCollection):
@@ -270,13 +273,11 @@ class TestParticleCollection:
             assert particle_database[search_term]
         except LookupError as error:
             candidates = {
-                name for name in particle_database if search_term in name
+                particle.name
+                for particle in particle_database
+                if search_term in particle.name
             }
             assert error.args[-1] == candidates
-
-    @staticmethod
-    def test_keys(particle_database: ParticleCollection):
-        assert set(particle_database.keys()) == set(particle_database)
 
 
 class TestSpin:
@@ -339,7 +340,7 @@ def test_create_antiparticle(
 def test_create_antiparticle_tilde(particle_database: ParticleCollection):
     anti_particles = particle_database.filter(lambda p: "~" in p.name)
     assert len(anti_particles) == 166
-    for anti_particle in anti_particles.values():
+    for anti_particle in anti_particles:
         particle_name = anti_particle.name.replace("~", "")
         if "+" in particle_name:
             particle_name = particle_name.replace("+", "-")

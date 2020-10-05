@@ -43,8 +43,10 @@ def test_write_read_particle_collection(
     assert len(particle_selection) == 202
     imported_collection = io.load_particle_collection(filename)
     assert len(particle_selection) == len(imported_collection)
-    for name in particle_selection:
-        assert particle_selection[name] == imported_collection[name]
+    for particle in particle_selection:
+        exported = particle_selection[particle.name]
+        imported = imported_collection[particle.name]
+        assert imported == exported
 
 
 def test_equivalence_xml_yaml_particle_list(
@@ -53,5 +55,8 @@ def test_equivalence_xml_yaml_particle_list(
     write_test_files(particle_selection)
     xml_particle_collection = io.load_particle_collection(XML_FILE)
     yml_particle_collection = io.load_particle_collection(YAML_FILE)
-    for name in xml_particle_collection:
-        assert xml_particle_collection[name] == yml_particle_collection[name]
+    for particle in xml_particle_collection:
+        xml_particle = xml_particle_collection[particle.name]
+        yml_particle = yml_particle_collection[particle.name]
+        assert xml_particle == yml_particle
+        assert xml_particle is not yml_particle
