@@ -73,13 +73,6 @@ class FitParameters(abc.Mapping):
             [parameter for parameter in self.values() if function(parameter)]
         )
 
-    def register_parameter(
-        self, name: str, value: float, fix: bool
-    ) -> FitParameter:
-        parameter = FitParameter(name=name, value=value, is_fixed=fix)
-        self.add(parameter)
-        return parameter
-
 
 class Dynamics(ABC):
     pass
@@ -146,12 +139,12 @@ class ParticleDynamics(abc.Mapping):
         if not relativistic:
             raise NotImplementedError
         particle = self.__particles[particle_name]
-        pole_position = self.__parameters.register_parameter(
+        pole_position = self.__register_parameter(
             name=f"Position_{particle.name}",
             value=particle.mass,
             fix=False,
         )
-        pole_width = self.__parameters.register_parameter(
+        pole_width = self.__register_parameter(
             name=f"Width_{particle.name}",
             value=particle.width,
             fix=False,
@@ -165,7 +158,7 @@ class ParticleDynamics(abc.Mapping):
         return dynamics
 
     def __create_form_factor(self, particle_name: str) -> BlattWeisskopf:
-        meson_radius = self.__parameters.register_parameter(
+        meson_radius = self.__register_parameter(
             name=f"MesonRadius_{particle_name}",
             value=1.0,
             fix=True,
@@ -179,6 +172,15 @@ class ParticleDynamics(abc.Mapping):
                 f'Particle "{particle_name}" not in {ParticleCollection.__name__}'
             )
         self.__dynamics[particle_name] = value
+
+    def __register_parameter(
+        self, name: str, value: float, fix: bool = False
+    ) -> FitParameter:
+        if name in self.__parameters:
+            return self.__parameters[name]
+        parameter = FitParameter(name=name, value=value, is_fixed=fix)
+        self.__parameters.add(parameter)
+        return parameter
 
 
 class KinematicsType(Enum):

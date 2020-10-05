@@ -488,7 +488,7 @@ class HelicityAmplitudeGenerator:
     def __prepend_strength(
         self, intensity: IntensityNode
     ) -> StrengthIntensity:
-        strength = self.__safe_register_parameter(
+        strength = self.__register_parameter(
             name="strength_incoherent",
             value=1.0,
             fix=True,
@@ -584,10 +584,10 @@ class HelicityAmplitudeGenerator:
         seq_par_suffix = (
             self.name_generator.generate_sequential_amplitude_suffix(graph)
         )
-        magnitude = self.__safe_register_parameter(
+        magnitude = self.__register_parameter(
             name=f"Magnitude_{seq_par_suffix}", value=1.0, fix=False
         )
-        phase = self.__safe_register_parameter(
+        phase = self.__register_parameter(
             name=f"Phase_{seq_par_suffix}", value=0.0, fix=False
         )
         return magnitude, phase
@@ -612,14 +612,14 @@ class HelicityAmplitudeGenerator:
                     return prefactor
         return None
 
-    def __safe_register_parameter(
+    def __register_parameter(
         self, name: str, value: float, fix: bool = False
     ) -> FitParameter:
-        if name in set(self.fit_parameters):
+        if name in self.fit_parameters:
             return self.fit_parameters[name]
-        return self.fit_parameters.register_parameter(
-            name=name, value=value, fix=fix
-        )
+        parameter = FitParameter(name=name, value=value, is_fixed=fix)
+        self.fit_parameters.add(parameter)
+        return parameter
 
 
 def __validate_float_type(
