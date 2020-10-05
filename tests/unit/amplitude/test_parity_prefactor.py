@@ -1,4 +1,4 @@
-from typing import NamedTuple
+from typing import NamedTuple, Tuple
 
 import pytest
 
@@ -22,26 +22,34 @@ class Input(NamedTuple):
 
 
 @pytest.mark.parametrize(
-    "test_input, ingoing_state, relative_parity_prefactor",
+    "test_input, ingoing_state, related_component_names, relative_parity_prefactor",
     [
         (
             Input(
-                initial_state=[("J/psi(1S)", [1])],
-                final_state=[("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
-                intermediate_states=["f(0)(980)"],
-                final_state_grouping=["pi0", "pi0"],
+                [("J/psi(1S)", [1])],
+                [("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
+                ["f(0)(980)"],
+                ["pi0", "pi0"],
             ),
             "J/psi(1S)",
+            (
+                "J/psi(1S)_1_to_f(0)(980)_0+gamma_1;f(0)(980)_0_to_pi0_0+pi0_0;",
+                "J/psi(1S)_1_to_f(0)(980)_0+gamma_-1;f(0)(980)_0_to_pi0_0+pi0_0;",
+            ),
             1.0,
         ),
         (
             Input(
-                initial_state=[("J/psi(1S)", [1])],
-                final_state=[("pi0", [0]), ("pi+", [0]), ("pi-", [0])],
-                intermediate_states=["rho(770)"],
-                final_state_grouping=["pi+", "pi-"],
+                [("J/psi(1S)", [1])],
+                [("pi0", [0]), ("pi+", [0]), ("pi-", [0])],
+                ["rho(770)"],
+                ["pi+", "pi-"],
             ),
             "J/psi(1S)",
+            (
+                "J/psi(1S)_1_to_pi0_0+rho(770)0_1;rho(770)0_1_to_pi+_0+pi-_0;",
+                "J/psi(1S)_1_to_pi0_0+rho(770)0_-1;rho(770)0_-1_to_pi+_0+pi-_0;",
+            ),
             -1.0,
         ),
     ],
@@ -49,6 +57,7 @@ class Input(NamedTuple):
 def test_parity_prefactor(
     test_input: Input,
     ingoing_state: str,
+    related_component_names: Tuple[str, str],
     relative_parity_prefactor: float,
 ) -> None:
     stm = StateTransitionManager(
@@ -88,11 +97,28 @@ def test_parity_prefactor(
         filename=f'amplitude_model_prefactor_{"-".join(test_input.intermediate_states)}.xml',
     )
 
-    prefactors = amplitude_model.parameters.filter(
-        lambda p: p.name.startswith("PreFactor")
-    )
-    if len(prefactors) > 0:
-        product = 1.0
-        for factor in prefactors.values():
-            product *= factor.value
-        assert relative_parity_prefactor == product
+    prefactor1 = extract_prefactor(amplitude_model, related_component_names[0])
+    prefactor2 = extract_prefactor(amplitude_model, related_component_names[1])
+
+    assert prefactor1 == relative_parity_prefactor * prefactor2
+
+
+def extract_prefactor(node, coefficient_amplitude_name):
+    if hasattr(node, "component"):
+        if node.component == coefficient_amplitude_name:
+            if hasattr(node, "prefactor") and node.prefactor is not None:
+                return node.prefactor
+            return 1.0
+    if hasattr(node, "intensity"):
+        return extract_prefactor(node.intensity, coefficient_amplitude_name)
+    if hasattr(node, "intensities"):
+        for amp in node.intensities:
+            prefactor = extract_prefactor(amp, coefficient_amplitude_name)
+            if prefactor is not None:
+                return prefactor
+    if hasattr(node, "amplitudes"):
+        for amp in node.amplitudes:
+            prefactor = extract_prefactor(amp, coefficient_amplitude_name)
+            if prefactor is not None:
+                return prefactor
+    return None
