@@ -20,14 +20,11 @@ from typing import (
 from expertsystem.data import Particle, ParticleCollection
 
 
-@dataclass
-class FitParameter(abc.Hashable):
+@dataclass(unsafe_hash=True)
+class FitParameter:
     name: str
     value: float = 0.0
     is_fixed: bool = False
-
-    def __hash__(self) -> int:
-        return hash(str(self))
 
 
 class FitParameters(abc.Mapping):
