@@ -1,0 +1,31 @@
+import pytest
+
+from expertsystem import io
+from expertsystem.amplitude.model import AmplitudeModel
+
+
+@pytest.mark.parametrize("file_extension", ["yml"])
+@pytest.mark.parametrize("formalism", ["helicity", "canonical"])
+def test_write_load(
+    file_extension: str,
+    formalism: str,
+    jpsi_to_gamma_pi_pi_canonical_amplitude_model: AmplitudeModel,
+    jpsi_to_gamma_pi_pi_helicity_amplitude_model: AmplitudeModel,
+):
+    filename = f"test_write_read_{formalism}.{file_extension}"
+    exported = None
+    if formalism == "helicity":
+        exported = jpsi_to_gamma_pi_pi_helicity_amplitude_model
+    elif formalism == "canonical":
+        exported = jpsi_to_gamma_pi_pi_canonical_amplitude_model
+    else:
+        raise NotImplementedError(formalism)
+    io.write(exported, filename)
+    imported = io.load_amplitude_model(filename)
+    assert exported.particles == imported.particles
+    assert exported.parameters == imported.parameters
+    assert exported.kinematics == imported.kinematics
+    assert exported.dynamics == imported.dynamics
+    assert exported.intensity == imported.intensity
+    assert exported == imported
+    assert exported is not imported
