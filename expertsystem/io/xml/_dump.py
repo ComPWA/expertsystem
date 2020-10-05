@@ -240,7 +240,7 @@ def _intensity_to_dict(  # pylint: disable=too-many-return-statements
             "Amplitude": _intensity_to_dict(node.amplitude),
         }
         if node.prefactor is not None:
-            output_dict["PreFactor"] = node.prefactor
+            output_dict["PreFactor"] = {"Real": node.prefactor}
         return output_dict
     if isinstance(node, SequentialAmplitude):
         return {
