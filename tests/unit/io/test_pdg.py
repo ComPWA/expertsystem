@@ -1,5 +1,5 @@
 # pylint: disable=redefined-outer-name
-from particle import Particle
+import particle
 
 import pytest
 
@@ -27,7 +27,7 @@ def test_maybe_qq():
         "pi(1)(1600)-",
         "pi(1)(1600)0",
     }
-    maybe_qq_search_results = Particle.findall(
+    maybe_qq_search_results = particle.Particle.findall(
         lambda p: "qq" in p.quarks.lower()
     )
     assert expected_maybe_qq == {item.name for item in maybe_qq_search_results}
