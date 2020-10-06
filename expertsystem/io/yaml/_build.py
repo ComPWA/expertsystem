@@ -44,12 +44,14 @@ from . import validation
 def build_amplitude_model(definition: dict) -> AmplitudeModel:
     validation.amplitude_model(definition)
     particles = build_particle_collection(definition, validate=False)
-    parameters = build_fit_parameters(definition["Parameters"])
-    kinematics = build_kinematics(definition["Kinematics"], particles)
-    dynamics = build_particle_dynamics(
+    parameters = __build_fit_parameters(definition["Parameters"])
+    kinematics = __build_kinematics(definition["Kinematics"], particles)
+    dynamics = __build_particle_dynamics(
         definition["Dynamics"], particles, parameters
     )
-    intensity = build_intensity(definition["Intensity"], particles, parameters)
+    intensity = __build_intensity(
+        definition["Intensity"], particles, parameters
+    )
     return AmplitudeModel(
         particles=particles,
         kinematics=kinematics,
@@ -59,15 +61,15 @@ def build_amplitude_model(definition: dict) -> AmplitudeModel:
     )
 
 
-def build_fit_parameters(definition: List[dict]) -> FitParameters:
+def __build_fit_parameters(definition: List[dict]) -> FitParameters:
     parameters = FitParameters()
     for parameter_def in definition:
-        parameter = build_fit_parameter(parameter_def)
+        parameter = __build_fit_parameter(parameter_def)
         parameters.add(parameter)
     return parameters
 
 
-def build_fit_parameter(definition: dict) -> FitParameter:
+def __build_fit_parameter(definition: dict) -> FitParameter:
     return FitParameter(
         name=str(definition["Name"]),
         value=float(definition.get("Value", 0.0)),
@@ -75,7 +77,7 @@ def build_fit_parameter(definition: dict) -> FitParameter:
     )
 
 
-def build_kinematics(
+def __build_kinematics(
     definition: dict, particles: ParticleCollection
 ) -> Kinematics:
     str_to_kinematics_type = {"Helicity": KinematicsType.Helicity}
@@ -95,7 +97,7 @@ def build_kinematics(
     return kinematics
 
 
-def build_particle_dynamics(
+def __build_particle_dynamics(
     definition: dict,
     particles: ParticleCollection,
     parameters: FitParameters,
@@ -116,7 +118,7 @@ def build_particle_dynamics(
     return dynamics
 
 
-def build_intensity(
+def __build_intensity(
     definition: dict, particles: ParticleCollection, parameters: FitParameters
 ) -> IntensityNode:
     intensity_type = definition["Class"]
@@ -126,20 +128,20 @@ def build_intensity(
         return StrengthIntensity(
             component=component,
             strength=strength,
-            intensity=build_intensity(
+            intensity=__build_intensity(
                 definition["Intensity"], particles, parameters
             ),
         )
     if intensity_type == "NormalizedIntensity":
         return NormalizedIntensity(
-            intensity=build_intensity(
+            intensity=__build_intensity(
                 definition["Intensity"], particles, parameters
             )
         )
     if intensity_type == "IncoherentIntensity":
         return IncoherentIntensity(
             intensities=[
-                build_intensity(item, particles, parameters)
+                __build_intensity(item, particles, parameters)
                 for item in definition["Intensities"]
             ]
         )
@@ -265,10 +267,10 @@ def build_particle(name: str, definition: dict) -> Particle:
         electron_lepton_number=int(qn_def.get("ElectronLN", 0)),
         muon_lepton_number=int(qn_def.get("MuonLN", 0)),
         tau_lepton_number=int(qn_def.get("TauLN", 0)),
-        isospin=_yaml_to_isospin(qn_def.get("IsoSpin", None)),
-        parity=_yaml_to_parity(qn_def.get("Parity", None)),
-        c_parity=_yaml_to_parity(qn_def.get("CParity", None)),
-        g_parity=_yaml_to_parity(qn_def.get("GParity", None)),
+        isospin=__yaml_to_isospin(qn_def.get("IsoSpin", None)),
+        parity=__yaml_to_parity(qn_def.get("Parity", None)),
+        c_parity=__yaml_to_parity(qn_def.get("CParity", None)),
+        g_parity=__yaml_to_parity(qn_def.get("GParity", None)),
     )
 
 
@@ -293,7 +295,7 @@ def build_spin(definition: Union[dict, float, int, str]) -> Spin:
     return Spin(magnitude, projection)
 
 
-def _yaml_to_parity(
+def __yaml_to_parity(
     definition: Optional[Union[float, int, str]]
 ) -> Optional[Parity]:
     if definition is None:
@@ -301,7 +303,7 @@ def _yaml_to_parity(
     return Parity(definition)
 
 
-def _yaml_to_isospin(
+def __yaml_to_isospin(
     definition: Optional[Union[dict, float, int, str]]
 ) -> Optional[Spin]:
     if definition is None:

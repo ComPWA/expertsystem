@@ -46,12 +46,14 @@ from . import validation
 
 def build_amplitude_model(definition: dict) -> AmplitudeModel:
     particles = build_particle_collection(definition)
-    kinematics = build_kinematics(definition, particles)
+    kinematics = __build_kinematics(definition, particles)
     parameters = FitParameters()
-    dynamics = build_particle_dynamics(
+    dynamics = __build_particle_dynamics(
         definition["ParticleList"]["Particle"], particles, parameters
     )
-    intensity = build_intensity(definition["Intensity"], particles, parameters)
+    intensity = __build_intensity(
+        definition["Intensity"], particles, parameters
+    )
     return AmplitudeModel(
         particles=particles,
         kinematics=kinematics,
@@ -61,7 +63,7 @@ def build_amplitude_model(definition: dict) -> AmplitudeModel:
     )
 
 
-def build_fit_parameter(
+def __build_fit_parameter(
     definition: dict, parameters: FitParameters
 ) -> FitParameter:
     parameter_name = str(definition["Name"])
@@ -76,7 +78,7 @@ def build_fit_parameter(
     return parameter
 
 
-def build_kinematics(
+def __build_kinematics(
     definition: dict, particles: ParticleCollection
 ) -> Kinematics:
     str_to_kinematics_type = {"HelicityKinematics": KinematicsType.Helicity}
@@ -107,7 +109,7 @@ def build_kinematics(
     return kinematics
 
 
-def build_particle_dynamics(
+def __build_particle_dynamics(
     definition: List[dict],
     particles: ParticleCollection,
     parameters: FitParameters,
@@ -134,30 +136,30 @@ def build_particle_dynamics(
     return dynamics
 
 
-def build_intensity(
+def __build_intensity(
     definition: dict, particles: ParticleCollection, parameters: FitParameters
 ) -> IntensityNode:
     intensity_type = definition["Class"]
     if intensity_type == "StrengthIntensity":
-        strength = build_fit_parameter(definition["Parameter"], parameters)
+        strength = __build_fit_parameter(definition["Parameter"], parameters)
         component = str(definition["Component"])
         return StrengthIntensity(
             component=component,
             strength=strength,
-            intensity=build_intensity(
+            intensity=__build_intensity(
                 definition["Intensity"], particles, parameters
             ),
         )
     if intensity_type == "NormalizedIntensity":
         return NormalizedIntensity(
-            intensity=build_intensity(
+            intensity=__build_intensity(
                 definition["Intensity"], particles, parameters
             )
         )
     if intensity_type == "IncoherentIntensity":
         return IncoherentIntensity(
             intensities=[
-                build_intensity(item, particles, parameters)
+                __build_intensity(item, particles, parameters)
                 for item in definition["Intensity"]
             ]
         )
@@ -183,11 +185,11 @@ def __build_amplitude(  # pylint: disable=too-many-locals
     if amplitude_type == "CoefficientAmplitude":
         component = definition["Component"]
         parameter_defs = definition["Parameter"]
-        magnitude = build_fit_parameter(
+        magnitude = __build_fit_parameter(
             next(filter(lambda p: p["Type"] == "Magnitude", parameter_defs)),
             parameters,
         )
-        phase = build_fit_parameter(
+        phase = __build_fit_parameter(
             next(filter(lambda p: p["Type"] == "Phase", parameter_defs)),
             parameters,
         )
@@ -295,12 +297,12 @@ def build_particle_collection(definition: dict) -> ParticleCollection:
 
 def build_particle(definition: dict) -> Particle:
     validation.particle(definition)
-    qn_defs = _xml_qn_list_to_qn_object(definition["QuantumNumber"])
+    qn_defs = __xml_qn_list_to_qn_object(definition["QuantumNumber"])
     return Particle(
         name=str(definition["Name"]),
         pid=int(definition["Pid"]),
         mass=float(definition["Parameter"]["Value"]),
-        width=_xml_to_width(definition),
+        width=__xml_to_width(definition),
         charge=int(qn_defs["Charge"]),
         spin=float(qn_defs["Spin"]),
         isospin=qn_defs.get("IsoSpin", None),
@@ -324,7 +326,7 @@ def build_spin(definition: dict) -> Spin:
     return Spin(magnitude, projection)
 
 
-def _xml_to_width(definition: dict) -> float:
+def __xml_to_width(definition: dict) -> float:
     definition = definition.get("DecayInfo", {})
     definition = definition.get("Parameter", None)
     if isinstance(definition, list):
@@ -337,27 +339,27 @@ def _xml_to_width(definition: dict) -> float:
     return float(definition["Value"])
 
 
-def _xml_qn_list_to_qn_object(definitions: List[dict]) -> Dict[str, Any]:
+def __xml_qn_list_to_qn_object(definitions: List[dict]) -> Dict[str, Any]:
     output = dict()
     for definition in definitions:
-        type_name, quantum_number = _xml_to_quantum_number(definition)
+        type_name, quantum_number = __xml_to_quantum_number(definition)
         output[type_name] = quantum_number
     return output
 
 
-def _xml_to_quantum_number(definition: Dict[str, str]) -> Tuple[str, Any]:
+def __xml_to_quantum_number(definition: Dict[str, str]) -> Tuple[str, Any]:
     conversion_map: Dict[str, Callable] = {
-        "Spin": _xml_to_float,
-        "Charge": _xml_to_int,
-        "Strangeness": _xml_to_int,
-        "Charmness": _xml_to_int,
-        "BaryonNumber": _xml_to_int,
-        "ElectronLN": _xml_to_int,
-        "MuonLN": _xml_to_int,
-        "TauLN": _xml_to_int,
-        "Parity": _xml_to_parity,
-        "CParity": _xml_to_parity,
-        "GParity": _xml_to_parity,
+        "Spin": __xml_to_float,
+        "Charge": __xml_to_int,
+        "Strangeness": __xml_to_int,
+        "Charmness": __xml_to_int,
+        "BaryonNumber": __xml_to_int,
+        "ElectronLN": __xml_to_int,
+        "MuonLN": __xml_to_int,
+        "TauLN": __xml_to_int,
+        "Parity": __xml_to_parity,
+        "CParity": __xml_to_parity,
+        "GParity": __xml_to_parity,
         "IsoSpin": build_spin,
     }
     type_name = definition["Type"]
@@ -371,16 +373,16 @@ def _xml_to_quantum_number(definition: Dict[str, str]) -> Tuple[str, Any]:
     )
 
 
-def _xml_to_float(definition: dict) -> float:
+def __xml_to_float(definition: dict) -> float:
     return float(definition["Value"])
 
 
-def _xml_to_int(definition: dict) -> int:
+def __xml_to_int(definition: dict) -> int:
     return int(definition["Value"])
 
 
-def _xml_to_parity(definition: dict) -> Parity:
-    return Parity(_xml_to_int(definition))
+def __xml_to_parity(definition: dict) -> Parity:
+    return Parity(__xml_to_int(definition))
 
 
 def __safe_wrap_in_list(instance: object) -> list:
