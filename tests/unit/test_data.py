@@ -232,9 +232,6 @@ class TestParticleCollection:
         assert f0_1500_from_subset is particle_database["f(0)(1500)"]
         assert f0_1500_from_subset is not particle_database["f(0)(980)"]
 
-        # test iadd
-        particle_database += search_result
-
         search_result = particle_database.filter(lambda p: p.pid == 22)
         gamma_from_subset = search_result["gamma"]
         assert len(search_result) == 1
@@ -258,16 +255,15 @@ class TestParticleCollection:
 
     @staticmethod
     def test_exceptions(particle_database: ParticleCollection):
-        gamma_1 = create_particle(particle_database["gamma"], name="gamma_1")
-        gamma_2 = create_particle(particle_database["gamma"], name="gamma_2")
-        particle_database += gamma_1
-        particle_database += gamma_2
+        gamma = particle_database["gamma"]
+        with pytest.raises(KeyError):
+            particle_database += create_particle(gamma, name="gamma_new")
         with pytest.raises(NotImplementedError):
             particle_database.find(3.14)  # type: ignore
         with pytest.raises(NotImplementedError):
             particle_database += 3.14  # type: ignore
         with pytest.raises(AssertionError):
-            assert gamma_1 == "gamma"
+            assert gamma == "gamma"
 
     @pytest.mark.parametrize("name", ["gamma", "pi0", "K+"])
     def test_contains(self, name: str, particle_database: ParticleCollection):

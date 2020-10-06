@@ -1,6 +1,5 @@
 """A collection of data containers."""
 
-import logging
 from collections import abc
 from dataclasses import dataclass, field, fields
 from functools import total_ordering
@@ -413,9 +412,14 @@ class ParticleCollection(abc.MutableSet):
         return f"{self.__class__.__name__}({set(self.__particles.values())})"
 
     def add(self, value: Particle) -> None:
-        if value.name in self.__particles:
-            logging.warning(
-                f"{self.__class__.__name__}: Overwriting particle {value.name}"
+        if value in self.__particles.values():
+            equivalent_particles = {p for p in self if p == value}
+            equivalent_particle = next(iter(equivalent_particles))
+            raise KeyError(
+                "While trying to add particle:",
+                value,
+                "An equivalent definition already exists:",
+                equivalent_particle,
             )
         self.__particles[value.name] = value
 
