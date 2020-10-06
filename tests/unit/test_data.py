@@ -208,6 +208,12 @@ class TestParticleCollection:
             ParticleCollection(1)  # type: ignore
 
     @staticmethod
+    def test_equality(particle_database: ParticleCollection):
+        assert list(particle_database) == particle_database
+        with pytest.raises(NotImplementedError):
+            assert particle_database == 0
+
+    @staticmethod
     def test_find(particle_database: ParticleCollection):
         f2_1950 = particle_database.find(9050225)
         assert f2_1950.name == "f(2)(1950)"
@@ -262,6 +268,8 @@ class TestParticleCollection:
             particle_database.find(3.14)  # type: ignore
         with pytest.raises(NotImplementedError):
             particle_database += 3.14  # type: ignore
+        with pytest.raises(NotImplementedError):
+            assert 3.14 in particle_database
         with pytest.raises(AssertionError):
             assert gamma == "gamma"
 
@@ -273,10 +281,13 @@ class TestParticleCollection:
         assert particle.pid in particle_database
 
     def test_add_discard(self, particle_database: ParticleCollection):
-        subset_copy = ParticleCollection(
-            particle_database.filter(lambda p: p.name.startswith("omega"))
+        subset_copy = particle_database.filter(
+            lambda p: p.name.startswith("omega")
         )
-        n_omegas = len(subset_copy)
+        subset_copy += particle_database.filter(
+            lambda p: p.name.startswith("pi")
+        )
+        subset = len(subset_copy)
 
         new_particle = create_particle(
             particle_database.find(443),
@@ -286,11 +297,11 @@ class TestParticleCollection:
             width=0.0,
         )
         subset_copy.add(new_particle)
-        assert len(subset_copy) == n_omegas + 1
+        assert len(subset_copy) == subset + 1
         assert subset_copy["EpEm"] is new_particle
 
         subset_copy.discard(new_particle)
-        assert len(subset_copy) == n_omegas
+        assert len(subset_copy) == subset
         assert new_particle.name == "EpEm"  # still exists
         some_name = next(iter(subset_copy)).name
 
