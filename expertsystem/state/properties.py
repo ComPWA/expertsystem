@@ -15,12 +15,14 @@ from typing import (
     List,
     Optional,
     Set,
+    Type,
     Union,
 )
 
 from numpy import arange
 
 from expertsystem.data import (
+    EdgeQuantumNumber,
     EdgeQuantumNumbers,
     Parity,
     ParticleCollection,
@@ -60,7 +62,7 @@ def create_spin_domain(
 
 
 def get_particle_property(
-    edge_property: ParticleWithSpin, qn_type: type
+    edge_property: ParticleWithSpin, qn_type: Type[EdgeQuantumNumber]
 ) -> Optional[Union[float, int]]:
     """Convert a data member of `.Particle` into one of `.EdgeQuantumNumbers`.
 
