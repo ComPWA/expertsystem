@@ -367,7 +367,7 @@ class ParticleCollection(abc.MutableSet):
         if isinstance(other, Particle):
             self.add(other)
         elif isinstance(other, ParticleCollection):
-            self.merge(other)
+            self.update(other)
         else:
             raise NotImplementedError(f"Cannot add {other.__class__.__name__}")
         return self
@@ -440,7 +440,7 @@ class ParticleCollection(abc.MutableSet):
             {particle for particle in self if function(particle)}
         )
 
-    def merge(self, other: "ParticleCollection") -> None:
+    def update(self, other: "ParticleCollection") -> None:
         for particle in other:
             self.add(particle)
 
