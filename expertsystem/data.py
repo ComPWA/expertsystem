@@ -301,7 +301,7 @@ class GellmannNishijima:
         )
 
 
-class ParticleCollection(abc.Set):
+class ParticleCollection(abc.MutableSet):
     """Searchable collection of immutable `.Particle` instances."""
 
     def __init__(self, particles: Optional[Iterable[Particle]] = None) -> None:
@@ -369,18 +369,30 @@ class ParticleCollection(abc.Set):
         elif isinstance(other, ParticleCollection):
             self.merge(other)
         else:
-            raise NotImplementedError
+            raise NotImplementedError(f"Cannot add {other.__class__.__name__}")
         return self
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({set(self.__particles.values())})"
 
-    def add(self, particle: Particle) -> None:
-        if particle.name in self.__particles:
+    def add(self, value: Particle) -> None:
+        if value.name in self.__particles:
             logging.warning(
-                f"{self.__class__.__name__}: Overwriting particle {particle.name}"
+                f"{self.__class__.__name__}: Overwriting particle {value.name}"
             )
-        self.__particles[particle.name] = particle
+        self.__particles[value.name] = value
+
+    def discard(self, value: Union[Particle, str]) -> None:
+        particle_name = ""
+        if isinstance(value, Particle):
+            particle_name = value.name
+        elif isinstance(value, str):
+            particle_name = value
+        else:
+            raise NotImplementedError(
+                f"Cannot discard something of type {value.__class__.__name__}"
+            )
+        del self.__particles[particle_name]
 
     def find(self, search_term: Union[int, str]) -> Particle:
         """Search for a particle by either name (`str`) or PID (`int`)."""

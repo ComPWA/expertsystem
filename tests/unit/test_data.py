@@ -269,6 +269,32 @@ class TestParticleCollection:
         assert particle in particle_database
         assert particle.pid in particle_database
 
+    def test_add_discard(self, particle_database: ParticleCollection):
+        subset_copy = ParticleCollection(
+            particle_database.filter(lambda p: p.name.startswith("omega"))
+        )
+        n_omegas = len(subset_copy)
+
+        new_particle = create_particle(
+            particle_database.find(443),
+            pid=666,
+            name="EpEm",
+            mass=1.0,
+            width=0.0,
+        )
+        subset_copy.add(new_particle)
+        assert len(subset_copy) == n_omegas + 1
+        assert subset_copy["EpEm"] is new_particle
+
+        subset_copy.discard(new_particle)
+        assert len(subset_copy) == n_omegas
+        assert new_particle.name == "EpEm"  # still exists
+        some_name = next(iter(subset_copy)).name
+
+        some_particle = subset_copy[some_name]
+        subset_copy.remove(some_particle)
+        assert some_particle.name == some_name  # still exists
+
     @staticmethod
     def test_key_error(particle_database: ParticleCollection):
         try:
