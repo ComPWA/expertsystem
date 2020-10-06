@@ -520,7 +520,7 @@ def create_particle(  # pylint: disable=too-many-arguments,too-many-locals
     return Particle(
         name=name if name else template_particle.name,
         pid=pid if pid else template_particle.pid,
-        mass=mass if mass else template_particle.mass,
+        mass=mass if mass is not None else template_particle.mass,
         width=width if width else template_particle.width,
         spin=spin if spin else template_particle.spin,
         charge=charge if charge else template_particle.charge,
