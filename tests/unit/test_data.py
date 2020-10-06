@@ -348,7 +348,7 @@ def test_create_antiparticle(
 
 def test_create_antiparticle_tilde(particle_database: ParticleCollection):
     anti_particles = particle_database.filter(lambda p: "~" in p.name)
-    assert len(anti_particles) == 166
+    assert len(anti_particles) == 165
     for anti_particle in anti_particles.values():
         particle_name = anti_particle.name.replace("~", "")
         if "+" in particle_name:
