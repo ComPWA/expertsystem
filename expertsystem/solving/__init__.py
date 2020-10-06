@@ -18,14 +18,12 @@ from enum import Enum, auto
 from typing import (
     Any,
     Dict,
-    Generic,
     List,
     Optional,
     Sequence,
     Set,
     Tuple,
     Type,
-    TypeVar,
     Union,
 )
 
@@ -114,13 +112,10 @@ def create_interaction_node_settings(
     return {node_id: interaction_settings for node_id in graph.nodes}
 
 
-_T = TypeVar("_T", dict, ParticleWithSpin)
-
-
-class Result(Generic[_T]):
+class Result:
     def __init__(
         self,
-        solutions: List[StateTransitionGraph[_T]],
+        solutions: List[StateTransitionGraph[ParticleWithSpin]],
         not_executed_rules: Optional[Dict[int, Set[Rule]]] = None,
         violated_rules: Optional[Dict[int, Set[Tuple[Rule]]]] = None,
     ) -> None:
@@ -128,7 +123,9 @@ class Result(Generic[_T]):
             raise ValueError(
                 "Invalid Result! Found solutions, but also violated rules."
             )
-        self.__solutions: List[StateTransitionGraph[_T]] = solutions
+        self.__solutions: List[
+            StateTransitionGraph[ParticleWithSpin]
+        ] = solutions
         self.__not_executed_rules: Dict[int, Set[Rule]] = defaultdict(set)
         if not_executed_rules is not None:
             self.__not_executed_rules = not_executed_rules
@@ -140,7 +137,7 @@ class Result(Generic[_T]):
             self.__violated_rules = violated_rules
 
     @property
-    def solutions(self) -> List[StateTransitionGraph[_T]]:
+    def solutions(self) -> List[StateTransitionGraph[ParticleWithSpin]]:
         return self.__solutions
 
     @property
@@ -187,7 +184,7 @@ class Solver(ABC):
         self,
         graph: StateTransitionGraph[ParticleWithSpin],
         graph_settings: GraphSettings,
-    ) -> Result[ParticleWithSpin]:
+    ) -> Result:
         """Find solutions for the given input.
 
         It is expected that this function determines and returns all of the
@@ -695,7 +692,7 @@ class CSPSolver(Solver):
         self,
         graph: StateTransitionGraph[ParticleWithSpin],
         graph_settings: GraphSettings,
-    ) -> Result[ParticleWithSpin]:
+    ) -> Result:
         self.__graph = graph
         self.__initialize_constraints(graph_settings)
         solutions = self.__problem.getSolutions()
@@ -730,7 +727,7 @@ class CSPSolver(Solver):
         if full_particle_graphs and not_executed_rules:
             # rerun solver on these graphs using not executed rules
             # and combine results
-            result = Result[ParticleWithSpin]([])
+            result = Result([])
             for full_particle_graph in full_particle_graphs:
                 result.extend(
                     validate_fully_initialized_graph(
