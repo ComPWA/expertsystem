@@ -257,9 +257,6 @@ class Particle:  # pylint: disable=too-many-instance-attributes
                 ")"
             )
 
-    def __hash__(self) -> int:
-        return hash(str(self))
-
     def __repr__(self) -> str:
         output_string = f"{self.__class__.__name__}("
         for member in fields(self):
@@ -362,6 +359,13 @@ class ParticleCollection(abc.Mapping):
 
     def __contains__(self, particle_name: object) -> bool:
         return particle_name in self.__particles
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ParticleCollection):
+            return set(self.values()) == set(other.values())
+        raise NotImplementedError(
+            f"Cannot compare {self.__class__.__name__} with  {self.__class__.__name__}"
+        )
 
     def __getitem__(self, particle_name: str) -> Particle:
         if particle_name in self.__particles:

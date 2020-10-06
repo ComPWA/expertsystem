@@ -183,6 +183,7 @@ class TestParticle:
         same_particle = deepcopy(particle)
         assert particle is not same_particle
         assert particle == same_particle
+        assert hash(particle) == hash(same_particle)
         different_labels = Particle(
             name="Different name, same QNs",
             pid=753,
@@ -192,6 +193,7 @@ class TestParticle:
             isospin=Spin(1, 0),
         )
         assert particle == different_labels
+        assert hash(particle) == hash(different_labels)
         assert particle.name != different_labels.name
         assert particle.pid != different_labels.pid
 
@@ -220,11 +222,6 @@ class TestParticleCollection:
     ):
         with pytest.raises(LookupError):
             particle_database.find(search_term)
-        gamma = particle_database["gamma"]
-        new_gamma = create_particle(gamma, name="new_gamma")
-        particles = ParticleCollection({gamma, new_gamma})
-        with pytest.raises(LookupError):
-            particles.find(22)
 
     @staticmethod
     def test_filter(particle_database: ParticleCollection):
