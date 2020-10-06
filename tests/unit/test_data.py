@@ -272,6 +272,11 @@ class TestParticleCollection:
             assert 3.14 in particle_database
         with pytest.raises(AssertionError):
             assert gamma == "gamma"
+        pi_plus = particle_database["pi+"]
+        with pytest.raises(LookupError):
+            pions = particle_database.filter(lambda p: p.name.startswith("pi"))
+            pions.add(create_particle(pi_plus, name="new pi+", mass=0.0))
+            pions.find(pi_plus.pid)
 
     @pytest.mark.parametrize("name", ["gamma", "pi0", "K+"])
     def test_contains(self, name: str, particle_database: ParticleCollection):
