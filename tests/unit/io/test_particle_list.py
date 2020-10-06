@@ -40,7 +40,7 @@ def test_write_read_particle_collection(
     particle_selection: ParticleCollection, filename: str
 ):
     write_test_files(particle_selection)
-    assert len(particle_selection) == 202
+    assert len(particle_selection) == 182
     imported_collection = io.load_particle_collection(filename)
     assert len(particle_selection) == len(imported_collection)
     for particle in particle_selection:

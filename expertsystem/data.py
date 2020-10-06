@@ -2,7 +2,7 @@
 
 import logging
 from collections import abc
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field, fields
 from functools import total_ordering
 from typing import (
     Any,
@@ -149,6 +149,30 @@ for edge_qn_name, edge_qn_type in EdgeQuantumNumbers.__dict__.items():
         edge_qn_type.__module__ = "expertsystem.data"
 
 
+# for static typing
+EdgeQuantumNumber = Union[
+    EdgeQuantumNumbers.pid,
+    EdgeQuantumNumbers.mass,
+    EdgeQuantumNumbers.width,
+    EdgeQuantumNumbers.spin_magnitude,
+    EdgeQuantumNumbers.spin_projection,
+    EdgeQuantumNumbers.charge,
+    EdgeQuantumNumbers.isospin_magnitude,
+    EdgeQuantumNumbers.isospin_projection,
+    EdgeQuantumNumbers.strangeness,
+    EdgeQuantumNumbers.charmness,
+    EdgeQuantumNumbers.bottomness,
+    EdgeQuantumNumbers.topness,
+    EdgeQuantumNumbers.baryon_number,
+    EdgeQuantumNumbers.electron_lepton_number,
+    EdgeQuantumNumbers.muon_lepton_number,
+    EdgeQuantumNumbers.tau_lepton_number,
+    EdgeQuantumNumbers.parity,
+    EdgeQuantumNumbers.c_parity,
+    EdgeQuantumNumbers.g_parity,
+]
+
+
 @dataclass(frozen=True, init=False)
 class NodeQuantumNumbers:
     """Definition of quantum numbers for interaction nodes."""
@@ -166,6 +190,16 @@ for node_qn_name, node_qn_type in NodeQuantumNumbers.__dict__.items():
         node_qn_type.__module__ = "expertsystem.data"
 
 
+# for static typing
+NodeQuantumNumber = Union[
+    NodeQuantumNumbers.l_magnitude,
+    NodeQuantumNumbers.l_projection,
+    NodeQuantumNumbers.s_magnitude,
+    NodeQuantumNumbers.s_projection,
+    NodeQuantumNumbers.parity_prefactor,
+]
+
+
 @dataclass(frozen=True)
 class Particle:  # pylint: disable=too-many-instance-attributes
     """Immutable container of data defining a physical particle.
@@ -173,15 +207,21 @@ class Particle:  # pylint: disable=too-many-instance-attributes
     A `Particle` is defined by the minimum set of the quantum numbers that
     every possible instances of that particle have in common (the "static"
     quantum numbers of the particle). A "non-static" quantum number is the spin
-    projection. Hence Particles do NOT contain spin projection information.
+    projection. Hence `Particle` instances do **not** contain spin projection
+    information.
 
-    As opposed to classes such as `EdgeQuantumNumbers` and `NodeQuantumNumbers`
-    the `Particle` class serves as an interface to the user (see
-    :doc:`/usage/particles`).
+    `Particle` instances are uniquely defined by their quantum numbers and
+    properties like `~Particle.mass`. The `~Particle.name` and `~Particle.pid`
+    are therefore just labels that are not taken into account when checking if
+    two `Particle` instances are equal.
+
+    .. note:: As opposed to classes such as `EdgeQuantumNumbers` and
+        `NodeQuantumNumbers`, the `Particle` class serves as an interface to
+        the user (see :doc:`/usage/particles`).
     """
 
-    name: str
-    pid: int
+    name: str = field(compare=False)
+    pid: int = field(compare=False)
     spin: float
     mass: float
     width: float = 0.0
@@ -217,20 +257,17 @@ class Particle:  # pylint: disable=too-many-instance-attributes
                 ")"
             )
 
-    def __hash__(self) -> int:
-        return hash(str(self))
-
     def __repr__(self) -> str:
         output_string = f"{self.__class__.__name__}("
-        for field in fields(self):
-            value = getattr(self, field.name)
+        for member in fields(self):
+            value = getattr(self, member.name)
             if value is None:
                 continue
-            if field.name not in ["mass", "spin", "isospin"] and value == 0:
+            if member.name not in ["mass", "spin", "isospin"] and value == 0:
                 continue
             if isinstance(value, str):
                 value = f'"{value}"'
-            output_string += f"\n    {field.name}={value},"
+            output_string += f"\n    {member.name}={value},"
         output_string += "\n)"
         return output_string
 
