@@ -173,7 +173,6 @@ class TestParticle:
             name="MyParticle",
             pid=123,
             mass=1.2,
-            width=0.1,
             spin=1,
             charge=0,
             isospin=Spin(1, 0),
@@ -184,6 +183,17 @@ class TestParticle:
         same_particle = deepcopy(particle)
         assert particle is not same_particle
         assert particle == same_particle
+        different_labels = Particle(
+            name="Different name, same QNs",
+            pid=753,
+            mass=1.2,
+            spin=1,
+            charge=0,
+            isospin=Spin(1, 0),
+        )
+        assert particle == different_labels
+        assert particle.name != different_labels.name
+        assert particle.pid != different_labels.pid
 
 
 class TestParticleCollection:
