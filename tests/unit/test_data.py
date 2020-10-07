@@ -198,6 +198,11 @@ class TestParticle:
         assert particle.name != different_labels.name
         assert particle.pid != different_labels.pid
 
+    def test_neg(self, particle_database: ParticleCollection):
+        pip = particle_database.find(211)
+        pim = particle_database.find(-211)
+        assert pip == -pim
+
 
 class TestParticleCollection:
     @staticmethod
