@@ -1,4 +1,5 @@
 # pylint: disable=redefined-outer-name, no-self-use
+import logging
 import typing
 from copy import deepcopy
 from dataclasses import FrozenInstanceError
@@ -308,6 +309,18 @@ class TestParticleCollection:
         some_particle = subset_copy[some_name]
         subset_copy.remove(some_particle)
         assert some_particle.name == some_name  # still exists
+
+    def test_add_warnings(self, particle_database: ParticleCollection, caplog):
+        pions = particle_database.filter(lambda p: p.name.startswith("pi"))
+        pi_plus = pions["pi+"]
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
+            pions.add(create_particle(pi_plus, name="new pi+", mass=0.0))
+        assert f"{pi_plus.pid}" in caplog.text
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
+            pions.add(create_particle(pi_plus, width=1.0))
+        assert "pi+" in caplog.text
 
     @staticmethod
     def test_key_error(particle_database: ParticleCollection):
