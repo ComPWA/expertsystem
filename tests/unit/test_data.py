@@ -422,6 +422,22 @@ def test_create_antiparticle_tilde(particle_database: ParticleCollection):
         assert created_particle == particle_database[particle_name]
 
 
+def test_create_antiparticle_by_pid(particle_database: ParticleCollection):
+    n_particles_with_neg_pid = 0
+    for particle in particle_database:
+        anti_particles_by_pid = particle_database.filter(
+            lambda p: p.pid
+            == -particle.pid  # pylint: disable=cell-var-from-loop
+        )
+        if len(anti_particles_by_pid) != 1:
+            continue
+        n_particles_with_neg_pid += 1
+        anti_particle = next(iter(anti_particles_by_pid))
+        particle_from_anti = -anti_particle
+        assert particle == particle_from_anti
+    assert n_particles_with_neg_pid == 428
+
+
 @pytest.mark.parametrize(
     "particle_name",
     ["p", "phi(1020)", "W-", "gamma"],
