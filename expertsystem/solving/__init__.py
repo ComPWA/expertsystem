@@ -115,7 +115,9 @@ def create_interaction_node_settings(
 class Result:
     def __init__(
         self,
-        solutions: List[StateTransitionGraph[ParticleWithSpin]],
+        solutions: Optional[
+            List[StateTransitionGraph[ParticleWithSpin]]
+        ] = None,
         not_executed_rules: Optional[Dict[int, Set[Rule]]] = None,
         violated_rules: Optional[Dict[int, Set[Tuple[Rule]]]] = None,
     ) -> None:
@@ -123,9 +125,11 @@ class Result:
             raise ValueError(
                 "Invalid Result! Found solutions, but also violated rules."
             )
-        self.__solutions: List[
-            StateTransitionGraph[ParticleWithSpin]
-        ] = solutions
+
+        self.__solutions: List[StateTransitionGraph[ParticleWithSpin]] = list()
+        if solutions is not None:
+            self.__solutions = solutions
+
         self.__not_executed_rules: Dict[int, Set[Rule]] = defaultdict(set)
         if not_executed_rules is not None:
             self.__not_executed_rules = not_executed_rules
@@ -727,7 +731,7 @@ class CSPSolver(Solver):
         if full_particle_graphs and not_executed_rules:
             # rerun solver on these graphs using not executed rules
             # and combine results
-            result = Result([])
+            result = Result()
             for full_particle_graph in full_particle_graphs:
                 result.extend(
                     validate_fully_initialized_graph(

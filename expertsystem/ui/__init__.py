@@ -376,9 +376,10 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             )
 
         # merge strengths
-        final_result = Result([])
+        final_result = Result()
         for temp_result in results.values():
             final_result.extend(temp_result)
+
         # remove duplicate solutions, which only differ in the interaction qns
         final_solutions = remove_duplicate_solutions(
             final_result.solutions,
