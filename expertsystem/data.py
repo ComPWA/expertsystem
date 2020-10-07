@@ -358,7 +358,7 @@ class ParticleCollection(abc.MutableSet):
         if isinstance(instance, Particle):
             return instance in self.__particles.values()
         if isinstance(instance, int):
-            return instance in {p.pid for p in self}
+            return instance in self.__pid_to_name
         raise NotImplementedError(
             f"Cannot search for type {instance.__class__.__name__}"
         )
