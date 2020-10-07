@@ -337,10 +337,8 @@ class StateTransitionGraph(Topology, Generic[_EdgeType]):
                 return self.graph_node_properties_comparator(
                     self.node_props, other.node_props
                 )
+            return self.node_props == other.node_props
 
-            raise NotImplementedError(
-                "Graph node properties comparator is not set!"
-            )
         raise NotImplementedError
 
     @staticmethod
