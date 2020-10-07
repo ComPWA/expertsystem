@@ -281,14 +281,14 @@ class TestParticleCollection:
         assert particle in particle_database
         assert particle.pid in particle_database
 
-    def test_add_discard(self, particle_database: ParticleCollection):
+    def test_add(self, particle_database: ParticleCollection):
         subset_copy = particle_database.filter(
             lambda p: p.name.startswith("omega")
         )
         subset_copy += particle_database.filter(
             lambda p: p.name.startswith("pi")
         )
-        subset = len(subset_copy)
+        n_subset = len(subset_copy)
 
         new_particle = create_particle(
             particle_database.find(443),
@@ -298,17 +298,8 @@ class TestParticleCollection:
             width=0.0,
         )
         subset_copy.add(new_particle)
-        assert len(subset_copy) == subset + 1
+        assert len(subset_copy) == n_subset + 1
         assert subset_copy["EpEm"] is new_particle
-
-        subset_copy.discard(new_particle)
-        assert len(subset_copy) == subset
-        assert new_particle.name == "EpEm"  # still exists
-        some_name = next(iter(subset_copy)).name
-
-        some_particle = subset_copy[some_name]
-        subset_copy.remove(some_particle)
-        assert some_particle.name == some_name  # still exists
 
     def test_add_warnings(self, particle_database: ParticleCollection, caplog):
         pions = particle_database.filter(lambda p: p.name.startswith("pi"))
@@ -321,6 +312,25 @@ class TestParticleCollection:
         with caplog.at_level(logging.WARNING):
             pions.add(create_particle(pi_plus, width=1.0))
         assert "pi+" in caplog.text
+
+    def test_discard(self, particle_database: ParticleCollection):
+        pions = particle_database.filter(lambda p: p.name.startswith("pi"))
+        n_pions = len(pions)
+        pim = pions["pi-"]
+        pip = pions["pi+"]
+
+        pions.discard(pions["pi+"])
+        assert len(pions) == n_pions - 1
+        assert "pi+" not in pions
+        assert pip.name == "pi+"  # still exists
+
+        pions.remove("pi-")
+        assert len(pions) == n_pions - 2
+        assert pim not in pions
+        assert pim.name == "pi-"  # still exists
+
+        with pytest.raises(NotImplementedError):
+            pions.discard(111)  # type: ignore
 
     @staticmethod
     def test_key_error(particle_database: ParticleCollection):
