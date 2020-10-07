@@ -343,19 +343,9 @@ class ParticleCollection(abc.MutableSet):
 
     def __init__(self, particles: Optional[Iterable[Particle]] = None) -> None:
         self.__particles: Dict[str, Particle] = dict()
+        self.__pid_to_name: Dict[int, str] = dict()
         if particles is not None:
-            if not isinstance(particles, abc.Iterable):
-                raise ValueError(
-                    f"Cannot construct a {self.__class__.__name__} "
-                    f"from a {particles.__class__.__name__}"
-                )
-            self.__particles.update(
-                {
-                    particle.name: particle
-                    for particle in particles
-                    if isinstance(particle, Particle)
-                }
-            )
+            self.update(particles)
 
     def __contains__(self, instance: object) -> bool:
         if isinstance(instance, str):
@@ -424,14 +414,10 @@ class ParticleCollection(abc.MutableSet):
             )
         if value.name in self.__particles:
             logging.warning(f'Overwriting particle with name "{value.name}"')
-        if value.pid in self.__particles:
-            candidates = {
-                p.name for p in self.filter(lambda p: p.pid == value.pid)
-            }
-            logging.warning(
-                f'Particle with PID "{value.pid}" already exists: {candidates}'
-            )
+        if value.pid in self.__pid_to_name:
+            logging.warning(f'Particle with PID "{value.pid} already exists"')
         self.__particles[value.name] = value
+        self.__pid_to_name[value.pid] = value.name
 
     def discard(self, value: Union[Particle, str]) -> None:
         particle_name = ""
@@ -443,6 +429,7 @@ class ParticleCollection(abc.MutableSet):
             raise NotImplementedError(
                 f"Cannot discard something of type {value.__class__.__name__}"
             )
+        del self.__pid_to_name[self[particle_name].pid]
         del self.__particles[particle_name]
 
     def find(self, search_term: Union[int, str]) -> Particle:
@@ -451,18 +438,10 @@ class ParticleCollection(abc.MutableSet):
             particle_name = search_term
             return self.__getitem__(particle_name)
         if isinstance(search_term, int):
-            pid = search_term
-            search_results = [
-                particle for particle in self if particle.pid == pid
-            ]
-            if len(search_results) == 0:
-                raise LookupError(f"Could not find particle with PID {pid}")
-            if len(search_results) > 1:
-                error_message = f"Found multiple results for PID {pid}!:"
-                for particle in search_results:
-                    error_message += f"\n  - {particle.name}"
-                raise LookupError(error_message)
-            return search_results[0]
+            if search_term not in self.__pid_to_name:
+                raise KeyError(f"No particle with PID {search_term}")
+            particle_name = self.__pid_to_name[search_term]
+            return self.__getitem__(particle_name)
         raise NotImplementedError(
             f"Cannot search for a search term of type {type(search_term)}"
         )
@@ -491,7 +470,12 @@ class ParticleCollection(abc.MutableSet):
             {particle for particle in self if function(particle)}
         )
 
-    def update(self, other: "ParticleCollection") -> None:
+    def update(self, other: Iterable[Particle]) -> None:
+        if not isinstance(other, abc.Iterable):
+            raise TypeError(
+                f"Cannot update {self.__class__.__name__} from "
+                f"non-iterable class {self.__class__.__name__}"
+            )
         for particle in other:
             self.add(particle)
 
