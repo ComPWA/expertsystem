@@ -158,6 +158,11 @@ class CharmConservation(Rule):
     pass
 
 
+@additive_quantum_number_rule(EdgeQuantumNumbers.bottomness)
+class BottomnessConservation(Rule):
+    pass
+
+
 class ParityConservation(Rule):
     def __call__(
         self,

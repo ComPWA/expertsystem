@@ -16,6 +16,7 @@ from expertsystem.solving import (
 )
 from expertsystem.solving.conservation_rules import (
     BaryonNumberConservation,
+    BottomnessConservation,
     CParityConservation,
     ChargeConservation,
     CharmConservation,
@@ -65,6 +66,7 @@ CONSERVATION_LAW_PRIORITIES = {
     IsoSpinConservation: 60,
     IsoSpinValidity: 61,
     GParityConservation: 3,
+    BottomnessConservation: 68,
 }
 
 
@@ -189,6 +191,7 @@ def create_default_interaction_settings(
             ),
             EdgeQuantumNumbers.charmness: [-1, 0, 1],
             EdgeQuantumNumbers.strangeness: [-1, 0, 1],
+            EdgeQuantumNumbers.bottomness: [-1, 0, 1],
         },
     )
 
@@ -202,6 +205,7 @@ def create_default_interaction_settings(
         {
             CharmConservation(),
             StrangenessConservation(),
+            BottomnessConservation(),
             ParityConservation(),
             CParityConservation(),
         }
