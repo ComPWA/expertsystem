@@ -8,14 +8,9 @@ __all__ = [
 import yaml
 
 from expertsystem.amplitude.model import AmplitudeModel
-from expertsystem.data import (
-    Particle,
-    ParticleCollection,
-    Spin,
-)
+from expertsystem.data import Particle, ParticleCollection, Spin
 
-from . import _build
-from . import _dump
+from . import _build, _dump
 
 
 class _IncreasedIndent(yaml.Dumper):
