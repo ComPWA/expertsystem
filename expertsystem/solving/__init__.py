@@ -45,7 +45,7 @@ from expertsystem.data import (
     ParticleWithSpin,
     Spin,
 )
-from expertsystem.solving.conservation_rules import Rule
+from expertsystem.solving.conservation_rules import IsoSpinValidity, Rule
 from expertsystem.state.properties import get_particle_property
 from expertsystem.topology import StateTransitionGraph, Topology
 
@@ -56,6 +56,9 @@ class InteractionTypes(Enum):
     Strong = auto()
     EM = auto()
     Weak = auto()
+
+
+Scalar = Union[int, float]
 
 
 @dataclass
@@ -160,10 +163,10 @@ class Result:
 @dataclass(frozen=True)
 class QuantumNumberSolution:
     node_quantum_numbers: Dict[
-        int, Dict[Type[NodeQuantumNumber], Union[int, float]]
+        int, Dict[Type[NodeQuantumNumber], Scalar]
     ] = field(default_factory=lambda: defaultdict(dict))
     edge_quantum_numbers: Dict[
-        int, Dict[Type[EdgeQuantumNumber], Union[int, float]]
+        int, Dict[Type[EdgeQuantumNumber], Scalar]
     ] = field(default_factory=lambda: defaultdict(dict))
 
 
@@ -204,11 +207,14 @@ def _is_optional(class_field: Any) -> bool:
     return False
 
 
+_GraphEdgePropertyMap = Dict[Type[EdgeQuantumNumber], Any]
+_GraphNodePropertyMap = Dict[Type[NodeQuantumNumber], Any]
+_GraphElementPropertyMap = Union[_GraphEdgePropertyMap, _GraphNodePropertyMap]
+
+
 def _init_class(
     class_type: Type,
-    props: Union[
-        Dict[Type[EdgeQuantumNumber], Any], Dict[Type[NodeQuantumNumber], Any]
-    ],
+    props: _GraphElementPropertyMap,
 ) -> object:
     return class_type(
         **{
@@ -221,9 +227,7 @@ def _init_class(
 
 
 def _extract_value(
-    props: Union[
-        Dict[Type[EdgeQuantumNumber], Any], Dict[Type[NodeQuantumNumber], Any]
-    ],
+    props: _GraphElementPropertyMap,
     obj_type: Any,
 ) -> Any:
     if _is_optional(obj_type):
@@ -241,9 +245,7 @@ def _extract_value(
 
 def _check_arg_requirements(
     class_type: type,
-    props: Union[
-        Dict[Type[EdgeQuantumNumber], Any], Dict[Type[NodeQuantumNumber], Any]
-    ],
+    props: _GraphElementPropertyMap,
 ) -> bool:
     if "__dataclass_fields__" in class_type.__dict__:
         return all(
@@ -259,9 +261,9 @@ def _check_arg_requirements(
 
 def _check_requirements(
     rule: Rule,
-    in_edge_props: Sequence[Dict[Type[EdgeQuantumNumber], Any]],
-    out_edge_props: Sequence[Dict[Type[EdgeQuantumNumber], Any]],
-    node_props: Dict[Type[NodeQuantumNumber], Any],
+    in_edge_props: Sequence[_GraphEdgePropertyMap],
+    out_edge_props: Sequence[_GraphEdgePropertyMap],
+    node_props: _GraphNodePropertyMap,
 ) -> bool:
     if not hasattr(rule.__class__.__call__, "__annotations__"):
         raise TypeError(
@@ -293,7 +295,7 @@ def _check_requirements(
 
 def _create_rule_edge_arg(
     input_type: Type[Any],
-    edge_props: Sequence[Dict[Type[EdgeQuantumNumber], Any]],
+    edge_props: Sequence[_GraphEdgePropertyMap],
 ) -> List[Any]:
     # pylint: disable=unidiomatic-typecheck
     if not isinstance(edge_props, (list, tuple)):
@@ -310,7 +312,7 @@ def _create_rule_edge_arg(
 
 def _create_rule_node_arg(
     input_type: Type[Any],
-    node_props: Dict[Type[NodeQuantumNumber], Any],
+    node_props: _GraphNodePropertyMap,
 ) -> Any:
     # pylint: disable=unidiomatic-typecheck
     if isinstance(node_props, (list, tuple)):
@@ -326,9 +328,9 @@ def _create_rule_node_arg(
 
 def _create_rule_args(
     rule: Rule,
-    in_edge_props: Sequence[Dict[Type[EdgeQuantumNumber], Any]],
-    out_edge_props: Sequence[Dict[Type[EdgeQuantumNumber], Any]],
-    node_props: Dict[Type[NodeQuantumNumber], Any],
+    in_edge_props: Sequence[_GraphEdgePropertyMap],
+    out_edge_props: Sequence[_GraphEdgePropertyMap],
+    node_props: _GraphNodePropertyMap,
 ) -> list:
     if not hasattr(rule.__class__.__call__, "__annotations__"):
         raise TypeError(
@@ -452,7 +454,7 @@ def _merge_solutions_with_graph(
 
 
 def __get_particle_candidates_for_state(
-    state: Dict[Type[EdgeQuantumNumber], Union[int, float]],
+    state: Dict[Type[EdgeQuantumNumber], Scalar],
     allowed_particles: ParticleCollection,
 ) -> List[ParticleWithSpin]:
     particle_edges: List[ParticleWithSpin] = []
@@ -467,15 +469,15 @@ def __get_particle_candidates_for_state(
 
 
 def __check_qns_equal(
-    state: Dict[Type[EdgeQuantumNumber], Union[int, float]], particle: Particle
+    state: Dict[Type[EdgeQuantumNumber], Scalar], particle: Particle
 ) -> bool:
     # This function assumes the attribute names of Particle and the quantum
     # numbers defined by new type match
     changes_dict: Dict[str, Union[int, float, Parity, Spin]] = {
-        getattr(edge_qn, "__name__"): value
+        edge_qn.__name__: value
         for edge_qn, value in state.items()
-        if "magnitude" not in getattr(edge_qn, "__name__")
-        and "projection" not in getattr(edge_qn, "__name__")
+        if "magnitude" not in edge_qn.__name__
+        and "projection" not in edge_qn.__name__
     }
 
     if EdgeQuantumNumbers.isospin_magnitude in state:
@@ -496,7 +498,7 @@ def validate_fully_initialized_graph(
 
     def _create_node_variables(
         node_id: int, qn_list: Set[Type[NodeQuantumNumber]]
-    ) -> Dict[Type[NodeQuantumNumber], Union[int, float]]:
+    ) -> Dict[Type[NodeQuantumNumber], Scalar]:
         """Create variables for the quantum numbers of the specified node."""
         variables = {}
         if node_id in graph.node_props:
@@ -549,7 +551,7 @@ def validate_fully_initialized_graph(
             # for all edges and the node
             var_containers = _create_variable_containers(node_id, rule)
             # check the requirements
-            if str(rule) == "IsoSpinValidity" or _check_requirements(
+            if isinstance(rule, IsoSpinValidity) or _check_requirements(
                 rule,
                 var_containers[0],
                 var_containers[1],
@@ -580,25 +582,25 @@ def _create_variable_string(
     element_id: int,
     qn_type: Union[Type[EdgeQuantumNumber], Type[NodeQuantumNumber]],
 ) -> str:
-    return str(element_id) + "-" + getattr(qn_type, "__name__")
+    return str(element_id) + "-" + qn_type.__name__
 
 
 @dataclass
 class _VariableContainer:
     ingoing_edge_variables: Set[_EdgeVariableInfo] = field(default_factory=set)
     fixed_ingoing_edge_variables: Dict[
-        int, Dict[Type[EdgeQuantumNumber], Union[int, float]]
+        int, Dict[Type[EdgeQuantumNumber], Scalar]
     ] = field(default_factory=dict)
     outgoing_edge_variables: Set[_EdgeVariableInfo] = field(
         default_factory=set
     )
     fixed_outgoing_edge_variables: Dict[
-        int, Dict[Type[EdgeQuantumNumber], Union[int, float]]
+        int, Dict[Type[EdgeQuantumNumber], Scalar]
     ] = field(default_factory=dict)
     node_variables: Set[_NodeVariableInfo] = field(default_factory=set)
-    fixed_node_variables: Dict[
-        Type[NodeQuantumNumber], Union[int, float]
-    ] = field(default_factory=dict)
+    fixed_node_variables: Dict[Type[NodeQuantumNumber], Scalar] = field(
+        default_factory=dict
+    )
 
 
 class CSPSolver(Solver):
@@ -776,10 +778,7 @@ class CSPSolver(Solver):
         node_id: int,
         qn_list: Set[Type[NodeQuantumNumber]],
         node_settings: Dict[int, NodeSettings],
-    ) -> Tuple[
-        Set[_NodeVariableInfo],
-        Dict[Type[NodeQuantumNumber], Union[int, float]],
-    ]:
+    ) -> Tuple[Set[_NodeVariableInfo], Dict[Type[NodeQuantumNumber], Scalar],]:
         """Create variables for the quantum numbers of the specified node.
 
         If a quantum number is already defined for a node, then a fixed
@@ -789,7 +788,7 @@ class CSPSolver(Solver):
         """
         variables: Tuple[
             Set[_NodeVariableInfo],
-            Dict[Type[NodeQuantumNumber], Union[int, float]],
+            Dict[Type[NodeQuantumNumber], Scalar],
         ] = (
             set(),
             dict(),
@@ -816,7 +815,7 @@ class CSPSolver(Solver):
         edge_settings: Dict[int, EdgeSettings],
     ) -> Tuple[
         Set[_EdgeVariableInfo],
-        Dict[int, Dict[Type[EdgeQuantumNumber], Union[int, float]]],
+        Dict[int, Dict[Type[EdgeQuantumNumber], Scalar]],
     ]:
         """Create variables for the quantum numbers of the specified edges.
 
@@ -827,7 +826,7 @@ class CSPSolver(Solver):
         """
         variables: Tuple[
             Set[_EdgeVariableInfo],
-            Dict[int, Dict[Type[EdgeQuantumNumber], Union[int, float]]],
+            Dict[int, Dict[Type[EdgeQuantumNumber], Scalar]],
         ] = (
             set(),
             dict(),
@@ -862,7 +861,7 @@ class CSPSolver(Solver):
 
     def __convert_solution_keys(
         self,
-        solutions: List[Dict[str, Union[int, float]]],
+        solutions: List[Dict[str, Scalar]],
     ) -> List[QuantumNumberSolution]:
         """Convert keys of CSP solutions from string to quantum number types."""
         initial_edges = self.__graph.get_initial_state_edges()
@@ -905,11 +904,9 @@ class _ConservationRuleConstraintWrapper(Constraint):
             str,
             Union[_EdgeVariableInfo, _NodeVariableInfo],
         ] = {}
-        self.__in_edges_qns: Dict[int, Dict[Type[EdgeQuantumNumber], Any]] = {}
-        self.__out_edges_qns: Dict[
-            int, Dict[Type[EdgeQuantumNumber], Any]
-        ] = {}
-        self.__node_qns: Dict[Type[NodeQuantumNumber], Any] = {}
+        self.__in_edges_qns: Dict[int, _GraphEdgePropertyMap] = {}
+        self.__out_edges_qns: Dict[int, _GraphEdgePropertyMap] = {}
+        self.__node_qns: _GraphNodePropertyMap = {}
 
         self.conditions_never_met = False
         self.scenario_results = [0, 0]
@@ -933,10 +930,8 @@ class _ConservationRuleConstraintWrapper(Constraint):
 
         def _initialize_edge_container(
             variable_set: Set[_EdgeVariableInfo],
-            fixed_variables: Dict[
-                int, Dict[Type[EdgeQuantumNumber], Union[int, float]]
-            ],
-            container: Dict[int, Dict[Type[EdgeQuantumNumber], Any]],
+            fixed_variables: Dict[int, Dict[Type[EdgeQuantumNumber], Scalar]],
+            container: Dict[int, _GraphEdgePropertyMap],
         ) -> None:
             container.update(fixed_variables)
             for element_id, qn_type in variable_set:
@@ -1007,7 +1002,7 @@ class _ConservationRuleConstraintWrapper(Constraint):
             return True
 
         self.__update_variable_lists(params)
-        if str(self.rule) != "IsoSpinValidity":
+        if not isinstance(self.rule, IsoSpinValidity):
             if not _check_requirements(
                 self.__rule,
                 list(self.__in_edges_qns.values()),
@@ -1054,6 +1049,6 @@ class _ConservationRuleConstraintWrapper(Constraint):
             else:
                 raise ValueError(
                     "The variable with name "
-                    + getattr(qn_type, "__name__")
+                    + qn_type.__name__
                     + "does not appear in the variable mapping!"
                 )
