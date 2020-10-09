@@ -391,7 +391,7 @@ def _get_required_qns(
 
         class_type = input_type
         if "__origin__" in input_type.__dict__ and (
-            input_type.__origin__ is list or input_type.__origin__ is tuple
+            input_type.__origin__ is List or input_type.__origin__ is Tuple
         ):
             class_type = input_type.__args__[0]
 
