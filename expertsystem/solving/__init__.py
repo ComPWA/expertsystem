@@ -190,8 +190,14 @@ class Solver(ABC):
         """
 
 
-def _is_optional(class_field: attr.Attribute) -> bool:
-    if class_field.default is None:
+def _is_optional(
+    field_type: Union[EdgeQuantumNumber, NodeQuantumNumber]
+) -> bool:
+    if (
+        hasattr(field_type, "__origin__")
+        and getattr(field_type, "__origin__") is Union
+        and type(None) in getattr(field_type, "__args__")
+    ):
         return True
     return False
 
@@ -209,7 +215,6 @@ def _init_class(
         **{
             class_field.name: _extract_value(props, class_field.type)
             for class_field in attr.fields(class_type)
-            if not _is_optional(class_field) or class_field.type in props
         }
     )
 
@@ -220,8 +225,12 @@ def _extract_value(
 ) -> Any:
     if _is_optional(obj_type):
         obj_type = obj_type.__args__[0]
-
-    value = props[obj_type]
+        if obj_type in props:
+            value = props[obj_type]
+        else:
+            return None
+    else:
+        value = props[obj_type]
 
     if (
         "__supertype__" in obj_type.__dict__
@@ -240,7 +249,7 @@ def _check_arg_requirements(
             [
                 bool(class_field.type in props)
                 for class_field in attr.fields(class_type)
-                if not _is_optional(class_field)
+                if not _is_optional(class_field.type)  # type: ignore
             ]
         )
 
@@ -388,8 +397,11 @@ def _get_required_qns(
 
         if attr.has(class_type):
             for class_field in attr.fields(class_type):
-                if class_field.type is not None:
-                    qn_set.add(class_field.type)
+                qn_set.add(
+                    class_field.type.__args__[0]  # type: ignore
+                    if _is_optional(class_field.type)  # type: ignore
+                    else class_field.type
+                )
         else:
             qn_set.add(class_type)
         arg_counter += 1
