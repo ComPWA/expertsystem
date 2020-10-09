@@ -19,7 +19,6 @@ def jpsi_to_gamma_pi_pi_canonical_solutions():
         allowed_intermediate_particles=["f(0)(980)", "f(0)(1500)"],
         formalism_type="canonical-helicity",
     )
-    stm.number_of_threads = 1
     stm.set_allowed_interaction_types([InteractionTypes.EM])
     graph_interaction_settings_groups = stm.prepare_graphs()
     result = stm.find_solutions(graph_interaction_settings_groups)
@@ -33,7 +32,6 @@ def jpsi_to_gamma_pi_pi_helicity_solutions():
         final_state=["gamma", "pi0", "pi0"],
         allowed_intermediate_particles=["f(0)(980)", "f(0)(1500)"],
     )
-    stm.number_of_threads = 1
     stm.set_allowed_interaction_types(
         [InteractionTypes.Strong, InteractionTypes.EM]
     )
