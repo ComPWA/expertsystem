@@ -155,7 +155,7 @@ class EdgeQuantumNumbers:  # pylint: disable=too-many-instance-attributes
 for edge_qn_name, edge_qn_type in EdgeQuantumNumbers.__dict__.items():
     if not edge_qn_name.startswith("__"):
         edge_qn_type.__qualname__ = f"EdgeQuantumNumbers.{edge_qn_name}"
-        edge_qn_type.__module__ = "expertsystem.data"
+        edge_qn_type.__module__ = __name__
 
 
 # for static typing
@@ -196,7 +196,7 @@ class NodeQuantumNumbers:
 for node_qn_name, node_qn_type in NodeQuantumNumbers.__dict__.items():
     if not node_qn_name.startswith("__"):
         node_qn_type.__qualname__ = f"NodeQuantumNumbers.{node_qn_name}"
-        node_qn_type.__module__ = "expertsystem.data"
+        node_qn_type.__module__ = __name__
 
 
 # for static typing
