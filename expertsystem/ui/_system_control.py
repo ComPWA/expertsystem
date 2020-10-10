@@ -15,7 +15,7 @@ from expertsystem.solving import (
 from expertsystem.solving.conservation_rules import Rule
 from expertsystem.solving.properties import CompareGraphNodePropertiesFunctor
 from expertsystem.solving.topology import StateTransitionGraph
-from expertsystem.types import (
+from expertsystem.solving.types import (
     InteractionProperties,
     NodeQuantumNumber,
     ParticleWithSpin,

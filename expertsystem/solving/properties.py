@@ -12,7 +12,7 @@ import attr
 
 from expertsystem.data import Parity, ParticleCollection
 from expertsystem.solving.topology import StateTransitionGraph
-from expertsystem.types import (
+from expertsystem.solving.types import (
     EdgeQuantumNumber,
     EdgeQuantumNumbers,
     InteractionProperties,

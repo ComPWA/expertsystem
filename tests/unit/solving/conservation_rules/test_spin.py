@@ -11,7 +11,7 @@ from expertsystem.solving.conservation_rules import (
     SpinEdgeInput,
     SpinNodeInput,
 )
-from expertsystem.types import EdgeQuantumNumbers, NodeQuantumNumbers
+from expertsystem.solving.types import EdgeQuantumNumbers, NodeQuantumNumbers
 
 _SpinRuleInputType = Tuple[
     List[SpinEdgeInput], List[SpinEdgeInput], SpinNodeInput

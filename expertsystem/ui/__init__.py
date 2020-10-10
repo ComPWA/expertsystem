@@ -40,7 +40,7 @@ from expertsystem.solving.topology import (
     StateTransitionGraph,
     Topology,
 )
-from expertsystem.types import (
+from expertsystem.solving.types import (
     InteractionProperties,
     NodeQuantumNumber,
     NodeQuantumNumbers,

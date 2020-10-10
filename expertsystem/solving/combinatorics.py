@@ -21,7 +21,7 @@ from typing import (
 
 from expertsystem.data import Particle, ParticleCollection
 from expertsystem.solving.topology import StateTransitionGraph, Topology
-from expertsystem.types import ParticleWithSpin
+from expertsystem.solving.types import ParticleWithSpin
 
 StateWithSpins = Tuple[str, Sequence[float]]
 StateDefinition = Union[str, StateWithSpins]

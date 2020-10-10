@@ -7,7 +7,7 @@ from expertsystem.solving.properties import (
     perform_external_edge_identical_particle_combinatorics,
 )
 from expertsystem.solving.topology import StateTransitionGraph, Topology
-from expertsystem.types import ParticleWithSpin
+from expertsystem.solving.types import ParticleWithSpin
 
 from .model import (
     AmplitudeModel,

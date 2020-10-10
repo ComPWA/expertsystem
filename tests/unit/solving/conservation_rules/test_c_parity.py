@@ -8,7 +8,7 @@ from expertsystem.solving.conservation_rules import (
     CParityEdgeInput,
     CParityNodeInput,
 )
-from expertsystem.types import EdgeQuantumNumbers, NodeQuantumNumbers
+from expertsystem.solving.types import EdgeQuantumNumbers, NodeQuantumNumbers
 
 # Currently need to cast to the proper Edge/NodeQuantumNumber type, see
 # https://github.com/ComPWA/expertsystem/issues/255
