@@ -1,6 +1,6 @@
 import pytest
 
-from expertsystem.data import Spin
+from expertsystem.particles import Spin
 from expertsystem.solving.conservation_rules import ParityConservationHelicity
 from expertsystem.solving.types import InteractionProperties
 from expertsystem.ui import InteractionTypes, StateTransitionManager

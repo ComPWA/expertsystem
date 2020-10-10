@@ -2,7 +2,7 @@ from itertools import product
 
 import pytest
 
-from expertsystem.data import Parity
+from expertsystem.particles import Parity
 from expertsystem.solving.conservation_rules import (
     GParityConservation,
     GParityEdgeInput,

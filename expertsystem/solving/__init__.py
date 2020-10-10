@@ -25,7 +25,7 @@ from constraint import (
     Variable,
 )
 
-from expertsystem.data import Parity, Particle, ParticleCollection, Spin
+from expertsystem.particles import Parity, Particle, ParticleCollection, Spin
 from expertsystem.solving.conservation_rules import IsoSpinValidity, Rule
 from expertsystem.solving.properties import get_particle_property
 from expertsystem.solving.topology import StateTransitionGraph, Topology

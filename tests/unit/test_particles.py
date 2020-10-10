@@ -6,7 +6,7 @@ from copy import deepcopy
 import pytest
 from attr.exceptions import FrozenInstanceError
 
-from expertsystem.data import (
+from expertsystem.particles import (
     GellmannNishijima,
     Parity,
     Particle,

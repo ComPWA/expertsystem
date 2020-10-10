@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Set, Type, Union
 
 import attr
 
-from expertsystem.data import Parity, ParticleCollection
+from expertsystem.particles import Parity, ParticleCollection
 from expertsystem.solving.topology import StateTransitionGraph
 from expertsystem.solving.types import (
     EdgeQuantumNumber,
@@ -27,7 +27,7 @@ def get_particle_property(
     """Convert a data member of `.Particle` into one of `.EdgeQuantumNumbers`.
 
     The `.solving` model requires a list of 'flat' values, such as `int` and
-    `float`. It cannot handle `~.data.Spin` (which contains `~.Spin.magnitude` and
+    `float`. It cannot handle `.Spin` (which contains `~.Spin.magnitude` and
     `~.Spin.projection`). The `.solving` module also works with spin
     projection, which a general `.Particle` instance does not carry.
     """

@@ -4,7 +4,7 @@ from typing import Dict, NewType, Optional, Tuple, Type, Union
 
 import attr
 
-from expertsystem.data import Parity, Particle
+from expertsystem.particles import Parity, Particle
 
 Scalar = Union[int, float]
 

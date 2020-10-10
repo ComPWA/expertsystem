@@ -19,7 +19,7 @@ from typing import (
     Union,
 )
 
-from expertsystem.data import Particle, ParticleCollection
+from expertsystem.particles import Particle, ParticleCollection
 from expertsystem.solving.topology import StateTransitionGraph, Topology
 from expertsystem.solving.types import ParticleWithSpin
 

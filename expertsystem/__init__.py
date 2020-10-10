@@ -17,11 +17,11 @@ parameters so that they resemble the data set as good as possible.
 
 __all__ = [
     "amplitude",
-    "data",
+    "particles",
     "io",
     "solving",
     "ui",
 ]
 
 
-from . import amplitude, data, io, solving, ui
+from . import amplitude, io, particles, solving, ui

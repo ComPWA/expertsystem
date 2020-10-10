@@ -1,7 +1,7 @@
 # pylint: disable=protected-access
 import pytest
 
-from expertsystem.data import Particle
+from expertsystem.particles import Particle
 from expertsystem.solving.properties import (
     CompareGraphNodePropertiesFunctor,
     _create_edge_id_particle_mapping,

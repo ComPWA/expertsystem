@@ -1,9 +1,9 @@
-"""Serialization module for containers of `expertsystem.data`."""
+"""Serialization module for containers of `expertsystem.particles`."""
 
 from pathlib import Path
 
 from expertsystem.amplitude.model import AmplitudeModel
-from expertsystem.data import ParticleCollection
+from expertsystem.particles import ParticleCollection
 
 from . import _pdg, dot, xml, yaml
 
