@@ -19,8 +19,9 @@ from typing import (
 )
 
 from expertsystem._utils import arange
-from expertsystem.data import Particle, ParticleCollection, ParticleWithSpin
+from expertsystem.data import Particle, ParticleCollection
 from expertsystem.topology import StateTransitionGraph, Topology
+from expertsystem.types import ParticleWithSpin
 
 StateWithSpins = Tuple[str, Sequence[float]]
 StateDefinition = Union[str, StateWithSpins]

@@ -4,7 +4,6 @@ from copy import deepcopy
 from os.path import dirname, join, realpath
 from typing import Dict, List, Tuple, Union
 
-from expertsystem.data import EdgeQuantumNumbers, NodeQuantumNumbers
 from expertsystem.solving import EdgeSettings, InteractionTypes, NodeSettings
 from expertsystem.solving.conservation_rules import (
     BaryonNumberConservation,
@@ -29,6 +28,7 @@ from expertsystem.solving.conservation_rules import (
     StrangenessConservation,
     TauLNConservation,
 )
+from expertsystem.types import EdgeQuantumNumbers, NodeQuantumNumbers
 
 EXPERT_SYSTEM_PATH = dirname(dirname(realpath(__file__)))
 DEFAULT_PARTICLE_LIST_FILE = "additional_particle_definitions.yml"

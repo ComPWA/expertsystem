@@ -1,10 +1,10 @@
 import pytest
 
-from expertsystem.data import EdgeQuantumNumbers
 from expertsystem.solving.conservation_rules import (
     MassConservation,
     MassEdgeInput,
 )
+from expertsystem.types import EdgeQuantumNumbers
 
 # Currently need to cast to the proper Edge/NodeQuantumNumber type, see
 # https://github.com/ComPWA/expertsystem/issues/255

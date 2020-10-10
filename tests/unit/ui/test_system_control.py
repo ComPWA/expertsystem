@@ -1,11 +1,7 @@
 # pylint: disable=protected-access
 import pytest
 
-from expertsystem.data import (
-    InteractionProperties,
-    NodeQuantumNumbers,
-    Particle,
-)
+from expertsystem.data import Particle
 from expertsystem.state.properties import (
     CompareGraphNodePropertiesFunctor,
     _create_edge_id_particle_mapping,
@@ -13,6 +9,7 @@ from expertsystem.state.properties import (
     perform_external_edge_identical_particle_combinatorics,
 )
 from expertsystem.topology import StateTransitionGraph
+from expertsystem.types import InteractionProperties, NodeQuantumNumbers
 from expertsystem.ui import InteractionTypes, StateTransitionManager
 from expertsystem.ui._system_control import (
     filter_graphs,

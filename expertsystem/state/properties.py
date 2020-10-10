@@ -10,16 +10,15 @@ from typing import Dict, List, Optional, Set, Type, Union
 
 import attr
 
-from expertsystem.data import (
+from expertsystem.data import Parity, ParticleCollection
+from expertsystem.topology import StateTransitionGraph
+from expertsystem.types import (
     EdgeQuantumNumber,
     EdgeQuantumNumbers,
     InteractionProperties,
     NodeQuantumNumber,
-    Parity,
-    ParticleCollection,
     ParticleWithSpin,
 )
-from expertsystem.topology import StateTransitionGraph
 
 
 def get_particle_property(

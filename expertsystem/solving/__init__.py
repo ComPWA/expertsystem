@@ -25,22 +25,19 @@ from constraint import (
     Variable,
 )
 
-from expertsystem.data import (
-    EdgeQuantumNumber,
-    EdgeQuantumNumbers,
-    NodeQuantumNumber,
-    Parity,
-    Particle,
-    ParticleCollection,
-    ParticleWithSpin,
-    Scalar,
-    Spin,
-    _create_interaction_properties,
-    _get_node_quantum_number,
-)
+from expertsystem.data import Parity, Particle, ParticleCollection, Spin
 from expertsystem.solving.conservation_rules import IsoSpinValidity, Rule
 from expertsystem.state.properties import get_particle_property
 from expertsystem.topology import StateTransitionGraph, Topology
+from expertsystem.types import (
+    EdgeQuantumNumber,
+    EdgeQuantumNumbers,
+    NodeQuantumNumber,
+    ParticleWithSpin,
+    Scalar,
+    _create_interaction_properties,
+    _get_node_quantum_number,
+)
 
 
 class InteractionTypes(Enum):

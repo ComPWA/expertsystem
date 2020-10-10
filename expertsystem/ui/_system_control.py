@@ -6,12 +6,6 @@ from typing import Callable, Dict, List, Optional, Set, Tuple, Type, Union
 
 import attr
 
-from expertsystem.data import (
-    InteractionProperties,
-    NodeQuantumNumber,
-    ParticleWithSpin,
-    _get_node_quantum_number,
-)
 from expertsystem.solving import (
     EdgeSettings,
     GraphSettings,
@@ -21,6 +15,12 @@ from expertsystem.solving import (
 from expertsystem.solving.conservation_rules import Rule
 from expertsystem.state.properties import CompareGraphNodePropertiesFunctor
 from expertsystem.topology import StateTransitionGraph
+from expertsystem.types import (
+    InteractionProperties,
+    NodeQuantumNumber,
+    ParticleWithSpin,
+    _get_node_quantum_number,
+)
 
 Strength = float
 
