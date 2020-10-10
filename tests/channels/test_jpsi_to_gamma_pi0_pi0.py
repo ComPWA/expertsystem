@@ -6,7 +6,7 @@ import logging
 
 import pytest
 
-from expertsystem.state.properties import _create_edge_id_particle_mapping
+from expertsystem.solving.properties import _create_edge_id_particle_mapping
 from expertsystem.ui import InteractionTypes, StateTransitionManager
 
 logging.basicConfig(level=logging.ERROR)

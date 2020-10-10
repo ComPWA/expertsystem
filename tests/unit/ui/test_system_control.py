@@ -2,13 +2,13 @@
 import pytest
 
 from expertsystem.data import Particle
-from expertsystem.solving.topology import StateTransitionGraph
-from expertsystem.state.properties import (
+from expertsystem.solving.properties import (
     CompareGraphNodePropertiesFunctor,
     _create_edge_id_particle_mapping,
     match_external_edges,
     perform_external_edge_identical_particle_combinatorics,
 )
+from expertsystem.solving.topology import StateTransitionGraph
 from expertsystem.types import InteractionProperties, NodeQuantumNumbers
 from expertsystem.ui import InteractionTypes, StateTransitionManager
 from expertsystem.ui._system_control import (

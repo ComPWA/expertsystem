@@ -13,8 +13,8 @@ from expertsystem.solving import (
     NodeSettings,
 )
 from expertsystem.solving.conservation_rules import Rule
+from expertsystem.solving.properties import CompareGraphNodePropertiesFunctor
 from expertsystem.solving.topology import StateTransitionGraph
-from expertsystem.state.properties import CompareGraphNodePropertiesFunctor
 from expertsystem.types import (
     InteractionProperties,
     NodeQuantumNumber,

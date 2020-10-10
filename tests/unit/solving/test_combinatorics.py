@@ -6,13 +6,7 @@ from math import factorial
 import pytest
 
 from expertsystem import io
-from expertsystem.solving.topology import (
-    InteractionNode,
-    SimpleStateTransitionTopologyBuilder,
-    StateTransitionGraph,
-    Topology,
-)
-from expertsystem.state.combinatorics import (
+from expertsystem.solving.combinatorics import (
     KinematicRepresentation,
     _generate_kinematic_permutations,
     _generate_outer_edge_permutations,
@@ -20,6 +14,12 @@ from expertsystem.state.combinatorics import (
     _safe_set_spin_projections,
     get_kinematic_representation,
     initialize_graph,
+)
+from expertsystem.solving.topology import (
+    InteractionNode,
+    SimpleStateTransitionTopologyBuilder,
+    StateTransitionGraph,
+    Topology,
 )
 
 

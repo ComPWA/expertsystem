@@ -3,10 +3,10 @@ import logging
 from typing import Dict, List, Optional, Tuple, Union
 
 from expertsystem.data import ParticleCollection, Spin
-from expertsystem.solving.topology import StateTransitionGraph, Topology
-from expertsystem.state.properties import (
+from expertsystem.solving.properties import (
     perform_external_edge_identical_particle_combinatorics,
 )
+from expertsystem.solving.topology import StateTransitionGraph, Topology
 from expertsystem.types import ParticleWithSpin
 
 from .model import (

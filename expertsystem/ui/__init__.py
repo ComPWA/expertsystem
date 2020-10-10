@@ -25,17 +25,20 @@ from expertsystem.solving import (
     NodeSettings,
     Result,
 )
+from expertsystem.solving.combinatorics import (
+    StateDefinition,
+    initialize_graph,
+)
+from expertsystem.solving.properties import (
+    CompareGraphNodePropertiesFunctor,
+    filter_particles,
+    match_external_edges,
+)
 from expertsystem.solving.topology import (
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
     StateTransitionGraph,
     Topology,
-)
-from expertsystem.state.combinatorics import StateDefinition, initialize_graph
-from expertsystem.state.properties import (
-    CompareGraphNodePropertiesFunctor,
-    filter_particles,
-    match_external_edges,
 )
 from expertsystem.types import (
     InteractionProperties,
