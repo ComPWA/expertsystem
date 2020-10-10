@@ -5,6 +5,7 @@ related to this.
 """
 
 from copy import deepcopy
+from decimal import Decimal
 from itertools import permutations
 from typing import (
     Any,
@@ -18,7 +19,6 @@ from typing import (
     Union,
 )
 
-from expertsystem._utils import arange
 from expertsystem.data import Particle, ParticleCollection
 from expertsystem.solving.topology import StateTransitionGraph, Topology
 from expertsystem.types import ParticleWithSpin
@@ -332,6 +332,15 @@ def _safe_set_spin_projections(
         safe_set_spin_projections(state, particle_db)
         for state in list_of_states
     ]
+
+
+def arange(
+    x_1: float, x_2: float, delta: float
+) -> Generator[float, None, None]:
+    current = Decimal(x_1)
+    while current < x_2:
+        yield float(current)
+        current += Decimal(delta)
 
 
 def _generate_outer_edge_permutations(
