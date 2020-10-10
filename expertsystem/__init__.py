@@ -21,13 +21,14 @@ __all__ = [
     "io",
     "state",
     "topology",
+    "solving",
     "ui",
 ]
 
 
 import sys
 
-from . import amplitude, data, io, state, topology, ui
+from . import amplitude, data, io, solving, state, topology, ui
 
 
 def __check_python_version() -> None:
