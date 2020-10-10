@@ -20,10 +20,9 @@ __all__ = [
     "data",
     "io",
     "state",
-    "topology",
     "solving",
     "ui",
 ]
 
 
-from . import amplitude, data, io, solving, state, topology, ui
+from . import amplitude, data, io, solving, state, ui

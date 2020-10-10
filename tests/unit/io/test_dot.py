@@ -2,7 +2,7 @@ import pydot
 import pytest
 
 from expertsystem import io
-from expertsystem.topology import Edge, Topology
+from expertsystem.solving.topology import Edge, Topology
 
 
 def test_dot_syntax(jpsi_to_gamma_pi_pi_helicity_solutions):

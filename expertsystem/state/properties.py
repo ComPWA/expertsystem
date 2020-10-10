@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Set, Type, Union
 import attr
 
 from expertsystem.data import Parity, ParticleCollection
-from expertsystem.topology import StateTransitionGraph
+from expertsystem.solving.topology import StateTransitionGraph
 from expertsystem.types import (
     EdgeQuantumNumber,
     EdgeQuantumNumbers,

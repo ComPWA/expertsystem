@@ -27,8 +27,8 @@ from constraint import (
 
 from expertsystem.data import Parity, Particle, ParticleCollection, Spin
 from expertsystem.solving.conservation_rules import IsoSpinValidity, Rule
+from expertsystem.solving.topology import StateTransitionGraph, Topology
 from expertsystem.state.properties import get_particle_property
-from expertsystem.topology import StateTransitionGraph, Topology
 from expertsystem.types import (
     EdgeQuantumNumber,
     EdgeQuantumNumbers,
