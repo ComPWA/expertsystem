@@ -20,8 +20,9 @@ from typing import Any, Callable, List, Optional, Set, Tuple, Type, Union
 import attr
 
 from expertsystem.particles import Spin
-from expertsystem.solving.combinatorics import arange
-from expertsystem.solving.types import EdgeQuantumNumbers, NodeQuantumNumbers
+
+from .combinatorics import arange
+from .types import EdgeQuantumNumbers, NodeQuantumNumbers
 
 
 def is_boson(spin_magnitude: float) -> bool:

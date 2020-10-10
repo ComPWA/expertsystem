@@ -25,7 +25,7 @@ from typing import (
 
 import attr
 
-from expertsystem.solving.types import InteractionProperties
+from .types import InteractionProperties
 
 
 @attr.s

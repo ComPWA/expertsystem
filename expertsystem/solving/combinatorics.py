@@ -20,8 +20,9 @@ from typing import (
 )
 
 from expertsystem.particles import Particle, ParticleCollection
-from expertsystem.solving.topology import StateTransitionGraph, Topology
-from expertsystem.solving.types import ParticleWithSpin
+
+from .topology import StateTransitionGraph, Topology
+from .types import ParticleWithSpin
 
 StateWithSpins = Tuple[str, Sequence[float]]
 StateDefinition = Union[str, StateWithSpins]
