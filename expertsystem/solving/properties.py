@@ -1,7 +1,8 @@
-"""Collection of data structures and functions for particle information.
+"""Collection of data structures and functions for `.topology` properties.
 
-This module defines a particle as a collection of quantum numbers and things
-related to this.
+In a `.StateTransitionGraph`, the edges represent quantum states, while the
+nodes represent interactions. This module provides tools to modify or extract
+these properties.
 """
 from collections import OrderedDict
 from copy import deepcopy

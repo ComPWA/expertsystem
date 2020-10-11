@@ -1,8 +1,4 @@
-"""Collection of data structures and functions for particle information.
-
-This module defines a particle as a collection of quantum numbers and things
-related to this.
-"""
+"""Perform permutations on the edges of a `.StateTransitionGraph`."""
 
 from copy import deepcopy
 from decimal import Decimal

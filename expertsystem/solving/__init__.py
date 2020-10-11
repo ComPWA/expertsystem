@@ -2,11 +2,11 @@
 
 """Functions to solve a particle reaction problem.
 
-This module is responsible for solving a particle reaction problem stated by
-a `.StateTransitionGraph` and corresponding `.GraphSettings`. The Solver classes
-(e.g. :class:`.CSPSolver`) generate new quantum numbers (for example belonging
-to an intermediate state) and use the implemented conservation rules of
-:mod:`.conservation_rules`.
+This module is responsible for solving a particle reaction problem stated by a
+`.StateTransitionGraph` and corresponding `.GraphSettings`. The `.Solver`
+classes (e.g. :class:`.CSPSolver`) generate new quantum numbers (for example
+belonging to an intermediate state) and validate the decay processes with the
+rules formulated by the `.conservation_rules` module.
 """
 
 import logging

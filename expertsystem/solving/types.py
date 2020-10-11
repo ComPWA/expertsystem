@@ -1,4 +1,11 @@
-"""Definitions used internally for typing and signatures."""
+"""Definitions used internally for type hints and signatures.
+
+The `expertsystem` is strictly typed (enforced through :doc:`mypy
+<mypy:index>`. This module bundles structures and definitions that don't serve
+as data containers but only as type hints. `.EdgeQuantumNumbers` and
+`.NodeQuantumNumbers` are the main structures and serve as a bridge between the
+:mod:`.particles` and the :mod:`.solving` module.
+"""
 
 from typing import Dict, NewType, Optional, Tuple, Type, Union
 
