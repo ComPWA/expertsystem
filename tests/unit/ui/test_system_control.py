@@ -2,7 +2,7 @@
 import pytest
 
 from expertsystem.particles import Particle
-from expertsystem.solving.properties import (
+from expertsystem.solving.combinatorics import (
     _create_edge_id_particle_mapping,
     match_external_edges,
     perform_external_edge_identical_particle_combinatorics,

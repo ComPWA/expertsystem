@@ -3,7 +3,7 @@ import logging
 from typing import Dict, List, Optional, Tuple, Union
 
 from expertsystem.particles import ParticleCollection, Spin
-from expertsystem.solving.properties import (
+from expertsystem.solving.combinatorics import (
     perform_external_edge_identical_particle_combinatorics,
 )
 from expertsystem.solving.topology import StateTransitionGraph, Topology

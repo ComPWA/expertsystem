@@ -28,8 +28,8 @@ from expertsystem.solving import (
 from expertsystem.solving.combinatorics import (
     StateDefinition,
     initialize_graph,
+    match_external_edges,
 )
-from expertsystem.solving.properties import match_external_edges
 from expertsystem.solving.topology import (
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
