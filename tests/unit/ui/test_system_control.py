@@ -3,7 +3,6 @@ import pytest
 
 from expertsystem.particles import Particle
 from expertsystem.solving.properties import (
-    CompareGraphNodePropertiesFunctor,
     _create_edge_id_particle_mapping,
     match_external_edges,
     perform_external_edge_identical_particle_combinatorics,
@@ -15,6 +14,7 @@ from expertsystem.solving.types import (
 )
 from expertsystem.ui import InteractionTypes, StateTransitionManager
 from expertsystem.ui._system_control import (
+    CompareGraphNodePropertiesFunctor,
     filter_graphs,
     remove_duplicate_solutions,
     require_interaction_property,

@@ -13,7 +13,6 @@ from expertsystem.solving import (
     NodeSettings,
 )
 from expertsystem.solving.conservation_rules import Rule
-from expertsystem.solving.properties import CompareGraphNodePropertiesFunctor
 from expertsystem.solving.topology import StateTransitionGraph
 from expertsystem.solving.types import (
     InteractionProperties,
@@ -27,6 +26,33 @@ Strength = float
 GraphSettingsGroups = Dict[
     Strength, List[Tuple[StateTransitionGraph, GraphSettings]]
 ]
+
+
+class CompareGraphNodePropertiesFunctor:
+    """Functor for comparing graph elements."""
+
+    def __init__(
+        self,
+        ignored_qn_list: Optional[Set[Type[NodeQuantumNumber]]] = None,
+    ) -> None:
+        self.__ignored_qn_list = ignored_qn_list if ignored_qn_list else set()
+
+    def __call__(
+        self,
+        node_props1: Dict[int, InteractionProperties],
+        node_props2: Dict[int, InteractionProperties],
+    ) -> bool:
+        for node_id, node_props in node_props1.items():
+            other_node_props = node_props2[node_id]
+            if attr.evolve(
+                node_props,
+                **{x.__name__: None for x in self.__ignored_qn_list},
+            ) != attr.evolve(
+                other_node_props,
+                **{x.__name__: None for x in self.__ignored_qn_list},
+            ):
+                return False
+        return True
 
 
 def _change_qn_domain(

@@ -30,7 +30,6 @@ from expertsystem.solving.combinatorics import (
     initialize_graph,
 )
 from expertsystem.solving.properties import (
-    CompareGraphNodePropertiesFunctor,
     filter_particles,
     match_external_edges,
 )
@@ -52,6 +51,7 @@ from ._default_settings import (
     create_default_interaction_settings,
 )
 from ._system_control import (
+    CompareGraphNodePropertiesFunctor,
     GammaCheck,
     GraphSettingsGroups,
     LeptonCheck,
