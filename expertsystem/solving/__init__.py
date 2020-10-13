@@ -28,7 +28,6 @@ from constraint import (
 from expertsystem.particles import Parity, Particle, ParticleCollection, Spin
 
 from .conservation_rules import IsoSpinValidity, Rule
-from .properties import get_particle_property
 from .topology import StateTransitionGraph, Topology
 from .types import (
     EdgeQuantumNumber,
@@ -526,7 +525,7 @@ def validate_fully_initialized_graph(
                 edge_vars = {}
                 edge_props = graph.edge_props[edge_id]
                 for qn_type in qn_list:
-                    value = get_particle_property(edge_props, qn_type)
+                    value = _get_particle_property(edge_props, qn_type)
                     if value is not None:
                         edge_vars[qn_type] = value
                 variables.append(edge_vars)
@@ -838,7 +837,7 @@ class CSPSolver(Solver):
             if edge_id in self.__graph.edge_props:
                 edge_props = self.__graph.edge_props[edge_id]
                 for qn_type in qn_list:
-                    value = get_particle_property(edge_props, qn_type)
+                    value = _get_particle_property(edge_props, qn_type)
                     if value is not None:
                         variables[1][edge_id].update({qn_type: value})
             else:
@@ -1054,3 +1053,33 @@ class _ConservationRuleConstraintWrapper(Constraint):
                     + qn_type.__name__
                     + "does not appear in the variable mapping!"
                 )
+
+
+def _get_particle_property(
+    edge_property: ParticleWithSpin, qn_type: Type[EdgeQuantumNumber]
+) -> Optional[Union[float, int]]:
+    """Convert a data member of `.Particle` into one of `.EdgeQuantumNumbers`.
+
+    The `.solving` model requires a list of 'flat' values, such as `int` and
+    `float`. It cannot handle `.Spin` (which contains `~.Spin.magnitude` and
+    `~.Spin.projection`). The `.solving` module also works with spin
+    projection, which a general `.Particle` instance does not carry.
+    """
+    particle, spin_projection = edge_property
+    value = None
+    if hasattr(particle, qn_type.__name__):
+        value = getattr(particle, qn_type.__name__)
+    else:
+        if qn_type is EdgeQuantumNumbers.spin_magnitude:
+            value = particle.spin
+        elif qn_type is EdgeQuantumNumbers.spin_projection:
+            value = spin_projection
+        if particle.isospin is not None:
+            if qn_type is EdgeQuantumNumbers.isospin_magnitude:
+                value = particle.isospin.magnitude
+            elif qn_type is EdgeQuantumNumbers.isospin_projection:
+                value = particle.isospin.projection
+
+    if isinstance(value, Parity):
+        return int(value)
+    return value

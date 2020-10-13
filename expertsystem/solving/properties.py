@@ -7,50 +7,14 @@ these properties.
 from collections import OrderedDict
 from copy import deepcopy
 from itertools import permutations
-from typing import Dict, List, Optional, Set, Type, Union
+from typing import Dict, List, Optional, Set, Type
 
 import attr
 
-from expertsystem.particles import Parity, ParticleCollection
+from expertsystem.particles import ParticleCollection
 
 from .topology import StateTransitionGraph
-from .types import (
-    EdgeQuantumNumber,
-    EdgeQuantumNumbers,
-    InteractionProperties,
-    NodeQuantumNumber,
-    ParticleWithSpin,
-)
-
-
-def get_particle_property(
-    edge_property: ParticleWithSpin, qn_type: Type[EdgeQuantumNumber]
-) -> Optional[Union[float, int]]:
-    """Convert a data member of `.Particle` into one of `.EdgeQuantumNumbers`.
-
-    The `.solving` model requires a list of 'flat' values, such as `int` and
-    `float`. It cannot handle `.Spin` (which contains `~.Spin.magnitude` and
-    `~.Spin.projection`). The `.solving` module also works with spin
-    projection, which a general `.Particle` instance does not carry.
-    """
-    particle, spin_projection = edge_property
-    value = None
-    if hasattr(particle, qn_type.__name__):
-        value = getattr(particle, qn_type.__name__)
-    else:
-        if qn_type is EdgeQuantumNumbers.spin_magnitude:
-            value = particle.spin
-        elif qn_type is EdgeQuantumNumbers.spin_projection:
-            value = spin_projection
-        if particle.isospin is not None:
-            if qn_type is EdgeQuantumNumbers.isospin_magnitude:
-                value = particle.isospin.magnitude
-            elif qn_type is EdgeQuantumNumbers.isospin_projection:
-                value = particle.isospin.projection
-
-    if isinstance(value, Parity):
-        return int(value)
-    return value
+from .types import InteractionProperties, NodeQuantumNumber, ParticleWithSpin
 
 
 class CompareGraphNodePropertiesFunctor:
