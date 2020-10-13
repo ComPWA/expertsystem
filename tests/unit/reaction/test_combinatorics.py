@@ -5,7 +5,6 @@ from math import factorial
 
 import pytest
 
-from expertsystem import io
 from expertsystem.reaction.combinatorics import (
     KinematicRepresentation,
     _generate_kinematic_permutations,
@@ -106,8 +105,8 @@ class TestKinematicRepresentation:
         graph1 = StateTransitionGraph.from_topology(three_body_decay)
         pion = particle_database["pi0"]
         graph1.edge_props[0] = ("J/psi", [-1, +1])
-        graph1.edge_props[2] = particle_database["pi0"]
-        graph1.edge_props[3] = io.xml.object_to_dict(pion)
+        graph1.edge_props[2] = pion
+        graph1.edge_props[3] = pion
         graph1.edge_props[4] = "gamma"
         kinematic_representation1 = get_kinematic_representation(graph1)
         assert kinematic_representation1.initial_state == [
