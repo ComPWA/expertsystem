@@ -6,20 +6,20 @@ from typing import Callable, Dict, List, Optional, Set, Tuple, Type, Union
 
 import attr
 
-from expertsystem.solving import (
+from expertsystem.reaction import (
     EdgeSettings,
     GraphSettings,
     InteractionTypes,
     NodeSettings,
 )
-from expertsystem.solving.conservation_rules import Rule
-from expertsystem.solving.quantum_numbers import (
+from expertsystem.reaction.conservation_rules import Rule
+from expertsystem.reaction.quantum_numbers import (
     InteractionProperties,
     NodeQuantumNumber,
     ParticleWithSpin,
     _get_node_quantum_number,
 )
-from expertsystem.solving.topology import StateTransitionGraph
+from expertsystem.reaction.topology import StateTransitionGraph
 
 Strength = float
 

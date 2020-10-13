@@ -48,7 +48,7 @@ class Rule:
         the type annotations of its `.__call__` method. The type annotations
         therefore are not just there for *static* type checking: they also
         carry more information about the rule that is extracted *dynamically*
-        by the `.solving` module.
+        by the `.reaction` module.
 
     Generally, the conditions can be separated into two categories:
 

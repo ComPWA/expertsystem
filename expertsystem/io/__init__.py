@@ -1,7 +1,7 @@
 """Serialization module for the `expertsystem`.
 
 The `.io` module provides tools to export or import objects from the
-:mod:`.particles`, :mod:`.solving` and :mod:`.amplitude` modules to and from
+:mod:`.particles`, :mod:`.reaction` and :mod:`.amplitude` modules to and from
 disk, so that they can be used by external packages, or just to store (cache)
 the state of the system.
 """

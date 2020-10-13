@@ -1,6 +1,6 @@
 """All modules related to the creation of amplitude models.
 
-This module concerts the `.StateTransitionGraph` solutions that the `.solving`
+This module concerts the `.StateTransitionGraph` solutions that the `.reaction`
 module found for a specific reaction process into an `.AmplitudeModel`. As
 such, this module is the place that formulates theoretical formalisms from
 Partial Wave Analysis.

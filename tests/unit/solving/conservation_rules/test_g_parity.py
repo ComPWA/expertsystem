@@ -3,12 +3,12 @@ from itertools import product
 import pytest
 
 from expertsystem.particles import Parity
-from expertsystem.solving.conservation_rules import (
+from expertsystem.reaction.conservation_rules import (
     GParityConservation,
     GParityEdgeInput,
     GParityNodeInput,
 )
-from expertsystem.solving.quantum_numbers import (
+from expertsystem.reaction.quantum_numbers import (
     EdgeQuantumNumbers,
     NodeQuantumNumbers,
 )

@@ -6,7 +6,7 @@ collection of immutable `Particle` instances that are uniquely defined by their
 properties. As such it can be used stand-alone as a database of quantum numbers
 (see :doc:`/usage/particles`).
 
-The `.solving` module uses the properties of `Particle` instances when
+The `.reaction` module uses the properties of `Particle` instances when
 computing which `.StateTransitionGraph` s are allowed between an initial state
 and final state.
 """

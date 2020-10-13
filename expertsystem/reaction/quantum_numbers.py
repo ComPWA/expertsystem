@@ -4,7 +4,7 @@ The `expertsystem` is strictly typed (enforced through :doc:`mypy
 <mypy:index>`. This module bundles structures and definitions that don't serve
 as data containers but only as type hints. `.EdgeQuantumNumbers` and
 `.NodeQuantumNumbers` are the main structures and serve as a bridge between the
-:mod:`.particles` and the :mod:`.solving` module.
+:mod:`.particles` and the :mod:`.reaction` module.
 """
 
 from typing import Dict, NewType, Optional, Tuple, Type, Union
@@ -23,7 +23,7 @@ class EdgeQuantumNumbers:  # pylint: disable=too-many-instance-attributes
     """Definition of quantum numbers for edges.
 
     This class defines the types that are used in the
-    `~.solving.conservation_rules`, for instance in
+    `~.reaction.conservation_rules`, for instance in
     `.additive_quantum_number_rule`. You can also create data classes (see
     `attr.s`) with data members that are typed as the data members of
     `.EdgeQuantumNumbers` (see for example `.HelicityParityEdgeInput`) and use

@@ -3,7 +3,7 @@ from typing import List, Tuple
 import pytest
 
 from expertsystem.particles import Spin
-from expertsystem.solving.conservation_rules import (
+from expertsystem.reaction.conservation_rules import (
     IsoSpinConservation,
     IsoSpinEdgeInput,
     SpinConservation,
@@ -11,7 +11,7 @@ from expertsystem.solving.conservation_rules import (
     SpinEdgeInput,
     SpinNodeInput,
 )
-from expertsystem.solving.quantum_numbers import (
+from expertsystem.reaction.quantum_numbers import (
     EdgeQuantumNumbers,
     NodeQuantumNumbers,
 )

@@ -4,8 +4,8 @@ from copy import deepcopy
 from os.path import dirname, join, realpath
 from typing import Dict, List, Tuple, Union
 
-from expertsystem.solving import EdgeSettings, InteractionTypes, NodeSettings
-from expertsystem.solving.conservation_rules import (
+from expertsystem.reaction import EdgeSettings, InteractionTypes, NodeSettings
+from expertsystem.reaction.conservation_rules import (
     BaryonNumberConservation,
     BottomnessConservation,
     ChargeConservation,
@@ -28,7 +28,7 @@ from expertsystem.solving.conservation_rules import (
     StrangenessConservation,
     TauLNConservation,
 )
-from expertsystem.solving.quantum_numbers import (
+from expertsystem.reaction.quantum_numbers import (
     EdgeQuantumNumbers,
     NodeQuantumNumbers,
 )

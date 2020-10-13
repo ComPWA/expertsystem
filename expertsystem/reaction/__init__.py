@@ -1060,9 +1060,9 @@ def _get_particle_property(
 ) -> Optional[Union[float, int]]:
     """Convert a data member of `.Particle` into one of `.EdgeQuantumNumbers`.
 
-    The `.solving` model requires a list of 'flat' values, such as `int` and
+    The `.reaction` model requires a list of 'flat' values, such as `int` and
     `float`. It cannot handle `.Spin` (which contains `~.Spin.magnitude` and
-    `~.Spin.projection`). The `.solving` module also works with spin
+    `~.Spin.projection`). The `.reaction` module also works with spin
     projection, which a general `.Particle` instance does not carry.
     """
     particle, spin_projection = edge_property

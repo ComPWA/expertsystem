@@ -17,7 +17,7 @@ from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particles import Particle, ParticleCollection
-from expertsystem.solving import (
+from expertsystem.reaction import (
     CSPSolver,
     EdgeSettings,
     GraphSettings,
@@ -25,18 +25,18 @@ from expertsystem.solving import (
     NodeSettings,
     Result,
 )
-from expertsystem.solving.combinatorics import (
+from expertsystem.reaction.combinatorics import (
     StateDefinition,
     initialize_graph,
     match_external_edges,
 )
-from expertsystem.solving.quantum_numbers import (
+from expertsystem.reaction.quantum_numbers import (
     InteractionProperties,
     NodeQuantumNumber,
     NodeQuantumNumbers,
     ParticleWithSpin,
 )
-from expertsystem.solving.topology import (
+from expertsystem.reaction.topology import (
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
     StateTransitionGraph,
@@ -101,7 +101,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         self.__formalism_type = str(formalism_type)
         self.__particles = particles
         self.number_of_threads = int(number_of_threads)
-        self.solving_mode = str(solving_mode)
+        self.reaction_mode = str(solving_mode)
         self.initial_state = initial_state
         self.final_state = final_state
         self.interaction_type_settings = interaction_type_settings
@@ -363,7 +363,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                     results[strength].extend(temp_result, True)
             if (
                 results[strength].solutions
-                and self.solving_mode == SolvingMode.Fast
+                and self.reaction_mode == SolvingMode.Fast
             ):
                 break
 
