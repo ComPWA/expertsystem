@@ -1,4 +1,5 @@
 """Implementation of the helicity formalism for amplitude model generation."""
+
 import logging
 from typing import Dict, List, Optional, Tuple, Union
 

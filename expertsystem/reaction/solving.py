@@ -6,7 +6,7 @@ This module is responsible for solving a particle reaction problem stated by a
 `.StateTransitionGraph` and corresponding `.GraphSettings`. The `.Solver`
 classes (e.g. :class:`.CSPSolver`) generate new quantum numbers (for example
 belonging to an intermediate state) and validate the decay processes with the
-rules formulated by the :mod:.conservation_rules` module.
+rules formulated by the :mod:`.conservation_rules` module.
 """
 
 import logging

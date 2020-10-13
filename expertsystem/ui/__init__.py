@@ -1,4 +1,4 @@
-"""Main interface of the `expertsystem`.
+"""Main user interface of the `expertsystem`.
 
 This module contains the functions that you need for the most common use cases
 of the `expertsystem`. See the :doc:`/usage/quickstart`.
