@@ -1,7 +1,7 @@
 # pylint: disable=protected-access
 import pytest
 
-from expertsystem.particles import Particle
+from expertsystem.particle import Particle
 from expertsystem.reaction.combinatorics import (
     _create_edge_id_particle_mapping,
     match_external_edges,

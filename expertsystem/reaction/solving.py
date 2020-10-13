@@ -25,7 +25,7 @@ from constraint import (
     Variable,
 )
 
-from expertsystem.particles import Parity, Particle, ParticleCollection, Spin
+from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
 
 from .conservation_rules import IsoSpinValidity, Rule
 from .quantum_numbers import (

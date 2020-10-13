@@ -1,6 +1,6 @@
 """A collection of particle info containers.
 
-The `~expertsystem.particles` module is the starting point of the
+The `~expertsystem.particle` module is the starting point of the
 `expertsystem`. Its main interface is the `ParticleCollection`, which is a
 collection of immutable `Particle` instances that are uniquely defined by their
 properties. As such it can be used stand-alone as a database of quantum numbers

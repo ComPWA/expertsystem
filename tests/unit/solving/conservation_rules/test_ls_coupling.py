@@ -1,6 +1,6 @@
 import pytest
 
-from expertsystem.particles import Spin
+from expertsystem.particle import Spin
 from expertsystem.reaction.conservation_rules import ParityConservationHelicity
 from expertsystem.reaction.quantum_numbers import InteractionProperties
 from expertsystem.ui import InteractionTypes, StateTransitionManager

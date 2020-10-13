@@ -19,7 +19,7 @@ from typing import Any, Callable, List, Optional, Set, Tuple, Type, Union
 
 import attr
 
-from expertsystem.particles import Spin
+from expertsystem.particle import Spin
 
 from .combinatorics import arange
 from .quantum_numbers import EdgeQuantumNumbers, NodeQuantumNumbers

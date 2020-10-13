@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import pytest
 
-from expertsystem.particles import Spin
+from expertsystem.particle import Spin
 from expertsystem.reaction.conservation_rules import (
     IsoSpinConservation,
     IsoSpinEdgeInput,

@@ -2,7 +2,7 @@
 
 from typing import Any, Callable, List, Optional
 
-from expertsystem.particles import Spin
+from expertsystem.particle import Spin
 from expertsystem.reaction.quantum_numbers import (
     InteractionProperties,
     ParticleWithSpin,

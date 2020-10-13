@@ -16,7 +16,7 @@ from expertsystem import io
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.amplitude.model import AmplitudeModel
-from expertsystem.particles import Particle, ParticleCollection
+from expertsystem.particle import Particle, ParticleCollection
 from expertsystem.reaction.combinatorics import (
     StateDefinition,
     initialize_graph,

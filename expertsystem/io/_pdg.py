@@ -7,7 +7,7 @@ from typing import Optional, Tuple, Union
 from particle import Particle as PdgDatabase
 from particle.particle import enums
 
-from expertsystem.particles import (
+from expertsystem.particle import (
     GellmannNishijima,
     Parity,
     Particle,

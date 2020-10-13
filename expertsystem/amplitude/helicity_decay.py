@@ -2,7 +2,7 @@
 import logging
 from typing import Dict, List, Optional, Tuple, Union
 
-from expertsystem.particles import ParticleCollection, Spin
+from expertsystem.particle import ParticleCollection, Spin
 from expertsystem.reaction.combinatorics import (
     perform_external_edge_identical_particle_combinatorics,
 )

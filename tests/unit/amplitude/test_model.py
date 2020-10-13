@@ -10,7 +10,7 @@ from expertsystem.amplitude.model import (
     RelativisticBreitWigner,
     _assert_arg_type,
 )
-from expertsystem.particles import ParticleCollection
+from expertsystem.particle import ParticleCollection
 
 
 class TestFitParameters:

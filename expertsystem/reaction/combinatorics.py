@@ -22,7 +22,7 @@ from typing import (
     Union,
 )
 
-from expertsystem.particles import Particle, ParticleCollection
+from expertsystem.particle import Particle, ParticleCollection
 
 from .quantum_numbers import ParticleWithSpin
 from .topology import StateTransitionGraph, Topology
