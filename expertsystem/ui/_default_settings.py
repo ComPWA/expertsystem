@@ -4,7 +4,6 @@ from copy import deepcopy
 from os.path import dirname, join, realpath
 from typing import Dict, List, Tuple, Union
 
-from expertsystem.reaction import EdgeSettings, InteractionTypes, NodeSettings
 from expertsystem.reaction.conservation_rules import (
     BaryonNumberConservation,
     BottomnessConservation,
@@ -31,6 +30,11 @@ from expertsystem.reaction.conservation_rules import (
 from expertsystem.reaction.quantum_numbers import (
     EdgeQuantumNumbers,
     NodeQuantumNumbers,
+)
+from expertsystem.reaction.solving import (
+    EdgeSettings,
+    InteractionTypes,
+    NodeSettings,
 )
 
 EXPERT_SYSTEM_PATH = dirname(dirname(realpath(__file__)))

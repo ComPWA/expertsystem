@@ -17,14 +17,6 @@ from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
 from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particles import Particle, ParticleCollection
-from expertsystem.reaction import (
-    CSPSolver,
-    EdgeSettings,
-    GraphSettings,
-    InteractionTypes,
-    NodeSettings,
-    Result,
-)
 from expertsystem.reaction.combinatorics import (
     StateDefinition,
     initialize_graph,
@@ -35,6 +27,14 @@ from expertsystem.reaction.quantum_numbers import (
     NodeQuantumNumber,
     NodeQuantumNumbers,
     ParticleWithSpin,
+)
+from expertsystem.reaction.solving import (
+    CSPSolver,
+    EdgeSettings,
+    GraphSettings,
+    InteractionTypes,
+    NodeSettings,
+    Result,
 )
 from expertsystem.reaction.topology import (
     InteractionNode,

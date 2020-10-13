@@ -6,18 +6,18 @@ from typing import Callable, Dict, List, Optional, Set, Tuple, Type, Union
 
 import attr
 
-from expertsystem.reaction import (
-    EdgeSettings,
-    GraphSettings,
-    InteractionTypes,
-    NodeSettings,
-)
 from expertsystem.reaction.conservation_rules import Rule
 from expertsystem.reaction.quantum_numbers import (
     InteractionProperties,
     NodeQuantumNumber,
     ParticleWithSpin,
     _get_node_quantum_number,
+)
+from expertsystem.reaction.solving import (
+    EdgeSettings,
+    GraphSettings,
+    InteractionTypes,
+    NodeSettings,
 )
 from expertsystem.reaction.topology import StateTransitionGraph
 
