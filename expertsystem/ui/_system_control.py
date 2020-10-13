@@ -13,13 +13,13 @@ from expertsystem.solving import (
     NodeSettings,
 )
 from expertsystem.solving.conservation_rules import Rule
-from expertsystem.solving.topology import StateTransitionGraph
-from expertsystem.solving.types import (
+from expertsystem.solving.quantum_numbers import (
     InteractionProperties,
     NodeQuantumNumber,
     ParticleWithSpin,
     _get_node_quantum_number,
 )
+from expertsystem.solving.topology import StateTransitionGraph
 
 Strength = float
 

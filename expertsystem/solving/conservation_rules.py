@@ -22,7 +22,7 @@ import attr
 from expertsystem.particles import Spin
 
 from .combinatorics import arange
-from .types import EdgeQuantumNumbers, NodeQuantumNumbers
+from .quantum_numbers import EdgeQuantumNumbers, NodeQuantumNumbers
 
 
 def is_boson(spin_magnitude: float) -> bool:

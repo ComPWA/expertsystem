@@ -7,11 +7,11 @@ from expertsystem.solving.combinatorics import (
     match_external_edges,
     perform_external_edge_identical_particle_combinatorics,
 )
-from expertsystem.solving.topology import StateTransitionGraph
-from expertsystem.solving.types import (
+from expertsystem.solving.quantum_numbers import (
     InteractionProperties,
     NodeQuantumNumbers,
 )
+from expertsystem.solving.topology import StateTransitionGraph
 from expertsystem.ui import InteractionTypes, StateTransitionManager
 from expertsystem.ui._system_control import (
     CompareGraphNodePropertiesFunctor,

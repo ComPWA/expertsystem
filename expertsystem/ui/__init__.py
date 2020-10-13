@@ -30,17 +30,17 @@ from expertsystem.solving.combinatorics import (
     initialize_graph,
     match_external_edges,
 )
+from expertsystem.solving.quantum_numbers import (
+    InteractionProperties,
+    NodeQuantumNumber,
+    NodeQuantumNumbers,
+    ParticleWithSpin,
+)
 from expertsystem.solving.topology import (
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
     StateTransitionGraph,
     Topology,
-)
-from expertsystem.solving.types import (
-    InteractionProperties,
-    NodeQuantumNumber,
-    NodeQuantumNumbers,
-    ParticleWithSpin,
 )
 
 from ._default_settings import (

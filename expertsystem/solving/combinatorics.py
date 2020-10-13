@@ -24,8 +24,8 @@ from typing import (
 
 from expertsystem.particles import Particle, ParticleCollection
 
+from .quantum_numbers import ParticleWithSpin
 from .topology import StateTransitionGraph, Topology
-from .types import ParticleWithSpin
 
 StateWithSpins = Tuple[str, Sequence[float]]
 StateDefinition = Union[str, StateWithSpins]

@@ -27,7 +27,7 @@ from typing import (
 
 import attr
 
-from .types import InteractionProperties
+from .quantum_numbers import InteractionProperties
 
 
 @attr.s

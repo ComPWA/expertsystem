@@ -3,8 +3,11 @@
 from typing import Any, Callable, List, Optional
 
 from expertsystem.particles import Spin
+from expertsystem.solving.quantum_numbers import (
+    InteractionProperties,
+    ParticleWithSpin,
+)
 from expertsystem.solving.topology import StateTransitionGraph
-from expertsystem.solving.types import InteractionProperties, ParticleWithSpin
 
 from .helicity_decay import (
     HelicityAmplitudeGenerator,

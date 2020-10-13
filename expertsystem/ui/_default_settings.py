@@ -28,7 +28,10 @@ from expertsystem.solving.conservation_rules import (
     StrangenessConservation,
     TauLNConservation,
 )
-from expertsystem.solving.types import EdgeQuantumNumbers, NodeQuantumNumbers
+from expertsystem.solving.quantum_numbers import (
+    EdgeQuantumNumbers,
+    NodeQuantumNumbers,
+)
 
 EXPERT_SYSTEM_PATH = dirname(dirname(realpath(__file__)))
 DEFAULT_PARTICLE_LIST_FILE = "additional_particle_definitions.yml"

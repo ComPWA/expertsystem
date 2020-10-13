@@ -9,7 +9,7 @@ import pytest
 
 from expertsystem.amplitude.canonical_decay import CanonicalAmplitudeGenerator
 from expertsystem.amplitude.helicity_decay import HelicityAmplitudeGenerator
-from expertsystem.solving.types import NodeQuantumNumbers
+from expertsystem.solving.quantum_numbers import NodeQuantumNumbers
 from expertsystem.ui import (
     InteractionTypes,
     StateDefinition,

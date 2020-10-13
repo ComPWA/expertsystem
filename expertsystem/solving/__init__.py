@@ -28,8 +28,7 @@ from constraint import (
 from expertsystem.particles import Parity, Particle, ParticleCollection, Spin
 
 from .conservation_rules import IsoSpinValidity, Rule
-from .topology import StateTransitionGraph, Topology
-from .types import (
+from .quantum_numbers import (
     EdgeQuantumNumber,
     EdgeQuantumNumbers,
     NodeQuantumNumber,
@@ -38,6 +37,7 @@ from .types import (
     _create_interaction_properties,
     _get_node_quantum_number,
 )
+from .topology import StateTransitionGraph, Topology
 
 
 class InteractionTypes(Enum):

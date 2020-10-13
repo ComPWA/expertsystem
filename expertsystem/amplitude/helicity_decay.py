@@ -6,8 +6,8 @@ from expertsystem.particles import ParticleCollection, Spin
 from expertsystem.solving.combinatorics import (
     perform_external_edge_identical_particle_combinatorics,
 )
+from expertsystem.solving.quantum_numbers import ParticleWithSpin
 from expertsystem.solving.topology import StateTransitionGraph, Topology
-from expertsystem.solving.types import ParticleWithSpin
 
 from .model import (
     AmplitudeModel,
