@@ -23,15 +23,11 @@
 {% endif %}
 
 {%- if subpackages %}
-Subpackages
------------
 
 {{ toctree(subpackages) }}
 {% endif %}
 
 {%- if submodules %}
-Submodules
-----------
 {% if separatemodules %}
 {{ toctree(submodules) }}
 {%- else %}
