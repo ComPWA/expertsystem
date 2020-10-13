@@ -7,13 +7,11 @@ as data containers but only as type hints. `.EdgeQuantumNumbers` and
 :mod:`.particles` and the :mod:`.reaction` module.
 """
 
-from typing import Dict, NewType, Optional, Tuple, Type, Union
+from typing import NewType, Optional, Tuple, Union
 
 import attr
 
 from expertsystem.particles import Parity, Particle
-
-Scalar = Union[int, float]
 
 ParticleWithSpin = Tuple[Particle, float]
 
@@ -123,22 +121,3 @@ class InteractionProperties:
     s_magnitude: Optional[float] = attr.ib(default=None)
     s_projection: Optional[float] = attr.ib(default=None)
     parity_prefactor: Optional[float] = attr.ib(default=None)
-
-
-def _get_node_quantum_number(
-    qn_type: Type[NodeQuantumNumber], node_props: InteractionProperties
-) -> Optional[Scalar]:
-    return getattr(node_props, qn_type.__name__)
-
-
-def _create_interaction_properties(
-    qn_solution: Dict[Type[NodeQuantumNumber], Scalar]
-) -> InteractionProperties:
-    converted_solution = {k.__name__: v for k, v in qn_solution.items()}
-    kw_args = {
-        x.name: converted_solution[x.name]
-        for x in attr.fields(InteractionProperties)
-        if x.name in converted_solution
-    }
-
-    return attr.evolve(InteractionProperties(), **kw_args)

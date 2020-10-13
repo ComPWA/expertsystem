@@ -11,13 +11,13 @@ from expertsystem.reaction.quantum_numbers import (
     InteractionProperties,
     NodeQuantumNumber,
     ParticleWithSpin,
-    _get_node_quantum_number,
 )
 from expertsystem.reaction.solving import (
     EdgeSettings,
     GraphSettings,
     InteractionTypes,
     NodeSettings,
+    _get_node_quantum_number,
 )
 from expertsystem.reaction.topology import StateTransitionGraph
 

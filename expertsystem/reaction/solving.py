@@ -31,13 +31,13 @@ from .conservation_rules import IsoSpinValidity, Rule
 from .quantum_numbers import (
     EdgeQuantumNumber,
     EdgeQuantumNumbers,
+    InteractionProperties,
     NodeQuantumNumber,
     ParticleWithSpin,
-    Scalar,
-    _create_interaction_properties,
-    _get_node_quantum_number,
 )
 from .topology import StateTransitionGraph, Topology
+
+Scalar = Union[int, float]
 
 
 class InteractionTypes(Enum):
@@ -1083,3 +1083,22 @@ def _get_particle_property(
     if isinstance(value, Parity):
         return int(value)
     return value
+
+
+def _get_node_quantum_number(
+    qn_type: Type[NodeQuantumNumber], node_props: InteractionProperties
+) -> Optional[Scalar]:
+    return getattr(node_props, qn_type.__name__)
+
+
+def _create_interaction_properties(
+    qn_solution: Dict[Type[NodeQuantumNumber], Scalar]
+) -> InteractionProperties:
+    converted_solution = {k.__name__: v for k, v in qn_solution.items()}
+    kw_args = {
+        x.name: converted_solution[x.name]
+        for x in attr.fields(InteractionProperties)
+        if x.name in converted_solution
+    }
+
+    return attr.evolve(InteractionProperties(), **kw_args)
