@@ -29,10 +29,7 @@ from expertsystem.solving.combinatorics import (
     StateDefinition,
     initialize_graph,
 )
-from expertsystem.solving.properties import (
-    filter_particles,
-    match_external_edges,
-)
+from expertsystem.solving.properties import match_external_edges
 from expertsystem.solving.topology import (
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
@@ -160,11 +157,21 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         if reload_pdg or len(self.__particles) == 0:
             self.__particles = load_default_particles()
 
-        if allowed_intermediate_particles is None:
-            allowed_intermediate_particles = []
-        self.__allowed_intermediate_particles = filter_particles(
-            self.__particles, allowed_intermediate_particles
-        )
+        self.__allowed_intermediate_particles = self.__particles
+        if allowed_intermediate_particles is not None:
+            self.set_allowed_intermediate_particles(
+                allowed_intermediate_particles
+            )
+
+    def set_allowed_intermediate_particles(
+        self, particle_names: List[str]
+    ) -> None:
+        self.__allowed_intermediate_particles = ParticleCollection()
+        for particle_name in particle_names:
+            self.__allowed_intermediate_particles += self.__particles.filter(
+                lambda p: particle_name  # pylint: disable=cell-var-from-loop
+                in p.name
+            )
 
     @property
     def formalism_type(self) -> str:

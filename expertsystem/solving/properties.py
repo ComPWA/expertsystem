@@ -9,31 +9,8 @@ from copy import deepcopy
 from itertools import permutations
 from typing import Dict, List, Set
 
-from expertsystem.particles import ParticleCollection
-
 from .topology import StateTransitionGraph
 from .types import ParticleWithSpin
-
-
-def filter_particles(
-    particle_db: ParticleCollection,
-    allowed_particle_names: List[str],
-) -> ParticleCollection:
-    """Filters `.ParticleCollection` based on the allowed particle names."""
-    allowed_particles = ParticleCollection()
-    if len(allowed_particle_names) == 0:
-        return particle_db
-
-    for particle_name in allowed_particle_names:
-        # if isinstance(particle_label, int):
-        #     allowed_particles.add(particle_db.find(particle_label))
-        # elif isinstance(particle_label, str):
-        subset = particle_db.filter(
-            lambda p: particle_name  # pylint: disable=cell-var-from-loop
-            in p.name
-        )
-        allowed_particles.update(subset)
-    return allowed_particles
 
 
 def match_external_edges(
