@@ -17,6 +17,11 @@
 {{ automodule(pkgname, automodule_options) }}
 {% endif %}
 
+{%- if not modulefirst and not is_namespace %}
+
+{{ automodule(pkgname, automodule_options) }}
+{% endif %}
+
 {%- if subpackages %}
 Subpackages
 -----------
@@ -37,11 +42,4 @@ Submodules
 {{ automodule(submodule, automodule_options) }}
 {% endfor %}
 {%- endif %}
-{% endif %}
-
-{%- if not modulefirst and not is_namespace %}
-Module contents
----------------
-
-{{ automodule(pkgname, automodule_options) }}
 {% endif %}
