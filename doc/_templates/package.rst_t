@@ -22,11 +22,14 @@
 {{ automodule(pkgname, automodule_options) }}
 {% endif %}
 
+{%- if submodules or subpackages %}
+.. rubric:: Submodules and Subpackages
+{% endif %}
+
 {%- if subpackages %}
 
 {{ toctree(subpackages) }}
 {% endif %}
-
 {%- if submodules %}
 {% if separatemodules %}
 {{ toctree(submodules) }}
