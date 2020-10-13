@@ -84,6 +84,9 @@ source_suffix = [
 
 # The master toctree document.
 master_doc = "index"
+modindex_common_prefix = [
+    "expertsystem.",
+]
 
 extensions = [
     "myst_parser",
