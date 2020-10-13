@@ -9,7 +9,6 @@ Responsible for building all possible topologies bases on basic user input:
 import copy
 import itertools
 import logging
-from collections import OrderedDict
 from typing import (
     Callable,
     Dict,
@@ -536,9 +535,3 @@ def attach_node_to_edges(
         new_open_end_lines.append(edge_id)
 
     return (temp_graph, new_open_end_lines)
-
-
-def _dicts_unequal(dict1: dict, dict2: dict) -> bool:
-    return OrderedDict(sorted(dict1.items())) != OrderedDict(
-        sorted(dict2.items())
-    )
