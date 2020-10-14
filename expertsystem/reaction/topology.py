@@ -2,8 +2,8 @@
 
 Responsible for building all possible topologies bases on basic user input:
 
-  - number of initial state particles
-  - number of final state particles
+- number of initial state particles
+- number of final state particles
 
 The main interface is the `.StateTransitionGraph`.
 """
