@@ -147,6 +147,8 @@ Table of Contents
   interactive
   contribute
 
+* :ref:`Python API <modindex>`
+
 
 .. toctree::
   :maxdepth: 1
@@ -154,5 +156,3 @@ Table of Contents
 
   api
   adr
-
-* :ref:`Python API <modindex>`
