@@ -14,7 +14,16 @@ and final state.
 import logging
 from collections import abc
 from functools import total_ordering
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    Optional,
+    Set,
+    Union,
+)
 
 import attr
 
@@ -396,6 +405,10 @@ class ParticleCollection(abc.MutableSet):
             )
         for particle in other:
             self.add(particle)
+
+    @property
+    def names(self) -> Set[str]:
+        return set(self.__particles)
 
 
 def create_particle(  # pylint: disable=too-many-arguments,too-many-locals
