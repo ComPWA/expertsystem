@@ -394,6 +394,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             final_solutions,
             final_result.not_executed_rules,
             final_result.violated_rules,
+            formalism_type=self.formalism_type,
         )
 
     def _solve(
