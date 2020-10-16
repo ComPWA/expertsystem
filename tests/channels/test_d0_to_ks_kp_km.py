@@ -5,7 +5,8 @@
 import logging
 
 from expertsystem import io
-from expertsystem.ui import StateTransitionManager, generate_amplitude_model
+from expertsystem.reaction import StateTransitionManager
+from expertsystem.ui import generate_amplitude_model
 
 logging.basicConfig(level=logging.ERROR)
 logging.getLogger().setLevel(logging.ERROR)
