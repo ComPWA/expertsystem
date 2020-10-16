@@ -171,6 +171,16 @@ class Result:
             )
         return self.solutions[0]
 
+    def get_intermediate_particles(self) -> ParticleCollection:
+        """Extract the names of the intermediate state particles."""
+        intermediate_states = ParticleCollection()
+        for graph in self.solutions:
+            for edge_id in graph.get_intermediate_state_edges():
+                particle, _ = graph.edge_props[edge_id]
+                if particle not in intermediate_states:
+                    intermediate_states.add(particle)
+        return intermediate_states
+
 
 @attr.s(frozen=True)
 class _QuantumNumberSolution:
