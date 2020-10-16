@@ -407,19 +407,26 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
         return solver.find_solutions(*state_graph_node_settings_pair)
 
-    def generate_amplitude_model(self, result: Result) -> AmplitudeModel:
-        """Generate an amplitude model from a generated `.Result`.
 
-        The type of amplitude model (`.HelicityAmplitudeGenerator` or
-        `.CanonicalAmplitudeGenerator`) is determined from the
-        :code:`formalism_type` that was chosen when constructing the
-        `.StateTransitionManager`.
-        """
-        if self.formalism_type == "helicity":
-            amplitude_generator = HelicityAmplitudeGenerator()
-        elif self.formalism_type in ["canonical-helicity", "canonical"]:
-            amplitude_generator = CanonicalAmplitudeGenerator()
-        return amplitude_generator.generate(result.solutions)
+def generate_amplitude_model(result: Result) -> AmplitudeModel:
+    """Generate an amplitude model from a generated `.Result`.
+
+    The type of amplitude model (`.HelicityAmplitudeGenerator` or
+    `.CanonicalAmplitudeGenerator`) is determined from the
+    `.Result.formalism_type`.
+    """
+    formalism_type = result.formalism_type
+    if formalism_type is None:
+        raise ValueError(f"Result does not have a formalism type:\n{result}")
+    if formalism_type == "helicity":
+        amplitude_generator = HelicityAmplitudeGenerator()
+    elif formalism_type in ["canonical-helicity", "canonical"]:
+        amplitude_generator = CanonicalAmplitudeGenerator()
+    else:
+        raise NotImplementedError(
+            f'No amplitude generator for formalism type "{formalism_type}"'
+        )
+    return amplitude_generator.generate(result.solutions)
 
 
 def load_default_particles() -> ParticleCollection:

@@ -5,7 +5,7 @@
 import logging
 
 from expertsystem import io
-from expertsystem.ui import StateTransitionManager
+from expertsystem.ui import StateTransitionManager, generate_amplitude_model
 
 logging.basicConfig(level=logging.ERROR)
 logging.getLogger().setLevel(logging.ERROR)
@@ -33,7 +33,7 @@ def test_script():
     for solution in result.solutions:
         print(solution.edge_props[1][0].name)
 
-    amplitude_model = stm.generate_amplitude_model(result)
+    amplitude_model = generate_amplitude_model(result)
     io.write(amplitude_model, "D0ToKs0KpKm.xml")
 
 
