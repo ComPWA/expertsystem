@@ -35,8 +35,7 @@ __all__ = [
     "io",
     "particle",
     "reaction",
-    "ui",
 ]
 
 
-from . import amplitude, io, particle, reaction, ui
+from . import amplitude, io, particle, reaction
