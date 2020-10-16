@@ -151,11 +151,9 @@ Table of Contents
 
 
 .. toctree::
-  :maxdepth: 1
   :hidden:
 
   api
-  adr
 
 .. toctree::
   :caption: Related projects
