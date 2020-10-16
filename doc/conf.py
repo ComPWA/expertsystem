@@ -32,12 +32,17 @@ for file_to_copy in FILES_TO_COPY:
 # -- Generate API skeleton ----------------------------------------------------
 shutil.rmtree("api", ignore_errors=True)
 subprocess.call(
-    "sphinx-apidoc "
-    "--force "
-    "--no-toc "
-    "--templatedir _templates "
-    "--separate "
-    "-o api/ ../expertsystem/; ",
+    " ".join(
+        [
+            "sphinx-apidoc",
+            "--force",
+            "--no-toc",
+            "--templatedir _templates",
+            "--separate",
+            "-o api/ ../expertsystem/",
+        ]
+    )
+    + ";",
     shell=True,
 )
 
