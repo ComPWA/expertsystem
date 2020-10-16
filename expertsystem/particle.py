@@ -384,13 +384,13 @@ class ParticleCollection(abc.MutableSet):
 
         >>> from expertsystem import io
         >>> pdg = io.load_pdg()
-        >>> results = pdg.filter(
+        >>> subset = pdg.filter(
         ...     lambda p: p.mass > 1.8
         ...     and p.mass < 2.0
         ...     and p.spin == 2
         ...     and p.strangeness == 1
         ... )
-        >>> sorted([p.name for p in results])
+        >>> sorted(list(subset.names))
         ['K(2)(1820)+', 'K(2)(1820)0']
         """
         return ParticleCollection(
