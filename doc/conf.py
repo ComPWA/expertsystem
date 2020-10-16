@@ -41,6 +41,25 @@ subprocess.call(
     shell=True,
 )
 
+# -- Visualize dependencies ---------------------------------------------------
+subprocess.call(
+    " ".join(
+        [
+            "HOME=.",  # when running from tox
+            "pydeps",
+            "../expertsystem",
+            "--exclude *._*",
+            "--max-bacon=1",
+            "--noshow",
+        ]
+    )
+    + ";",
+    shell=True,
+)
+if os.path.exists("expertsystem.svg"):
+    with open("api/expertsystem.rst", "a") as stream:
+        stream.write("\n.. image:: /expertsystem.svg")
+
 # -- Convert sphinx object inventory -----------------------------------------
 inv = soi.Inventory()
 inv.project = "constraint"
