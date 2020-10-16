@@ -35,11 +35,12 @@ subprocess.call(
     " ".join(
         [
             "sphinx-apidoc",
+            "../expertsystem/",
+            "-o api/",
             "--force",
             "--no-toc",
             "--templatedir _templates",
             "--separate",
-            "-o api/ ../expertsystem/",
         ]
     )
     + ";",
