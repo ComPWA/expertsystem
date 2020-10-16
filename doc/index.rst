@@ -156,3 +156,10 @@ Table of Contents
 
   api
   adr
+
+.. toctree::
+  :caption: Related projects
+  :hidden:
+
+  TensorWaves <http://pwa.readthedocs.io>
+  PWA Pages <http://pwa.readthedocs.io>
