@@ -10,19 +10,8 @@ possible.
 """
 
 
-__all__ = [
-    # Sub-modules
-    "canonical_decay",
-    "helicity_decay",
-    "model",
-    # User Interface
-    "generate_amplitude_model",
-]
-
-
 from expertsystem.reaction.solving import Result
 
-from . import canonical_decay, helicity_decay, model
 from .canonical_decay import CanonicalAmplitudeGenerator
 from .helicity_decay import HelicityAmplitudeGenerator
 from .model import AmplitudeModel
