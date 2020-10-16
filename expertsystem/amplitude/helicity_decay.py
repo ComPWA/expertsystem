@@ -8,6 +8,7 @@ from expertsystem.reaction.combinatorics import (
     perform_external_edge_identical_particle_combinatorics,
 )
 from expertsystem.reaction.quantum_numbers import ParticleWithSpin
+from expertsystem.reaction.solving import Result
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
 
 from .model import (
@@ -395,9 +396,8 @@ class HelicityAmplitudeGenerator:
         self.intensities: Optional[IntensityNode] = None
         self.fit_parameters: FitParameters = FitParameters()
 
-    def generate(
-        self, graphs: List[StateTransitionGraph[ParticleWithSpin]]
-    ) -> AmplitudeModel:
+    def generate(self, reaction_result: Result) -> AmplitudeModel:
+        graphs = reaction_result.solutions
         if len(graphs) < 1:
             raise ValueError(
                 f"At least one {StateTransitionGraph.__name__} required to"
