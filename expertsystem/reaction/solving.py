@@ -146,6 +146,31 @@ class Result:
                 else:
                     self.__violated_rules[key].update(rules2)
 
+    def get_initial_state(self) -> List[Particle]:
+        if len(self.solutions) == 0:
+            raise ValueError(
+                f"No solutions in {self.__class__.__name__} object"
+            )
+        graph = self.__get_first_graph()
+        return [
+            graph.edge_props[i][0] for i in graph.get_initial_state_edges()
+        ]
+
+    def get_final_state(self) -> List[Particle]:
+        if len(self.solutions) == 0:
+            raise ValueError(
+                f"No solutions in {self.__class__.__name__} object"
+            )
+        graph = self.__get_first_graph()
+        return [graph.edge_props[i][0] for i in graph.get_final_state_edges()]
+
+    def __get_first_graph(self) -> StateTransitionGraph:
+        if len(self.solutions) == 0:
+            raise ValueError(
+                f"No solutions in {self.__class__.__name__} object"
+            )
+        return self.solutions[0]
+
 
 @attr.s(frozen=True)
 class _QuantumNumberSolution:
