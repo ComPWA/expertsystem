@@ -51,11 +51,11 @@ subprocess.call(
 subprocess.call(
     " ".join(
         [
-            "HOME=.",  # when running from tox
+            "HOME=.",  # in case of calling through tox
             "pydeps",
             "../expertsystem",
-            "--exclude *._*",
-            "--max-bacon=1",
+            "--exclude *._*",  # hide private modules
+            "--max-bacon=1",  # hide external dependencies
             "--noshow",
         ]
     )
