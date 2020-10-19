@@ -74,7 +74,7 @@ def reduce_violated_rules(
         ((["Xi0"], ["p", "pi-"]), []),
         ((["pi-", "p"], ["Lambda", "K~0"]), []),
         ((["pi0"], ["gamma", "gamma"]), []),
-        ((["pi0"], ["gamma", "gamma", "gamma"]), []),
+        ((["pi0"], ["gamma", "gamma", "gamma"]), ["CParityConservation"]),
         ((["Sigma-"], ["n", "e-", "nu(e)~"]), []),
         # (
         #     (["rho(770)0"], ["pi0", "pi0"]),
@@ -84,7 +84,8 @@ def reduce_violated_rules(
         #         "IdenticalParticleSymmetrization",
         #     ],
         # ),
-        ((["rho(770)0"], ["gamma", "gamma"]), []),
+        ((["rho(770)0"], ["gamma", "gamma"]), ["CParityConservation"]),
+        ((["rho(770)0"], ["gamma", "gamma", "gamma"]), []),
         ((["J/psi(1S)"], ["pi0", "eta"]), []),
         ((["J/psi(1S)"], ["rho(770)0", "rho(770)0"]), []),
         ((["K~0"], ["pi+", "pi-", "pi0"]), []),
