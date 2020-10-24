@@ -215,6 +215,32 @@ class Result:
                     intermediate_states.add(particle)
         return intermediate_states
 
+    def get_particle_graphs(self) -> List[StateTransitionGraph[Particle]]:
+        """Strip `list` of `.StateTransitionGraph` s of the spin projections.
+
+        Extract a `list` of `.StateTransitionGraph` instances with only
+        particles on the edges.
+        """
+        inventory: List[StateTransitionGraph[Particle]] = list()
+        for graph in self.solutions:
+            if any(
+                [
+                    graph.compare(
+                        other, edge_comparator=lambda e1, e2: e1[0] == e2
+                    )
+                    for other in inventory
+                ]
+            ):
+                continue
+            new_graph: StateTransitionGraph[
+                Particle
+            ] = StateTransitionGraph.from_topology(graph)
+            for i, edge_prop in graph.edge_props.items():
+                particle, _ = edge_prop
+                new_graph.edge_props[i] = particle
+            inventory.append(new_graph)
+        return inventory
+
 
 @attr.s(frozen=True)
 class _QuantumNumberSolution:
