@@ -239,6 +239,12 @@ class Result:
                 particle, _ = edge_prop
                 new_graph.edge_props[i] = particle
             inventory.append(new_graph)
+        inventory = sorted(
+            inventory,
+            key=lambda g: [
+                g.edge_props[i].mass for i in g.get_intermediate_state_edges()
+            ],
+        )
         return inventory
 
 
