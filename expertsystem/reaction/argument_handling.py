@@ -42,8 +42,8 @@ GraphNodePropertyMap = GraphElementPropertyMap[NodeQuantumNumber]
 def _is_optional(field_type: Optional[type]) -> bool:
     if (
         hasattr(field_type, "__origin__")
-        and getattr(field_type, "__origin__") is Union
-        and type(None) in getattr(field_type, "__args__")
+        and field_type.__origin__ is Union  # type: ignore
+        and type(None) in field_type.__args__  # type: ignore
     ):
         return True
     return False
@@ -60,11 +60,11 @@ def _is_sequence_type(input_type: type) -> bool:
 
 
 def _is_edge_quantum_number(qn_type: Any) -> bool:
-    return qn_type in getattr(EdgeQuantumNumber, "__args__")
+    return qn_type in EdgeQuantumNumber.__args__  # type: ignore
 
 
 def _is_node_quantum_number(qn_type: Any) -> bool:
-    return qn_type in getattr(NodeQuantumNumber, "__args__")
+    return qn_type in NodeQuantumNumber.__args__  # type: ignore
 
 
 class _CompositeArgumentCheck:
@@ -120,7 +120,7 @@ class _ValueExtractor(Generic[_ElementType]):
         self.__function = self.__extract  # type: ignore
 
         if _is_optional(obj_type):
-            self.__obj_type = getattr(obj_type, "__args__")[0]
+            self.__obj_type = obj_type.__args__[0]  # type: ignore
             self.__function = self.__optional_extract  # type: ignore
 
     def __call__(
@@ -332,7 +332,7 @@ def get_required_qns(
         if attr.has(class_type):
             for class_field in attr.fields(class_type):
                 field_type = (
-                    getattr(class_field.type, "__args__")[0]
+                    class_field.type.__args__[0]  # type: ignore
                     if _is_optional(class_field.type)
                     else class_field.type
                 )
