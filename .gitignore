@@ -37,7 +37,8 @@ htmlcov/
 prof/
 
 # Virtual environments
-*venv*/
+*venv/
+pyvenv*/
 
 # Settings
 .idea/

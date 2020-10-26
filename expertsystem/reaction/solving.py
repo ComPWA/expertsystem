@@ -91,8 +91,6 @@ class GraphSettings:
     node_settings: Dict[int, NodeSettings] = attr.ib(factory=dict)
 
 
-# a tuple of rules defines a group which together violates all possible
-# combinations that were processed
 def convert_to_names(
     rules: Union[
         Dict[int, Set[Tuple[Rule, ...]]], Dict[int, Set[Tuple[str, ...]]]
@@ -117,6 +115,13 @@ def convert_to_names(
 
 
 class Result:
+    """Defines a result to a problem set processed by the solving code.
+
+    Args:
+        `violated_rules`: A tuple of rules defines a group, which together
+          violate all quantum number combinations that were processed.
+    """
+
     def __init__(
         self,
         solutions: Optional[

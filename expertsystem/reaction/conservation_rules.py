@@ -8,10 +8,10 @@ There are four different types of rules:
 
 1. Rules that work on individual graph edges (WIP).
 2. Rules that work on individual graph nodes (WIP).
-3. Rules that work on the interaction level, which use ingoing edges, outgoing
-   edges as arguments. For example `.ChargeConservation`.
-4. Rules that work on the interaction level, which use ingoing edges, outgoing
-   edges and a interaction node as arguments. For example
+3. `EdgeQNConservationRule` that work on the interaction level, which use
+   ingoing edges, outgoing edges as arguments.  E.g.: `.ChargeConservation`.
+4. `ConservationRule` that work on the interaction level, which use ingoing
+   edges, outgoing edges and a interaction node as arguments. E.g:
    `.parity_conservation`.
 
 The arguments can be any type of quantum number. However a rule argument
