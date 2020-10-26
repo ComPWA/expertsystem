@@ -117,9 +117,8 @@ def convert_to_names(
 class Result:
     """Defines a result to a problem set processed by the solving code.
 
-    Args:
-        `violated_rules`: A tuple of rules defines a group, which together
-          violate all quantum number combinations that were processed.
+    The tuple of rules in `violated_rules` defines a group, which together
+    violate all quantum number combinations that were processed.
     """
 
     def __init__(
