@@ -11,9 +11,11 @@ from expertsystem.reaction.conservation_rules import (
     CharmConservation,
     ConservationRule,
     EdgeQNConservationRule,
+    EdgeRule,
     ElectronLNConservation,
     MassConservation,
     MuonLNConservation,
+    NodeRule,
     StrangenessConservation,
     TauLNConservation,
     c_parity_conservation,
@@ -48,7 +50,7 @@ DEFAULT_PARTICLE_LIST_PATH = join(
 # If a conservation law is not listed here, a default priority of 1 is assumed.
 # Higher number means higher priority
 __CONSERVATION_LAW_PRIORITIES: Dict[
-    Union[EdgeQNConservationRule, ConservationRule], int
+    Union[EdgeRule, NodeRule, EdgeQNConservationRule, ConservationRule], int
 ] = {
     spin_conservation: 8,
     spin_magnitude_conservation: 8,

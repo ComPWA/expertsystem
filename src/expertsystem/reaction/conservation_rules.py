@@ -6,8 +6,8 @@ quantum numbers of the reaction.
 A rule is a function that takes quantum numbers as input and outputs a boolean.
 There are four different types of rules:
 
-1. Rules that work on individual graph edges (WIP).
-2. Rules that work on individual graph nodes (WIP).
+1. `EdgeRule` that work on individual graph edges.
+2. `NodeRule` that work on individual graph nodes.
 3. `EdgeQNConservationRule` that work on the interaction level, which use
    ingoing edges, outgoing edges as arguments.  E.g.: `.ChargeConservation`.
 4. `ConservationRule` that work on the interaction level, which use ingoing
@@ -72,6 +72,16 @@ def _is_particle_antiparticle_pair(pid1: int, pid2: int) -> bool:
     # we just check if the pid is opposite in sign
     # this is a requirement of the pid numbers of course
     return pid1 == -pid2
+
+
+class EdgeRule(Protocol):
+    def __call__(self, __edge_qns: Any) -> bool:
+        ...
+
+
+class NodeRule(Protocol):
+    def __call__(self, __node_qns: Any) -> bool:
+        ...
 
 
 class EdgeQNConservationRule(Protocol):
@@ -592,22 +602,11 @@ def _check_spin_valid(magnitude: float, projection: float) -> bool:
     return (magnitude - abs(projection)).is_integer()
 
 
-def _check_isospin_valid(isospin: IsoSpinEdgeInput) -> bool:
+def isospin_validity(isospin: IsoSpinEdgeInput) -> bool:
+    r"""Check for valid isospin magnitude and projection."""
     return _check_spin_valid(
         float(isospin.isospin_mag), float(isospin.isospin_proj)
     )
-
-
-def isospin_validity(
-    ingoing_edge_qns: List[IsoSpinEdgeInput],
-    outgoing_edge_qns: List[IsoSpinEdgeInput],
-) -> bool:
-    r"""Check for valid isospin magnitude and projection."""
-    if not all(
-        [_check_isospin_valid(x) for x in ingoing_edge_qns + outgoing_edge_qns]
-    ):
-        return False
-    return True
 
 
 def isospin_conservation(
@@ -629,7 +628,7 @@ def isospin_conservation(
     ):
         return False
     if not all(
-        [_check_isospin_valid(x) for x in ingoing_isospins + outgoing_isospins]
+        [isospin_validity(x) for x in ingoing_isospins + outgoing_isospins]
     ):
         return False
     return _check_spin_couplings(
@@ -819,7 +818,7 @@ def helicity_conservation(
 
 
 @attr.s(frozen=True)
-class GellMannNishijimaEdgeInput:
+class GellMannNishijimaInput:
     # pylint: disable=too-many-instance-attributes
     charge: EdgeQuantumNumbers.charge = attr.ib()
     isospin_proj: Optional[EdgeQuantumNumbers.isospin_projection] = attr.ib(
@@ -837,17 +836,14 @@ class GellMannNishijimaEdgeInput:
     tau_ln: Optional[EdgeQuantumNumbers.tau_lepton_number] = attr.ib(None)
 
 
-def gellmann_nishijima(
-    ingoing_edge_qns: List[GellMannNishijimaEdgeInput],
-    outgoing_edge_qns: List[GellMannNishijimaEdgeInput],
-) -> bool:
+def gellmann_nishijima(edge_qns: GellMannNishijimaInput) -> bool:
     r"""Check the Gell-Mann–Nishijima formula.
 
     :math:`Q=I_3+\frac{Y}{2}` for each particle.
     """
 
     def calculate_hypercharge(
-        particle: GellMannNishijimaEdgeInput,
+        particle: GellMannNishijimaInput,
     ) -> float:
         """Calculate the hypercharge :math:`Y=S+C+B+T+B`."""
         return sum(
@@ -863,17 +859,15 @@ def gellmann_nishijima(
             ]
         )
 
-    for particle in ingoing_edge_qns + outgoing_edge_qns:
-        if particle.electron_ln or particle.muon_ln or particle.tau_ln:
-            # if particle is a lepton then skip the check
-            continue
-        isospin_3 = 0.0
-        if particle.isospin_proj:
-            isospin_3 = particle.isospin_proj
-        if float(particle.charge) != (
-            isospin_3 + 0.5 * calculate_hypercharge(particle)
-        ):
-            return False
+    if edge_qns.electron_ln or edge_qns.muon_ln or edge_qns.tau_ln:
+        return True
+    isospin_3 = 0.0
+    if edge_qns.isospin_proj:
+        isospin_3 = edge_qns.isospin_proj
+    if float(edge_qns.charge) != (
+        isospin_3 + 0.5 * calculate_hypercharge(edge_qns)
+    ):
+        return False
     return True
 
 
