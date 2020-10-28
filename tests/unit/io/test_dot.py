@@ -17,6 +17,8 @@ def test_dot_syntax(jpsi_to_gamma_pi_pi_helicity_solutions: Result):
     assert pydot.graph_from_dot_data(dot_data) is not None
     dot_data = io.convert_to_dot(result.get_particle_graphs())
     assert pydot.graph_from_dot_data(dot_data) is not None
+    dot_data = io.convert_to_dot(result.collapse_graphs())
+    assert pydot.graph_from_dot_data(dot_data) is not None
 
 
 class TestWrite:
