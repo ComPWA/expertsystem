@@ -74,3 +74,32 @@ reaction is valid. If a solution is allowed, the `~.reaction.check` returns a
   )
 
 .. thebe-button::
+
+
+Investigate intermediate resonances
+-----------------------------------
+
+.. margin::
+
+  .. tip:: See :doc:`/usage/workflow`
+
+The `expertsystem` is designed to be a tool when doing Partial Wave Analysis.
+It's main features are therefore the `.generate_transitions` and
+`.generate_amplitudes` functions. Here's a small applet with which to visualize
+these transitions online:
+
+.. code-block:: python
+  :class: thebe, thebe-init
+
+  import expertsystem as es
+  from graphviz import Source
+
+  result = es.generate_transitions(
+    initial_state=("J/psi(1S)", [-1, +1]),
+    final_state=["K0", "Sigma+", "p~"],
+    allowed_interaction_types="strong",
+  )
+  graphs = result.collapse_graphs()
+  Source(es.io.convert_to_dot(graphs))
+
+.. thebe-button::
