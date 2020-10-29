@@ -428,7 +428,7 @@ def generate(  # pylint: disable=too-many-arguments
     particles: Optional[ParticleCollection] = None,
     topology_building: str = "isobar",
 ) -> Result:
-    """A convenient facade for the :doc:`usual workflow </usage/quickstart>`.
+    """A convenient facade for the :doc:`usual workflow </usage/workflow>`.
 
     An example (where, for illustrative purposes only, we specify all
     arguments) would be:
