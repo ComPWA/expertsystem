@@ -4,14 +4,12 @@
 How to contribute?
 ==================
 
-.. tip::
+.. list-table::
 
-  Bugs can be reported `here
-  <https://github.com/ComPWA/expertsystem/issues/new/choose>`__. Also, please
-  do have a look at the `'good first issues' page
-  <https://github.com/ComPWA/expertsystem/issues?q=is%3Aissue+is%3Aopen+label%3A%22%F0%9F%92%AB+Good+first+issue%22>`_:
-  they are nice challenges to get into the find your way around the source
-  code! ;)
+  * - .. image:: https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod
+        :alt: GitPod
+        :align: left
+        :target: https://gitpod.io/#https://github.com/ComPWA/expertsystem
 
 If you have installed the `expertsystem` in :ref:`install:Development mode`, it
 is easy to tweak the source code and try out new ideas immediately, because the
