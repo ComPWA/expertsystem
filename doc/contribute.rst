@@ -37,23 +37,6 @@ source code is considered the 'installation'.
 Automated style checks
 ----------------------
 
-.. sidebar:: Node.js packages
-
-  If you have Node.js (:code:`npm`) on your system, you can run a few
-  additional checks. Install these packages as follows (possibly with
-  administrator rights):
-
-  .. code-block:: bash
-
-    npm install -g cspell markdownlint-cli pyright
-
-  Normally, these packages are only run in the :ref:`CI <contribute:Continuous
-  Integration>`, but if you have them installed, they are also run when you run
-  :ref:`tox <contribute:Testing>` (local CI).
-
-  Note that :code:`pyright` requires Node.js v12.x (see install instructions
-  `here <https://nodejs.org/en/download/package-manager>`__).
-
 When working on the source code of the `expertsystem`, it is highly recommended
 to install certain additional Python tools. Assuming you installed the
 `expertsystem` in :ref:`development mode <install:Development mode>`, these
@@ -76,6 +59,24 @@ These config files **define our convention policies**, such as :pep:`8`. If you
 run into persistent linting errors, this may mean we need to further specify
 our conventions. In that case, it's best to create an issue and propose a
 policy change that can then be formulated in the config files.
+
+.. tip::
+  :class: dropdown
+
+  If you have Node.js (:code:`npm`) on your system, you can run a few
+  additional checks. Install these packages as follows (possibly with
+  administrator rights):
+
+  .. code-block:: bash
+
+    npm install -g cspell markdownlint-cli pyright
+
+  Normally, these packages are only run in the :ref:`CI <contribute:Continuous
+  Integration>`, but if you have them installed, they are also run when you run
+  :ref:`tox <contribute:Testing>` (local CI).
+
+  Note that :code:`pyright` requires Node.js v12.x (see install instructions
+  `here <https://nodejs.org/en/download/package-manager>`__).
 
 
 Pre-commit
