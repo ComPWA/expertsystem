@@ -37,6 +37,23 @@ source code is considered the 'installation'.
 Automated style checks
 ----------------------
 
+.. sidebar:: Node.js packages
+
+  If you have Node.js (:code:`npm`) on your system, you can run a few
+  additional checks. Install these packages as follows (possibly with
+  administrator rights):
+
+  .. code-block:: bash
+
+    npm install -g cspell markdownlint-cli pyright
+
+  Normally, these packages are only run in the :ref:`CI <contribute:Continuous
+  Integration>`, but if you have them installed, they are also run when you run
+  :ref:`tox <contribute:Testing>` (local CI).
+
+  Note that :code:`pyright` requires Node.js v12.x (see install instructions
+  `here <https://nodejs.org/en/download/package-manager>`__).
+
 When working on the source code of the `expertsystem`, it is highly recommended
 to install certain additional Python tools. Assuming you installed the
 `expertsystem` in :ref:`development mode <install:Development mode>`, these
@@ -59,23 +76,6 @@ These config files **define our convention policies**, such as :pep:`8`. If you
 run into persistent linting errors, this may mean we need to further specify
 our conventions. In that case, it's best to create an issue and propose a
 policy change that can then be formulated in the config files.
-
-.. tip::
-
-  If you have Node.js (:code:`npm`) on your system, you can run a few
-  additional checks. Install these packages as follows (possibly with
-  administrator rights):
-
-  .. code-block:: bash
-
-    npm install -g cspell markdownlint-cli pyright
-
-  Normally, these packages are only run in the :ref:`CI <contribute:Continuous
-  Integration>`, but if you have them installed, they are also run when you run
-  :ref:`tox <contribute:Testing>` (local CI).
-
-  Note that :code:`pyright` requires Node.js v12.x (see install instructions
-  `here <https://nodejs.org/en/download/package-manager>`__).
 
 
 Pre-commit
@@ -123,6 +123,17 @@ This command will run :code:`pytest`, build the documentation, and verify
 cross-references in the documentation and the API. It's especially recommended
 to **run tox before submitting a pull request!**
 
+.. margin::
+
+  .. tip::
+    To get an idea of performance per component, run
+
+    .. code-block::
+
+      pytest --profile-svg
+
+    and check the stats and the :file:`prof/combined.svg` output file.
+
 More specialized :code:`tox` tests are defined in the `tox.ini
 <https://github.com/ComPWA/expertsystem/blob/master/tox.ini>`__ file, under
 each :code:`testenv` section. You can list all environments, along with a
@@ -144,12 +155,6 @@ Gutters
 <https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters>`_
 extension (for this you need to run :code:`pytest` with the flag
 :code:`--cov-report=xml`).
-
-.. tip::
-
-  To get an idea of performance per component, run :command:`pytest
-  --profile-svg` and check the stats and the :file:`prof/combined.svg` output
-  file.
 
 .. admonition:: Organizing unit tests
   :class: dropdown
@@ -205,6 +210,14 @@ or just click "details" under the RTD check once you submit your PR.
 Jupyter Notebooks
 -----------------
 
+.. margin::
+
+  .. tip::
+    Sometimes it happens that your Jupyter installation does not recognize your
+    :ref:`virtual environment <install:Step 2: Create a virtual environment>`.
+    In that case, have a look at `these instructions
+    <https://ipython.readthedocs.io/en/stable/install/kernel_install.html#kernels-for-different-environments>`__.
+
 The `doc/usage <https://github.com/ComPWA/expertsystem/tree/master/doc/usage>`_
 folder contains a few notebooks that illustrate how to use the `expertsystem`.
 These notebooks are also rendered on the :doc:`Usage <usage>` page and are run
@@ -237,13 +250,6 @@ will look like in the :ref:`contribute:Documentation`, you can do this with:
 
 This command takes more time than :code:`tox -e doc`, but it is good practice
 to do this before you submit a pull request.
-
-.. tip::
-
-  Sometimes it happens that your Jupyter installation does not recognize your
-  :ref:`virtual environment <install:Step 2: Create a virtual environment>`. In
-  that case, have a look at `these instructions
-  <https://ipython.readthedocs.io/en/stable/install/kernel_install.html#kernels-for-different-environments>`__.
 
 
 Spelling

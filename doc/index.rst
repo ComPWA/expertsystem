@@ -20,6 +20,12 @@ Welcome to the PWA Expert System!
         :alt: Codacy Badge
         :target: https://www.codacy.com/gh/ComPWA/expertsystem
 
+.. margin::
+
+  .. tip::
+    For an overview of upcoming releases and planned functionality, see `here
+    <https://github.com/ComPWA/expertsystem/milestones?direction=asc&sort=title&state=open>`__!
+
 The two purposes of the Partial Wave Analysis Expert System are to:
 
 1. validate a particle reaction, based on given information. E.g.: Can a
@@ -33,10 +39,6 @@ as an initial state and a final state. Helper functions provide easy ways to
 configure the system, but the user still has full control. The expert system
 then constructs several hypotheses for what happens during the transition from
 initial to final state.
-
-.. tip::
-  For an overview of **upcoming releases and planned functionality**, see `here
-  <https://github.com/ComPWA/expertsystem/milestones?direction=asc&sort=title&state=open>`__!
 
 Internal design
 ---------------
