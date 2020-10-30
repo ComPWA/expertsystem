@@ -11,8 +11,7 @@
 !.readthedocs.yml
 !codecov.yml
 !environment.yml
-!examples/additional_particles.yml
-!expertsystem/additional_particle_definitions.yml
+!src/expertsystem/additional_particle_definitions.yml
 !tests/**/expected_recipe.yml
 
 # Build output
