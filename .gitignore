@@ -12,7 +12,7 @@
 !codecov.yml
 !environment.yml
 !src/expertsystem/additional_particle_definitions.yml
-!tests/**/expected_recipe.yml
+!test/**/expected_recipe.yml
 
 # Build output
 *.egg-info/
