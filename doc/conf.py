@@ -63,11 +63,11 @@ author = "Common Partial Wave Analysis"
 
 
 # -- General configuration ---------------------------------------------------
-source_suffix = [
-    ".rst",
-    ".ipynb",
-    ".md",
-]
+source_suffix = {
+    ".ipynb": "myst-nb",
+    ".md": "myst-nb",
+    ".rst": "restructuredtext",
+}
 
 # The master toctree document.
 master_doc = "index"
@@ -76,8 +76,7 @@ modindex_common_prefix = [
 ]
 
 extensions = [
-    "myst_parser",
-    "nbsphinx",
+    "myst_nb",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.autosummary",
@@ -128,13 +127,14 @@ html_theme_options = {
     "use_issues_button": True,
     "use_repository_button": True,
     "launch_buttons": {
-        "binderhub_url": "https://mybinder.org/v2/gh/ComPWA/expertsystem/stable?filepath=doc/usage",
-        "colab_url": "https://colab.research.google.com/github/ComPWA/expertsystem/blob/stable",
+        "binderhub_url": "https://mybinder.org",
+        "colab_url": "https://colab.research.google.com",
         "notebook_interface": "jupyterlab",
         "thebe": True,
         "thebelab": True,
     },
     "expand_sections": ["usage"],
+    "theme_dev_mode": True,
 }
 html_title = "PWA Expert System"
 pygments_style = "sphinx"
@@ -181,24 +181,27 @@ intersphinx_mapping = {
 # Settings for autosectionlabel
 autosectionlabel_prefix_document = True
 
+# Settings for copybutton
+copybutton_prompt_is_regexp = True
+copybutton_prompt_text = r">>> |\.\.\. "  # doctest
+
 # Settings for linkcheck
 linkcheck_anchors = False
 
-# Settings for nbsphinx
+# Settings for myst_nb
+execution_timeout = -1
+nb_output_stderr = "remove"
+
+jupyter_execute_notebooks = "off"
 if (
-    "NBSPHINX_EXECUTE" in os.environ
+    "EXECUTE_NB" in os.environ
     or "READTHEDOCS" in os.environ  # PR preview on RTD
 ):
     print("\033[93;1mWill run Jupyter notebooks!\033[0m")
-    nbsphinx_execute = "always"
-else:
-    nbsphinx_execute = "never"
-nbsphinx_timeout = -1
-nbsphinx_execute_arguments = [
-    "--InlineBackend.figure_formats={'svg', 'pdf'}",
-]
+    jupyter_execute_notebooks = "force"
 
 # Settings for myst-parser
+myst_admonition_enable = True
 myst_update_mathjax = False
 
 # Settings for Thebe cell output
@@ -208,7 +211,7 @@ thebe_config = {
 }
 
 # -- Visualize dependencies ---------------------------------------------------
-if nbsphinx_execute == "always":
+if jupyter_execute_notebooks != "off":
     print("Generating module dependency tree...")
     subprocess.call(
         " ".join(

@@ -206,7 +206,7 @@ Alternatively, you can run :code:`sphinx-build` yourself as follows:
 .. code-block:: shell
 
   cd doc
-  make html  # or NBSPHINX_EXECUTE= make html
+  make html  # or EXECUTE_NB= make html
 
 A nice feature of `Read the Docs <https://readthedocs.org/>`_, where we host
 our documentation, is that documentation is built for each pull request as
