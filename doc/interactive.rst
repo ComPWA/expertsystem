@@ -100,7 +100,7 @@ these transitions online:
 
   result = es.generate_transitions(
     initial_state=("J/psi(1S)", [-1, +1]),
-    final_state=["K0", "Sigma+", "p~"],
+    final_state=["p", "p~", "eta"],
     allowed_interaction_types="strong",
   )
   graphs = result.collapse_graphs()
