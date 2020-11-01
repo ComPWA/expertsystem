@@ -18,9 +18,9 @@ source code is considered the 'installation'.
 .. admonition:: Conda and VSCode
   :class: dropdown
 
-  The easiest way to contribute, is by using :ref:`Conda <install:Conda
-  environment>` and :ref:`contribute:Visual Studio code`. In that case, the
-  complete developer install procedure becomes:
+  The easiest way to contribute, is by using :ref:`Conda <install:Step 2:
+  Create a virtual environment>` and :ref:`contribute:Visual Studio code`. In
+  that case, the complete developer install procedure becomes:
 
   .. code-block:: shell
 
@@ -247,7 +247,7 @@ If you want to improve those notebooks, we recommend working with `Jupyter Lab
 <https://jupyterlab.readthedocs.io/en/stable/>`_, which is installed with the
 :code:`dev` requirements of the `expertsystem`. Jupyter Lab offers a nicer
 developer experience than the default Jupyter notebook editor does. In
-addition, recommend to install a few extensions:
+addition, we recommend to install a few extensions:
 
 .. code-block:: shell
 
