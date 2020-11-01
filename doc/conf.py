@@ -63,6 +63,7 @@ author = "Common Partial Wave Analysis"
 
 
 # -- General configuration ---------------------------------------------------
+master_doc = "index.md"
 source_suffix = {
     ".ipynb": "myst-nb",
     ".md": "myst-nb",
