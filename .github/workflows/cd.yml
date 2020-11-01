@@ -1,4 +1,4 @@
-# cspell:ignore pypa sdist
+# cspell:ignore noreply pypa sdist
 
 name: CD
 
@@ -8,11 +8,25 @@ on:
       - created
 
 jobs:
-  pypi:
-    name: Publish to PyPI
+  push:
+    name: Push to stable branch
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
+      - name: Push to stable branch
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git push origin HEAD:refs/heads/stable
+
+  pypi:
+    name: Publish to PyPI
+    needs: push
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@master
+        with:
+          ref: stable
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
