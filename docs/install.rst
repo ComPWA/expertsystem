@@ -78,61 +78,59 @@ case something goes wrong with the dependencies: you can just trash the
 environment and recreate it. There are two options: :ref:`Conda <install:Conda
 environment>` or :ref:`Python's venv <install:Python venv>`.
 
-Conda environment
-~~~~~~~~~~~~~~~~~
+.. tabbed:: Conda environment
 
-`Conda <https://www.anaconda.com/>`_ can be installed without administrator
-rights, see instructions on `this page
-<https://www.anaconda.com/distribution/>`_. Once installed, navigate to the
-:ref:`local repository <local-repository>` and create the Conda environment for
-the `expertsystem` as follows:
+  `Conda <https://www.anaconda.com/>`_ can be installed without administrator
+  rights, see instructions on `this page
+  <https://www.anaconda.com/distribution/>`_. Once installed, navigate to the
+  :ref:`local repository <local-repository>` and create the Conda environment
+  for the `expertsystem` as follows:
 
-.. code-block:: shell
+  .. code-block:: shell
 
-  conda env create
+    conda env create
 
-This command uses the `environment.yml
-<https://github.com/ComPWA/expertsystem/blob/master/environment.yml>`_ file and
-immediately installs the `expertsystem` in `editable mode
-<https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs>`__.
+  This command uses the `environment.yml
+  <https://github.com/ComPWA/expertsystem/blob/master/environment.yml>`_ file
+  and immediately installs the `expertsystem` in `editable mode
+  <https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs>`__.
 
-After Conda finishes creating the environment, you can activate it with as
-follows:
+  After Conda finishes creating the environment, you can activate it with as
+  follows:
 
-.. code-block:: shell
+  .. code-block:: shell
 
-  conda activate es
+    conda activate es
+
+  You need to have the environment called :code:`es` activated whenever you
+  want to run the `expertsystem`.
 
 
-You need to have the environment called :code:`es` activated whenever you want
-to run the `expertsystem`.
+.. tabbed:: Python venv
 
-Python venv
-~~~~~~~~~~~
+  Alternatively, you can use `Python's venv
+  <https://docs.python.org/3/library/venv.html>`_, if you have that available
+  on your system. All you have to do, is navigate into :ref:`local repository
+  <local-repository>` and run:
 
-Alternatively, you can use `Python's venv
-<https://docs.python.org/3/library/venv.html>`_, if you have that available on
-your system. All you have to do, is navigate into :ref:`local repository
-<local-repository>` and run:
+  .. code-block:: shell
 
-.. code-block:: shell
+    python3 -m venv ./venv
 
-  python3 -m venv ./venv
+  This creates a folder called :file:`venv` where all Python packages will be
+  contained. You first have to activate the environment, and will have to do so
+  whenever you want to run the `expertsystem`.
 
-This creates a folder called :file:`venv` where all Python packages will be
-contained. You first have to activate the environment, and will have to do so
-whenever you want to run the `expertsystem`.
+  .. code-block:: shell
 
-.. code-block:: shell
+    source ./venv/bin/activate
 
-  source ./venv/bin/activate
+  Now you can safely install the `expertsystem` in `editable mode
+  <https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs>`__:
 
-Now you can safely install the `expertsystem` in `editable mode
-<https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs>`__:
+  .. code-block:: shell
 
-.. code-block:: shell
-
-  pip install -e .
+    pip install -e .
 
 That's it, now you're all set to :doc:`help develop the project <contribute>`!
 

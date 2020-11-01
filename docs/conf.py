@@ -88,6 +88,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_thebe",
     "sphinx_togglebutton",
+    "sphinx_panels",
 ]
 exclude_patterns = [
     "**.ipynb_checkpoints",
