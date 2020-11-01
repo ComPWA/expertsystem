@@ -93,7 +93,7 @@ exclude_patterns = [
     "**.ipynb_checkpoints",
     "*build",
     "adr*",
-    "test",
+    "tests",
 ]
 
 # General sphinx settings

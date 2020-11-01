@@ -174,7 +174,7 @@ extension (for this you need to run :code:`pytest` with the flag
   Therefore, when writing new tests, try to follow the module and class
   structure of the package. For example, put unit tests that test the functions
   and methods defined in the `expertsystem.particle` module into a test file
-  called :file:`test_particle.py` that is directly placed under the `test/unit
+  called :file:`test_particle.py` that is directly placed under the `tests/unit
   <https://github.com/ComPWA/expertsystem/tree/master/test/unit>`_ folder.
   Similarly, bundle for `.ParticleCollection` under a
   :code:`TestParticleCollection` class.

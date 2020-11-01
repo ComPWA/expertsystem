@@ -49,9 +49,9 @@
   "restructuredtext.confPath": "${workspaceFolder}/doc",
   "rewrap.wrappingColumn": 79,
   "search.exclude": {
-    "**/test/**/__init__.py": true,
+    "**/tests/**/__init__.py": true,
     "doc/tox.ini": true,
-    "test/tox.ini": true
+    "tests/tox.ini": true
   },
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,
