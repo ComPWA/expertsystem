@@ -80,11 +80,7 @@ extensions = [
     "myst_nb",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
-    "sphinx.ext.autosummary",
-    "sphinx.ext.coverage",
     "sphinx.ext.doctest",
-    "sphinx.ext.githubpages",
-    "sphinx.ext.ifconfig",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
@@ -204,6 +200,7 @@ if (
 # Settings for myst-parser
 myst_admonition_enable = True
 myst_update_mathjax = False
+suppress_warnings = ["app.add_directive"]
 
 # Settings for Thebe cell output
 thebe_config = {
