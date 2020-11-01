@@ -10,6 +10,15 @@ import shutil
 import subprocess
 
 import sphobjinv as soi
+from pkg_resources import get_distribution
+
+# -- Project information -----------------------------------------------------
+project = "ExpertSystem"
+copyright = "2020, ComPWA"
+author = "Common Partial Wave Analysis"
+
+__release = get_distribution("expertsystem").version
+version = ".".join(__release.split(".")[:3])
 
 # -- Generate API skeleton ----------------------------------------------------
 shutil.rmtree("api", ignore_errors=True)
@@ -54,12 +63,6 @@ for object_name in constraint_object_names:
 text = inv.data_file(contract=True)
 ztext = soi.compress(text)
 soi.writebytes("constraint.inv", ztext)
-
-
-# -- Project information -----------------------------------------------------
-project = "ExpertSystem"
-copyright = "2020, ComPWA"
-author = "Common Partial Wave Analysis"
 
 
 # -- General configuration ---------------------------------------------------
