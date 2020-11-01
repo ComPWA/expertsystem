@@ -188,6 +188,20 @@ linkcheck_anchors = False
 # Settings for myst_nb
 execution_timeout = -1
 nb_output_stderr = "remove"
+nb_render_priority = {
+    "html": (
+        "application/vnd.jupyter.widget-view+json",
+        "application/javascript",
+        "text/html",
+        "image/svg+xml",
+        "image/png",
+        "image/jpeg",
+        "text/markdown",
+        "text/latex",
+        "text/plain",
+    )
+}
+nb_render_priority["doctest"] = nb_render_priority["html"]
 
 jupyter_execute_notebooks = "off"
 if (
