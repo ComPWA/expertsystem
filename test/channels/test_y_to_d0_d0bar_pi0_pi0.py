@@ -30,7 +30,7 @@ def test_simple(formalism_type, n_solutions, particle_database):
 
 
 @pytest.mark.skipif(
-    "PYTEST_RUN_SLOW_TESTS" in os.environ,
+    "PYTEST_RUN_SLOW_TESTS" not in os.environ,
     reason="Test takes too long. Can be enabled again after Rule refactoring",
 )
 @pytest.mark.slow
