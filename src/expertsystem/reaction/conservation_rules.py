@@ -608,7 +608,7 @@ def _check_spin_valid(magnitude: float, projection: float) -> bool:
         return False
     if abs(projection) > magnitude:
         return False
-    return (projection - magnitude).is_integer()
+    return float(projection - magnitude).is_integer()
 
 
 def isospin_validity(isospin: IsoSpinEdgeInput) -> bool:
