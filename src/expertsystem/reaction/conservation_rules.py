@@ -4,13 +4,12 @@ This module is the place where the 'expert' defines the rules that verify
 quantum numbers of the reaction.
 
 A rule is a function that takes quantum numbers as input and outputs a boolean.
-There are four different types of rules:
+There are three different types of rules:
 
-1. `EdgeRule` that work on individual graph edges.
-2. `NodeRule` that work on individual graph nodes.
-3. `EdgeQNConservationRule` that work on the interaction level, which use
+1. `GraphElementRule` that work on individual graph edges or nodes.
+2. `EdgeQNConservationRule` that work on the interaction level, which use
    ingoing edges, outgoing edges as arguments.  E.g.: `.ChargeConservation`.
-4. `ConservationRule` that work on the interaction level, which use ingoing
+3. `ConservationRule` that work on the interaction level, which use ingoing
    edges, outgoing edges and a interaction node as arguments. E.g:
    `.parity_conservation`.
 
