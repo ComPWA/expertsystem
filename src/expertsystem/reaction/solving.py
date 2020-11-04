@@ -20,12 +20,14 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generic,
     List,
     Optional,
     Sequence,
     Set,
     Tuple,
     Type,
+    TypeVar,
     Union,
 )
 
@@ -41,8 +43,8 @@ from constraint import (
 from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
 
 from .argument_handling import (
-    EdgeRule,
     GraphEdgePropertyMap,
+    GraphElementRule,
     GraphNodePropertyMap,
     Rule,
     RuleArgumentHandler,
@@ -71,8 +73,8 @@ class InteractionTypes(Enum):
 class EdgeSettings:
     """Solver settings for a specific edge of a graph."""
 
-    conservation_rules: Set[EdgeRule] = attr.ib(factory=set)
-    rule_priorities: Dict[EdgeRule, int] = attr.ib(factory=dict)
+    conservation_rules: Set[GraphElementRule] = attr.ib(factory=set)
+    rule_priorities: Dict[GraphElementRule, int] = attr.ib(factory=dict)
     qn_domains: Dict[Any, Any] = attr.ib(factory=dict)
 
 
@@ -105,7 +107,7 @@ class GraphSettings:
 def convert_violated_rules_to_names(
     rules: Union[
         Dict[int, Set[Tuple[Rule, ...]]],
-        Dict[int, Set[Tuple[EdgeRule, ...]]],
+        Dict[int, Set[Tuple[GraphElementRule, ...]]],
     ]
 ) -> Dict[int, Set[Tuple[str, ...]]]:
     def get_name(rule: Any) -> str:
@@ -115,7 +117,7 @@ def convert_violated_rules_to_names(
             return rule
         return rule.__class__.__name__
 
-    converted_dict = {}
+    converted_dict = defaultdict(set)
     for node_id, rule_set in rules.items():
         rule_name_set = set()
         for rule_tuple in rule_set:
@@ -129,7 +131,7 @@ def convert_violated_rules_to_names(
 def convert_non_executed_rules_to_names(
     rules: Union[
         Dict[int, Set[Rule]],
-        Dict[int, Set[EdgeRule]],
+        Dict[int, Set[GraphElementRule]],
     ]
 ) -> Dict[int, Set[str]]:
     def get_name(rule: Any) -> str:
@@ -139,7 +141,7 @@ def convert_non_executed_rules_to_names(
             return rule
         return rule.__class__.__name__
 
-    converted_dict = {}
+    converted_dict = defaultdict(set)
     for node_id, rule_set in rules.items():
         rule_name_set = set()
         for rule_tuple in rule_set:
@@ -494,7 +496,7 @@ def __check_qns_equal(
 def validate_fully_initialized_graph(
     graph: StateTransitionGraph[ParticleWithSpin],
     rules_per_node: Dict[int, Set[Rule]],
-    rules_per_edge: Dict[int, Set[EdgeRule]],
+    rules_per_edge: Dict[int, Set[GraphElementRule]],
 ) -> Result:
     # pylint: disable=too-many-locals
     logging.debug("validating graph...")
@@ -551,10 +553,12 @@ def validate_fully_initialized_graph(
 
         return (in_edges_vars, out_edges_vars, node_vars)
 
-    edge_violated_rules: Dict[int, Set[Tuple[EdgeRule, ...]]] = defaultdict(
+    edge_violated_rules: Dict[
+        int, Set[Tuple[GraphElementRule, ...]]
+    ] = defaultdict(set)
+    edge_not_executed_rules: Dict[int, Set[GraphElementRule]] = defaultdict(
         set
     )
-    edge_not_executed_rules: Dict[int, Set[EdgeRule]] = defaultdict(set)
     node_violated_rules: Dict[int, Set[Tuple[Rule, ...]]] = defaultdict(set)
     node_not_executed_rules: Dict[int, Set[Rule]] = defaultdict(set)
     for edge_id, edge_rules in rules_per_edge.items():
@@ -667,9 +671,9 @@ class CSPSolver(Solver):
         self.__non_executable_node_rules: Dict[int, Set[Rule]] = defaultdict(
             set
         )
-        self.__edge_rules: Dict[int, Set[EdgeRule]] = defaultdict(set)
+        self.__edge_rules: Dict[int, Set[GraphElementRule]] = defaultdict(set)
         self.__non_executable_edge_rules: Dict[
-            int, Set[EdgeRule]
+            int, Set[GraphElementRule]
         ] = defaultdict(set)
         self.__problem = Problem(BacktrackingSolver(True))
         self.__allowed_intermediate_particles = allowed_intermediate_particles
@@ -691,7 +695,7 @@ class CSPSolver(Solver):
         ] = defaultdict(set)
         edge_not_executed_rules = self.__non_executable_edge_rules
         edge_not_satisfied_rules: Dict[
-            int, Set[Tuple[EdgeRule, ...]]
+            int, Set[Tuple[GraphElementRule, ...]]
         ] = defaultdict(set)
         for node_id, rules in self.__node_rules.items():
             for rule in rules:
@@ -800,7 +804,7 @@ class CSPSolver(Solver):
                 )
 
                 score_callback = self.__scoresheet.register_rule(edge_id, rule)
-                constraint = _EdgeConstraint(
+                constraint = _GraphElementConstraint[EdgeQuantumNumber](
                     rule,  # type: ignore
                     edge_vars,
                     fixed_edge_vars,
@@ -858,9 +862,18 @@ class CSPSolver(Solver):
                 var_list.extend(list(variable_mapping.node_variables))
 
                 score_callback = self.__scoresheet.register_rule(node_id, rule)
-                constraint = _ConservationRuleConstraintWrapper(
-                    rule, variable_mapping, arg_handler, score_callback
-                )
+                if len(inspect.signature(rule).parameters) == 1:
+                    constraint = _GraphElementConstraint[NodeQuantumNumber](
+                        rule,  # type: ignore
+                        int_node_vars[0],
+                        {node_id: int_node_vars[1]},
+                        arg_handler,
+                        score_callback,
+                    )
+                else:
+                    constraint = _ConservationRuleConstraintWrapper(
+                        rule, variable_mapping, arg_handler, score_callback
+                    )
                 if var_list:
                     var_strings = [
                         _create_variable_string(*x) for x in var_list
@@ -1021,7 +1034,10 @@ class Scoresheet:
         return self.__rule_passes
 
 
-class _EdgeConstraint(Constraint):
+_QNType = TypeVar("_QNType", EdgeQuantumNumber, NodeQuantumNumber)
+
+
+class _GraphElementConstraint(Generic[_QNType], Constraint):
     """Wrapper class of the python-constraint Constraint class.
 
     This allows a customized definition of conservation rules, and hence a
@@ -1031,9 +1047,9 @@ class _EdgeConstraint(Constraint):
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        rule: EdgeRule,
-        edge_variables: Set[_EdgeVariableInfo],
-        fixed_edge_variables: Dict[int, Dict[Type[EdgeQuantumNumber], Scalar]],
+        rule: GraphElementRule,
+        variables: Set[Tuple[int, Type[_QNType]]],
+        fixed_variables: Dict[int, Dict[Type[_QNType], Scalar]],
         argument_handler: RuleArgumentHandler,
         scoresheet: Callable[[bool], None],
     ) -> None:
@@ -1046,12 +1062,10 @@ class _EdgeConstraint(Constraint):
         ) = argument_handler.register_rule(rule)
         self.__score_callback = scoresheet
 
-        self.__var_string_to_data: Dict[str, Type[EdgeQuantumNumber]] = {}
-        self.__edge_qns: GraphEdgePropertyMap = {}
+        self.__var_string_to_data: Dict[str, Type[_QNType]] = {}
+        self.__qns: Dict[Type[_QNType], Optional[Scalar]] = {}
 
-        self.__initialize_variable_containers(
-            edge_variables, fixed_edge_variables
-        )
+        self.__initialize_variable_containers(variables, fixed_variables)
 
     @property
     def rule(self) -> Rule:
@@ -1059,8 +1073,8 @@ class _EdgeConstraint(Constraint):
 
     def __initialize_variable_containers(
         self,
-        edge_variables: Set[_EdgeVariableInfo],
-        fixed_edge_variables: Dict[int, Dict[Type[EdgeQuantumNumber], Scalar]],
+        variables: Set[Tuple[int, Type[_QNType]]],
+        fixed_variables: Dict[int, Dict[Type[_QNType], Scalar]],
     ) -> None:
         """Fill the name decoding map.
 
@@ -1069,12 +1083,12 @@ class _EdgeConstraint(Constraint):
         linking the var name to a list that consists of the particle list index
         and the qn name.
         """
-        self.__edge_qns.update(list(fixed_edge_variables.values())[0])  # type: ignore
-        for edge_id, qn_type in edge_variables:
+        self.__qns.update(list(fixed_variables.values())[0])  # type: ignore
+        for element_id, qn_type in variables:
             self.__var_string_to_data[
-                _create_variable_string(edge_id, qn_type)
+                _create_variable_string(element_id, qn_type)
             ] = qn_type
-            self.__edge_qns.update({qn_type: None})
+            self.__qns.update({qn_type: None})
 
     def __call__(
         self,
@@ -1118,11 +1132,11 @@ class _EdgeConstraint(Constraint):
         self.__update_variable_lists(params)
 
         if not self.__check_rule_requirements(
-            self.__edge_qns,
+            self.__qns,
         ):
             return True
 
-        passed = self.__rule(*self.__create_rule_args(self.__edge_qns))
+        passed = self.__rule(*self.__create_rule_args(self.__qns))
 
         self.__score_callback(passed)
 
@@ -1134,8 +1148,8 @@ class _EdgeConstraint(Constraint):
     ) -> None:
         for var_string, value in parameters:
             qn_type = self.__var_string_to_data[var_string]
-            if qn_type in self.__edge_qns:
-                self.__edge_qns[qn_type] = value  # type: ignore
+            if qn_type in self.__qns:
+                self.__qns[qn_type] = value  # type: ignore
             else:
                 raise ValueError(
                     "The variable with name "

@@ -70,7 +70,7 @@ def reduce_violated_rules(
         ((["Sigma0"], ["Lambda", "gamma"]), []),
         ((["Xi-"], ["Lambda", "pi-"]), []),
         ((["Xi0"], ["p", "pi-"]), []),
-        ((["pi-", "p"], ["Lambda", "K~0"]), []),
+        ((["pi-", "p"], ["Lambda", "K0"]), []),
         ((["pi0"], ["gamma", "gamma"]), []),
         ((["pi0"], ["gamma", "gamma", "gamma"]), ["c_parity_conservation"]),
         ((["Sigma-"], ["n", "e-", "nu(e)~"]), []),
@@ -162,6 +162,11 @@ def test_em_reactions(test_input, expected):
         #     (["J/psi(1S)"], ["pi0", "f(0)(980)"]),
         #     ["IsoSpinConservation", "CParityConservation", "SpinConservation"],
         # ),
+        ((["p", "p"], ["Sigma+", "n", "K0", "pi+", "pi0"]), []),
+        (
+            (["p", "p"], ["Sigma+", "n", "K~0", "pi+", "pi0"]),
+            ["StrangenessConservation", "isospin_conservation"],
+        ),
     ],
 )
 def test_strong_reactions(test_input, expected):

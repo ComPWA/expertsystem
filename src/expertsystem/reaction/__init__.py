@@ -396,7 +396,6 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 f"after qn solving: {len(result.solutions)}",
             )
 
-        # merge strengths
         final_result = Result()
         for temp_result in results.values():
             final_result.extend(temp_result)

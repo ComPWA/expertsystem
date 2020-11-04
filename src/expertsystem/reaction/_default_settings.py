@@ -11,11 +11,10 @@ from expertsystem.reaction.conservation_rules import (
     CharmConservation,
     ConservationRule,
     EdgeQNConservationRule,
-    EdgeRule,
     ElectronLNConservation,
+    GraphElementRule,
     MassConservation,
     MuonLNConservation,
-    NodeRule,
     StrangenessConservation,
     TauLNConservation,
     c_parity_conservation,
@@ -26,10 +25,12 @@ from expertsystem.reaction.conservation_rules import (
     identical_particle_symmetrization,
     isospin_conservation,
     isospin_validity,
+    ls_spin_validity,
     parity_conservation,
     parity_conservation_helicity,
     spin_conservation,
     spin_magnitude_conservation,
+    spin_validity,
 )
 from expertsystem.reaction.quantum_numbers import (
     EdgeQuantumNumbers,
@@ -50,9 +51,10 @@ DEFAULT_PARTICLE_LIST_PATH = join(
 # If a conservation law is not listed here, a default priority of 1 is assumed.
 # Higher number means higher priority
 __CONSERVATION_LAW_PRIORITIES: Dict[
-    Union[NodeRule, EdgeQNConservationRule, ConservationRule], int
+    Union[GraphElementRule, EdgeQNConservationRule, ConservationRule], int
 ] = {
     spin_conservation: 8,
+    ls_spin_validity: 89,
     spin_magnitude_conservation: 8,
     helicity_conservation: 7,
     MassConservation: 10,
@@ -73,9 +75,10 @@ __CONSERVATION_LAW_PRIORITIES: Dict[
 }
 
 
-__EDGE_RULE_PRIORITIES: Dict[EdgeRule, int] = {
+__EDGE_RULE_PRIORITIES: Dict[GraphElementRule, int] = {
     gellmann_nishijima: 50,
     isospin_validity: 61,
+    spin_validity: 62,
 }
 
 
@@ -115,6 +118,7 @@ def create_default_interaction_settings(
         conservation_rules={
             isospin_validity,
             gellmann_nishijima,
+            spin_validity,
         },
         rule_priorities=__EDGE_RULE_PRIORITIES,
         qn_domains={
@@ -159,9 +163,12 @@ def create_default_interaction_settings(
     elif formalism_type == "canonical":
         formalism_node_settings.conservation_rules = {
             spin_magnitude_conservation
-            if nbody_topology
-            else spin_conservation,
         }
+        if nbody_topology:
+            formalism_node_settings.conservation_rules = {
+                spin_conservation,
+                ls_spin_validity,
+            }
         formalism_node_settings.qn_domains = {
             NodeQuantumNumbers.l_magnitude: _get_ang_mom_magnitudes(
                 nbody_topology
@@ -177,8 +184,11 @@ def create_default_interaction_settings(
             ),
         }
     if formalism_type == "canonical-helicity":
-        formalism_node_settings.conservation_rules.add(
-            clebsch_gordan_helicity_to_canonical
+        formalism_node_settings.conservation_rules.update(
+            {
+                clebsch_gordan_helicity_to_canonical,
+                ls_spin_validity,
+            }
         )
         formalism_node_settings.qn_domains.update(
             {

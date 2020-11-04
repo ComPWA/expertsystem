@@ -72,13 +72,8 @@ def _is_particle_antiparticle_pair(pid1: int, pid2: int) -> bool:
     return pid1 == -pid2
 
 
-class EdgeRule(Protocol):
-    def __call__(self, __edge_qns: Any) -> bool:
-        ...
-
-
-class NodeRule(Protocol):
-    def __call__(self, __node_qns: Any) -> bool:
+class GraphElementRule(Protocol):
+    def __call__(self, __qns: Any) -> bool:
         ...
 
 
@@ -471,6 +466,15 @@ class SpinMagnitudeNodeInput:
     s_magnitude: NodeQuantumNumbers.s_magnitude = attr.ib()
 
 
+def ls_spin_validity(spin_input: SpinNodeInput) -> bool:
+    r"""Check for valid isospin magnitude and projection."""
+    return _check_spin_valid(
+        float(spin_input.l_magnitude), float(spin_input.l_projection)
+    ) and _check_spin_valid(
+        float(spin_input.s_magnitude), float(spin_input.s_projection)
+    )
+
+
 def _check_magnitude(
     in_part: List[float],
     out_part: List[float],
@@ -650,26 +654,11 @@ class SpinEdgeInput:
     spin_projection: EdgeQuantumNumbers.spin_projection = attr.ib()
 
 
-def _check_spins_valid(
-    spins: List[SpinEdgeInput], node_qns: Optional[SpinNodeInput]
-) -> bool:
-    if node_qns:
-        if not _check_spin_valid(
-            float(node_qns.s_magnitude),
-            float(node_qns.s_projection),
-        ):
-            return False
-        if not _check_spin_valid(
-            float(node_qns.l_magnitude),
-            float(node_qns.l_projection),
-        ):
-            return False
-    for edge in spins:
-        if not _check_spin_valid(
-            float(edge.spin_magnitude), float(edge.spin_projection)
-        ):
-            return False
-    return True
+def spin_validity(spin: SpinEdgeInput) -> bool:
+    r"""Check for valid spin magnitude and projection."""
+    return _check_spin_valid(
+        float(spin.spin_magnitude), float(spin.spin_projection)
+    )
 
 
 def spin_conservation(
@@ -692,9 +681,6 @@ def spin_conservation(
     Also checks :math:`M_1 + M_2 = M` and if Clebsch-Gordan coefficients
     are all 0.
     """
-    if not _check_spins_valid(ingoing_spins + outgoing_spins, interaction_qns):
-        return False
-
     # L and S can only be used if one side is a single state
     # and the other side contains of two states (isobar)
     # So do a full check if this is the case
@@ -739,9 +725,6 @@ def spin_magnitude_conservation(
     .. math::
         |L - S| \leq J \leq |L + S|
     """
-    if not _check_spins_valid(ingoing_spins + outgoing_spins, None):
-        return False
-
     # L and S can only be used if one side is a single state
     # and the other side contains of two states (isobar)
     # So do a full check if this is the case
@@ -773,11 +756,6 @@ def clebsch_gordan_helicity_to_canonical(
     coupling based on the conversion of helicity to canonical amplitude sums.
     """
     if len(ingoing_spins) == 1 and len(outgoing_spins) == 2:
-        if not _check_spins_valid(
-            ingoing_spins + outgoing_spins, interaction_qns
-        ):
-            return False
-
         out_spin1 = _Spin(
             outgoing_spins[0].spin_magnitude,
             outgoing_spins[0].spin_projection,
