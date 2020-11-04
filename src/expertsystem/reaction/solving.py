@@ -155,8 +155,9 @@ def convert_non_executed_rules_to_names(
 class Result:
     """Defines a result to a problem set processed by the solving code.
 
-    The tuple of rules in `violated_rules` defines a group, which together
-    violate all quantum number combinations that were processed.
+    The tuple of rules in `violated_node_rules` and `violated_edge_rules`
+    defines a group, which together violate all quantum number combinations
+    that were processed.
     """
 
     # pylint: disable=too-many-arguments
