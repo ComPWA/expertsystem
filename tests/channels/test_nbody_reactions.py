@@ -111,7 +111,7 @@ def test_general_reaction(test_input, expected):
         print("is valid")
         assert len(expected) == 0
     else:
-        reduced_violations = reduce_violated_rules(result.violated_rules)
+        reduced_violations = reduce_violated_rules(result.violated_node_rules)
         print("not allowed! violates: " + str(reduced_violations))
         assert reduced_violations == set(expected)
 
@@ -150,7 +150,7 @@ def test_em_reactions(test_input, expected):
     graph_interaction_settings = stm.prepare_graphs()
     result = stm.find_solutions(graph_interaction_settings)
 
-    reduced_violations = reduce_violated_rules(result.violated_rules)
+    reduced_violations = reduce_violated_rules(result.violated_node_rules)
     assert reduced_violations == set(expected)
 
 
@@ -181,5 +181,5 @@ def test_strong_reactions(test_input, expected):
     graph_interaction_settings = stm.prepare_graphs()
     result = stm.find_solutions(graph_interaction_settings)
 
-    reduced_violations = reduce_violated_rules(result.violated_rules)
+    reduced_violations = reduce_violated_rules(result.violated_node_rules)
     assert set(reduced_violations) == set(expected)

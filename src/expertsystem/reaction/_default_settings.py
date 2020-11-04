@@ -50,13 +50,12 @@ DEFAULT_PARTICLE_LIST_PATH = join(
 # If a conservation law is not listed here, a default priority of 1 is assumed.
 # Higher number means higher priority
 __CONSERVATION_LAW_PRIORITIES: Dict[
-    Union[EdgeRule, NodeRule, EdgeQNConservationRule, ConservationRule], int
+    Union[NodeRule, EdgeQNConservationRule, ConservationRule], int
 ] = {
     spin_conservation: 8,
     spin_magnitude_conservation: 8,
     helicity_conservation: 7,
     MassConservation: 10,
-    gellmann_nishijima: 50,
     ChargeConservation: 100,
     ElectronLNConservation: 45,
     MuonLNConservation: 44,
@@ -69,9 +68,14 @@ __CONSERVATION_LAW_PRIORITIES: Dict[
     c_parity_conservation: 5,
     parity_conservation_helicity: 4,
     isospin_conservation: 60,
-    isospin_validity: 61,
     g_parity_conservation: 3,
     BottomnessConservation: 68,
+}
+
+
+__EDGE_RULE_PRIORITIES: Dict[EdgeRule, int] = {
+    gellmann_nishijima: 50,
+    isospin_validity: 61,
 }
 
 
@@ -107,7 +111,34 @@ def create_default_interaction_settings(
     E.g.: strong, em and weak interaction.
     """
     interaction_type_settings = {}
-    formalism_edge_settings = EdgeSettings()
+    formalism_edge_settings = EdgeSettings(
+        conservation_rules={
+            isospin_validity,
+            gellmann_nishijima,
+        },
+        rule_priorities=__EDGE_RULE_PRIORITIES,
+        qn_domains={
+            EdgeQuantumNumbers.charge: [-2, -1, 0, 1, 2],
+            EdgeQuantumNumbers.baryon_number: [-1, 0, 1],
+            EdgeQuantumNumbers.electron_lepton_number: [-1, 0, 1],
+            EdgeQuantumNumbers.muon_lepton_number: [-1, 0, 1],
+            EdgeQuantumNumbers.tau_lepton_number: [-1, 0, 1],
+            EdgeQuantumNumbers.parity: [-1, 1],
+            EdgeQuantumNumbers.c_parity: [-1, 1, None],
+            EdgeQuantumNumbers.g_parity: [-1, 1, None],
+            EdgeQuantumNumbers.spin_magnitude: [0, 0.5, 1, 1.5, 2],
+            EdgeQuantumNumbers.spin_projection: __create_projections(
+                [0, 0.5, 1, 1.5, 2]
+            ),
+            EdgeQuantumNumbers.isospin_magnitude: [0, 0.5, 1, 1.5],
+            EdgeQuantumNumbers.isospin_projection: __create_projections(
+                [0, 0.5, 1, 1.5]
+            ),
+            EdgeQuantumNumbers.charmness: [-1, 0, 1],
+            EdgeQuantumNumbers.strangeness: [-1, 0, 1],
+            EdgeQuantumNumbers.bottomness: [-1, 0, 1],
+        },
+    )
     formalism_node_settings = NodeSettings(
         rule_priorities=__CONSERVATION_LAW_PRIORITIES
     )
@@ -168,37 +199,11 @@ def create_default_interaction_settings(
             MuonLNConservation(),
             TauLNConservation(),
             BaryonNumberConservation(),
-            isospin_validity,  # should be changed to a pure edge rule
             identical_particle_symmetrization,
-            gellmann_nishijima,  # should be changed to a pure edge rule
         ]
     )
     weak_node_settings.interaction_strength = 10 ** (-4)
-
     weak_edge_settings = deepcopy(formalism_edge_settings)
-    weak_edge_settings.qn_domains.update(
-        {
-            EdgeQuantumNumbers.charge: [-2, -1, 0, 1, 2],
-            EdgeQuantumNumbers.baryon_number: [-1, 0, 1],
-            EdgeQuantumNumbers.electron_lepton_number: [-1, 0, 1],
-            EdgeQuantumNumbers.muon_lepton_number: [-1, 0, 1],
-            EdgeQuantumNumbers.tau_lepton_number: [-1, 0, 1],
-            EdgeQuantumNumbers.parity: [-1, 1],
-            EdgeQuantumNumbers.c_parity: [-1, 1, None],
-            EdgeQuantumNumbers.g_parity: [-1, 1, None],
-            EdgeQuantumNumbers.spin_magnitude: [0, 0.5, 1, 1.5, 2],
-            EdgeQuantumNumbers.spin_projection: __create_projections(
-                [0, 0.5, 1, 1.5, 2]
-            ),
-            EdgeQuantumNumbers.isospin_magnitude: [0, 0.5, 1, 1.5],
-            EdgeQuantumNumbers.isospin_projection: __create_projections(
-                [0, 0.5, 1, 1.5]
-            ),
-            EdgeQuantumNumbers.charmness: [-1, 0, 1],
-            EdgeQuantumNumbers.strangeness: [-1, 0, 1],
-            EdgeQuantumNumbers.bottomness: [-1, 0, 1],
-        },
-    )
 
     interaction_type_settings[InteractionTypes.Weak] = (
         weak_edge_settings,
