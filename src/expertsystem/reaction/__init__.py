@@ -459,9 +459,16 @@ def check_reaction_violations(
 ) -> Set[Tuple[str, ...]]:
     """Determine violated interaction rules for a given particle reaction.
 
-    Warning: This function does only guarantees to find P, C and G parity
-    violations, if its a two body decay. If all initial and final states have
-    the C/G parity defined, then these violations are also determined correctly.
+    .. warning:: This function does only guarantees to find P, C and G parity
+      violations, if its a two body decay. If all initial and final states have
+      the C/G parity defined, then these violations are also determined
+      correctly.
+
+    Args:
+      initial_state: Shortform description of the initial state w/o spin
+        projections.
+      final_state: Shortform description of the final state w/o spin
+        projections.
 
     Returns:
       Set of least violating rules. The set can have multiple entries, as
@@ -472,7 +479,7 @@ def check_reaction_violations(
     # pylint: disable=too-many-locals
     def _check_violations(
         graph: StateTransitionGraph, node_rules: Set[Rule]
-    ) -> Set[Tuple[str, ...]]:
+    ) -> Set[str]:
         node_id = list(graph.nodes)[0]
         return validate_fully_initialized_graph(
             graph,
@@ -545,9 +552,12 @@ def check_reaction_violations(
     if len(initial_state) == 1:
         edge_qn_conservation_rules.add(MassConservation(5))
 
-    violations = _check_violations(
-        initialized_graphs[0], edge_qn_conservation_rules
-    )
+    violations: Set[Tuple[str, ...]] = {
+        (x,)
+        for x in _check_violations(
+            initialized_graphs[0], edge_qn_conservation_rules
+        )
+    }
 
     # Step 5: Create combinations of graphs for magnitudes of S and L, but only
     # if it is a two body reaction
@@ -576,7 +586,7 @@ def check_reaction_violations(
         identical_particle_symmetrization,
     }
 
-    conservation_rule_violations: List[Set[Tuple[str, ...]]] = []
+    conservation_rule_violations: List[Set[str]] = []
     for graph in graphs:
         rule_violations = _check_violations(graph, conservation_rules)
         conservation_rule_violations.append(rule_violations)
@@ -584,17 +594,25 @@ def check_reaction_violations(
             return violations
 
     # first add rules which consistently fail
-    common_ruleset = conservation_rule_violations[0]
+    common_ruleset = set(conservation_rule_violations[0])
     for rule_set in conservation_rule_violations[1:]:
         common_ruleset &= rule_set
 
-    violations.update(common_ruleset)
+    violations.update({(x,) for x in common_ruleset})
 
-    conservation_rule_violations = sorted(
-        [x - common_ruleset for x in conservation_rule_violations]
-    )
+    conservation_rule_violations = [
+        x - common_ruleset for x in conservation_rule_violations
+    ]
 
-    # then pick the two smallest violating ruleset and combine them
+    # if there is not non-violated graph with the remaining violations then
+    # the collection of violations also violate everything as a group.
+    if all(map(len, conservation_rule_violations)):
+        rule_group: Set[str] = set()
+        for graph_violations in conservation_rule_violations:
+            rule_group.update(graph_violations)
+        violations.add(tuple(rule_group))
+
+    # then start combining rules and see if they violate things as a whole
     # while not any(map(len, conservation_rule_violations)):
     #     group_ruleset = (
     #         conservation_rule_violations[0] + conservation_rule_violations[1]
