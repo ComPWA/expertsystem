@@ -12,7 +12,17 @@ from copy import copy, deepcopy
 from enum import Enum, auto
 from itertools import product
 from multiprocessing import Pool
-from typing import Dict, List, Optional, Sequence, Set, Tuple, Type, Union
+from typing import (
+    Dict,
+    FrozenSet,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Type,
+    Union,
+)
 
 from tqdm import tqdm
 
@@ -456,7 +466,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 def check_reaction_violations(
     initial_state: Union[StateDefinition, Sequence[StateDefinition]],
     final_state: Sequence[StateDefinition],
-) -> Set[Tuple[str, ...]]:
+) -> Set[FrozenSet[str]]:
     """Determine violated interaction rules for a given particle reaction.
 
     .. warning:: This function does only guarantees to find P, C and G parity
@@ -472,7 +482,7 @@ def check_reaction_violations(
 
     Returns:
       Set of least violating rules. The set can have multiple entries, as
-      several quantum numbers can be violated. Each entry in the tuple
+      several quantum numbers can be violated. Each entry in the frozenset
       represents a group of rules that together violate all possible quantum
       number configurations.
     """
@@ -528,7 +538,7 @@ def check_reaction_violations(
 
     def check_edge_qn_conservation(
         graph: StateTransitionGraph[ParticleWithSpin],
-    ) -> Set[Tuple[str, ...]]:
+    ) -> Set[FrozenSet[str]]:
         """Check if edge quantum numbers are conserved.
 
         Those rules give the same results, independent on the node and spin
@@ -550,7 +560,8 @@ def check_reaction_violations(
             edge_qn_conservation_rules.add(MassConservation(5))
 
         return {
-            (x,) for x in _check_violations(graph, edge_qn_conservation_rules)
+            frozenset((x,))
+            for x in _check_violations(graph, edge_qn_conservation_rules)
         }
 
     # Using a n-body topology is enough, to determine the violations reliably
@@ -604,7 +615,7 @@ def check_reaction_violations(
     for rule_set in conservation_rule_violations[1:]:
         common_ruleset &= rule_set
 
-    violations.update({(x,) for x in common_ruleset})
+    violations.update({frozenset((x,)) for x in common_ruleset})
 
     conservation_rule_violations = [
         x - common_ruleset for x in conservation_rule_violations
@@ -616,7 +627,7 @@ def check_reaction_violations(
         rule_group: Set[str] = set()
         for graph_violations in conservation_rule_violations:
             rule_group.update(graph_violations)
-        violations.add(tuple(sorted(rule_group)))
+        violations.add(frozenset(rule_group))
 
     return violations
 

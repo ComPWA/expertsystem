@@ -1,5 +1,5 @@
 # pylint: disable=redefined-outer-name
-from typing import Set, Tuple, Union
+from typing import FrozenSet, Set, Union
 
 import pytest
 
@@ -7,12 +7,12 @@ from expertsystem.reaction import check_reaction_violations
 
 
 def reduce_violated_rules(
-    violated_rules: Set[Tuple[str, ...]]
-) -> Set[Union[str, Tuple[str, ...]]]:
-    reduced_violations: Set[Union[str, Tuple[str, ...]]] = set()
+    violated_rules: Set[FrozenSet[str]],
+) -> Set[Union[str, FrozenSet[str]]]:
+    reduced_violations: Set[Union[str, FrozenSet[str]]] = set()
     for rule_group in violated_rules:
         if len(rule_group) == 1:
-            reduced_violations.add(rule_group[0])
+            reduced_violations.add(tuple(rule_group)[0])
         else:
             reduced_violations.add(rule_group)
 
@@ -155,4 +155,6 @@ def test_nbody_reaction(test_input, expected):
     )
 
     reduced_violations = reduce_violated_rules(violations)
-    assert reduced_violations == set(expected)
+    assert reduced_violations == {
+        frozenset(x) if isinstance(x, tuple) else x for x in expected
+    }
