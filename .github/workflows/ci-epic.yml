@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - epic/*
-      - feat/*
   pull_request:
     branches:
       - epic/*
-      - feat/*
 
 jobs:
   pytest:
