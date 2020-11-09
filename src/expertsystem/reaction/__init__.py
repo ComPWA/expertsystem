@@ -460,8 +460,8 @@ def check_reaction_violations(
     """Determine violated interaction rules for a given particle reaction.
 
     .. warning:: This function does only guarantees to find P, C and G parity
-      violations, if its a two body decay. If all initial and final states have
-      the C/G parity defined, then these violations are also determined
+      violations, if it's a two body decay. If all initial and final states
+      have the C/G parity defined, then these violations are also determined
       correctly.
 
     Args:
@@ -477,6 +477,9 @@ def check_reaction_violations(
       number configurations.
     """
     # pylint: disable=too-many-locals
+    if not isinstance(initial_state, (list, tuple)):
+        initial_state = [initial_state]  # type: ignore
+
     def _check_violations(
         graph: StateTransitionGraph, node_rules: Set[Rule]
     ) -> Set[str]:
@@ -487,24 +490,74 @@ def check_reaction_violations(
             rules_per_edge={},
         ).violated_node_rules[node_id]
 
-    # Step 1: create n-body topology
-    # Using and n-body topology is enough, to determine the violations reliably
+    def check_pure_edge_rules(
+        graph: StateTransitionGraph[ParticleWithSpin],
+    ) -> None:
+        pure_edge_rules: Set[GraphElementRule] = {
+            gellmann_nishijima,
+            isospin_validity,
+        }
+
+        edge_check_result = validate_fully_initialized_graph(
+            graph,
+            rules_per_node={},
+            rules_per_edge={
+                edge_id: pure_edge_rules
+                for edge_id in graph.get_initial_state_edges()
+                + graph.get_final_state_edges()
+            },
+        )
+
+        if edge_check_result.violated_edge_rules:
+            raise ValueError(
+                f"Some edges violate"
+                f" {edge_check_result.violated_edge_rules.values()}"
+            )
+
+    def create_n_body_topology() -> Topology:
+        topology_builder = SimpleStateTransitionTopologyBuilder(
+            [
+                InteractionNode(
+                    "NBodyScattering", len(initial_state), len(final_state)
+                )
+            ]
+        )
+        return topology_builder.build_graphs(
+            len(initial_state), len(final_state)
+        )[0]
+
+    def check_edge_qn_conservation(
+        graph: StateTransitionGraph[ParticleWithSpin],
+    ) -> Set[Tuple[str, ...]]:
+        """Check if edge quantum numbers are conserved.
+
+        Those rules give the same results, independent on the node and spin
+        props. Note they are also independent of the topology and hence their
+        results are always correct.
+        """
+        edge_qn_conservation_rules: Set[Rule] = {
+            BaryonNumberConservation(),
+            BottomnessConservation(),
+            ChargeConservation(),
+            CharmConservation(),
+            ElectronLNConservation(),
+            MuonLNConservation(),
+            StrangenessConservation(),
+            TauLNConservation(),
+            isospin_conservation,
+        }
+        if len(initial_state) == 1:
+            edge_qn_conservation_rules.add(MassConservation(5))
+
+        return {
+            (x,) for x in _check_violations(graph, edge_qn_conservation_rules)
+        }
+
+    # Using a n-body topology is enough, to determine the violations reliably
     # since only certain spin rules require the isobar model. These spin rules
     # are not required here though.
-    if not isinstance(initial_state, (list, tuple)):
-        initial_state = [initial_state]  # type: ignore
-    topology_builder = SimpleStateTransitionTopologyBuilder(
-        [
-            InteractionNode(
-                "NBodyScattering", len(initial_state), len(final_state)
-            )
-        ]
-    )
-    topology = topology_builder.build_graphs(
-        len(initial_state), len(final_state)
-    )[0]
+    topology = create_n_body_topology()
 
-    # Step 2: initialize topologies with initial and final state
     initialized_graphs = initialize_graph(
         topology=topology,
         particles=load_default_particles(),
@@ -512,60 +565,16 @@ def check_reaction_violations(
         final_state=final_state,
     )
 
-    # EdgeRules: (can be checked for each node individually)
-    pure_edge_rules: Set[GraphElementRule] = {
-        gellmann_nishijima,
-        isospin_validity,
-    }
+    check_pure_edge_rules(initialized_graphs[0])
+    violations = check_edge_qn_conservation(initialized_graphs[0])
 
-    # Step 4: verify edges with the edge rules first
-    edge_check_result = validate_fully_initialized_graph(
-        initialized_graphs[0],
-        rules_per_node={},
-        rules_per_edge={
-            edge_id: pure_edge_rules
-            for edge_id in initialized_graphs[0].get_initial_state_edges()
-            + initialized_graphs[0].get_final_state_edges()
-        },
-    )
-
-    if edge_check_result.violated_edge_rules:
-        raise ValueError(
-            f"Some edges violate"
-            f" {edge_check_result.violated_edge_rules.values()}"
-        )
-
-    # Those rules give the same results, independent on the node and spin props.
-    # Note they are also independent of the topology and hence their results
-    # are always correct.
-    edge_qn_conservation_rules: Set[Rule] = {
-        BaryonNumberConservation(),
-        BottomnessConservation(),
-        ChargeConservation(),
-        CharmConservation(),
-        ElectronLNConservation(),
-        MuonLNConservation(),
-        StrangenessConservation(),
-        TauLNConservation(),
-        isospin_conservation,
-    }
-    if len(initial_state) == 1:
-        edge_qn_conservation_rules.add(MassConservation(5))
-
-    violations: Set[Tuple[str, ...]] = {
-        (x,)
-        for x in _check_violations(
-            initialized_graphs[0], edge_qn_conservation_rules
-        )
-    }
-
-    # Step 5: Create combinations of graphs for magnitudes of S and L, but only
+    # Create combinations of graphs for magnitudes of S and L, but only
     # if it is a two body reaction
     ls_combinations = [
         InteractionProperties(l_magnitude=l_mag, s_magnitude=s_mag)
         for l_mag, s_mag in product([0, 1], [0, 0.5, 1, 1.5, 2])
     ]
-    node_id = list(initialized_graphs[0].nodes)[0]
+    node_id = next(iter(topology.nodes))
     graphs = []
     for ls_combi in ls_combinations:
         for graph in initialized_graphs:
@@ -573,10 +582,9 @@ def check_reaction_violations(
             new_graph.node_props = {node_id: ls_combi}
             graphs.append(new_graph)
 
-    # Step 6: Then verify each graph with the interaction rules. Process each
-    # rule separately and keep track of the on which graph each rule passes or
-    # not. Spin projection rules are skipped as they can only be checked
-    # reliably for a isobar topology (too difficult to solve)
+    # Verify each graph with the interaction rules.
+    # Spin projection rules are skipped as they can only be checked reliably
+    # for a isobar topology (too difficult to solve)
     conservation_rules: Set[Rule] = {
         c_parity_conservation,
         clebsch_gordan_helicity_to_canonical,
@@ -590,8 +598,6 @@ def check_reaction_violations(
     for graph in graphs:
         rule_violations = _check_violations(graph, conservation_rules)
         conservation_rule_violations.append(rule_violations)
-        if len(rule_violations) == 0:
-            return violations
 
     # first add rules which consistently fail
     common_ruleset = set(conservation_rule_violations[0])
@@ -610,23 +616,7 @@ def check_reaction_violations(
         rule_group: Set[str] = set()
         for graph_violations in conservation_rule_violations:
             rule_group.update(graph_violations)
-        violations.add(tuple(rule_group))
-
-    # then start combining rules and see if they violate things as a whole
-    # while not any(map(len, conservation_rule_violations)):
-    #     group_ruleset = (
-    #         conservation_rule_violations[0] + conservation_rule_violations[1]
-    #     )
-
-    #     common_ruleset = conservation_rule_violations[0]
-    #     for rule_set in conservation_rule_violations[1:]:
-    #         common_ruleset &= rule_set
-    #     if len(rule_violations) == 0:
-    #         return violations
-
-    #     conservation_rule_violations = sorted(
-    #         [x - common_ruleset for x in conservation_rule_violations]
-    #     )
+        violations.add(tuple(sorted(rule_group)))
 
     return violations
 

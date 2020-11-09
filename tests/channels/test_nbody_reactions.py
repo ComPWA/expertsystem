@@ -33,9 +33,9 @@ def reduce_violated_rules(
             {
                 (
                     "c_parity_conservation",
-                    "spin_magnitude_conservation",
                     "parity_conservation",
-                ),
+                    "spin_magnitude_conservation",
+                )
             },
         ),
         (
@@ -81,7 +81,7 @@ def reduce_violated_rules(
             {
                 "isospin_conservation",
                 "c_parity_conservation",
-                ("spin_magnitude_conservation", "parity_conservation"),
+                ("parity_conservation", "spin_magnitude_conservation"),
             },
         ),
         ((["p", "p"], ["Sigma+", "n", "K0", "pi+", "pi0"]), {}),
@@ -104,7 +104,7 @@ def reduce_violated_rules(
             {
                 "isospin_conservation",
                 "StrangenessConservation",
-                ("spin_magnitude_conservation", "parity_conservation"),
+                ("parity_conservation", "spin_magnitude_conservation"),
             },
         ),
         (
@@ -149,14 +149,10 @@ def reduce_violated_rules(
     ],
 )
 def test_nbody_reaction(test_input, expected):
-    # define all of the different decay scenarios
-    print("processing case:" + str(test_input))
-
     violations = check_reaction_violations(
         initial_state=test_input[0],
         final_state=test_input[1],
     )
 
     reduced_violations = reduce_violated_rules(violations)
-    print("not allowed! violates: " + str(reduced_violations))
     assert reduced_violations == set(expected)
