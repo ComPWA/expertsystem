@@ -185,7 +185,7 @@ def parity_conservation(
 
 @attr.s(frozen=True)
 class HelicityParityEdgeInput:
-    parity: Optional[EdgeQuantumNumbers.parity] = attr.ib()
+    parity: EdgeQuantumNumbers.parity = attr.ib()
     spin_mag: EdgeQuantumNumbers.spin_magnitude = attr.ib()
     spin_proj: EdgeQuantumNumbers.spin_projection = attr.ib()
 
@@ -202,8 +202,10 @@ def parity_conservation_helicity(
     .. math:: A_{-\lambda_1-\lambda_2} = P_1 P_2 P_3 (-1)^{S_2+S_3-S_1}
         A_{\lambda_1\lambda_2}
 
-    Notice that only the special case :math:`\lambda_1=\lambda_2=0` may
-    return False.
+    .. math:: \mathrm{parity\,prefactor} = P_1 P_2 P_3 (-1)^{S_2+S_3-S_1}
+
+    .. note:: Only the special case :math:`\lambda_1=\lambda_2=0` may
+      return False independent on the parity prefactor.
     """
     if len(ingoing_edge_qns) == 1 and len(outgoing_edge_qns) == 2:
         out_spins = [x.spin_mag for x in outgoing_edge_qns]
@@ -217,10 +219,11 @@ def parity_conservation_helicity(
             sum(out_spins) - ingoing_edge_qns[0].spin_mag
         )
 
-        daughter_hel = [0 for x in outgoing_edge_qns if x.spin_proj == 0.0]
-        if len(daughter_hel) == 2:
-            if prefactor == -1:
-                return False
+        if (
+            all([x.spin_proj == 0.0 for x in outgoing_edge_qns])
+            and prefactor == -1
+        ):
+            return False
 
         return prefactor == parity_prefactor
     return True
