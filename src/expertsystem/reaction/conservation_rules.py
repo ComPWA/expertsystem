@@ -395,12 +395,27 @@ def identical_particle_symmetrization(
     ingoing_parities: List[EdgeQuantumNumbers.parity],
     outgoing_edge_qns: List[IdenticalParticleSymmetryOutEdgeInput],
 ) -> bool:
-    """Implementation of particle symmetrization."""
+    """Verifies multi particle state symmetrization for identical particles.
+
+    In case of a multi particle state with identical particles, their exchange
+    symmetry has to follow the spin statistic theorem.
+
+    For bosonic systems the total exchange symmetry (parity) has to be even
+    (+1). For fermionic systems the total exchange symmetry (parity) has to be
+    odd (-1).
+
+    In case of a particle decaying into N identical particles (N>1), the
+    decaying particle has to have the same parity as required by the spin
+    statistic theorem of the multi body state.
+    """
 
     def _check_particles_identical(
         particles: List[IdenticalParticleSymmetryOutEdgeInput],
     ) -> bool:
         """Check if pids and spins match."""
+        if len(particles) == 1:
+            return False
+
         reference_pid = particles[0].pid
         reference_spin_proj = particles[0].spin_projection
         for particle in particles[1:]:

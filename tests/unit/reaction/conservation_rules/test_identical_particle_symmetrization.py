@@ -93,3 +93,26 @@ def test_identical_fermion_symmetrization(in_edges, out_edges, expected):
 )
 def test_nonidentical_particle_symmetrization(in_edges, out_edges, expected):
     assert identical_particle_symmetrization(in_edges, out_edges) is expected
+
+
+@pytest.mark.parametrize(
+    "in_edges, out_edges, expected",
+    [
+        (
+            [
+                EdgeQuantumNumbers.parity(Parity(parity)),
+            ],
+            [
+                IdenticalParticleSymmetryOutEdgeInput(
+                    spin_magnitude=EdgeQuantumNumbers.spin_magnitude(1.0),
+                    spin_projection=EdgeQuantumNumbers.spin_projection(0),
+                    pid=EdgeQuantumNumbers.pid(10),
+                ),
+            ],
+            True,
+        )
+        for parity in [-1, 1]
+    ],
+)
+def test_single_particle_case(in_edges, out_edges, expected):
+    assert identical_particle_symmetrization(in_edges, out_edges) is expected
