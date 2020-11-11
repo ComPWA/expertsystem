@@ -385,21 +385,20 @@ def g_parity_conservation(
 
 
 @attr.s(frozen=True)
-class IdenticalParticleSymmetryEdgeInput:
-    parity: EdgeQuantumNumbers.parity = attr.ib()
+class IdenticalParticleSymmetryOutEdgeInput:
     spin_magnitude: EdgeQuantumNumbers.spin_magnitude = attr.ib()
     spin_projection: EdgeQuantumNumbers.spin_projection = attr.ib()
     pid: EdgeQuantumNumbers.pid = attr.ib()
 
 
 def identical_particle_symmetrization(
-    ingoing_edge_qns: List[IdenticalParticleSymmetryEdgeInput],
-    outgoing_edge_qns: List[IdenticalParticleSymmetryEdgeInput],
+    ingoing_parities: List[EdgeQuantumNumbers.parity],
+    outgoing_edge_qns: List[IdenticalParticleSymmetryOutEdgeInput],
 ) -> bool:
     """Implementation of particle symmetrization."""
 
     def _check_particles_identical(
-        particles: List[IdenticalParticleSymmetryEdgeInput],
+        particles: List[IdenticalParticleSymmetryOutEdgeInput],
     ) -> bool:
         """Check if pids and spins match."""
         reference_pid = particles[0].pid
@@ -411,18 +410,19 @@ def identical_particle_symmetrization(
                 return False
         return True
 
-    if _check_particles_identical(outgoing_edge_qns):
-        if _is_boson(outgoing_edge_qns[0].spin_magnitude):
-            # we have a boson, check if parity of mother is even
-            parity = ingoing_edge_qns[0].parity
-            if parity == -1:
-                # if its odd then return False
-                return False
-        else:
-            # its fermion
-            parity = ingoing_edge_qns[0].parity
-            if parity == 1:
-                return False
+    if len(ingoing_parities) == 1:
+        if _check_particles_identical(outgoing_edge_qns):
+            if _is_boson(outgoing_edge_qns[0].spin_magnitude):
+                # we have a boson, check if parity of mother is even
+                parity = ingoing_parities[0]
+                if parity == -1:
+                    # if its odd then return False
+                    return False
+            else:
+                # its fermion
+                parity = ingoing_parities[0]
+                if parity == 1:
+                    return False
 
     return True
 
