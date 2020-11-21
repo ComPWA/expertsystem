@@ -130,6 +130,7 @@
         "permalinks",
         "phsp",
         "pids",
+        "precommit",
         "prefactor",
         "pygments",
         "pylance",
