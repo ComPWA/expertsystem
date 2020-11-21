@@ -14,11 +14,13 @@ from pkg_resources import get_distribution
 
 # -- Project information -----------------------------------------------------
 project = "ExpertSystem"
+package = "expertsystem"
 copyright = "2020, ComPWA"
 author = "Common Partial Wave Analysis"
 
-__release = get_distribution("expertsystem").version
-version = ".".join(__release.split(".")[:3])
+if os.path.exists(f"../src/{package}/version.py"):
+    __release = get_distribution(package).version
+    version = ".".join(__release.split(".")[:3])
 
 # -- Generate API skeleton ----------------------------------------------------
 shutil.rmtree("api", ignore_errors=True)
