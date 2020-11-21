@@ -43,6 +43,7 @@ pyvenv*/
 !.readthedocs.yml
 !codecov.yml
 !environment.yml
+!pyrightconfig.json
 
 !docs/usage/additional_particles.yml
 !src/expertsystem/additional_particle_definitions.yml
