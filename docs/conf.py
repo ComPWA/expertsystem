@@ -28,7 +28,7 @@ subprocess.call(
     " ".join(
         [
             "sphinx-apidoc",
-            "../src/expertsystem/",
+            f"../src/{package}/",
             "-o api/",
             "--force",
             "--no-toc",
@@ -78,7 +78,7 @@ source_suffix = {
 # The master toctree document.
 master_doc = "index"
 modindex_common_prefix = [
-    "expertsystem.",
+    f"{package}.",
 ]
 
 extensions = [
@@ -123,7 +123,7 @@ html_show_sphinx = False
 html_sourcelink_suffix = ""
 html_theme = "sphinx_book_theme"
 html_theme_options = {
-    "repository_url": "https://github.com/ComPWA/expertsystem",
+    "repository_url": f"https://github.com/ComPWA/{package}",
     "repository_branch": "stable",
     "path_to_docs": "docs",
     "use_download_button": True,
@@ -232,7 +232,8 @@ if jupyter_execute_notebooks != "off":
             [
                 "HOME=.",  # in case of calling through tox
                 "pydeps",
-                "../src/expertsystem",
+                f"../src/{package}",
+                "-o module_structure.svg",
                 "--exclude *._*",  # hide private modules
                 "--max-bacon=1",  # hide external dependencies
                 "--noshow",
@@ -240,6 +241,6 @@ if jupyter_execute_notebooks != "off":
         ),
         shell=True,
     )
-    if os.path.exists("expertsystem.svg"):
-        with open("api/expertsystem.rst", "a") as stream:
-            stream.write("\n.. image:: /expertsystem.svg")
+    if os.path.exists("module_structure.svg"):
+        with open(f"api/{package}.rst", "a") as stream:
+            stream.write("\n.. image:: /module_structure.svg")
