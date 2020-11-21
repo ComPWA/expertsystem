@@ -101,17 +101,11 @@ maxdepth: 2
 install
 usage
 interactive
-develop
+api
+Develop <https://pwa.readthedocs.io/develop.html>
 ```
 
 - {ref}`Python API <modindex>`
-
-```{toctree}
----
-hidden:
----
-api
-```
 
 ```{toctree}
 ---
