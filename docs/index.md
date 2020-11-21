@@ -106,6 +106,8 @@ Develop <https://pwa.readthedocs.io/develop.html>
 ```
 
 - {ref}`Python API <modindex>`
+- {ref}`General Index <genindex>`
+- {ref}`Search <search>`
 
 ```{toctree}
 ---
