@@ -1,5 +1,3 @@
-# cspell:ignore reqs
-
 name: es
 channels:
   - defaults
