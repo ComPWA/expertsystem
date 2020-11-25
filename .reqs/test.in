@@ -1,0 +1,8 @@
+-r ../requirements.txt
+
+# Requirements for running pytest
+pydot
+pytest
+pytest-cov
+pytest-profiling
+pytest-xdist

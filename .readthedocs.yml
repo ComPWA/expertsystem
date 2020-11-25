@@ -12,4 +12,6 @@ python:
   version: 3.7
   install:
     - method: pip
-      path: .[doc]
+      path: -r .reqs/doc.txt
+    - method: pip
+      path: .
