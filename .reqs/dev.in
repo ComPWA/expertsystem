@@ -7,4 +7,4 @@ jupyterlab
 jupyterlab-code-formatter
 labels
 pip-tools
-tox >= 1.6  # for use develop
+tox >= 1.9  # for skip_install, use_develop
