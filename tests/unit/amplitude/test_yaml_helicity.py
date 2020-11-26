@@ -114,15 +114,16 @@ def test_dynamics_section(imported_dict):
     j_psi = dynamics["J/psi(1S)"]
     assert j_psi["Type"] == "NonDynamic"
     assert j_psi["FormFactor"]["Type"] == "BlattWeisskopf"
-    assert j_psi["FormFactor"]["MesonRadius"] == "MesonRadius_J/psi(1S)"
-    assert get_parameter("MesonRadius_J/psi(1S)")["Value"] == 1.0
+    assert get_parameter(j_psi["FormFactor"]["MesonRadius"])["Value"] == 1.0
 
     f0_980 = dynamics.get("f(0)(980)", None)
     if f0_980:
         assert f0_980["Type"] == "RelativisticBreitWigner"
         assert f0_980["FormFactor"]["Type"] == "BlattWeisskopf"
         assert f0_980["FormFactor"]["MesonRadius"] == "MesonRadius_f(0)(980)"
-        assert get_parameter("MesonRadius_f(0)(980)")["Value"] == 1.0
+        assert (
+            get_parameter(f0_980["FormFactor"]["MesonRadius"])["Value"] == 1.0
+        )
 
 
 def test_intensity_section(imported_dict):
