@@ -39,7 +39,7 @@ Rule = Union[GraphElementRule, EdgeQNConservationRule, ConservationRule]
 
 _ElementType = TypeVar("_ElementType", EdgeQuantumNumber, NodeQuantumNumber)
 
-GraphElementPropertyMap = Dict[Type[_ElementType], Union[int, float, None]]
+GraphElementPropertyMap = Dict[Type[_ElementType], Scalar]
 GraphEdgePropertyMap = GraphElementPropertyMap[EdgeQuantumNumber]
 GraphNodePropertyMap = GraphElementPropertyMap[NodeQuantumNumber]
 

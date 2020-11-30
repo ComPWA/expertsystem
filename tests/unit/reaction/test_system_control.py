@@ -5,11 +5,13 @@ from expertsystem.particle import Particle
 from expertsystem.reaction import InteractionTypes, StateTransitionManager
 from expertsystem.reaction._system_control import (
     CompareGraphNodePropertiesFunctor,
+    create_edge_properties,
     filter_graphs,
     remove_duplicate_solutions,
     require_interaction_property,
 )
 from expertsystem.reaction.combinatorics import (
+    ParticleWithSpin,
     _create_edge_id_particle_mapping,
     match_external_edges,
     perform_external_edge_identical_particle_combinatorics,
@@ -18,7 +20,7 @@ from expertsystem.reaction.quantum_numbers import (
     InteractionProperties,
     NodeQuantumNumbers,
 )
-from expertsystem.reaction.topology import StateTransitionGraph
+from expertsystem.reaction.topology import Edge, StateTransitionGraph, Topology
 
 
 @pytest.mark.parametrize(
@@ -99,37 +101,55 @@ def test_external_edge_initialization(
     for group in final_state_groupings:
         stm.add_final_state_grouping(group)
 
-    topology_graphs = stm._build_topologies()
+    problem_sets = stm.create_problem_sets()
+    if problem_sets.values():
+        assert len(list(problem_sets.values())[0]) == result_graph_count
 
-    init_graphs = stm._create_seed_graphs(topology_graphs)
-    assert len(init_graphs) == result_graph_count
+
+@pytest.mark.parametrize(
+    "particle, spin_projection",
+    [],
+)
+def test_create_edge_properties(particle, spin_projection):
+    pass
 
 
-def make_ls_test_graph(angular_momentum_magnitude, coupled_spin_magnitude):
-    graph = StateTransitionGraph[dict]()
+def make_ls_test_graph(
+    angular_momentum_magnitude, coupled_spin_magnitude, particle
+):
+    graph = StateTransitionGraph[ParticleWithSpin](
+        topology=Topology(nodes={0}, edges={0: Edge(None, 0)}),
+        node_props={
+            0: InteractionProperties(
+                s_magnitude=coupled_spin_magnitude,
+                l_magnitude=angular_momentum_magnitude,
+            )
+        },
+        edge_props={0: (particle, 0)},
+    )
     graph.graph_node_properties_comparator = (
         CompareGraphNodePropertiesFunctor()
-    )
-    graph.add_node(0)
-    graph.node_props[0] = InteractionProperties(
-        s_magnitude=coupled_spin_magnitude,
-        l_magnitude=angular_momentum_magnitude,
     )
     return graph
 
 
 def make_ls_test_graph_scrambled(
-    angular_momentum_magnitude, coupled_spin_magnitude
+    angular_momentum_magnitude, coupled_spin_magnitude, particle
 ):
-    graph = StateTransitionGraph[dict]()
+    graph = StateTransitionGraph[ParticleWithSpin](
+        topology=Topology(nodes={0}, edges={0: Edge(None, 0)}),
+        node_props={
+            0: InteractionProperties(
+                l_magnitude=angular_momentum_magnitude,
+                s_magnitude=coupled_spin_magnitude,
+            )
+        },
+        edge_props={0: (particle, 0)},
+    )
     graph.graph_node_properties_comparator = (
         CompareGraphNodePropertiesFunctor()
     )
-    graph.add_node(0)
-    graph.node_props[0] = InteractionProperties(
-        l_magnitude=angular_momentum_magnitude,
-        s_magnitude=coupled_spin_magnitude,
-    )
+
     return graph
 
 
@@ -141,16 +161,19 @@ class TestSolutionFilter:  # pylint: disable=no-self-use
             ([(1, 0), (1, 0)], 1),
         ],
     )
-    def test_remove_duplicates(self, ls_pairs, result):
-        graphs: list = []
+    def test_remove_duplicates(self, ls_pairs, result, particle_database):
+        pi0 = particle_database["pi0"]
+        graphs = []
         for ls_pair in ls_pairs:
-            graphs.append(make_ls_test_graph(ls_pair[0], ls_pair[1]))
+            graphs.append(make_ls_test_graph(ls_pair[0], ls_pair[1], pi0))
 
         results = remove_duplicate_solutions(graphs)
         assert len(results) == result
 
         for ls_pair in ls_pairs:
-            graphs.append(make_ls_test_graph_scrambled(ls_pair[0], ls_pair[1]))
+            graphs.append(
+                make_ls_test_graph_scrambled(ls_pair[0], ls_pair[1], pi0)
+            )
         results = remove_duplicate_solutions(graphs)
         assert len(results) == result
 
@@ -205,17 +228,20 @@ class TestSolutionFilter:  # pylint: disable=no-self-use
         ],
     )
     def test_filter_graphs_for_interaction_qns(
-        self, input_values, filter_parameters, result
+        self, input_values, filter_parameters, result, particle_database
     ):
         graphs = []
+        pi0 = particle_database["pi0"]
 
         for value in input_values:
-            tempgraph = make_ls_test_graph(value[1][0], value[1][1])
-            tempgraph.add_edges([0])
-            tempgraph.attach_edges_to_node_ingoing([0], 0)
-            tempgraph.edge_props[0] = (
-                Particle(name=value[0], pid=0, mass=1.0, spin=1.0),
-                0.0,
+            tempgraph = make_ls_test_graph(value[1][0], value[1][1], pi0)
+            tempgraph = tempgraph.evolve(
+                edge_props={
+                    0: (
+                        Particle(name=value[0], pid=0, mass=1.0, spin=1.0),
+                        0.0,
+                    )
+                }
             )
             graphs.append(tempgraph)
 
@@ -244,25 +270,25 @@ def test_edge_swap(particle_database, initial_state, final_state):
     )
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
 
-    topology_graphs = stm._build_topologies()
+    topology_graphs = stm.__build_topologies()
     init_graphs = stm._create_seed_graphs(topology_graphs)
 
     for graph in init_graphs:
         ref_mapping = _create_edge_id_particle_mapping(
-            graph, "get_final_state_edges"
+            graph, graph.get_final_state_edge_ids()
         )
         edge_keys = list(ref_mapping.keys())
         edge1 = edge_keys[0]
         edge1_val = graph.edges[edge1]
-        edge1_props = graph.edge_props[edge1]
+        edge1_props = graph.get_edge_props(edge1)
         edge2 = edge_keys[1]
         edge2_val = graph.edges[edge2]
-        edge2_props = graph.edge_props[edge2]
+        edge2_props = graph.get_edge_props(edge2)
         graph.swap_edges(edge1, edge2)
         assert graph.edges[edge1] == edge2_val
         assert graph.edges[edge2] == edge1_val
-        assert graph.edge_props[edge1] == edge2_props
-        assert graph.edge_props[edge2] == edge1_props
+        assert graph.get_edge_props(edge1) == edge2_props
+        assert graph.get_edge_props(edge2) == edge1_props
 
 
 @pytest.mark.parametrize(
@@ -295,18 +321,18 @@ def test_match_external_edges(particle_database, initial_state, final_state):
     match_external_edges(init_graphs)
 
     ref_mapping_fs = _create_edge_id_particle_mapping(
-        init_graphs[0], "get_final_state_edges"
+        init_graphs[0], init_graphs[0].get_final_state_edge_ids()
     )
     ref_mapping_is = _create_edge_id_particle_mapping(
-        init_graphs[0], "get_initial_state_edges"
+        init_graphs[0], init_graphs[0].get_initial_state_edge_ids()
     )
 
     for graph in init_graphs[1:]:
         assert ref_mapping_fs == _create_edge_id_particle_mapping(
-            graph, "get_final_state_edges"
+            graph, graph.get_final_state_edge_ids()
         )
         assert ref_mapping_is == _create_edge_id_particle_mapping(
-            graph, "get_initial_state_edges"
+            graph, graph.get_initial_state_edge_ids()
         )
 
 
@@ -377,16 +403,16 @@ def test_external_edge_identical_particle_combinatorics(
     assert len(comb_graphs) == result_graph_count
 
     ref_mapping_fs = _create_edge_id_particle_mapping(
-        comb_graphs[0], "get_final_state_edges"
+        comb_graphs[0], comb_graphs[0].get_final_state_edge_ids()
     )
     ref_mapping_is = _create_edge_id_particle_mapping(
-        comb_graphs[0], "get_initial_state_edges"
+        comb_graphs[0], comb_graphs[0].get_initial_state_edge_ids()
     )
 
     for group in comb_graphs[1:]:
         assert ref_mapping_fs == _create_edge_id_particle_mapping(
-            group, "get_final_state_edges"
+            group, group.get_final_state_edge_ids()
         )
         assert ref_mapping_is == _create_edge_id_particle_mapping(
-            group, "get_initial_state_edges"
+            group, group.get_initial_state_edge_ids()
         )
