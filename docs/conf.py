@@ -160,6 +160,7 @@ nitpick_ignore = [
     ("py:class", "a set-like object providing a view on D's items"),
     ("py:class", "a set-like object providing a view on D's keys"),
     ("py:class", "an object providing a view on D's values"),
+    ("py:class", "attr._make.Attribute"),
     ("py:class", "typing_extensions.Protocol"),
 ]
 

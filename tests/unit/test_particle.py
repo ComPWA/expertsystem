@@ -116,6 +116,20 @@ class TestParity:
         with pytest.raises(ValueError):
             Parity(1.2)
 
+    @pytest.mark.parametrize(
+        "definition, expected",
+        [
+            (1.0, Parity(+1)),
+            (-1, Parity(-1)),
+            (+1, Parity(+1)),
+        ],
+    )
+    def test_serialize(self, definition, expected):
+        spin_from_dict = Parity.fromdict(definition)
+        assert spin_from_dict == expected
+        dict_from_spin = expected.asdict()
+        assert dict_from_spin == definition
+
 
 class TestParticle:
     @staticmethod
@@ -202,6 +216,35 @@ class TestParticle:
         pip = particle_database.find(211)
         pim = particle_database.find(-211)
         assert pip == -pim
+
+    def test_serialize(self, particle_database: ParticleCollection):
+        particle = particle_database["pi0"]
+        definition = particle.asdict()
+        assert definition == {
+            "baryon_number": 0,
+            "bottomness": 0,
+            "c_parity": +1,
+            "charge": 0,
+            "charmness": 0,
+            "electron_lepton_number": 0,
+            "g_parity": -1,
+            "isospin": {
+                "magnitude": 1.0,
+                "projection": 0.0,
+            },
+            "mass": 0.1349768,
+            "muon_lepton_number": 0,
+            "name": "pi0",
+            "parity": -1,
+            "pid": 111,
+            "spin": 0.0,
+            "strangeness": 0,
+            "tau_lepton_number": 0,
+            "topness": 0,
+            "width": 7.73e-09,
+        }
+        from_dict = Particle.fromdict(definition)
+        assert from_dict == particle
 
 
 class TestParticleCollection:
@@ -349,6 +392,13 @@ class TestParticleCollection:
                 "omega(1650)",
             ]
 
+    def test_serialize(self, particle_database: ParticleCollection):
+        pdg = particle_database
+        definition = pdg.asdict()
+        assert len(definition) == len(pdg)
+        pdg_imported = ParticleCollection.fromdict(definition)
+        assert pdg == pdg_imported
+
 
 class TestSpin:
     @staticmethod
@@ -387,6 +437,19 @@ class TestSpin:
     def test_exceptions(self, magnitude, projection):
         with pytest.raises(ValueError):
             print(Spin(magnitude, projection))
+
+    @pytest.mark.parametrize(
+        "definition, expected",
+        [
+            ({"magnitude": 0.5, "projection": -0.5}, Spin(0.5, -0.5)),
+            ({"magnitude": 1, "projection": 1}, Spin(1.0, 1.0)),
+        ],
+    )
+    def test_serialize(self, definition, expected):
+        spin_from_dict = Spin.fromdict(definition)
+        assert spin_from_dict == expected
+        dict_from_spin = expected.asdict()
+        assert dict_from_spin == definition
 
 
 @pytest.mark.parametrize(

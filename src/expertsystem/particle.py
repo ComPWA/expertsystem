@@ -27,9 +27,11 @@ from typing import (
 
 import attr
 
+from expertsystem.interfaces import Serializable, value_serializer
+
 
 @total_ordering
-class Parity(abc.Hashable):
+class Parity(abc.Hashable, Serializable):
     """Safe, immutable data container for parity."""
 
     def __init__(self, value: Union[float, int, str]) -> None:
@@ -64,8 +66,15 @@ class Parity(abc.Hashable):
     def value(self) -> int:
         return self.__value
 
+    def asdict(self) -> Any:
+        return self.value
 
-class Spin(abc.Hashable):
+    @staticmethod
+    def fromdict(definition: int) -> "Parity":
+        return Parity(definition)
+
+
+class Spin(abc.Hashable, Serializable):
     """Safe, immutable data container for spin **with projection**."""
 
     def __init__(self, magnitude: float, projection: float) -> None:
@@ -125,9 +134,21 @@ class Spin(abc.Hashable):
     def __hash__(self) -> int:
         return hash(repr(self))
 
+    def asdict(self) -> Any:
+        return {
+            "magnitude": self.magnitude,
+            "projection": self.projection,
+        }
+
+    @staticmethod
+    def fromdict(definition: dict) -> "Spin":
+        magnitude = definition["magnitude"]
+        projection = definition["projection"]
+        return Spin(magnitude, projection)
+
 
 @attr.s(frozen=True, repr=False)
-class Particle:  # pylint: disable=too-many-instance-attributes
+class Particle(Serializable):  # pylint: disable=too-many-instance-attributes
     """Immutable container of data defining a physical particle.
 
     A `Particle` is defined by the minimum set of the quantum numbers that
@@ -208,6 +229,31 @@ class Particle:  # pylint: disable=too-many-instance-attributes
             or self.tau_lepton_number != 0
         )
 
+    def asdict(self) -> Any:
+        return attr.asdict(
+            self, recurse=True, value_serializer=value_serializer
+        )
+
+    @staticmethod
+    def fromdict(definition: dict) -> "Particle":
+        kwargs: Dict[str, Any] = dict()
+        for field in attr.fields(Particle):
+            item_definition = definition[field.name]
+            union_types = getattr(field.type, "__args__", None)
+            if union_types is not None:  # Union
+                attribute_type = union_types[0]
+            else:
+                attribute_type = field.type
+            if item_definition is None:
+                kwargs[field.name] = None
+            elif issubclass(attribute_type, Serializable):
+                kwargs[field.name] = attribute_type.fromdict(item_definition)
+            elif attr.has(attribute_type):
+                kwargs[field.name] = attribute_type(**item_definition)
+            else:
+                kwargs[field.name] = item_definition
+        return Particle(**kwargs)
+
 
 class GellmannNishijima:
     r"""Collection of conversion methods using Gell-Mann–Nishijima.
@@ -265,7 +311,9 @@ class GellmannNishijima:
         )
 
 
-class ParticleCollection(abc.MutableSet):
+class ParticleCollection(
+    abc.MutableSet, Serializable
+):  # pylint: disable=too-many-ancestors
     """Searchable collection of immutable `.Particle` instances."""
 
     def __init__(self, particles: Optional[Iterable[Particle]] = None) -> None:
@@ -410,6 +458,15 @@ class ParticleCollection(abc.MutableSet):
     @property
     def names(self) -> Set[str]:
         return set(self.__particles)
+
+    def asdict(self) -> Any:
+        return {p.name: p.asdict() for p in self}
+
+    @staticmethod
+    def fromdict(definition: dict) -> "ParticleCollection":
+        return ParticleCollection(
+            Particle.fromdict(i) for i in definition.values()
+        )
 
 
 def create_particle(  # pylint: disable=too-many-arguments,too-many-locals
