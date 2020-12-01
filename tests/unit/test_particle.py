@@ -245,6 +245,7 @@ class TestParticle:
         }
         from_dict = Particle.fromdict(as_dict)
         assert from_dict == particle
+        assert from_dict.asdict() == as_dict
 
 
 class TestParticleCollection:
