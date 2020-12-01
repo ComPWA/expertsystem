@@ -119,9 +119,9 @@ class TestParity:
     @pytest.mark.parametrize(
         "dict_definition, expected",
         [
-            (1.0, Parity(+1)),
-            (-1, Parity(-1)),
-            (+1, Parity(+1)),
+            ({"value": 1.0}, Parity(+1)),
+            ({"value": -1}, Parity(-1)),
+            ({"value": +1}, Parity(+1)),
         ],
     )
     def test_serialize(self, dict_definition, expected):
@@ -223,11 +223,11 @@ class TestParticle:
         assert as_dict == {
             "baryon_number": 0,
             "bottomness": 0,
-            "c_parity": +1,
+            "c_parity": {"value": +1},
             "charge": 0,
             "charmness": 0,
             "electron_lepton_number": 0,
-            "g_parity": -1,
+            "g_parity": {"value": -1},
             "isospin": {
                 "magnitude": 1.0,
                 "projection": 0.0,
@@ -235,7 +235,7 @@ class TestParticle:
             "mass": 0.1349768,
             "muon_lepton_number": 0,
             "name": "pi0",
-            "parity": -1,
+            "parity": {"value": -1},
             "pid": 111,
             "spin": 0.0,
             "strangeness": 0,

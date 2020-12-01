@@ -66,12 +66,12 @@ class Parity(abc.Hashable, Serializable):
     def value(self) -> int:
         return self.__value
 
-    def asdict(self) -> Any:
-        return self.value
+    def asdict(self) -> Dict[str, Any]:
+        return {"value": self.value}
 
     @staticmethod
-    def fromdict(definition: int) -> "Parity":
-        return Parity(definition)
+    def fromdict(definition: Dict[str, Any]) -> "Parity":
+        return Parity(**definition)
 
 
 class Spin(abc.Hashable, Serializable):
@@ -134,17 +134,15 @@ class Spin(abc.Hashable, Serializable):
     def __hash__(self) -> int:
         return hash(repr(self))
 
-    def asdict(self) -> Any:
+    def asdict(self) -> Dict[str, Any]:
         return {
             "magnitude": self.magnitude,
             "projection": self.projection,
         }
 
     @staticmethod
-    def fromdict(definition: dict) -> "Spin":
-        magnitude = definition["magnitude"]
-        projection = definition["projection"]
-        return Spin(magnitude, projection)
+    def fromdict(definition: Dict[str, Any]) -> "Spin":
+        return Spin(**definition)
 
 
 @attr.s(frozen=True, repr=False)
@@ -229,13 +227,13 @@ class Particle(Serializable):  # pylint: disable=too-many-instance-attributes
             or self.tau_lepton_number != 0
         )
 
-    def asdict(self) -> Any:
+    def asdict(self) -> Dict[str, Any]:
         return attr.asdict(
             self, recurse=True, value_serializer=value_serializer
         )
 
     @staticmethod
-    def fromdict(definition: dict) -> "Particle":
+    def fromdict(definition: Dict[str, Any]) -> "Particle":
         kwargs: Dict[str, Any] = dict()
         for field in attr.fields(Particle):
             item_definition = definition[field.name]
@@ -459,11 +457,11 @@ class ParticleCollection(
     def names(self) -> Set[str]:
         return set(self.__particles)
 
-    def asdict(self) -> Any:
+    def asdict(self) -> Dict[str, Any]:
         return {p.name: p.asdict() for p in self}
 
     @staticmethod
-    def fromdict(definition: dict) -> "ParticleCollection":
+    def fromdict(definition: Dict[str, Any]) -> "ParticleCollection":
         return ParticleCollection(
             Particle.fromdict(i) for i in definition.values()
         )
