@@ -117,18 +117,18 @@ class TestParity:
             Parity(1.2)
 
     @pytest.mark.parametrize(
-        "definition, expected",
+        "dict_definition, expected",
         [
             (1.0, Parity(+1)),
             (-1, Parity(-1)),
             (+1, Parity(+1)),
         ],
     )
-    def test_serialize(self, definition, expected):
-        spin_from_dict = Parity.fromdict(definition)
-        assert spin_from_dict == expected
-        dict_from_spin = expected.asdict()
-        assert dict_from_spin == definition
+    def test_serialize(self, dict_definition, expected):
+        from_dict = Parity.fromdict(dict_definition)
+        assert from_dict == expected
+        as_dict = expected.asdict()
+        assert as_dict == dict_definition
 
 
 class TestParticle:
@@ -219,8 +219,8 @@ class TestParticle:
 
     def test_serialize(self, particle_database: ParticleCollection):
         particle = particle_database["pi0"]
-        definition = particle.asdict()
-        assert definition == {
+        as_dict = particle.asdict()
+        assert as_dict == {
             "baryon_number": 0,
             "bottomness": 0,
             "c_parity": +1,
@@ -243,7 +243,7 @@ class TestParticle:
             "topness": 0,
             "width": 7.73e-09,
         }
-        from_dict = Particle.fromdict(definition)
+        from_dict = Particle.fromdict(as_dict)
         assert from_dict == particle
 
 
@@ -393,11 +393,10 @@ class TestParticleCollection:
             ]
 
     def test_serialize(self, particle_database: ParticleCollection):
-        pdg = particle_database
-        definition = pdg.asdict()
-        assert len(definition) == len(pdg)
-        pdg_imported = ParticleCollection.fromdict(definition)
-        assert pdg == pdg_imported
+        as_dict = particle_database.asdict()
+        assert len(as_dict) == len(particle_database)
+        from_dict = ParticleCollection.fromdict(as_dict)
+        assert particle_database == from_dict
 
 
 class TestSpin:
@@ -439,17 +438,17 @@ class TestSpin:
             print(Spin(magnitude, projection))
 
     @pytest.mark.parametrize(
-        "definition, expected",
+        "dict_definition, expected",
         [
             ({"magnitude": 0.5, "projection": -0.5}, Spin(0.5, -0.5)),
             ({"magnitude": 1, "projection": 1}, Spin(1.0, 1.0)),
         ],
     )
-    def test_serialize(self, definition, expected):
-        spin_from_dict = Spin.fromdict(definition)
-        assert spin_from_dict == expected
+    def test_serialize(self, dict_definition, expected):
+        from_dict = Spin.fromdict(dict_definition)
+        assert from_dict == expected
         dict_from_spin = expected.asdict()
-        assert dict_from_spin == definition
+        assert dict_from_spin == dict_definition
 
 
 @pytest.mark.parametrize(
