@@ -27,7 +27,7 @@ from typing import (
 
 import attr
 
-from expertsystem.interfaces import Serializable, value_serializer
+from expertsystem.interfaces import Serializable, implement_attr_serializer
 
 
 @total_ordering
@@ -145,6 +145,7 @@ class Spin(abc.Hashable, Serializable):
         return Spin(**definition)
 
 
+@implement_attr_serializer()
 @attr.s(frozen=True, repr=False)
 class Particle(Serializable):  # pylint: disable=too-many-instance-attributes
     """Immutable container of data defining a physical particle.
@@ -226,31 +227,6 @@ class Particle(Serializable):  # pylint: disable=too-many-instance-attributes
             or self.muon_lepton_number != 0
             or self.tau_lepton_number != 0
         )
-
-    def asdict(self) -> Dict[str, Any]:
-        return attr.asdict(
-            self, recurse=True, value_serializer=value_serializer
-        )
-
-    @staticmethod
-    def fromdict(definition: Dict[str, Any]) -> "Particle":
-        kwargs: Dict[str, Any] = dict()
-        for field in attr.fields(Particle):
-            item_definition = definition[field.name]
-            union_types = getattr(field.type, "__args__", None)
-            if union_types is not None:  # Union
-                attribute_type = union_types[0]
-            else:
-                attribute_type = field.type
-            if item_definition is None:
-                kwargs[field.name] = None
-            elif issubclass(attribute_type, Serializable):
-                kwargs[field.name] = attribute_type.fromdict(item_definition)
-            elif attr.has(attribute_type):
-                kwargs[field.name] = attribute_type(**item_definition)
-            else:
-                kwargs[field.name] = item_definition
-        return Particle(**kwargs)
 
 
 class GellmannNishijima:
