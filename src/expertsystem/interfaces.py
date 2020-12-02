@@ -25,7 +25,7 @@ def implement_attr_serializer(
                 self, recurse=True, value_serializer=value_serializer
             )
 
-        def fromdict(definition: Dict[str, Any]) -> Type[Serializable]:
+        def fromdict(definition: Dict[str, Any]) -> Serializable:
             kwargs: Dict[str, Any] = dict()
             for field in attr.fields(decorated_class):
                 item_definition = definition[field.name]
