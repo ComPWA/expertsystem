@@ -27,7 +27,7 @@ from typing import (
 
 import attr
 
-from expertsystem.interfaces import Serializable, implement_attr_serializer
+from expertsystem._serialization import Serializable, implement_attr_serializer
 
 
 @total_ordering
