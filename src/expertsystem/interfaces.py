@@ -28,22 +28,23 @@ def implement_attr_serializer(
         def fromdict(definition: Dict[str, Any]) -> Serializable:
             kwargs: Dict[str, Any] = dict()
             for field in attr.fields(decorated_class):
-                item_definition = definition[field.name]
-                union_types = getattr(field.type, "__args__", None)
-                if union_types is not None:  # Union
-                    attribute_type = union_types[0]
-                else:
-                    attribute_type = field.type
-                if item_definition is None:
-                    kwargs[field.name] = None
-                elif issubclass(attribute_type, Serializable):
-                    kwargs[field.name] = attribute_type.fromdict(
-                        item_definition
-                    )
-                elif attr.has(attribute_type):
-                    kwargs[field.name] = attribute_type(**item_definition)
-                else:
-                    kwargs[field.name] = item_definition
+                if field.name in definition:
+                    item_definition = definition[field.name]
+                    union_types = getattr(field.type, "__args__", None)
+                    if union_types is not None:  # Union
+                        attribute_type = union_types[0]
+                    else:
+                        attribute_type = field.type
+                    if item_definition is None:
+                        kwargs[field.name] = None
+                    elif issubclass(attribute_type, Serializable):
+                        kwargs[field.name] = attribute_type.fromdict(
+                            item_definition
+                        )
+                    elif attr.has(attribute_type):
+                        kwargs[field.name] = attribute_type(**item_definition)
+                    else:
+                        kwargs[field.name] = item_definition
             return decorated_class(**kwargs)
 
         fromdict.__annotations__["return"] = decorated_class
