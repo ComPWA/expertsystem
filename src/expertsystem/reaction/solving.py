@@ -14,6 +14,7 @@ import inspect
 import logging
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from copy import copy
 from typing import (
     Any,
     Callable,
@@ -97,7 +98,7 @@ class GraphElementProperties:
 
 
 @attr.s(frozen=True)
-class ProblemSet:
+class QNProblemSet:
     """Particle reaction problem set, defined as a graph like data structure.
 
     initial_facts
@@ -260,7 +261,7 @@ class Solver(ABC):
     """Interface of a Solver."""
 
     @abstractmethod
-    def find_solutions(self, problem_set: ProblemSet) -> QNResult:
+    def find_solutions(self, problem_set: QNProblemSet) -> QNResult:
         """Find solutions for the given input.
 
         It is expected that this function determines and returns all of the
@@ -306,12 +307,13 @@ def _merge_particle_candidates_with_solutions(
             new_solutions_temp = []
             for current_new_solution in current_new_solutions:
                 for particle_edge in particle_edges:
-                    particle_edge.update(
+                    new_edge_qns = copy(particle_edge)
+                    new_edge_qns.update(
                         solution.edge_quantum_numbers[int_edge_id]
                     )
                     temp_solution = attr.evolve(
                         current_new_solution,
-                        edge_quantum_numbers={int_edge_id: particle_edge},
+                        edge_quantum_numbers={int_edge_id: new_edge_qns},
                     )
                     new_solutions_temp.append(temp_solution)
             current_new_solutions = new_solutions_temp
@@ -348,7 +350,7 @@ def __is_sub_mapping(
     return True
 
 
-def validate_full_solution(problem_set: ProblemSet) -> QNResult:
+def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
     # pylint: disable=too-many-locals
     logging.debug("validating graph...")
 
@@ -542,7 +544,7 @@ class CSPSolver(Solver):
         self.__allowed_intermediate_particles = allowed_intermediate_particles
         self.__scoresheet = Scoresheet()
 
-    def find_solutions(self, problem_set: ProblemSet) -> QNResult:
+    def find_solutions(self, problem_set: QNProblemSet) -> QNResult:
         # pylint: disable=too-many-locals
         self.__initialize_constraints(problem_set)
         solutions = self.__problem.getSolutions()
@@ -599,7 +601,7 @@ class CSPSolver(Solver):
                 edge_props.update(problem_set.initial_facts.edge_props)
                 result.extend(
                     validate_full_solution(
-                        ProblemSet(
+                        QNProblemSet(
                             topology=problem_set.topology,
                             initial_facts=GraphElementProperties(
                                 node_props=node_props,
@@ -636,7 +638,7 @@ class CSPSolver(Solver):
         self.__problem = Problem(BacktrackingSolver(True))
         self.__scoresheet = Scoresheet()
 
-    def __initialize_constraints(self, problem_set: ProblemSet) -> None:
+    def __initialize_constraints(self, problem_set: QNProblemSet) -> None:
         """Initialize all of the constraints for this graph.
 
         For each interaction node a set of independent constraints/conservation
@@ -776,7 +778,7 @@ class CSPSolver(Solver):
         self,
         node_id: int,
         qn_list: Set[Type[NodeQuantumNumber]],
-        problem_set: ProblemSet,
+        problem_set: QNProblemSet,
     ) -> Tuple[Set[_NodeVariableInfo], GraphNodePropertyMap]:
         """Create variables for the quantum numbers of the specified node.
 
@@ -809,7 +811,7 @@ class CSPSolver(Solver):
         self,
         edge_ids: Sequence[int],
         qn_list: Set[Type[EdgeQuantumNumber]],
-        problem_set: ProblemSet,
+        problem_set: QNProblemSet,
     ) -> Tuple[Set[_EdgeVariableInfo], Dict[int, GraphEdgePropertyMap]]:
         """Create variables for the quantum numbers of the specified edges.
 
@@ -1106,7 +1108,7 @@ class _ConservationRuleConstraintWrapper(Constraint):
                 ] = (element_id, qn_type)
                 if element_id not in container:
                     container[element_id] = {}
-                container[element_id].update({qn_type: None})
+                container[element_id].update({qn_type: None})  # type: ignore
 
         _initialize_edge_container(
             variables.ingoing_edge_variables,
@@ -1120,7 +1122,7 @@ class _ConservationRuleConstraintWrapper(Constraint):
         )
         # and now interaction node variables
         for var_info in variables.node_variables:
-            self.__node_qns[var_info[1]] = None
+            self.__node_qns[var_info[1]] = None  # type: ignore
             self.__var_string_to_data[
                 _create_variable_string(*var_info)
             ] = var_info

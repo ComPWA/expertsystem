@@ -1,11 +1,16 @@
 # pylint: disable=protected-access
+from copy import deepcopy
+
 import pytest
 
 from expertsystem.particle import Particle
-from expertsystem.reaction import InteractionTypes, StateTransitionManager
+from expertsystem.reaction import (
+    InteractionTypes,
+    ProblemSet,
+    StateTransitionManager,
+)
 from expertsystem.reaction._system_control import (
     CompareGraphNodePropertiesFunctor,
-    create_edge_properties,
     filter_graphs,
     remove_duplicate_solutions,
     require_interaction_property,
@@ -250,6 +255,14 @@ class TestSolutionFilter:  # pylint: disable=no-self-use
         assert len(filtered_graphs) == result
 
 
+def _create_graph(problem_set: ProblemSet):
+    return StateTransitionGraph[ParticleWithSpin](
+        topology=problem_set.topology,
+        node_props=problem_set.initial_facts.node_props,
+        edge_props=problem_set.initial_facts.edge_props,
+    )
+
+
 @pytest.mark.parametrize(
     "initial_state,final_state",
     [
@@ -270,8 +283,10 @@ def test_edge_swap(particle_database, initial_state, final_state):
     )
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
 
-    topology_graphs = stm.__build_topologies()
-    init_graphs = stm._create_seed_graphs(topology_graphs)
+    problem_sets = stm.create_problem_sets()
+    init_graphs = []
+    for _, problem_set_list in problem_sets.items():
+        init_graphs.extend([_create_graph(x) for x in problem_set_list])
 
     for graph in init_graphs:
         ref_mapping = _create_edge_id_particle_mapping(
@@ -280,10 +295,10 @@ def test_edge_swap(particle_database, initial_state, final_state):
         edge_keys = list(ref_mapping.keys())
         edge1 = edge_keys[0]
         edge1_val = graph.edges[edge1]
-        edge1_props = graph.get_edge_props(edge1)
+        edge1_props = deepcopy(graph.get_edge_props(edge1))
         edge2 = edge_keys[1]
         edge2_val = graph.edges[edge2]
-        edge2_props = graph.get_edge_props(edge2)
+        edge2_props = deepcopy(graph.get_edge_props(edge2))
         graph.swap_edges(edge1, edge2)
         assert graph.edges[edge1] == edge2_val
         assert graph.edges[edge2] == edge1_val
@@ -315,8 +330,10 @@ def test_match_external_edges(particle_database, initial_state, final_state):
 
     stm.set_allowed_interaction_types([InteractionTypes.Strong])
 
-    topology_graphs = stm._build_topologies()
-    init_graphs = stm._create_seed_graphs(topology_graphs)
+    problem_sets = stm.create_problem_sets()
+    init_graphs = []
+    for _, problem_set_list in problem_sets.items():
+        init_graphs.extend([_create_graph(x) for x in problem_set_list])
 
     match_external_edges(init_graphs)
 
@@ -389,9 +406,11 @@ def test_external_edge_identical_particle_combinatorics(
     for group in final_state_groupings:
         stm.add_final_state_grouping(group)
 
-    topology_graphs = stm._build_topologies()
+    problem_sets = stm.create_problem_sets()
 
-    init_graphs = stm._create_seed_graphs(topology_graphs)
+    init_graphs = []
+    for _, problem_set_list in problem_sets.items():
+        init_graphs.extend([_create_graph(x) for x in problem_set_list])
 
     match_external_edges(init_graphs)
 

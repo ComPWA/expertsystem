@@ -61,9 +61,9 @@ def test_parity_prefactor(
     )
     stm.add_final_state_grouping(test_input.final_state_grouping)
     stm.set_allowed_interaction_types([InteractionTypes.EM])
-    graph_interaction_settings_groups = stm.prepare_graphs()
+    problem_sets = stm.create_problem_sets()
 
-    result = stm.find_solutions(graph_interaction_settings_groups)
+    result = stm.find_solutions(problem_sets)
 
     for solution in result.solutions:
         in_edge = [

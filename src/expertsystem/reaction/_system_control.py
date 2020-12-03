@@ -7,7 +7,7 @@ from typing import Callable, Dict, List, Optional, Set, Tuple, Type
 
 import attr
 
-from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
+from expertsystem.particle import Parity, Particle, ParticleCollection
 from expertsystem.reaction.quantum_numbers import (
     EdgeQuantumNumber,
     EdgeQuantumNumbers,
@@ -97,41 +97,30 @@ def create_node_properties(
 def create_particle(
     edge_props: GraphEdgePropertyMap, particles: ParticleCollection
 ) -> ParticleWithSpin:
-    particle_kwargs = {}
-    spin_magnitude = None
-    spin_projection = None
-    isospin_magnitude = None
-    isospin_projection = None
+    """Create a Particle with spin projection from a qn dictionary.
 
-    for qn_type, qn_value in edge_props.items():
-        if qn_type == EdgeQuantumNumbers.spin_magnitude:
-            spin_magnitude = qn_value
-        elif qn_type == EdgeQuantumNumbers.spin_projection:
-            spin_projection = qn_value
-        elif qn_type == EdgeQuantumNumbers.isospin_magnitude:
-            isospin_magnitude = qn_value
-        elif qn_type == EdgeQuantumNumbers.isospin_projection:
-            isospin_projection = qn_value
-        else:
-            particle_kwargs[qn_type.__name__] = qn_value
+    The implementation assumes the edge properties match the attributes of a
+    particle inside the `.ParticleCollection`.
 
-    if isospin_magnitude is not None and isospin_projection is not None:
-        particle_kwargs["isospin"] = Spin(  # type: ignore
-            isospin_magnitude, isospin_projection
-        )
-    if spin_magnitude is None:
-        raise ValueError(
-            "GraphEdgePropertyMap does not contain a spin magnitude!"
-        )
-    particle_kwargs["spin"] = spin_magnitude
-    particle_kwargs["name"] = particles.find(particle_kwargs["pid"]).name
+    Args:
+        edge_props: The quantum number dictionary.
+        particles: A `.ParticleCollection` which is used to retrieve a
+          reference particle instance to lower the memory footprint.
 
-    if spin_projection is None:
+    Raises:
+        KeyError: If the edge properties do not contain the pid information or
+          no particle with the same pid is found in the `.ParticleCollection`.
+        ValueError: If the edge properties do not contain spin projection info.
+
+    """
+    particle = particles.find(int(edge_props[EdgeQuantumNumbers.pid]))
+    if EdgeQuantumNumbers.spin_projection not in edge_props:
         raise ValueError(
             "GraphEdgePropertyMap does not contain a spin projection!"
         )
+    spin_projection = edge_props[EdgeQuantumNumbers.spin_projection]
 
-    return (Particle(**particle_kwargs), spin_projection)  # type: ignore
+    return (particle, spin_projection)
 
 
 def create_interaction_properties(

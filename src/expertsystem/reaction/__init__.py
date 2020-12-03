@@ -60,7 +60,9 @@ from ._system_control import (
     CompareGraphNodePropertiesFunctor,
     GammaCheck,
     InteractionDeterminator,
-    InteractionTypes,
+)
+from ._system_control import InteractionTypes as _IntTypes
+from ._system_control import (
     LeptonCheck,
     create_edge_properties,
     create_interaction_properties,
@@ -86,7 +88,7 @@ from .solving import (
     GraphElementProperties,
     GraphSettings,
     NodeSettings,
-    ProblemSet,
+    QNProblemSet,
     QNResult,
     Rule,
     validate_full_solution,
@@ -97,6 +99,8 @@ from .topology import (
     StateTransitionGraph,
     Topology,
 )
+
+InteractionTypes = _IntTypes
 
 
 class SolvingMode(Enum):
@@ -109,7 +113,10 @@ class SolvingMode(Enum):
 
 
 class Result:
-    """Defines a result to a problem set processed by the solving code."""
+    """Defines a result of a `.ProblemSet`.
+
+    Returned by the `.StateTransitionManager`.
+    """
 
     # pylint: disable=too-many-arguments
     def __init__(
@@ -222,7 +229,7 @@ class Result:
             if x
         ]
 
-    def __get_first_graph(self) -> StateTransitionGraph:
+    def __get_first_graph(self) -> StateTransitionGraph[ParticleWithSpin]:
         if len(self.solutions) == 0:
             raise ValueError(
                 f"No solutions in {self.__class__.__name__} object"
@@ -268,7 +275,9 @@ class Result:
                     new_edge_props[edge_id] = edge_props[0]
             inventory.append(
                 StateTransitionGraph[Particle](
-                    topology=Topology(nodes=graph.nodes, edges=graph.edges),
+                    topology=Topology(
+                        nodes=set(graph.nodes), edges=graph.edges
+                    ),
                     node_props={
                         i: node_props
                         for i, node_props in zip(
@@ -345,7 +354,7 @@ class Result:
                 inventory.append(
                     StateTransitionGraph[ParticleCollection](
                         topology=Topology(
-                            nodes=graph.nodes, edges=graph.edges
+                            nodes=set(graph.nodes), edges=graph.edges
                         ),
                         node_props={
                             i: graph.get_node_props(i) for i in graph.nodes
@@ -360,6 +369,23 @@ class Result:
 class InitialFacts:
     edge_props: Dict[int, ParticleWithSpin] = attr.ib(factory=dict)
     node_props: Dict[int, InteractionProperties] = attr.ib(factory=dict)
+
+
+@attr.s
+class ProblemSet:
+    """Particle reaction problem set, defined as a graph like data structure.
+
+    Args:
+        topology: `~.Topology` that contains the structure of the reaction.
+        initial_facts: `~.InitialFacts` that contain the info of initial and
+          final state in connection with the topology.
+        solving_settings: Solving related settings such as the conservation
+          rules and the quantum number domains.
+    """
+
+    topology: Topology = attr.ib()
+    initial_facts: InitialFacts = attr.ib()
+    solving_settings: GraphSettings = attr.ib()
 
 
 def _group_by_strength(
@@ -559,9 +585,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                     [
                         ProblemSet(
                             topology=topology,
-                            initial_facts=_convert_to_graph_props(
-                                initial_facts
-                            ),
+                            initial_facts=initial_facts,
                             solving_settings=x,
                         )
                         for x in self.__determine_graph_settings(
@@ -685,19 +709,30 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             logging.info(f"{len(problems)} entries in this group")
             logging.info(f"running with {self.number_of_threads} threads...")
 
-            temp_results: List[Result] = []
+            qn_problems = [_convert_to_qn_problem_set(x) for x in problems]
+
+            # Because of pickling problems of Generic classes (in this case
+            # StateTransitionGraph), multithreaded code has to work with
+            # QNProblemSet's and QNResult's. So the appropriate conversions
+            # have to be done before and after
+            temp_qn_results: List[Tuple[QNProblemSet, QNResult]] = []
             if self.number_of_threads > 1:
                 with Pool(self.number_of_threads) as pool:
-                    for result in pool.imap_unordered(
-                        self._solve, problems, 1
+                    for qn_result in pool.imap_unordered(
+                        self._solve, qn_problems, 1
                     ):
-                        temp_results.append(result)
+                        temp_qn_results.append(qn_result)
                         progress_bar.update()
             else:
-                for problem in problems:
-                    temp_results.append(self._solve(problem))
+                for problem in qn_problems:
+                    temp_qn_results.append(self._solve(problem))
                     progress_bar.update()
-            for temp_result in temp_results:
+            for temp_qn_result in temp_qn_results:
+                temp_result = _convert_result(
+                    temp_qn_result[0].topology,
+                    temp_qn_result[1],
+                    self.__particles,
+                )
                 if strength not in results:
                     results[strength] = temp_result
                 else:
@@ -737,24 +772,21 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             formalism_type=self.formalism_type,
         )
 
-    def _solve(self, problem_set: ProblemSet) -> Result:
+    def _solve(
+        self, qn_problem_set: QNProblemSet
+    ) -> Tuple[QNProblemSet, QNResult]:
         solver = CSPSolver(self.__allowed_intermediate_particles)
 
-        qn_result = solver.find_solutions(problem_set)
-
-        return _convert_result(
-            problem_set.topology, qn_result, self.__particles
-        )
+        return (qn_problem_set, solver.find_solutions(qn_problem_set))
 
 
 def _convert_result(
     topology: Topology, qn_result: QNResult, particles: ParticleCollection
 ) -> Result:
-    """Converts a `.QNResult` with a `.Topology` into a `.Result.
+    """Converts a `.QNResult` with a `.Topology` into a `.Result`.
 
-    There is currently a ParticleCollection that has to be handed through in
-    order to retrieve the Particle name from a pid. This has to be fixed nicely
-    in the future!
+    The ParticleCollection is used to retrieve a particle instance reference to
+    lower the memory footprint.
     """
     solutions = []
     for solution in qn_result.solutions:
@@ -783,19 +815,25 @@ def _convert_result(
     )
 
 
-def _convert_to_graph_props(
-    initial_facts: InitialFacts,
-) -> GraphElementProperties:
+def _convert_to_qn_problem_set(
+    problem_set: ProblemSet,
+) -> QNProblemSet:
     node_props = {
         k: create_node_properties(v)
-        for k, v in initial_facts.node_props.items()
+        for k, v in problem_set.initial_facts.node_props.items()
     }
     edge_props = {
         k: create_edge_properties(v[0], v[1])
-        for k, v in initial_facts.edge_props.items()
+        for k, v in problem_set.initial_facts.edge_props.items()
     }
 
-    return GraphElementProperties(node_props=node_props, edge_props=edge_props)
+    return QNProblemSet(
+        topology=problem_set.topology,
+        initial_facts=GraphElementProperties(
+            node_props=node_props, edge_props=edge_props
+        ),
+        solving_settings=problem_set.solving_settings,
+    )
 
 
 def check_reaction_violations(
@@ -831,19 +869,21 @@ def check_reaction_violations(
         edge_rules: Dict[int, Set[GraphElementRule]],
     ) -> QNResult:
         return validate_full_solution(
-            ProblemSet(
-                topology=topology,
-                initial_facts=_convert_to_graph_props(facts),
-                solving_settings=GraphSettings(
-                    node_settings={
-                        i: NodeSettings(conservation_rules=rules)
-                        for i, rules in node_rules.items()
-                    },
-                    edge_settings={
-                        i: EdgeSettings(conservation_rules=rules)
-                        for i, rules in edge_rules.items()
-                    },
-                ),
+            _convert_to_qn_problem_set(
+                ProblemSet(
+                    topology=topology,
+                    initial_facts=facts,
+                    solving_settings=GraphSettings(
+                        node_settings={
+                            i: NodeSettings(conservation_rules=rules)
+                            for i, rules in node_rules.items()
+                        },
+                        edge_settings={
+                            i: EdgeSettings(conservation_rules=rules)
+                            for i, rules in edge_rules.items()
+                        },
+                    ),
+                )
             )
         )
 
