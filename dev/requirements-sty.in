@@ -1,5 +1,5 @@
--r ../requirements.txt
--r test.txt  # for pytest type hints
+# -r requirements.txt
+# -r requirements-test.txt  # for pytest type hints
 
 pre-commit >= 1.4.0
 
