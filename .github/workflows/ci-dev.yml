@@ -23,7 +23,7 @@ jobs:
         python-version:
           - 3.8
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@master
         with:
@@ -57,11 +57,31 @@ jobs:
             -r dev/${{ matrix.python-version }}/requirements-sty.txt \
             dev/requirements-dev.in \
             -o dev/${{ matrix.python-version }}/requirements-dev.txt
-      - name: Push updated requirements files
-        run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dev/${{ matrix.python-version }}
-          git commit -m "ci: upgrade dependencies for Python ${{ matrix.python-version }}"
-          git pull
-          git push
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.python-version }}
+          path: dev/${{ matrix.python-version }}
+          # dev* maintains path hierarchy:
+          # https://github.com/actions/upload-artifact#upload-using-multiple-paths-and-exclusions
+
+  push:
+    name: Push updated requirements files
+    runs-on: ubuntu-18.04
+    needs:
+      - requirements
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          path: dev
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: dev
+      - run: git status -s
+      - uses: EndBug/add-and-commit@v5
+        with:
+          author_name: GitHub Action
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
+          message: "ci: upgrade developer dependencies"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
