@@ -6,6 +6,8 @@ reaction. The `solving` submodule is responsible for finding solutions for
 particle reaction problems.
 """
 
+# pylint: disable=duplicate-code,too-many-lines
+
 import logging
 import multiprocessing
 from collections import defaultdict
@@ -52,17 +54,10 @@ from expertsystem.reaction.conservation_rules import (
     spin_magnitude_conservation,
 )
 
-from ._default_settings import (
-    DEFAULT_PARTICLE_LIST_PATH,
-    create_default_interaction_settings,
-)
 from ._system_control import (
     CompareGraphNodePropertiesFunctor,
     GammaCheck,
     InteractionDeterminator,
-)
-from ._system_control import InteractionTypes as _IntTypes
-from ._system_control import (
     LeptonCheck,
     create_edge_properties,
     create_interaction_properties,
@@ -75,6 +70,11 @@ from .combinatorics import (
     StateDefinition,
     create_initial_facts,
     match_external_edges,
+)
+from .default_settings import (
+    DEFAULT_PARTICLE_LIST_PATH,
+    InteractionTypes,
+    create_default_interaction_settings,
 )
 from .quantum_numbers import (
     InteractionProperties,
@@ -100,8 +100,6 @@ from .topology import (
     Topology,
 )
 
-InteractionTypes = _IntTypes
-
 
 class SolvingMode(Enum):
     """Types of modes for solving."""
@@ -115,7 +113,7 @@ class SolvingMode(Enum):
 class Result:
     """Defines a result of a `.ProblemSet`.
 
-    Returned by the `.StateTransitionManager`.
+    Returned by the `.StateTransitionManager`
     """
 
     # pylint: disable=too-many-arguments
@@ -688,7 +686,8 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
     def find_solutions(
         self,
         problem_sets: Dict[float, List[ProblemSet]],
-    ) -> Result:  # pylint: disable=too-many-locals
+    ) -> Result:
+        # pylint: disable=too-many-locals
         """Check for solutions for a specific set of interaction settings."""
         results: Dict[float, Result] = {}
         logging.info(
@@ -728,10 +727,9 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                     temp_qn_results.append(self._solve(problem))
                     progress_bar.update()
             for temp_qn_result in temp_qn_results:
-                temp_result = _convert_result(
+                temp_result = self.__convert_result(
                     temp_qn_result[0].topology,
                     temp_qn_result[1],
-                    self.__particles,
                 )
                 if strength not in results:
                     results[strength] = temp_result
@@ -779,40 +777,40 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
         return (qn_problem_set, solver.find_solutions(qn_problem_set))
 
+    def __convert_result(
+        self, topology: Topology, qn_result: QNResult
+    ) -> Result:
+        """Converts a `.QNResult` with a `.Topology` into a `.Result`.
 
-def _convert_result(
-    topology: Topology, qn_result: QNResult, particles: ParticleCollection
-) -> Result:
-    """Converts a `.QNResult` with a `.Topology` into a `.Result`.
+        The ParticleCollection is used to retrieve a particle instance
+        reference to lower the memory footprint.
+        """
+        solutions = []
+        for solution in qn_result.solutions:
+            graph = StateTransitionGraph[ParticleWithSpin](
+                topology=topology,
+                node_props={
+                    i: create_interaction_properties(x)
+                    for i, x in solution.node_quantum_numbers.items()
+                },
+                edge_props={
+                    i: create_particle(x, self.__particles)
+                    for i, x in solution.edge_quantum_numbers.items()
+                },
+            )
+            graph.graph_node_properties_comparator = (
+                CompareGraphNodePropertiesFunctor()
+            )
+            solutions.append(graph)
 
-    The ParticleCollection is used to retrieve a particle instance reference to
-    lower the memory footprint.
-    """
-    solutions = []
-    for solution in qn_result.solutions:
-        graph = StateTransitionGraph[ParticleWithSpin](
-            topology=topology,
-            node_props={
-                i: create_interaction_properties(x)
-                for i, x in solution.node_quantum_numbers.items()
-            },
-            edge_props={
-                i: create_particle(x, particles)
-                for i, x in solution.edge_quantum_numbers.items()
-            },
+        return Result(
+            solutions=solutions,
+            violated_edge_rules=qn_result.violated_edge_rules,
+            violated_node_rules=qn_result.violated_node_rules,
+            not_executed_node_rules=qn_result.not_executed_node_rules,
+            not_executed_edge_rules=qn_result.not_executed_edge_rules,
+            formalism_type=self.__formalism_type,
         )
-        graph.graph_node_properties_comparator = (
-            CompareGraphNodePropertiesFunctor()
-        )
-        solutions.append(graph)
-
-    return Result(
-        solutions=solutions,
-        violated_edge_rules=qn_result.violated_edge_rules,
-        violated_node_rules=qn_result.violated_node_rules,
-        not_executed_node_rules=qn_result.not_executed_node_rules,
-        not_executed_edge_rules=qn_result.not_executed_edge_rules,
-    )
 
 
 def _convert_to_qn_problem_set(

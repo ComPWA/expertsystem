@@ -101,26 +101,28 @@ class GraphElementProperties:
 class QNProblemSet:
     """Particle reaction problem set, defined as a graph like data structure.
 
-    initial_facts
-    solving_settings
+    Args:
+      topology (`.Topology`): a topology that represent the structure of the
+        reaction
+      initial_facts (`.GraphElementProperties`): all of the known facts quantum
+        numbers of the problem
+      solving_settings (`.GraphSettings`): solving specific settings such as
+        the specific rules and variable domains for nodes and edges of the
+        topology
     """
 
     topology: Topology = attr.ib()
     initial_facts: GraphElementProperties = attr.ib()
     solving_settings: GraphSettings = attr.ib()
 
-    # def __validate(self):
-    #     """validate if initial_facts and solving settings match the topology."""
-    #     pass
-
 
 @attr.s(frozen=True)
-class _QuantumNumberSolution:
+class QuantumNumberSolution:
     node_quantum_numbers: Dict[int, GraphNodePropertyMap] = attr.ib()
     edge_quantum_numbers: Dict[int, GraphEdgePropertyMap] = attr.ib()
 
 
-def convert_violated_rules_to_names(
+def _convert_violated_rules_to_names(
     rules: Union[
         Dict[int, Set[Rule]],
         Dict[int, Set[GraphElementRule]],
@@ -140,7 +142,7 @@ def convert_violated_rules_to_names(
     return converted_dict
 
 
-def convert_non_executed_rules_to_names(
+def _convert_non_executed_rules_to_names(
     rules: Union[
         Dict[int, Set[Rule]],
         Dict[int, Set[GraphElementRule]],
@@ -170,21 +172,18 @@ class QNResult:
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        solutions: Optional[List[_QuantumNumberSolution]] = None,
+        solutions: Optional[List[QuantumNumberSolution]] = None,
         not_executed_node_rules: Optional[Dict[int, Set[str]]] = None,
         violated_node_rules: Optional[Dict[int, Set[str]]] = None,
         not_executed_edge_rules: Optional[Dict[int, Set[str]]] = None,
         violated_edge_rules: Optional[Dict[int, Set[str]]] = None,
-        formalism_type: Optional[str] = None,
     ) -> None:
         # pylint: disable=too-many-locals
         if solutions and (violated_node_rules or violated_edge_rules):
             raise ValueError(
                 "Invalid Result! Found solutions, but also violated rules."
             )
-
-        self.__formalism_type = formalism_type
-        self.__solutions: List[_QuantumNumberSolution] = list()
+        self.__solutions: List[QuantumNumberSolution] = list()
         if solutions is not None:
             self.__solutions = solutions
 
@@ -205,11 +204,7 @@ class QNResult:
             self.__violated_edge_rules = violated_edge_rules
 
     @property
-    def formalism_type(self) -> Optional[str]:
-        return self.__formalism_type
-
-    @property
-    def solutions(self) -> List[_QuantumNumberSolution]:
+    def solutions(self) -> List[QuantumNumberSolution]:
         return self.__solutions
 
     @property
@@ -228,9 +223,7 @@ class QNResult:
     def violated_edge_rules(self) -> Dict[int, Set[str]]:
         return self.__violated_edge_rules
 
-    def extend(
-        self, other_result: "QNResult", intersect_violations: bool = False
-    ) -> None:
+    def extend(self, other_result: "QNResult") -> None:
         if self.solutions or other_result.solutions:
             self.__solutions.extend(other_result.solutions)
             self.__not_executed_node_rules.clear()
@@ -245,16 +238,10 @@ class QNResult:
                 self.__not_executed_edge_rules[key].update(rules)
 
             for key, rules2 in other_result.violated_node_rules.items():
-                if intersect_violations:
-                    self.__violated_node_rules[key] &= rules2
-                else:
-                    self.__violated_node_rules[key].update(rules2)
+                self.__violated_node_rules[key].update(rules2)
 
             for key, rules2 in other_result.violated_edge_rules.items():
-                if intersect_violations:
-                    self.__violated_edge_rules[key] &= rules2
-                else:
-                    self.__violated_edge_rules[key].update(rules2)
+                self.__violated_edge_rules[key].update(rules2)
 
 
 class Solver(ABC):
@@ -270,24 +257,19 @@ class Solver(ABC):
         have to be complete.
 
         Args:
-          graph: a `.StateTransitionGraph` which contains all of the known
-            facts quantum numbers of the problem.
-          edge_settings: mapping of edge id's to `EdgeSettings`, that
-            assigns specific rules and variable domains to an edge of the graph.
-          node_settings: mapping of node id's to `NodeSettings`, that
-            assigns specific rules and variable domains to a node of the graph.
+          problem_set (`.QNProblemSet`): states a problem set
 
         Returns:
-          Result: contains possible solutions, violated rules and not executed
+          QNResult: contains possible solutions, violated rules and not executed
           rules due to requirement issues.
         """
 
 
 def _merge_particle_candidates_with_solutions(
-    solutions: List[_QuantumNumberSolution],
+    solutions: List[QuantumNumberSolution],
     topology: Topology,
     allowed_particles: List[GraphEdgePropertyMap],
-) -> List[_QuantumNumberSolution]:
+) -> List[QuantumNumberSolution]:
     merged_solutions = []
 
     logging.debug("merging solutions with graph...")
@@ -471,18 +453,18 @@ def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
     if node_violated_rules or node_not_executed_rules:
         return QNResult(
             [],
-            convert_non_executed_rules_to_names(node_not_executed_rules),
-            convert_violated_rules_to_names(node_violated_rules),
-            convert_non_executed_rules_to_names(edge_not_executed_rules),
-            convert_violated_rules_to_names(edge_violated_rules),
+            _convert_non_executed_rules_to_names(node_not_executed_rules),
+            _convert_violated_rules_to_names(node_violated_rules),
+            _convert_non_executed_rules_to_names(edge_not_executed_rules),
+            _convert_violated_rules_to_names(edge_violated_rules),
         )
     return QNResult(
         [
-            _QuantumNumberSolution(
+            QuantumNumberSolution(
                 edge_quantum_numbers=problem_set.initial_facts.edge_props,
                 node_quantum_numbers=problem_set.initial_facts.node_props,
             )
-        ]
+        ],
     )
 
 
@@ -582,7 +564,7 @@ class CSPSolver(Solver):
             )
         else:
             full_particle_solutions = [
-                _QuantumNumberSolution(
+                QuantumNumberSolution(
                     node_quantum_numbers=problem_set.initial_facts.node_props,
                     edge_quantum_numbers=problem_set.initial_facts.edge_props,
                 )
@@ -624,10 +606,10 @@ class CSPSolver(Solver):
 
         return QNResult(
             full_particle_solutions,
-            convert_non_executed_rules_to_names(node_not_executed_rules),
-            convert_violated_rules_to_names(node_not_satisfied_rules),
-            convert_non_executed_rules_to_names(edge_not_executed_rules),
-            convert_violated_rules_to_names(edge_not_satisfied_rules),
+            _convert_non_executed_rules_to_names(node_not_executed_rules),
+            _convert_violated_rules_to_names(node_not_satisfied_rules),
+            _convert_non_executed_rules_to_names(edge_not_executed_rules),
+            _convert_violated_rules_to_names(edge_not_satisfied_rules),
         )
 
     def __clear(self) -> None:
@@ -863,7 +845,7 @@ class CSPSolver(Solver):
     def __convert_solution_keys(
         self,
         solutions: List[Dict[str, Scalar]],
-    ) -> List[_QuantumNumberSolution]:
+    ) -> List[QuantumNumberSolution]:
         """Convert keys of CSP solutions from string to quantum number types."""
         converted_solutions = list()
         for solution in solutions:
@@ -887,7 +869,7 @@ class CSPSolver(Solver):
                         {qn_type: value}  # type: ignore
                     )
             converted_solutions.append(
-                _QuantumNumberSolution(
+                QuantumNumberSolution(
                     node_quantum_numbers, edge_quantum_numbers
                 )
             )

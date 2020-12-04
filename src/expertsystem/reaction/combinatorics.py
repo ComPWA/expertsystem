@@ -248,13 +248,13 @@ def create_initial_facts(  # pylint: disable=too-many-locals
         final_state=final_state,
         allowed_kinematic_groupings=allowed_kinematic_groupings,
     )
-    output_graphs = list()
+    edge_initial_facts = list()
     for kinematic_permutation in kinematic_permutation_graphs:
         spin_permutations = _generate_spin_permutations(
             kinematic_permutation, particles
         )
-        output_graphs.extend(spin_permutations)
-    return output_graphs
+        edge_initial_facts.extend(spin_permutations)
+    return edge_initial_facts
 
 
 def _generate_kinematic_permutations(

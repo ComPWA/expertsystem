@@ -298,6 +298,7 @@ class Topology:
 
 
 _EdgeType = TypeVar("_EdgeType")
+"""A TypeVar representing the type of edge properties."""
 
 
 class StateTransitionGraph(Generic[_EdgeType]):

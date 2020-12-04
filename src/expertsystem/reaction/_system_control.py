@@ -2,12 +2,12 @@
 
 import logging
 from abc import ABC, abstractmethod
-from enum import Enum, auto
 from typing import Callable, Dict, List, Optional, Set, Tuple, Type
 
 import attr
 
 from expertsystem.particle import Parity, Particle, ParticleCollection
+from expertsystem.reaction.default_settings import InteractionTypes
 from expertsystem.reaction.quantum_numbers import (
     EdgeQuantumNumber,
     EdgeQuantumNumbers,
@@ -28,14 +28,6 @@ Strength = float
 GraphSettingsGroups = Dict[
     Strength, List[Tuple[StateTransitionGraph, GraphSettings]]
 ]
-
-
-class InteractionTypes(Enum):
-    """Types of interactions in the form of an enumerate."""
-
-    Strong = auto()
-    EM = auto()
-    Weak = auto()
 
 
 def create_edge_properties(
@@ -110,8 +102,8 @@ def create_particle(
     Raises:
         KeyError: If the edge properties do not contain the pid information or
           no particle with the same pid is found in the `.ParticleCollection`.
-        ValueError: If the edge properties do not contain spin projection info.
 
+        ValueError: If the edge properties do not contain spin projection info.
     """
     particle = particles.find(int(edge_props[EdgeQuantumNumbers.pid]))
     if EdgeQuantumNumbers.spin_projection not in edge_props:
