@@ -162,6 +162,8 @@ def test_external_edge_initialization(
                 EdgeQuantumNumbers.muon_lepton_number: 0,
                 EdgeQuantumNumbers.tau_lepton_number: 0,
                 EdgeQuantumNumbers.parity: -1,
+                EdgeQuantumNumbers.c_parity: None,
+                EdgeQuantumNumbers.g_parity: None,
             },
         ),
         (

@@ -40,26 +40,25 @@ def create_edge_properties(
         if not qn_name.startswith("__")
     }  # Note using attr.fields does not work here because init=False
     property_map: GraphEdgePropertyMap = {}
+    isospin = None
     for qn_name, value in attr.asdict(particle).items():
-        if value is None:
-            continue
         if isinstance(value, Parity):
             value = value.value
         if qn_name in edge_qn_mapping:
             property_map[edge_qn_mapping[qn_name]] = value
         else:
             if "isospin" in qn_name:
-                property_map[
-                    EdgeQuantumNumbers.isospin_magnitude
-                ] = value.magnitude
-                property_map[
-                    EdgeQuantumNumbers.isospin_projection
-                ] = value.projection
+                isospin = value
             elif "spin" in qn_name:
                 property_map[EdgeQuantumNumbers.spin_magnitude] = value
 
     if spin_projection is not None:
         property_map[EdgeQuantumNumbers.spin_projection] = spin_projection
+    if isospin is not None:
+        property_map[EdgeQuantumNumbers.isospin_magnitude] = isospin.magnitude
+        property_map[
+            EdgeQuantumNumbers.isospin_projection
+        ] = isospin.projection
     return property_map
 
 

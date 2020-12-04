@@ -322,8 +322,6 @@ def __is_sub_mapping(
     qn_state: GraphEdgePropertyMap, reference_qn_state: GraphEdgePropertyMap
 ) -> bool:
     for qn_type, qn_value in qn_state.items():
-        if qn_value is None:
-            continue
         if qn_type is EdgeQuantumNumbers.spin_projection:
             continue
         if qn_type not in reference_qn_state:
