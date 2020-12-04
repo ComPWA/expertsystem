@@ -23,13 +23,21 @@ from typing import (
     Union,
 )
 
+import attr
+
 from expertsystem.particle import Particle, ParticleCollection
 
-from .quantum_numbers import ParticleWithSpin
+from .quantum_numbers import InteractionProperties, ParticleWithSpin
 from .topology import StateTransitionGraph, Topology
 
 StateWithSpins = Tuple[str, Sequence[float]]
 StateDefinition = Union[str, StateWithSpins]
+
+
+@attr.s(frozen=True)
+class InitialFacts:
+    edge_props: Dict[int, ParticleWithSpin] = attr.ib(factory=dict)
+    node_props: Dict[int, InteractionProperties] = attr.ib(factory=dict)
 
 
 class _KinematicRepresentation:
@@ -226,7 +234,7 @@ def create_initial_facts(  # pylint: disable=too-many-locals
     final_state_groupings: Optional[
         Union[List[List[List[str]]], List[List[str]], List[str]]
     ] = None,
-) -> List[Dict[int, ParticleWithSpin]]:
+) -> List[InitialFacts]:
     def embed_in_list(some_list: List[Any]) -> List[List[Any]]:
         if not isinstance(some_list[0], list):
             return [some_list]
@@ -253,7 +261,9 @@ def create_initial_facts(  # pylint: disable=too-many-locals
         spin_permutations = _generate_spin_permutations(
             kinematic_permutation, particles
         )
-        edge_initial_facts.extend(spin_permutations)
+        edge_initial_facts.extend(
+            [InitialFacts(edge_props=x) for x in spin_permutations]
+        )
     return edge_initial_facts
 
 

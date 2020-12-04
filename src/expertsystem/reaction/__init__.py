@@ -67,6 +67,7 @@ from ._system_control import (
     remove_duplicate_solutions,
 )
 from .combinatorics import (
+    InitialFacts,
     StateDefinition,
     create_initial_facts,
     match_external_edges,
@@ -363,12 +364,6 @@ class Result:
         return inventory
 
 
-@attr.s(frozen=True)
-class InitialFacts:
-    edge_props: Dict[int, ParticleWithSpin] = attr.ib(factory=dict)
-    node_props: Dict[int, InteractionProperties] = attr.ib(factory=dict)
-
-
 @attr.s
 class ProblemSet:
     """Particle reaction problem set, defined as a graph like data structure.
@@ -602,8 +597,6 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         return all_graphs
 
     def __create_initial_facts(self, topology: Topology) -> List[InitialFacts]:
-        # initialize the graph edges (initial and final state)
-
         initial_facts = create_initial_facts(
             topology=topology,
             particles=self.__particles,
@@ -613,7 +606,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         )
 
         logging.info(f"initialized {len(initial_facts)} graphs!")
-        return [InitialFacts(edge_props=x) for x in initial_facts]
+        return initial_facts
 
     def __determine_graph_settings(
         self, topology: Topology, initial_facts: InitialFacts
@@ -957,15 +950,12 @@ def check_reaction_violations(
     topology = create_n_body_topology()
     node_id = next(iter(topology.nodes))
 
-    initial_facts = [
-        InitialFacts(edge_props=x)
-        for x in create_initial_facts(
-            topology=topology,
-            particles=load_default_particles(),
-            initial_state=initial_state,
-            final_state=final_state,
-        )
-    ]
+    initial_facts = create_initial_facts(
+        topology=topology,
+        particles=load_default_particles(),
+        initial_state=initial_state,
+        final_state=final_state,
+    )
 
     check_pure_edge_rules()
     violations = check_edge_qn_conservation()
