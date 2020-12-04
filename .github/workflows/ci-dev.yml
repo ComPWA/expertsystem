@@ -39,23 +39,23 @@ jobs:
           pip-compile --upgrade \
             -o dev/${{ matrix.python-version }}/requirements.txt
           pip-compile --upgrade \
-            -r dev/${{ matrix.python-version }}/requirements.txt \
+            setup.py \
             dev/requirements-doc.in \
             -o dev/${{ matrix.python-version }}/requirements-doc.txt
           pip-compile --upgrade \
-            -r dev/${{ matrix.python-version }}/requirements.txt \
+            setup.py \
             dev/requirements-test.in \
             -o dev/${{ matrix.python-version }}/requirements-test.txt
           pip-compile --upgrade \
-            -r dev/${{ matrix.python-version }}/requirements.txt \
-            -r dev/${{ matrix.python-version }}/requirements-test.txt \
+            setup.py \
+            dev/requirements-test.in \
             dev/requirements-sty.in \
             -o dev/${{ matrix.python-version }}/requirements-sty.txt
           pip-compile --upgrade \
-            -r dev/${{ matrix.python-version }}/requirements.txt \
-            -r dev/${{ matrix.python-version }}/requirements-doc.txt \
-            -r dev/${{ matrix.python-version }}/requirements-test.txt \
-            -r dev/${{ matrix.python-version }}/requirements-sty.txt \
+            setup.py \
+            dev/requirements-doc.in \
+            dev/requirements-test.in \
+            dev/requirements-sty.in \
             dev/requirements-dev.in \
             -o dev/${{ matrix.python-version }}/requirements-dev.txt
       - uses: actions/upload-artifact@v2
