@@ -65,7 +65,7 @@ jobs:
           # https://github.com/actions/upload-artifact#upload-using-multiple-paths-and-exclusions
 
   push:
-    name: Push updated requirements files
+    name: Make a PR for updated requirements files
     runs-on: ubuntu-18.04
     needs:
       - requirements
@@ -74,16 +74,21 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: dev
-      - name: Commit and push changes
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "ci: upgrade developer dependencies"
+          committer: GitHub <noreply@github.com>
+          author:
+            ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          assignees: ${{ github.actor }}
+          reviewers: ${{ github.actor }}
+          title: "ci: upgrade dependencies"
+          labels: |
+            🖱️ DX
+            🔨 Maintenance
+
+      - name: Print PR info
         run: |
-          git remote set-url origin ${GITHUB_SERVER_URL}/${{ github.event.pull_request.head.repo.full_name }}
-          git config --global user.name ${{ github.actor }}
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git checkout -b ${GITHUB_HEAD_REF}
-          git add dev/*/requirements*.txt
-          git commit -m "ci: upgrade developer dependencies"
-          git config pull.rebase true
-          git pull origin ${GITHUB_HEAD_REF}
-          git push origin HEAD:${GITHUB_HEAD_REF}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
