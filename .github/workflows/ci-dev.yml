@@ -86,7 +86,7 @@ jobs:
           git add dev/*/requirements*.txt
           git commit -m "ci: upgrade developer dependencies"
           git config pull.rebase true
-          git pull origin ${GITHUB_REF}
-          git push origin HEAD:${GITHUB_REF}
+          git pull origin ${GITHUB_HEAD_REF}
+          git push origin HEAD:${GITHUB_HEAD_REF}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
