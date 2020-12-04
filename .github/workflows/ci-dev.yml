@@ -4,7 +4,7 @@ name: CI-dev
 
 on:
   push:
-    branches: [master]
+    branches: [requirements-python-36-38]
 
 jobs:
   requirements:
