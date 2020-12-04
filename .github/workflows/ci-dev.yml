@@ -79,6 +79,7 @@ jobs:
         working-directory: dev
       - run: git status -s
       - run: |
+          git remote set-url origin ${GITHUB_SERVER_URL}/${{ github.event.pull_request.head.repo.full_name }}
           git config --global user.name "GitHub Action"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b $GITHUB_HEAD_REF
