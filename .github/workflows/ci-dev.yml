@@ -5,6 +5,13 @@ name: CI-dev
 on:
   push:
     branches: [master]
+  pull_request:
+    branches: [master]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
 jobs:
   requirements:
@@ -54,33 +61,3 @@ jobs:
         with:
           name: ${{ matrix.python-version }}
           path: dev/${{ matrix.python-version }}
-  push:
-    name: Make a PR for updated requirements files
-    runs-on: ubuntu-18.04
-    needs:
-      - requirements
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          path: dev
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          commit-message: "ci: upgrade developer dependencies"
-          committer: GitHub <noreply@github.com>
-          author:
-            ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          title: "ci: upgrade developer dependencies"
-          assignees: ${{ github.actor }}
-          reviewers: ${{ github.actor }}
-          labels: |
-            🖱️ DX
-            🔨 Maintenance
-          branch-suffix: timestamp
-          delete-branch: true
-
-      - name: Print PR info
-        run: |
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
