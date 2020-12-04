@@ -11,6 +11,7 @@ from expertsystem.reaction import (
 )
 from expertsystem.reaction._system_control import (
     CompareGraphNodePropertiesFunctor,
+    create_edge_properties,
     filter_graphs,
     remove_duplicate_solutions,
     require_interaction_property,
@@ -22,6 +23,7 @@ from expertsystem.reaction.combinatorics import (
     perform_external_edge_identical_particle_combinatorics,
 )
 from expertsystem.reaction.quantum_numbers import (
+    EdgeQuantumNumbers,
     InteractionProperties,
     NodeQuantumNumbers,
 )
@@ -112,11 +114,92 @@ def test_external_edge_initialization(
 
 
 @pytest.mark.parametrize(
-    "particle, spin_projection",
-    [],
+    "particle_name, spin_projection, expected_properties",
+    [
+        (
+            "pi0",
+            0,
+            {
+                EdgeQuantumNumbers.pid: 111,
+                EdgeQuantumNumbers.mass: 0.1349768,
+                EdgeQuantumNumbers.width: 7.73e-09,
+                EdgeQuantumNumbers.spin_magnitude: 0.0,
+                EdgeQuantumNumbers.spin_projection: 0,
+                EdgeQuantumNumbers.charge: 0,
+                EdgeQuantumNumbers.isospin_magnitude: 1.0,
+                EdgeQuantumNumbers.isospin_projection: 0.0,
+                EdgeQuantumNumbers.strangeness: 0,
+                EdgeQuantumNumbers.charmness: 0,
+                EdgeQuantumNumbers.bottomness: 0,
+                EdgeQuantumNumbers.topness: 0,
+                EdgeQuantumNumbers.baryon_number: 0,
+                EdgeQuantumNumbers.electron_lepton_number: 0,
+                EdgeQuantumNumbers.muon_lepton_number: 0,
+                EdgeQuantumNumbers.tau_lepton_number: 0,
+                EdgeQuantumNumbers.parity: -1,
+                EdgeQuantumNumbers.c_parity: 1,
+                EdgeQuantumNumbers.g_parity: -1,
+            },
+        ),
+        (
+            "D+",  # no g and c parity
+            0,
+            {
+                EdgeQuantumNumbers.pid: 411,
+                EdgeQuantumNumbers.mass: 1.86965,
+                EdgeQuantumNumbers.width: 6.33e-13,
+                EdgeQuantumNumbers.spin_magnitude: 0.0,
+                EdgeQuantumNumbers.spin_projection: 0,
+                EdgeQuantumNumbers.charge: 1,
+                EdgeQuantumNumbers.isospin_magnitude: 0.5,
+                EdgeQuantumNumbers.isospin_projection: 0.5,
+                EdgeQuantumNumbers.strangeness: 0,
+                EdgeQuantumNumbers.charmness: 1,
+                EdgeQuantumNumbers.bottomness: 0,
+                EdgeQuantumNumbers.topness: 0,
+                EdgeQuantumNumbers.baryon_number: 0,
+                EdgeQuantumNumbers.electron_lepton_number: 0,
+                EdgeQuantumNumbers.muon_lepton_number: 0,
+                EdgeQuantumNumbers.tau_lepton_number: 0,
+                EdgeQuantumNumbers.parity: -1,
+            },
+        ),
+        (
+            "f(2)(1270)",  # spin projection 1
+            1.0,
+            {
+                EdgeQuantumNumbers.pid: 225,
+                EdgeQuantumNumbers.mass: 1.2755,
+                EdgeQuantumNumbers.width: 0.18669999999999998,
+                EdgeQuantumNumbers.spin_magnitude: 2.0,
+                EdgeQuantumNumbers.spin_projection: 1.0,
+                EdgeQuantumNumbers.charge: 0,
+                EdgeQuantumNumbers.isospin_magnitude: 0.0,
+                EdgeQuantumNumbers.isospin_projection: 0.0,
+                EdgeQuantumNumbers.strangeness: 0,
+                EdgeQuantumNumbers.charmness: 0,
+                EdgeQuantumNumbers.bottomness: 0,
+                EdgeQuantumNumbers.topness: 0,
+                EdgeQuantumNumbers.baryon_number: 0,
+                EdgeQuantumNumbers.electron_lepton_number: 0,
+                EdgeQuantumNumbers.muon_lepton_number: 0,
+                EdgeQuantumNumbers.tau_lepton_number: 0,
+                EdgeQuantumNumbers.parity: 1,
+                EdgeQuantumNumbers.c_parity: 1,
+                EdgeQuantumNumbers.g_parity: 1,
+            },
+        ),
+    ],
 )
-def test_create_edge_properties(particle, spin_projection):
-    pass
+def test_create_edge_properties(
+    particle_name, spin_projection, expected_properties, particle_database
+):
+    particle = particle_database[particle_name]
+
+    assert (
+        create_edge_properties(particle, spin_projection)
+        == expected_properties
+    )
 
 
 def make_ls_test_graph(
