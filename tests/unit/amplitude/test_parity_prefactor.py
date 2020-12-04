@@ -67,9 +67,9 @@ def test_parity_prefactor(
 
     for solution in result.solutions:
         in_edge = [
-            i
-            for i in solution.edges
-            if solution.get_edge_props(i)[0].name == ingoing_state
+            edge_id
+            for edge_id in solution.edges
+            if solution.get_edge_props(edge_id)[0].name == ingoing_state
         ]
         assert len(in_edge) == 1
         node_id = solution.edges[in_edge[0]].ending_node_id

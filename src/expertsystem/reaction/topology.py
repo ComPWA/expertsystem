@@ -49,7 +49,7 @@ class Topology:
 
     Forms the underlying topology of `StateTransitionGraph`. The graphs are
     directed, meaning the edges are ingoing and outgoing to specific nodes
-    (since feynman graphs also have a time axis)
+    (since feynman graphs also have a time axis).
     Note that a `Topology` is not strictly speaking a graph from graph theory,
     because it allows open edges, like a Feynman-diagram.
     """
@@ -409,7 +409,7 @@ class StateTransitionGraph(Generic[_EdgeType]):
     ) -> "StateTransitionGraph[_EdgeType]":
         """Changes the node and edge properties of a graph instance.
 
-        Since a `.StateTransitionGraph` is frozen (cannot by modified), the
+        Since a `.StateTransitionGraph` is frozen (cannot be modified), the
         evolve function will also create a shallow copy the properties.
         """
         new_node_props = copy.copy(self.__node_props)
