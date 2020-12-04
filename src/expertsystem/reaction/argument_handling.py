@@ -144,9 +144,9 @@ class _ValueExtractor(Generic[_ElementType]):
     def __extract(
         self, props: GraphElementPropertyMap[_ElementType]
     ) -> _ElementType:
-        # print(props, self.__obj_type)
         value = props[self.__obj_type]
-
+        if value is None:
+            return None
         if (
             "__supertype__" in self.__obj_type.__dict__
             and self.__obj_type.__supertype__ == Parity  # type: ignore
