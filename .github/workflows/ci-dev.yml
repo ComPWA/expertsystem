@@ -74,16 +74,19 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: dev
+      - name: Commit changes
+        run: |
+          git config --global user.name ${{ github.actor }}
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git checkout -b ${GITHUB_HEAD_REF}
+          git add dev/*/requirements*.txt
+          git commit -m "ci: upgrade developer dependencies"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: "ci: upgrade developer dependencies"
-          committer: GitHub <noreply@github.com>
-          author:
-            ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           assignees: ${{ github.actor }}
           reviewers: ${{ github.actor }}
-          title: "ci: upgrade dependencies"
+          title: "ci: upgrade pinned dependencies"
           labels: |
             🖱️ DX
             🔨 Maintenance
