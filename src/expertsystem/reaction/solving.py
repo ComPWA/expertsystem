@@ -41,8 +41,10 @@ from constraint import (
 
 from .argument_handling import (
     GraphEdgePropertyMap,
+    GraphEdgePropertySetMap,
     GraphElementRule,
     GraphNodePropertyMap,
+    GraphNodePropertySetMap,
     Rule,
     RuleArgumentHandler,
     Scalar,
@@ -93,8 +95,8 @@ class GraphSettings:
 
 @attr.s
 class GraphElementProperties:
-    edge_props: Dict[int, GraphEdgePropertyMap] = attr.ib(factory=dict)
-    node_props: Dict[int, GraphNodePropertyMap] = attr.ib(factory=dict)
+    edge_props: Dict[int, GraphEdgePropertySetMap] = attr.ib(factory=dict)
+    node_props: Dict[int, GraphNodePropertySetMap] = attr.ib(factory=dict)
 
 
 @attr.s(frozen=True)
@@ -306,7 +308,13 @@ def __is_sub_mapping(
     return True
 
 
-def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
+def validate_full_solution(
+    topology: Topology,
+    node_facts: Dict[int, GraphNodePropertyMap],
+    edge_facts: Dict[int, GraphEdgePropertyMap],
+    node_rules: Dict[int, Set[Rule]],
+    edge_rules: Dict[int, Set[GraphElementRule]],
+) -> QNResult:
     # pylint: disable=too-many-locals
     logging.debug("validating graph...")
 
@@ -317,8 +325,8 @@ def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
     ) -> Dict[Type[NodeQuantumNumber], Scalar]:
         """Create variables for the quantum numbers of the specified node."""
         variables = {}
-        if node_id in problem_set.initial_facts.node_props:
-            node_props = problem_set.initial_facts.node_props[node_id]
+        if node_id in node_facts:
+            node_props = node_facts[node_id]
             variables = node_props
             for qn_type in qn_list:
                 if qn_type in node_props:
@@ -337,8 +345,8 @@ def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
         """
         variables = []
         for edge_id in edge_ids:
-            if edge_id in problem_set.initial_facts.edge_props:
-                edge_props = problem_set.initial_facts.edge_props[edge_id]
+            if edge_id in edge_facts:
+                edge_props = edge_facts[edge_id]
                 edge_vars = {}
                 for qn_type in qn_list:
                     if qn_type in edge_props:
@@ -349,10 +357,8 @@ def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
     def _create_variable_containers(
         node_id: int, cons_law: Rule
     ) -> Tuple[List[dict], List[dict], dict]:
-        in_edges = problem_set.topology.get_edge_ids_ingoing_to_node(node_id)
-        out_edges = problem_set.topology.get_edge_ids_outgoing_from_node(
-            node_id
-        )
+        in_edges = topology.get_edge_ids_ingoing_to_node(node_id)
+        out_edges = topology.get_edge_ids_outgoing_from_node(node_id)
 
         edge_qns, node_qns = get_required_qns(cons_law)
         in_edges_vars = _create_edge_variables(in_edges, edge_qns)
@@ -370,10 +376,9 @@ def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
     node_not_executed_rules: Dict[int, Set[Rule]] = defaultdict(set)
     for (
         edge_id,
-        edge_settings,
-    ) in problem_set.solving_settings.edge_settings.items():
-        edge_rules = edge_settings.conservation_rules
-        for edge_rule in edge_rules:
+        edge_ruleset,
+    ) in edge_rules.items():
+        for edge_rule in edge_ruleset:
             # get the needed qns for this conservation law
             # for all edges and the node
             (
@@ -397,33 +402,32 @@ def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
 
     for (
         node_id,
-        node_settings,
-    ) in problem_set.solving_settings.node_settings.items():
-        node_rules = node_settings.conservation_rules
-        for rule in node_rules:
+        node_ruleset,
+    ) in node_rules.items():
+        for node_rule in node_ruleset:
             # get the needed qns for this conservation law
             # for all edges and the node
             (
                 check_requirements,
                 create_rule_args,
-            ) = rule_argument_handler.register_rule(rule)
+            ) = rule_argument_handler.register_rule(node_rule)
 
-            var_containers = _create_variable_containers(node_id, rule)
+            var_containers = _create_variable_containers(node_id, node_rule)
             if check_requirements(
                 var_containers[0],
                 var_containers[1],
                 var_containers[2],
             ):
-                if not rule(
+                if not node_rule(
                     *create_rule_args(
                         var_containers[0],
                         var_containers[1],
                         var_containers[2],
                     )
                 ):
-                    node_violated_rules[node_id].add(rule)
+                    node_violated_rules[node_id].add(node_rule)
             else:
-                node_not_executed_rules[node_id].add(rule)
+                node_not_executed_rules[node_id].add(node_rule)
     if node_violated_rules or node_not_executed_rules:
         return QNResult(
             [],
@@ -435,8 +439,8 @@ def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
     return QNResult(
         [
             QuantumNumberSolution(
-                edge_quantum_numbers=problem_set.initial_facts.edge_props,
-                node_quantum_numbers=problem_set.initial_facts.node_props,
+                edge_quantum_numbers=edge_facts,
+                node_quantum_numbers=node_facts,
             )
         ],
     )
@@ -485,6 +489,12 @@ class CSPSolver(Solver):
         self.__variables: Set[
             Union[_EdgeVariableInfo, _NodeVariableInfo]
         ] = set()
+        self.__fixed_node_props: Dict[int, GraphNodePropertyMap] = defaultdict(
+            dict
+        )
+        self.__fixed_edge_props: Dict[int, GraphEdgePropertyMap] = defaultdict(
+            dict
+        )
         self.__var_string_to_data: Dict[
             str, Union[_EdgeVariableInfo, _NodeVariableInfo]
         ] = {}
@@ -501,7 +511,7 @@ class CSPSolver(Solver):
         self.__scoresheet = Scoresheet()
 
     def find_solutions(self, problem_set: QNProblemSet) -> QNResult:
-        # pylint: disable=too-many-locals
+        # pylint: disable=too-many-branches, too-many-locals
         self.__initialize_constraints(problem_set)
         solutions = self.__problem.getSolutions()
 
@@ -539,8 +549,8 @@ class CSPSolver(Solver):
         else:
             full_particle_solutions = [
                 QuantumNumberSolution(
-                    node_quantum_numbers=problem_set.initial_facts.node_props,
-                    edge_quantum_numbers=problem_set.initial_facts.edge_props,
+                    node_quantum_numbers=self.__fixed_node_props,
+                    edge_quantum_numbers=self.__fixed_edge_props,
                 )
             ]
 
@@ -553,27 +563,21 @@ class CSPSolver(Solver):
             for full_particle_solution in full_particle_solutions:
                 node_props = full_particle_solution.node_quantum_numbers
                 edge_props = full_particle_solution.edge_quantum_numbers
-                node_props.update(problem_set.initial_facts.node_props)
-                edge_props.update(problem_set.initial_facts.edge_props)
+                for node_id, nprops in self.__fixed_node_props.items():
+                    node_props[node_id].update(nprops)
+                for (
+                    edge_id,
+                    fixed_edge_props,
+                ) in self.__fixed_edge_props.items():
+                    edge_props[edge_id].update(fixed_edge_props)
+
                 result.extend(
                     validate_full_solution(
-                        QNProblemSet(
-                            topology=problem_set.topology,
-                            initial_facts=GraphElementProperties(
-                                node_props=node_props,
-                                edge_props=edge_props,
-                            ),
-                            solving_settings=GraphSettings(
-                                node_settings={
-                                    i: NodeSettings(conservation_rules=rules)
-                                    for i, rules in node_not_executed_rules.items()
-                                },
-                                edge_settings={
-                                    i: EdgeSettings(conservation_rules=rules)
-                                    for i, rules in edge_not_executed_rules.items()
-                                },
-                            ),
-                        )
+                        topology=problem_set.topology,
+                        node_facts=node_props,
+                        edge_facts=edge_props,
+                        node_rules=node_not_executed_rules,
+                        edge_rules=edge_not_executed_rules,
                     )
                 )
             return result
@@ -588,6 +592,8 @@ class CSPSolver(Solver):
 
     def __clear(self) -> None:
         self.__variables = set()
+        self.__fixed_node_props = defaultdict(dict)
+        self.__fixed_edge_props = defaultdict(dict)
         self.__var_string_to_data = {}
         self.__node_rules = defaultdict(set)
         self.__edge_rules = defaultdict(set)
@@ -752,7 +758,15 @@ class CSPSolver(Solver):
             node_props = problem_set.initial_facts.node_props[node_id]
             for qn_type in qn_list:
                 if qn_type in node_props:
-                    variables[1].update({qn_type: node_props[qn_type]})
+                    values = list(node_props[qn_type])
+                    if len(values) == 1:
+                        variables[1].update({qn_type: values[0]})
+                        self.__fixed_node_props[node_id][qn_type] = values[0]
+                    else:
+                        var_info = (node_id, qn_type)
+                        self.__add_variable(var_info, values)
+                        variables[0].add(var_info)
+
         else:
             node_settings = problem_set.solving_settings.node_settings[node_id]
             for qn_type in qn_list:
@@ -790,9 +804,17 @@ class CSPSolver(Solver):
                 edge_props = problem_set.initial_facts.edge_props[edge_id]
                 for qn_type in qn_list:
                     if qn_type in edge_props:
-                        variables[1][edge_id].update(
-                            {qn_type: edge_props[qn_type]}
-                        )
+                        values = list(edge_props[qn_type])
+                        if len(values) == 1:
+                            variables[1][edge_id].update({qn_type: values[0]})
+                            self.__fixed_edge_props[edge_id][qn_type] = values[
+                                0
+                            ]
+                        else:
+                            var_info = (edge_id, qn_type)
+                            self.__add_variable(var_info, values)
+                            variables[0].add(var_info)
+
             else:
                 edge_settings = problem_set.solving_settings.edge_settings[
                     edge_id

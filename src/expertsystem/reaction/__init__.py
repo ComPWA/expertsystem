@@ -35,6 +35,7 @@ from ._system_control import (
     InteractionDeterminator,
     LeptonCheck,
     create_edge_properties,
+    create_edge_properties_set,
     create_interaction_properties,
     create_node_properties,
     create_particle,
@@ -85,6 +86,8 @@ from .solving import (
     EdgeSettings,
     GraphEdgePropertyMap,
     GraphElementProperties,
+    GraphNodePropertyMap,
+    GraphNodePropertySetMap,
     GraphSettings,
     NodeSettings,
     QNProblemSet,
@@ -549,7 +552,9 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 node_props = initial_facts.node_props[node_id]
             for int_det in self.interaction_determinators:
                 determined_interactions = int_det.check(
-                    in_edge_props, out_edge_props, node_props
+                    [x[0] for x in in_edge_props],
+                    [x[0] for x in out_edge_props],
+                    node_props,
                 )
                 if interaction_types:
                     interaction_types = list(
@@ -735,12 +740,17 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 def _convert_to_qn_problem_set(
     problem_set: ProblemSet,
 ) -> QNProblemSet:
+    def _convert_to_property_sets(
+        property_map: GraphNodePropertyMap,
+    ) -> GraphNodePropertySetMap:
+        return {k: {v} for k, v in property_map.items()}
+
     node_props = {
-        k: create_node_properties(v)
+        k: _convert_to_property_sets(create_node_properties(v))
         for k, v in problem_set.initial_facts.node_props.items()
     }
     edge_props = {
-        k: create_edge_properties(v[0], v[1])
+        k: create_edge_properties_set(v[0], set(v[1]))
         for k, v in problem_set.initial_facts.edge_props.items()
     }
 
@@ -790,22 +800,14 @@ def check_reaction_violations(
         edge_rules: Dict[int, Set[GraphElementRule]],
     ) -> QNResult:
         return validate_full_solution(
-            _convert_to_qn_problem_set(
-                ProblemSet(
-                    topology=topology,
-                    initial_facts=facts,
-                    solving_settings=GraphSettings(
-                        node_settings={
-                            i: NodeSettings(conservation_rules=rules)
-                            for i, rules in node_rules.items()
-                        },
-                        edge_settings={
-                            i: EdgeSettings(conservation_rules=rules)
-                            for i, rules in edge_rules.items()
-                        },
-                    ),
-                )
-            )
+            topology=topology,
+            node_facts={
+                k: create_node_properties(v)
+                for k, v in facts.node_props.items()
+            },
+            edge_facts=facts.edge_props,  # type: ignore
+            node_rules=node_rules,
+            edge_rules=edge_rules,
         )
 
     def check_pure_edge_rules() -> None:

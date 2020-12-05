@@ -42,6 +42,9 @@ _ElementType = TypeVar("_ElementType", EdgeQuantumNumber, NodeQuantumNumber)
 GraphElementPropertyMap = Dict[Type[_ElementType], Scalar]
 GraphEdgePropertyMap = GraphElementPropertyMap[EdgeQuantumNumber]
 GraphNodePropertyMap = GraphElementPropertyMap[NodeQuantumNumber]
+GraphElementPropertySetMap = Dict[Type[_ElementType], Set[Scalar]]
+GraphEdgePropertySetMap = GraphElementPropertySetMap[EdgeQuantumNumber]
+GraphNodePropertySetMap = GraphElementPropertySetMap[NodeQuantumNumber]
 
 
 def _is_optional(field_type: Optional[type]) -> bool:

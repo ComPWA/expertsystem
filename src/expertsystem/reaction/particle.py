@@ -20,6 +20,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    FrozenSet,
     Iterable,
     Iterator,
     Optional,
@@ -236,6 +237,7 @@ class Particle:  # pylint: disable=too-many-instance-attributes
 
 
 ParticleWithSpin = Tuple[Particle, float]
+ParticleWithSpins = Tuple[Particle, FrozenSet[float]]
 
 
 class ParticleCollection(abc.MutableSet):

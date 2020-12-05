@@ -26,9 +26,12 @@ from typing import (
 
 import attr
 
-from expertsystem.reaction.particle import Particle, ParticleCollection
-
-from .particle import ParticleWithSpin
+from .particle import (
+    Particle,
+    ParticleCollection,
+    ParticleWithSpin,
+    ParticleWithSpins,
+)
 from .quantum_numbers import InteractionProperties, arange
 from .topology import StateTransitionGraph, Topology, get_originating_node_list
 
@@ -38,7 +41,7 @@ StateDefinition = Union[str, StateWithSpins]
 
 @attr.s(frozen=True)
 class InitialFacts:
-    edge_props: Dict[int, ParticleWithSpin] = attr.ib(factory=dict)
+    edge_props: Dict[int, ParticleWithSpins] = attr.ib(factory=dict)
     node_props: Dict[int, InteractionProperties] = attr.ib(factory=dict)
 
 
@@ -260,12 +263,12 @@ def create_initial_facts(  # pylint: disable=too-many-locals
     )
     edge_initial_facts = list()
     for kinematic_permutation in kinematic_permutation_graphs:
-        spin_permutations = _generate_spin_permutations(
-            kinematic_permutation, particles
-        )
-        edge_initial_facts.extend(
-            [InitialFacts(edge_props=x) for x in spin_permutations]
-        )
+        spin_permutations = {
+            i: (particles[x[0]], frozenset(x[1]))
+            for i, x in kinematic_permutation.items()
+        }
+        edge_initial_facts.append(InitialFacts(edge_props=spin_permutations))
+
     return edge_initial_facts
 
 
@@ -369,7 +372,7 @@ def _generate_outer_edge_permutations(
             )
 
 
-def _generate_spin_permutations(
+def _generate_spin_permutations(  # pyright: reportUnusedFunction=false
     initial_facts: Dict[int, StateWithSpins],
     particle_db: ParticleCollection,
 ) -> List[Dict[int, ParticleWithSpin]]:
