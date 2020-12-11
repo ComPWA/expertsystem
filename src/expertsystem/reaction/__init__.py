@@ -8,6 +8,16 @@ particle reaction problems.
 
 # pylint: disable=duplicate-code,too-many-lines
 
+# TODO:
+# 1. Create some benchmark test and check what is the bottleneck. Somehow the
+#    change I made was not giving any performance boost. But I expected some...
+# 2. I think it would be convenient to allow ParticleWithSpins in the
+#    StateTransitionGraphs of Result.solutions. That would allow to reduce the
+#    combinatorics overhead. Check if helicity and canonical amplitude can also
+#    work nicely with this change...
+# 3. Maybe validate in solving can also allow multiple props (set of qns)
+#
+
 import logging
 import multiprocessing
 from collections import defaultdict
