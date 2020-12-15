@@ -1,15 +1,14 @@
 # cspell:ignore noreply
 
-name: CI-dev
+name: Upgrade requirements
 
 on:
-  push:
-    branches: [master]
+  schedule:
+    - cron: "0 2 * * 1"
 
 jobs:
   requirements:
-    name: Unit tests + coverage
-    if: github.event.pull_request.draft == false
+    name: Upgrade requirement files
     continue-on-error: true
     runs-on: ubuntu-18.04
     strategy:
@@ -29,14 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pip-tools
       - name: Upgrade dependencies
-        run: |
-          git fetch origin
-          [[ $(git diff origin/$GITHUB_BASE_REF --name-only --
-            dev/requirements*.in
-            dev/*/requirements*.txt
-            setup.cfg)
-          ]] &&
-            bash dev/upgrade.sh
+        run: bash dev/upgrade.sh
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.python-version }}
