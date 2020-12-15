@@ -115,6 +115,6 @@ jobs:
       - name: Perform style checks
         run: pre-commit run -a
       - name: Check spelling
-        run: cspell $(git ls-files)
+        run: cspell --no-progress $(git ls-files)
       - name: Run pyright
         run: pyright
