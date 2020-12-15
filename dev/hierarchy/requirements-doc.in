@@ -1,0 +1,7 @@
+# -r ../requirements.txt
+-r ../requirements-doc.in
+
+# Forward constraints
+-c ../requirements-test.in
+-c ../requirements-sty.in
+-c ../requirements-dev.in

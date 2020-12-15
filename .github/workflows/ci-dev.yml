@@ -35,30 +35,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pip-tools
       - name: Upgrade dependencies
-        run: |
-          mkdir -p dev/${{ matrix.python-version }}
-          pip-compile --upgrade \
-            -o dev/${{ matrix.python-version }}/requirements.txt
-          pip-compile --upgrade \
-            setup.py \
-            dev/requirements-doc.in \
-            -o dev/${{ matrix.python-version }}/requirements-doc.txt
-          pip-compile --upgrade \
-            setup.py \
-            dev/requirements-test.in \
-            -o dev/${{ matrix.python-version }}/requirements-test.txt
-          pip-compile --upgrade \
-            setup.py \
-            dev/requirements-test.in \
-            dev/requirements-sty.in \
-            -o dev/${{ matrix.python-version }}/requirements-sty.txt
-          pip-compile --upgrade \
-            setup.py \
-            dev/requirements-doc.in \
-            dev/requirements-test.in \
-            dev/requirements-sty.in \
-            dev/requirements-dev.in \
-            -o dev/${{ matrix.python-version }}/requirements-dev.txt
+        run: bash dev/upgrade.sh
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.python-version }}

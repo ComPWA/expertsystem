@@ -1,0 +1,5 @@
+# -r ../requirements.txt
+# -r ../requirements-doc.txt
+# -r ../requirements-test.txt
+# -r ../requirements-sty.txt
+-r ../requirements-dev.in

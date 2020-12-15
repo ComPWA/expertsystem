@@ -1,9 +1,6 @@
-# Additional developer tools
-# -r requirements.txt
-# -r requirements-doc.txt
-# -r requirements-test.txt
-# -r requirements-sty.txt
+# https://github.com/jazzband/pip-tools/issues/625
 
+# Additional developer tools
 jupyterlab
 jupyterlab-code-formatter
 labels

@@ -1,4 +1,4 @@
-# -r requirements.txt
+# https://github.com/jazzband/pip-tools/issues/625
 
 # Requirements to build documentation
 graphviz
