@@ -38,7 +38,11 @@ jobs:
       - name: Upgrade dependencies
         run: |
           git fetch origin
-          [[ $(git diff origin/$GITHUB_BASE_REF --name-only -- dev/requirements*.in setup.cfg) ]] &&
+          [[ $(git diff origin/$GITHUB_BASE_REF --name-only --
+            dev/requirements*.in
+            dev/*/requirements*.txt
+            setup.cfg)
+          ]] &&
             bash dev/upgrade.sh
       - uses: actions/upload-artifact@v2
         with:
