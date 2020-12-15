@@ -1,4 +1,4 @@
-# cspell:ignore bdist noreply prereleased pypa sdist
+# cspell:ignore bdist noreply prereleased sdist
 
 name: CD
 
