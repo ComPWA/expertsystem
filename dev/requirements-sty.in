@@ -1,4 +1,5 @@
-# https://github.com/jazzband/pip-tools/issues/625
+-r requirements.in
+-r requirements-test.in  # for pytest type hints
 
 pre-commit >= 1.4.0
 

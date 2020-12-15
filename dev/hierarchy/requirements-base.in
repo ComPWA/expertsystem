@@ -1,7 +1,0 @@
-# Forward constraints
--c ../requirements-dev.in
--c ../requirements-doc.in
--c ../requirements-sty.in
--c ../requirements-test.in
-
--r ../requirements-base.in

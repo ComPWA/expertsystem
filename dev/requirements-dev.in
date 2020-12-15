@@ -1,4 +1,7 @@
-# https://github.com/jazzband/pip-tools/issues/625
+-r requirements.in
+-r requirements-doc.in
+-r requirements-test.in
+-r requirements-sty.in
 
 # Additional developer tools
 jupyterlab
