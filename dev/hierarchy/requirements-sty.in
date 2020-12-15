@@ -1,7 +1,7 @@
+# Forward constraints
+-c ../requirements-dev.in
+-c ../requirements-doc.in
+
 # -r ../requirements.txt
 # -r ../requirements-test.txt  # for pytest type hints
 -r ../requirements-sty.in
-
-# Forward constraints
--c ../requirements-doc.in
--c ../requirements-dev.in
