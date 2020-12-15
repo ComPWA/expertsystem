@@ -17,6 +17,7 @@ jobs:
   requirements:
     name: Unit tests + coverage
     if: github.event.pull_request.draft == false
+    continue-on-error: true
     runs-on: ubuntu-18.04
     strategy:
       matrix:
