@@ -36,7 +36,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pip-tools
       - name: Upgrade dependencies
-        run: bash dev/upgrade.sh
+        run: |
+          git fetch origin
+          [[ $(git diff origin/$GITHUB_BASE_REF --name-only -- dev/requirements*.in setup.cfg) ]] &&
+            bash dev/upgrade.sh
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.python-version }}
