@@ -48,7 +48,7 @@ identify==1.5.10          # via pre-commit
 idna==2.10                # via requests
 imagesize==1.2.0          # via sphinx
 importlib-metadata==2.1.1  # via flake8, jsonschema, myst-nb, pluggy, pre-commit, pytest, stevedore, tox, virtualenv
-importlib-resources==3.0.0 ; python_version < "3.7.0"  # via -r reqs/requirements.in, particle, pre-commit, sphinx-book-theme, sphinx-panels, virtualenv
+importlib-resources==3.0.0  # via particle, pre-commit, sphinx-book-theme, sphinx-panels, virtualenv
 iniconfig==1.1.1          # via pytest
 ipykernel==5.4.2          # via ipywidgets, jupyter, jupyter-console, notebook, qtconsole
 ipython-genutils==0.2.0   # via nbformat, notebook, qtconsole, traitlets
