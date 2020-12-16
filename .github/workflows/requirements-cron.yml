@@ -7,7 +7,7 @@ on:
     - cron: "0 2 * * 1"
 
 jobs:
-  requirements:
+  upgrade:
     name: Upgrade requirement files
     runs-on: ubuntu-18.04
     strategy:
@@ -37,7 +37,7 @@ jobs:
     name: Create PR
     runs-on: ubuntu-18.04
     needs:
-      - requirements
+      - upgrade
     steps:
       - uses: actions/checkout@v2
         with:
