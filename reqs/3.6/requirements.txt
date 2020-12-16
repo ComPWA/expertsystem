@@ -15,7 +15,7 @@ python-constraint==1.4.0  # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/re
 pyyaml==5.3.1             # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/requirements.in
 six==1.15.0               # via -c reqs/3.6/requirements-dev.txt, jsonschema
 tqdm==4.54.1              # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/requirements.in
-typing_extensions==3.7.4.3 ; python_version < "3.8.0"  # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/requirements.in
+typing-extensions==3.7.4.3 ; python_version < "3.8.0"  # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/requirements.in
 xmltodict==0.12.0         # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/requirements.in
 zipp==3.4.0               # via -c reqs/3.6/requirements-dev.txt, importlib-metadata, importlib-resources
 
