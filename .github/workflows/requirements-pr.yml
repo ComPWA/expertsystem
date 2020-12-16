@@ -32,18 +32,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pip-tools
+      - name: Fetch repository
+        run: git fetch origin
       - name: Abort if fork PR and dependency changes
         if: github.event.pull_request.head.repo.full_name != github.repository
         run: |
-          git fetch origin
-          [[ $(git diff origin/$GITHUB_BASE_REF --name-only -- reqs setup.cfg) ]] &&
+          export DEPENCY_CHANGES=$(git diff origin/$GITHUB_BASE_REF --name-only -- reqs setup.cfg)
+          [[ -n ${DEPENCY_CHANGES} ]] &&
+            echo "Dependency changes:"
+            echo ${DEPENCY_CHANGES}
             echo -e "\e[31;1mERROR: cannot modify package dependencies through a PR from a fork\e[0m" &&
             exit 1
+      - name: Return success if no dependency changes
+        run: "[[ -z ${DEPENCY_CHANGES} ]] && exit 0"
       - name: Upgrade dependencies
-        run: |
-          git fetch origin
-          [[ $(git diff origin/$GITHUB_BASE_REF --name-only -- reqs setup.cfg) ]] &&
-            bash reqs/upgrade.sh
+        run: bash reqs/upgrade.sh
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.python-version }}
