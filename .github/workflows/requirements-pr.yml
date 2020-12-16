@@ -59,6 +59,8 @@ jobs:
       - requirements
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
       - uses: actions/download-artifact@v2
         with:
           path: reqs
@@ -73,5 +75,3 @@ jobs:
           git config pull.rebase true
           git pull origin ${GITHUB_HEAD_REF}
           git push origin HEAD:${GITHUB_HEAD_REF}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
