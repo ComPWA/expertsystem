@@ -28,6 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pip-tools
       - name: Upgrade dependencies
+        id: upgrade
         run: bash reqs/upgrade.sh
       - uses: actions/upload-artifact@v2
         with:
@@ -39,6 +40,7 @@ jobs:
     runs-on: ubuntu-18.04
     needs:
       - requirements
+    if: steps.upgrade.outcome = "success"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
