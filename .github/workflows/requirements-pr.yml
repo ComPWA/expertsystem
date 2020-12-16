@@ -64,6 +64,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: reqs
+      - run: git status -s
       - name: Commit and push changes
         run: |
           git remote set-url origin ${GITHUB_SERVER_URL}/${{ github.event.pull_request.head.repo.full_name }}
