@@ -1,6 +1,6 @@
 # cspell:ignore noreply
 
-name: Check for dependency changes
+name: Requirements (PR)
 
 on:
   pull_request:
