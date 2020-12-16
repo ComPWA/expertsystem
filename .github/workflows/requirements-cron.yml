@@ -61,6 +61,7 @@ jobs:
             🔨 Maintenance
           branch-suffix: timestamp
           delete-branch: true
+          token: ${{ secrets.PAT }}
       - name: Print PR info
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
