@@ -1,6 +1,6 @@
 # cspell:ignore noreply
 
-name: Upgrade requirements
+name: Upgrade requirements (scheduled)
 
 on:
   schedule:
