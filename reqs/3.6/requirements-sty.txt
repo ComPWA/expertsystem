@@ -76,7 +76,7 @@ toml==0.10.2              # via -c reqs/3.6/requirements-dev.txt, black, pre-com
 tqdm==4.54.1              # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/requirements.in
 traitlets==4.3.3          # via -c reqs/3.6/requirements-dev.txt, jupyter-core, nbformat
 typed-ast==1.4.1          # via -c reqs/3.6/requirements-dev.txt, astroid, black, mypy
-typing-extensions==3.7.4.3 ; python_version < "3.8.0"  # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/requirements.in, black, mypy
+typing_extensions==3.7.4.3 ; python_version < "3.8.0"  # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/requirements.in, black, mypy
 virtualenv==20.2.2        # via -c reqs/3.6/requirements-dev.txt, pre-commit
 wrapt==1.12.1             # via -c reqs/3.6/requirements-dev.txt, astroid
 xmltodict==0.12.0         # via -c reqs/3.6/requirements-dev.txt, -r reqs/3.6/requirements.in
