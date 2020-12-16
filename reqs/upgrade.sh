@@ -17,7 +17,7 @@ mkdir -p reqs/$PYTHON_VERSION &&
     for in_file in $(ls reqs/$PYTHON_VERSION/requirements*.in); do
         echo -e "-c requirements-dev.txt\n$(cat ${in_file})" >${in_file}
         out_file="${in_file/.in/.txt}"
-        pip-compile "${in_file}" -o "${out_file}"
+        pip-compile "${in_file}" -o "${out_file}" --no-annotate
         # https://github.com/jazzband/pip-tools/issues/431#issuecomment-277300235
         sed -i -e 's/typing_extensions/typing-extensions/g' "${out_file}"
     done &&
