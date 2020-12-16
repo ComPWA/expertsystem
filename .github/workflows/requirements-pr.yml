@@ -68,7 +68,7 @@ jobs:
       - run: git status -s
       - name: Commit and push changes
         run: |
-          git remote set-url origin ${GITHUB_SERVER_URL}/${{ github.event.pull_request.head.repo.full_name }}
+          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }}
           git config --global user.name ${{ github.actor }}
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git checkout -b ${GITHUB_HEAD_REF}
