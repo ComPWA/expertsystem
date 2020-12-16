@@ -62,16 +62,13 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           path: reqs
-      - name: Commit and push changes
-        run: |
-          git remote set-url origin ${GITHUB_SERVER_URL}/${{ github.event.pull_request.head.repo.full_name }}
-          git config --global user.name ${{ github.actor }}
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git checkout -b ${GITHUB_HEAD_REF}
-          git add reqs/*/requirements*.txt
-          git commit -m "ci: upgrade developer dependencies (automatic)"
-          git config pull.rebase true
-          git pull origin ${GITHUB_HEAD_REF}
-          git push origin HEAD:${GITHUB_HEAD_REF}
+      - uses: EndBug/add-and-commit@v5
+        with:
+          author_name: ${{ github.actor }}
+          author_email: ${{ github.actor }}@users.noreply.github.com
+          message: "ci: upgrade developer dependencies (automatic)"
+          pull_strategy: "--rebase"
+          add: reqs/*/*.txt
+          push: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
