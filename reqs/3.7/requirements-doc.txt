@@ -101,7 +101,7 @@ testpath==0.4.4           # via -c reqs/3.7/requirements-dev.txt, nbconvert
 tornado==6.1              # via -c reqs/3.7/requirements-dev.txt, ipykernel, jupyter-client, nbdime, notebook, terminado
 tqdm==4.54.1              # via -c reqs/3.7/requirements-dev.txt, -r reqs/3.7/requirements.in
 traitlets==5.0.5          # via -c reqs/3.7/requirements-dev.txt, ipykernel, ipython, ipywidgets, jupyter-client, jupyter-core, nbclient, nbconvert, nbformat, notebook, qtconsole
-typing-extensions==3.7.4.3 ; python_version < "3.8.0"  # via -c reqs/3.7/requirements-dev.txt, -r reqs/3.7/requirements.in
+typing_extensions==3.7.4.3 ; python_version < "3.8.0"  # via -c reqs/3.7/requirements-dev.txt, -r reqs/3.7/requirements.in
 urllib3==1.26.2           # via -c reqs/3.7/requirements-dev.txt, requests
 wcwidth==0.2.5            # via -c reqs/3.7/requirements-dev.txt, prompt-toolkit
 webencodings==0.5.1       # via -c reqs/3.7/requirements-dev.txt, bleach
