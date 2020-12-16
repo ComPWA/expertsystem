@@ -59,7 +59,7 @@ jobs:
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git checkout -b ${GITHUB_HEAD_REF}
           git add reqs/*/requirements*.txt
-          git commit -m "ci: upgrade developer dependencies"
+          git commit -m "ci: upgrade developer dependencies (automatic)"
           git config pull.rebase true
           git pull origin ${GITHUB_HEAD_REF}
           git push origin HEAD:${GITHUB_HEAD_REF}
