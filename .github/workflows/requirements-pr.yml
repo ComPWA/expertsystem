@@ -67,8 +67,8 @@ jobs:
           author_name: ${{ github.actor }}
           author_email: ${{ github.actor }}@users.noreply.github.com
           message: "ci: upgrade developer dependencies (automatic)"
+          add: "reqs/*/requirements*.txt"
           pull_strategy: "--rebase"
-          add: reqs/*/*.txt
           push: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
