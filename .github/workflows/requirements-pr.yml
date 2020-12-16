@@ -37,14 +37,14 @@ jobs:
       - name: Abort if fork PR and dependency changes
         if: github.event.pull_request.head.repo.full_name != github.repository
         run: |
-          export DEPENCY_CHANGES=$(git diff origin/$GITHUB_BASE_REF --name-only -- reqs setup.cfg)
-          [[ -n ${DEPENCY_CHANGES} ]] &&
+          export DEPENDENCY_CHANGES=$(git diff origin/$GITHUB_BASE_REF --name-only -- reqs setup.cfg)
+          [[ -n ${DEPENDENCY_CHANGES} ]] &&
             echo "Dependency changes:"
-            echo ${DEPENCY_CHANGES}
+            echo ${DEPENDENCY_CHANGES}
             echo -e "\e[31;1mERROR: cannot modify package dependencies through a PR from a fork\e[0m" &&
             exit 1
       - name: Return success if no dependency changes
-        run: "[[ -z ${DEPENCY_CHANGES} ]] && exit 0"
+        run: "[[ -z ${DEPENDENCY_CHANGES} ]] && exit 0"
       - name: Upgrade dependencies
         run: bash reqs/upgrade.sh
       - uses: actions/upload-artifact@v2
