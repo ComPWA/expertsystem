@@ -34,15 +34,18 @@ jobs:
           path: reqs/${{ matrix.python-version }}
 
   push:
-    name: Make a PR for updated requirements files
+    name: Create PR
     runs-on: ubuntu-18.04
     needs:
       - requirements
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PAT }}
       - uses: actions/download-artifact@v2
         with:
           path: reqs
+      - run: git status -s
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
@@ -58,7 +61,6 @@ jobs:
             🔨 Maintenance
           branch-suffix: timestamp
           delete-branch: true
-
       - name: Print PR info
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
