@@ -38,7 +38,7 @@ This goes as follows:
 
    ```shell
    # pin dependencies first!
-   python3 -m pip install -r dev/PYTHON_VERSION/requirements-dev.txt
+   python3 -m pip install -r reqs/PYTHON_VERSION/requirements-dev.txt
    python3 -m pip install -e .
    ```
 

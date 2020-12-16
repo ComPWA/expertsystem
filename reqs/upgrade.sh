@@ -7,18 +7,18 @@ if [[ -z "$PYTHON_VERSION" ]]; then
     exit 1
 fi
 
-mkdir -p dev/$PYTHON_VERSION &&
-    python dev/extract_install_requires.py &&
-    cp dev/requirements*.in dev/$PYTHON_VERSION/ &&
-    rm dev/$PYTHON_VERSION/requirements-dev.in &&
+mkdir -p reqs/$PYTHON_VERSION &&
+    python reqs/extract_install_requires.py &&
+    cp reqs/requirements*.in reqs/$PYTHON_VERSION/ &&
+    rm reqs/$PYTHON_VERSION/requirements-dev.in &&
     pip-compile --upgrade \
-        dev/requirements*.in \
-        -o dev/$PYTHON_VERSION/requirements-dev.txt &&
-    for in_file in $(ls dev/$PYTHON_VERSION/requirements*.in); do
+        reqs/requirements*.in \
+        -o reqs/$PYTHON_VERSION/requirements-dev.txt &&
+    for in_file in $(ls reqs/$PYTHON_VERSION/requirements*.in); do
         echo -e "-c requirements-dev.txt\n$(cat ${in_file})" >${in_file}
         pip-compile "${in_file}"
     done &&
-    pip-sync dev/$PYTHON_VERSION/requirements*.txt &&
+    pip-sync reqs/$PYTHON_VERSION/requirements*.txt &&
     exit 0
 
 exit 1 # if failure
