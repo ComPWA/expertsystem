@@ -1,3 +1,5 @@
+# pylint: disable=too-many-instance-attributes
+
 """A collection of particle info containers.
 
 The `~expertsystem.particle` module is the starting point of the
@@ -147,7 +149,7 @@ class Spin(abc.Hashable, Serializable):
 
 @implement_attr_serializer()
 @attr.s(frozen=True, repr=False)
-class Particle(Serializable):  # pylint: disable=too-many-instance-attributes
+class Particle(Serializable):
     """Immutable container of data defining a physical particle.
 
     A `Particle` is defined by the minimum set of the quantum numbers that
