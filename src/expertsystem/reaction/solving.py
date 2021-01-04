@@ -120,8 +120,12 @@ class QNProblemSet:
 
 @attr.s(frozen=True)
 class QuantumNumberSolution:
-    node_quantum_numbers: Dict[int, GraphNodePropertyMap] = attr.ib()
-    edge_quantum_numbers: Dict[int, GraphEdgePropertyMap] = attr.ib()
+    node_quantum_numbers: Dict[int, GraphNodePropertyMap] = attr.ib(
+        factory=defaultdict
+    )
+    edge_quantum_numbers: Dict[int, GraphEdgePropertyMap] = attr.ib(
+        factory=defaultdict
+    )
 
 
 def _convert_violated_rules_to_names(
@@ -264,10 +268,13 @@ def _merge_particle_candidates_with_solutions(
             for current_new_solution in current_new_solutions:
                 for particle_edge in particle_edges:
                     # a "shallow" copy of the nested dicts is needed
-                    new_edge_qns = {
-                        k: copy(v)
-                        for k, v in current_new_solution.edge_quantum_numbers.items()
-                    }
+                    new_edge_qns = defaultdict(
+                        dict,
+                        {
+                            k: copy(v)
+                            for k, v in current_new_solution.edge_quantum_numbers.items()
+                        },
+                    )
                     new_edge_qns[int_edge_id].update(particle_edge)
                     temp_solution = attr.evolve(
                         current_new_solution,

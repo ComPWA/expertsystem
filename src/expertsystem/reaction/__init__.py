@@ -815,7 +815,10 @@ def check_reaction_violations(
                 k: create_node_properties(v)
                 for k, v in facts.node_props.items()
             },
-            edge_facts=facts.edge_props,  # type: ignore
+            edge_facts={
+                k: create_edge_properties(v[0], v[1])
+                for k, v in facts.edge_props.items()
+            },
             node_rules=node_rules,
             edge_rules=edge_rules,
         )
