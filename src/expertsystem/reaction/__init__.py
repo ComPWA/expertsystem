@@ -21,7 +21,7 @@ particle reaction problems.
 import logging
 import multiprocessing
 from collections import defaultdict
-from copy import copy, deepcopy
+from copy import deepcopy
 from enum import Enum, auto
 from itertools import product
 from multiprocessing import Pool
@@ -519,12 +519,14 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         int_edge_domains = create_intermediate_edge_qn_domains()
 
         def create_edge_settings(edge_id: int) -> EdgeSettings:
-            settings = copy(
+            settings = deepcopy(
                 self.interaction_type_settings[InteractionTypes.WEAK][0]
             )
             if edge_id in intermediate_state_edges:
                 settings.qn_domains = int_edge_domains
             else:
+                if initial_facts.edge_props[edge_id][0].isospin is None:
+                    settings.conservation_rules.remove(isospin_validity)
                 settings.qn_domains = {}
             return settings
 

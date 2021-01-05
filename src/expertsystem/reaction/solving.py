@@ -435,7 +435,12 @@ def validate_full_solution(
                     node_violated_rules[node_id].add(node_rule)
             else:
                 node_not_executed_rules[node_id].add(node_rule)
-    if node_violated_rules or node_not_executed_rules:
+    if (
+        node_violated_rules
+        or node_not_executed_rules
+        or edge_violated_rules
+        or edge_not_executed_rules
+    ):
         return QNResult(
             [],
             _convert_non_executed_rules_to_names(node_not_executed_rules),
