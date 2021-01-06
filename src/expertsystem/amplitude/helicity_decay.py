@@ -28,7 +28,6 @@ from .model import (
     ParticleDynamics,
     RecoilSystem,
     SequentialAmplitude,
-    StrengthIntensity,
 )
 
 
@@ -473,20 +472,6 @@ class HelicityAmplitudeGenerator:
                     self.__generate_sequential_decay(seq_graph)
                 )
         return coherent_intensity
-
-    def __prepend_strength(
-        self, intensity: IntensityNode
-    ) -> StrengthIntensity:
-        strength = self.__register_parameter(
-            name="strength_incoherent",
-            value=1.0,
-            fix=True,
-        )
-        return StrengthIntensity(
-            component="incoherent_with_strength",
-            strength=strength,
-            intensity=intensity,
-        )
 
     def __generate_sequential_decay(
         self, graph: StateTransitionGraph[ParticleWithSpin]
