@@ -125,7 +125,7 @@ def extract_prefactor(node, coefficient_amplitude_name):
                 ["Lambda(1405)"],
                 [],
             ),
-            6,
+            5,
         ),
         (
             Input(
@@ -134,7 +134,7 @@ def extract_prefactor(node, coefficient_amplitude_name):
                 ["Delta(1232)++"],
                 [],
             ),
-            6,
+            5,
         ),
         (
             Input(
@@ -143,7 +143,7 @@ def extract_prefactor(node, coefficient_amplitude_name):
                 ["K*(892)0"],
                 [],
             ),
-            10,
+            9,
         ),
     ],
 )
