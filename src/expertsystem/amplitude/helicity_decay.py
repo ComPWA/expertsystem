@@ -25,7 +25,6 @@ from .model import (
     IncoherentIntensity,
     IntensityNode,
     Kinematics,
-    NormalizedIntensity,
     ParticleDynamics,
     RecoilSystem,
     SequentialAmplitude,
@@ -444,14 +443,11 @@ class HelicityAmplitudeGenerator:
                 graph_group
             )
             incoherent_intensity.intensities.append(coherent_intensity)
-        if len(incoherent_intensity.intensities) > 1:
-            intensity: IntensityNode = NormalizedIntensity(
-                incoherent_intensity
-            )
-        else:
+        if len(incoherent_intensity.intensities) == 1:
             intensity = incoherent_intensity.intensities[0]
-        strength_intensity = self.__prepend_strength(intensity)
-        return strength_intensity
+        else:
+            intensity = incoherent_intensity
+        return intensity
 
     def __create_parameter_couplings(
         self, graph_groups: List[List[StateTransitionGraph[ParticleWithSpin]]]
