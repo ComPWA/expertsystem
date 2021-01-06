@@ -442,11 +442,11 @@ class HelicityAmplitudeGenerator:
                 graph_group
             )
             incoherent_intensity.intensities.append(coherent_intensity)
+        if len(incoherent_intensity.intensities) == 0:
+            raise ValueError("List of incoherent intensities cannot be empty")
         if len(incoherent_intensity.intensities) == 1:
-            intensity = incoherent_intensity.intensities[0]
-        else:
-            intensity = incoherent_intensity
-        return intensity
+            return incoherent_intensity.intensities[0]
+        return incoherent_intensity
 
     def __create_parameter_couplings(
         self, graph_groups: List[List[StateTransitionGraph[ParticleWithSpin]]]
