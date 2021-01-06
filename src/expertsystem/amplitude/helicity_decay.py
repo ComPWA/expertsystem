@@ -280,6 +280,9 @@ class _HelicityAmplitudeNameGenerator:
                 priority_partner_coefficient_suffix,
             ) = self._generate_amplitude_coefficient_couple(graph, node_id)
 
+            if graph.get_node_props(node_id).parity_prefactor is None:
+                continue
+
             if (
                 coefficient_suffix
                 not in self.parity_partner_coefficient_mapping
@@ -370,17 +373,10 @@ class _HelicityAmplitudeNameGenerator:
         """Generate unique suffix for a sequential amplitude graph."""
         output_suffix = ""
         for node_id in graph.nodes:
-            raw_suffix = self.generate_amplitude_coefficient_name(
-                graph, node_id
-            )
-            if raw_suffix not in self.parity_partner_coefficient_mapping:
-                raise KeyError(
-                    f"Coefficient name {raw_suffix} not found in mapping!"
-                )
-            coefficient_suffix = self.parity_partner_coefficient_mapping[
-                raw_suffix
-            ]
-            output_suffix += coefficient_suffix + ";"
+            suffix = self.generate_amplitude_coefficient_name(graph, node_id)
+            if suffix in self.parity_partner_coefficient_mapping:
+                suffix = self.parity_partner_coefficient_mapping[suffix]
+            output_suffix += suffix + ";"
         return output_suffix
 
 
@@ -577,14 +573,18 @@ class HelicityAmplitudeGenerator:
                     graph, node_id
                 )
             )
-            coefficient_suffix = (
-                self.name_generator.parity_partner_coefficient_mapping[
-                    raw_suffix
-                ]
-            )
-            if coefficient_suffix != raw_suffix:
-                if prefactor != 1.0 and prefactor is not None:
-                    return prefactor
+            if (
+                raw_suffix
+                in self.name_generator.parity_partner_coefficient_mapping
+            ):
+                coefficient_suffix = (
+                    self.name_generator.parity_partner_coefficient_mapping[
+                        raw_suffix
+                    ]
+                )
+                if coefficient_suffix != raw_suffix:
+                    if prefactor != 1.0 and prefactor is not None:
+                        return prefactor
         return None
 
     def __register_parameter(
