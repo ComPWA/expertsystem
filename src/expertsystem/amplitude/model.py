@@ -94,10 +94,6 @@ class FitParameters(abc.Mapping):
         )
 
 
-class Dynamics(ABC):
-    pass
-
-
 class FormFactor(ABC):
     pass
 
@@ -105,6 +101,10 @@ class FormFactor(ABC):
 @attr.s
 class BlattWeisskopf(FormFactor):
     meson_radius: FitParameter = attr.ib()
+
+
+class Dynamics(ABC):
+    pass
 
 
 @attr.s
