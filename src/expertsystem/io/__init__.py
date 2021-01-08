@@ -11,18 +11,25 @@ from pathlib import Path
 import yaml
 
 from expertsystem.amplitude.model import AmplitudeModel
-from expertsystem.particle import ParticleCollection
+from expertsystem.particle import Particle, ParticleCollection
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
 
 from . import _dict, _dot, _pdg
 
 
 def asdict(instance: object) -> dict:
-    return _dict.asdict(instance)
+    if isinstance(instance, Particle):
+        return _dict.dump.from_particle(instance)
+    if isinstance(instance, ParticleCollection):
+        return _dict.dump.from_particle_collection(instance)
+    if isinstance(instance, AmplitudeModel):
+        return _dict.dump.from_amplitude_model(instance)
+    raise NotImplementedError(
+        f"No conversion for dict available for class {instance.__class__.__name__}"
+    )
 
 
 def fromdict(definition: dict) -> object:
-    # pylint: disable=protected-access
     type_defined = _determine_type(definition)
     if type_defined == AmplitudeModel:
         return _dict.build.build_amplitude_model(definition)
@@ -32,7 +39,6 @@ def fromdict(definition: dict) -> object:
 
 
 def validate(instance: dict) -> None:
-    # pylint: disable=protected-access
     type_defined = _determine_type(instance)
     if type_defined == AmplitudeModel:
         _dict.validate.amplitude_model(instance)
