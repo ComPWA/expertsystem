@@ -25,9 +25,9 @@ def fromdict(definition: dict) -> object:
     # pylint: disable=protected-access
     type_defined = _determine_type(definition)
     if type_defined == AmplitudeModel:
-        return _dict._build.build_amplitude_model(definition)
+        return _dict.build.build_amplitude_model(definition)
     if type_defined == ParticleCollection:
-        return _dict._build.build_particle_collection(definition)
+        return _dict.build.build_particle_collection(definition)
     raise NotImplementedError
 
 
@@ -35,9 +35,9 @@ def validate(instance: dict) -> None:
     # pylint: disable=protected-access
     type_defined = _determine_type(instance)
     if type_defined == AmplitudeModel:
-        _dict._validate.amplitude_model(instance)
+        _dict.validate.amplitude_model(instance)
     elif type_defined == ParticleCollection:
-        _dict._validate.particle_collection(instance)
+        _dict.validate.particle_collection(instance)
 
 
 def load(filename: str) -> object:
