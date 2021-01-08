@@ -6,6 +6,7 @@ disk, so that they can be used by external packages, or just to store (cache)
 the state of the system.
 """
 
+import json
 from pathlib import Path
 
 import yaml
@@ -49,6 +50,9 @@ def validate(instance: dict) -> None:
 def load(filename: str) -> object:
     with open(filename) as stream:
         file_extension = _get_file_extension(filename)
+        if file_extension == "json":
+            definition = json.load(stream)
+            return fromdict(definition)
         if file_extension in ["yaml", "yml"]:
             definition = yaml.load(stream, Loader=yaml.SafeLoader)
             return fromdict(definition)
@@ -81,6 +85,9 @@ class _IncreasedIndent(yaml.Dumper):
 def write(instance: object, filename: str) -> None:
     with open(filename, "w") as stream:
         file_extension = _get_file_extension(filename)
+        if file_extension == "json":
+            json.dump(asdict(instance), stream, indent=2)
+            return
         if file_extension in ["yaml", "yml"]:
             yaml.dump(
                 asdict(instance),
