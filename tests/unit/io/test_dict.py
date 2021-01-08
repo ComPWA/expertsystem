@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use,protected-access,redefined-outer-name
+# pylint: disable=no-self-use,redefined-outer-name
 import json
 from os.path import dirname, realpath
 
@@ -76,7 +76,7 @@ class TestHelicityFormalism:
         return expected_recipe_dict
 
     def test_recipe_validation(self, expected_dict):
-        io._dict.validation.amplitude_model(expected_dict)
+        io.validate(expected_dict)
 
     def test_not_implemented_writer(
         self,

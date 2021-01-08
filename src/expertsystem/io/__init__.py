@@ -15,6 +15,15 @@ from expertsystem.reaction.topology import StateTransitionGraph, Topology
 from . import _dict, _dot, _pdg
 
 
+def validate(instance: dict) -> None:
+    # pylint: disable=protected-access
+    type_defined = _determine_type(instance)
+    if type_defined == AmplitudeModel:
+        _dict._validate.amplitude_model(instance)
+    elif type_defined == ParticleCollection:
+        _dict._validate.particle_collection(instance)
+
+
 def load_amplitude_model(filename: str) -> AmplitudeModel:
     file_extension = _get_file_extension(filename)
     if file_extension in ["yaml", "yml"]:
@@ -80,3 +89,18 @@ def _get_file_extension(filename: str) -> str:
         raise Exception(f"No file extension in file {filename}")
     extension = extension[1:]
     return extension
+
+
+def _determine_type(definition: dict) -> type:
+    keys = set(definition.keys())
+    if keys == {
+        "Dynamics",
+        "Intensity",
+        "Kinematics",
+        "Parameters",
+        "ParticleList",
+    }:
+        return AmplitudeModel
+    if keys == {"ParticleList"}:
+        return ParticleCollection
+    raise NotImplementedError(f"Could not determine type from keys {keys}")
