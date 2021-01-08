@@ -8,6 +8,8 @@ the state of the system.
 
 from pathlib import Path
 
+import yaml
+
 from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
@@ -38,21 +40,14 @@ def validate(instance: dict) -> None:
         _dict._validate.particle_collection(instance)
 
 
-def load_amplitude_model(filename: str) -> AmplitudeModel:
-    file_extension = _get_file_extension(filename)
-    if file_extension in ["yaml", "yml"]:
-        return _dict.load_amplitude_model(filename)
+def load(filename: str) -> object:
+    with open(filename) as stream:
+        file_extension = _get_file_extension(filename)
+        if file_extension in ["yaml", "yml"]:
+            definition = yaml.load(stream, Loader=yaml.SafeLoader)
+            return fromdict(definition)
     raise NotImplementedError(
-        f'No parser parser defined for file type "{file_extension}"'
-    )
-
-
-def load_particle_collection(filename: str) -> ParticleCollection:
-    file_extension = _get_file_extension(filename)
-    if file_extension in ["yaml", "yml"]:
-        return _dict.load_particle_collection(filename)
-    raise NotImplementedError(
-        f'No parser parser defined for file type "{file_extension}"'
+        f'No loader defined for file type "{file_extension}"'
     )
 
 
@@ -65,15 +60,35 @@ def load_pdg() -> ParticleCollection:
     return _pdg.load_pdg()
 
 
+class _IncreasedIndent(yaml.Dumper):
+    # pylint: disable=too-many-ancestors
+    def increase_indent(self, flow=False, indentless=False):  # type: ignore
+        return super().increase_indent(flow, False)
+
+    def write_line_break(self, data=None):  # type: ignore
+        """See https://stackoverflow.com/a/44284819."""
+        super().write_line_break(data)
+        if len(self.indents) == 1:
+            super().write_line_break()
+
+
 def write(instance: object, filename: str) -> None:
-    file_extension = _get_file_extension(filename)
-    if file_extension in ["yaml", "yml"]:
-        return _dict.write(instance, filename)
-    if file_extension == "gv":
-        output_str = convert_to_dot(instance)
-        with open(filename, "w") as stream:
-            stream.write(output_str)
-        return None
+    with open(filename, "w") as stream:
+        file_extension = _get_file_extension(filename)
+        if file_extension in ["yaml", "yml"]:
+            yaml.dump(
+                asdict(instance),
+                stream,
+                sort_keys=False,
+                Dumper=_IncreasedIndent,
+                default_flow_style=False,
+            )
+            return
+        if file_extension == "gv":
+            output_str = convert_to_dot(instance)
+            with open(filename, "w") as stream:
+                stream.write(output_str)
+            return
     raise NotImplementedError(
         f'No writer defined for file type "{file_extension}"'
     )
