@@ -100,7 +100,7 @@ class FormFactor(ABC):
 
 @attr.s
 class BlattWeisskopf(FormFactor):
-    meson_radius: FitParameter = attr.ib()
+    meson_radius: str = attr.ib()
 
 
 class Dynamics(ABC):
@@ -114,8 +114,8 @@ class NonDynamic(Dynamics):
 
 @attr.s
 class RelativisticBreitWigner(Dynamics):
-    pole_position: FitParameter = attr.ib()
-    pole_width: FitParameter = attr.ib()
+    pole_position: str = attr.ib()
+    pole_width: str = attr.ib()
     form_factor: BlattWeisskopf = attr.ib()
 
 
@@ -195,12 +195,11 @@ class ParticleDynamics(abc.Mapping):
 
     def __register_parameter(
         self, name: str, value: float, fix: bool = False
-    ) -> FitParameter:
-        if name in self.__parameters:
-            return self.__parameters[name]
-        parameter = FitParameter(name=name, value=value, is_fixed=fix)
-        self.__parameters.add(parameter)
-        return parameter
+    ) -> str:
+        if name not in self.__parameters:
+            parameter = FitParameter(name=name, value=value, is_fixed=fix)
+            self.__parameters.add(parameter)
+        return name
 
 
 class KinematicsType(Enum):

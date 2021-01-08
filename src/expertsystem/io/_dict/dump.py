@@ -166,8 +166,8 @@ def __dynamics_to_dict(dynamics: Dynamics) -> dict:
         return output
     if isinstance(dynamics, RelativisticBreitWigner):
         output["PoleParameters"] = {
-            "Real": dynamics.pole_position.name,
-            "Imaginary": dynamics.pole_width.name,
+            "Real": dynamics.pole_position,
+            "Imaginary": dynamics.pole_width,
         }
         output.update(__form_factor_to_dict(dynamics.form_factor))
         return output
@@ -181,7 +181,7 @@ def __form_factor_to_dict(form_factor: Optional[FormFactor]) -> dict:
         return {
             "FormFactor": {
                 "Type": "BlattWeisskopf",
-                "MesonRadius": form_factor.meson_radius.name,
+                "MesonRadius": form_factor.meson_radius,
             }
         }
     raise NotImplementedError("No conversion for", form_factor)
