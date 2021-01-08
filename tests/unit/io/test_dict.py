@@ -10,17 +10,15 @@ from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
 
 SCRIPT_PATH = dirname(realpath(__file__))
-YAML_FILE = "particle_selection.yml"
 
 
 @pytest.fixture(scope="session")
-def particle_selection(output_dir, particle_database: ParticleCollection):
+def particle_selection(particle_database: ParticleCollection):
     selection = ParticleCollection()
     selection += particle_database.filter(lambda p: p.name.startswith("pi"))
     selection += particle_database.filter(lambda p: p.name.startswith("K"))
     selection += particle_database.filter(lambda p: p.name.startswith("D"))
     selection += particle_database.filter(lambda p: p.name.startswith("J/psi"))
-    io.write(selection, output_dir + YAML_FILE)
     return selection
 
 
@@ -37,12 +35,12 @@ def test_not_implemented_errors(
         io.write(666, output_dir + "wont_work_anyway.yml")
 
 
-@pytest.mark.parametrize("filename", [YAML_FILE])
-def test_write_read_particle_collection(
-    output_dir, particle_selection: ParticleCollection, filename: str
-):
+def test_serialization(output_dir, particle_selection: ParticleCollection):
     assert len(particle_selection) == 181
-    imported_collection = io.load_particle_collection(output_dir + filename)
+    io.write(particle_selection, output_dir + "particle_selection.yml")
+    asdict = io.asdict(particle_selection)
+    imported_collection = io.fromdict(asdict)
+    assert isinstance(imported_collection, ParticleCollection)
     assert len(particle_selection) == len(imported_collection)
     for particle in particle_selection:
         exported = particle_selection[particle.name]
@@ -52,19 +50,17 @@ def test_write_read_particle_collection(
 
 class TestHelicityFormalism:
     @pytest.fixture(scope="session")
-    def imported_dict(
-        self,
-        output_dir,
-        jpsi_to_gamma_pi_pi_helicity_amplitude_model: AmplitudeModel,
+    def model(
+        self, jpsi_to_gamma_pi_pi_helicity_amplitude_model: AmplitudeModel
     ):
+        return jpsi_to_gamma_pi_pi_helicity_amplitude_model
+
+    @pytest.fixture(scope="session")
+    def imported_dict(self, output_dir, model: AmplitudeModel):
         output_filename = output_dir + "JPsiToGammaPi0Pi0_heli_recipe.yml"
-        io.write(
-            instance=jpsi_to_gamma_pi_pi_helicity_amplitude_model,
-            filename=output_filename,
-        )
-        with open(output_filename, "rb") as input_file:
-            loaded_dict = yaml.load(input_file, Loader=yaml.FullLoader)
-        return loaded_dict
+        asdict = io.asdict(model)
+        io.write(model, output_filename)
+        return asdict
 
     @pytest.fixture(scope="session")
     def expected_dict(self) -> dict:
@@ -190,19 +186,17 @@ class TestHelicityFormalism:
 
 class TestCanonicalFormalism:
     @pytest.fixture(scope="session")
-    def imported_dict(
-        self,
-        output_dir,
-        jpsi_to_gamma_pi_pi_canonical_amplitude_model: AmplitudeModel,
+    def model(
+        self, jpsi_to_gamma_pi_pi_canonical_amplitude_model: AmplitudeModel
     ):
+        return jpsi_to_gamma_pi_pi_canonical_amplitude_model
+
+    @pytest.fixture(scope="session")
+    def imported_dict(self, output_dir, model: AmplitudeModel):
         output_filename = output_dir + "JPsiToGammaPi0Pi0_cano_recipe.yml"
-        io.write(
-            instance=jpsi_to_gamma_pi_pi_canonical_amplitude_model,
-            filename=output_filename,
-        )
-        with open(output_filename, "rb") as input_file:
-            loaded_dict = yaml.load(input_file, Loader=yaml.FullLoader)
-        return loaded_dict
+        asdict = io.asdict(model)
+        io.write(model, output_filename)
+        return asdict
 
     def test_not_implemented_writer(
         self,

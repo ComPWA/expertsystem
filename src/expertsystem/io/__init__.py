@@ -15,6 +15,20 @@ from expertsystem.reaction.topology import StateTransitionGraph, Topology
 from . import _dict, _dot, _pdg
 
 
+def asdict(instance: object) -> dict:
+    return _dict.asdict(instance)
+
+
+def fromdict(definition: dict) -> object:
+    # pylint: disable=protected-access
+    type_defined = _determine_type(definition)
+    if type_defined == AmplitudeModel:
+        return _dict._build.build_amplitude_model(definition)
+    if type_defined == ParticleCollection:
+        return _dict._build.build_particle_collection(definition)
+    raise NotImplementedError
+
+
 def validate(instance: dict) -> None:
     # pylint: disable=protected-access
     type_defined = _determine_type(instance)
