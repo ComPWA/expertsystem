@@ -12,13 +12,13 @@ from expertsystem.amplitude.model import AmplitudeModel
 from expertsystem.particle import ParticleCollection
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
 
-from . import _dot, _pdg, _yaml
+from . import _dict, _dot, _pdg
 
 
 def load_amplitude_model(filename: str) -> AmplitudeModel:
     file_extension = _get_file_extension(filename)
     if file_extension in ["yaml", "yml"]:
-        return _yaml.load_amplitude_model(filename)
+        return _dict.load_amplitude_model(filename)
     raise NotImplementedError(
         f'No parser parser defined for file type "{file_extension}"'
     )
@@ -27,7 +27,7 @@ def load_amplitude_model(filename: str) -> AmplitudeModel:
 def load_particle_collection(filename: str) -> ParticleCollection:
     file_extension = _get_file_extension(filename)
     if file_extension in ["yaml", "yml"]:
-        return _yaml.load_particle_collection(filename)
+        return _dict.load_particle_collection(filename)
     raise NotImplementedError(
         f'No parser parser defined for file type "{file_extension}"'
     )
@@ -45,7 +45,7 @@ def load_pdg() -> ParticleCollection:
 def write(instance: object, filename: str) -> None:
     file_extension = _get_file_extension(filename)
     if file_extension in ["yaml", "yml"]:
-        return _yaml.write(instance, filename)
+        return _dict.write(instance, filename)
     if file_extension == "gv":
         output_str = convert_to_dot(instance)
         with open(filename, "w") as stream:

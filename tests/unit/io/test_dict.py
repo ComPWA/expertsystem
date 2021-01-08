@@ -76,7 +76,7 @@ class TestHelicityFormalism:
         return expected_recipe_dict
 
     def test_recipe_validation(self, expected_dict):
-        io._yaml.validation.amplitude_model(expected_dict)
+        io._dict.validation.amplitude_model(expected_dict)
 
     def test_not_implemented_writer(
         self,
