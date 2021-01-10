@@ -10,7 +10,6 @@ from expertsystem.amplitude.model import (
     CoefficientAmplitude,
     CoherentIntensity,
     Dynamics,
-    FitParameter,
     FitParameters,
     FormFactor,
     HelicityDecay,
@@ -53,17 +52,7 @@ def from_particle(particle: Particle) -> dict:
 
 
 def __parameters_to_dict(parameters: FitParameters) -> List[dict]:
-    return [__parameter_to_dict(par) for par in parameters.values()]
-
-
-def __parameter_to_dict(parameter: FitParameter) -> dict:
-    output_dict = {
-        "Name": parameter.name,
-        "Value": parameter.value,
-    }
-    if parameter.is_fixed:
-        output_dict["Fix"] = True
-    return output_dict
+    return [attr.asdict(par, recurse=True) for par in parameters.values()]
 
 
 def __kinematics_to_dict(kin: Kinematics) -> dict:

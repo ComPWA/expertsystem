@@ -124,16 +124,16 @@ class TestHelicityFormalism:
         parameter_list = imported_dict["Parameters"]
         assert len(parameter_list) == 11
         for parameter in parameter_list:
-            assert "Name" in parameter
-            assert "Value" in parameter
-            assert parameter.get("Fix", True)
+            assert "name" in parameter
+            assert "value" in parameter
+            assert parameter.get("fix", True)
 
     def test_dynamics_section(self, imported_dict):
         parameter_list: list = imported_dict["Parameters"]
 
         def get_parameter(parameter_name: str) -> dict:
             for par in parameter_list:
-                name = par["Name"]
+                name = par["name"]
                 if name == parameter_name:
                     return par
             raise LookupError(f'Could not find parameter  "{parameter_name}"')
@@ -145,7 +145,7 @@ class TestHelicityFormalism:
         assert j_psi["Type"] == "NonDynamic"
         assert j_psi["FormFactor"]["Type"] == "BlattWeisskopf"
         assert (
-            get_parameter(j_psi["FormFactor"]["MesonRadius"])["Value"] == 1.0
+            get_parameter(j_psi["FormFactor"]["MesonRadius"])["value"] == 1.0
         )
 
         f0_980 = dynamics.get("f(0)(980)", None)
@@ -156,7 +156,7 @@ class TestHelicityFormalism:
                 f0_980["FormFactor"]["MesonRadius"] == "MesonRadius_f(0)(980)"
             )
             assert (
-                get_parameter(f0_980["FormFactor"]["MesonRadius"])["Value"]
+                get_parameter(f0_980["FormFactor"]["MesonRadius"])["value"]
                 == 1.0
             )
 
@@ -172,9 +172,6 @@ class TestHelicityFormalism:
     def test_expected_recipe_shape(
         self, imported_dict, expected_dict, section
     ):
-        name_tag = "Name"
-        if section == "particles":
-            name_tag = "name"
         expected_section = equalize_dict(expected_dict[section])
         imported_section = equalize_dict(imported_dict[section])
         if isinstance(expected_section, dict):
@@ -182,12 +179,8 @@ class TestHelicityFormalism:
             imported_items = list(imported_section.values())
             expected_items = list(expected_section.values())
         else:
-            expected_items = sorted(
-                expected_section, key=lambda p: p[name_tag]
-            )
-            imported_items = sorted(
-                imported_section, key=lambda p: p[name_tag]
-            )
+            expected_items = sorted(expected_section, key=lambda p: p["name"])
+            imported_items = sorted(imported_section, key=lambda p: p["name"])
         assert len(imported_items) == len(expected_items)
         for imported, expected in zip(imported_items, expected_items):
             assert imported == expected
@@ -233,8 +226,8 @@ class TestCanonicalFormalism:
         parameter_list = imported_dict["Parameters"]
         assert len(parameter_list) == 11
         for parameter in parameter_list:
-            assert "Name" in parameter
-            assert "Value" in parameter
+            assert "name" in parameter
+            assert "value" in parameter
 
     def test_clebsch_gordan(self, imported_dict):
         incoherent_intensity = imported_dict["Intensity"]

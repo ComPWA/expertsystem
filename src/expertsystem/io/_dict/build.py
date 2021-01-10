@@ -78,17 +78,9 @@ def __build_particle(definition: dict) -> Particle:
 def __build_fit_parameters(definition: List[dict]) -> FitParameters:
     parameters = FitParameters()
     for parameter_def in definition:
-        parameter = __build_fit_parameter(parameter_def)
+        parameter = FitParameter(**parameter_def)
         parameters.add(parameter)
     return parameters
-
-
-def __build_fit_parameter(definition: dict) -> FitParameter:
-    return FitParameter(
-        name=str(definition["Name"]),
-        value=float(definition.get("Value", 0.0)),
-        is_fixed=bool(definition.get("Fix", False)),
-    )
 
 
 def __build_kinematics(

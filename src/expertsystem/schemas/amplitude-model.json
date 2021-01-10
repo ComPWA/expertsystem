@@ -53,24 +53,24 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["Name", "Value"],
+        "required": ["name", "value"],
         "additionalProperties": false,
         "properties": {
-          "Name": {
+          "name": {
             "type": "string",
             "title": "Parameter name",
             "description": "Has to be a unique string that is used to identify where the parameter is used in the rest of the model"
           },
-          "Value": {
+          "value": {
             "type": "number",
             "title": "Starting value of the fit parameter"
           },
-          "Fix": { "type": "boolean" },
-          "Min": {
+          "is_fixed": { "type": "boolean" },
+          "min": {
             "type": "number",
             "title": "Lower boundary of the fit range"
           },
-          "Max": {
+          "max": {
             "type": "number",
             "title": "Upper boundary of the fit range"
           }
