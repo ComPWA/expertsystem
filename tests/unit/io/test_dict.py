@@ -180,7 +180,7 @@ class TestHelicityFormalism:
         else:
             expected_items = sorted(expected_section, key=lambda p: p["Name"])
             imported_items = sorted(imported_section, key=lambda p: p["Name"])
-        # assert len(imported_items) == len(expected_items)
+        assert len(imported_items) == len(expected_items)
         for imported, expected in zip(imported_items, expected_items):
             assert imported == expected
 
