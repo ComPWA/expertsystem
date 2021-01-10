@@ -142,21 +142,22 @@ class TestHelicityFormalism:
         assert len(dynamics) == 3
 
         j_psi = dynamics["J/psi(1S)"]
-        assert j_psi["Type"] == "NonDynamic"
-        assert j_psi["FormFactor"]["Type"] == "BlattWeisskopf"
+        assert j_psi["type"] == "NonDynamic"
+        assert j_psi["form_factor"]["type"] == "BlattWeisskopf"
         assert (
-            get_parameter(j_psi["FormFactor"]["MesonRadius"])["value"] == 1.0
+            get_parameter(j_psi["form_factor"]["meson_radius"])["value"] == 1.0
         )
 
         f0_980 = dynamics.get("f(0)(980)", None)
         if f0_980:
-            assert f0_980["Type"] == "RelativisticBreitWigner"
-            assert f0_980["FormFactor"]["Type"] == "BlattWeisskopf"
+            assert f0_980["type"] == "RelativisticBreitWigner"
+            assert f0_980["form_factor"]["type"] == "BlattWeisskopf"
             assert (
-                f0_980["FormFactor"]["MesonRadius"] == "MesonRadius_f(0)(980)"
+                f0_980["form_factor"]["meson_radius"]
+                == "MesonRadius_f(0)(980)"
             )
             assert (
-                get_parameter(f0_980["FormFactor"]["MesonRadius"])["value"]
+                get_parameter(f0_980["form_factor"]["meson_radius"])["value"]
                 == 1.0
             )
 

@@ -424,23 +424,21 @@ particles:
 
 Dynamics:
   J/psi(1S):
-    Type: NonDynamic
-    FormFactor:
-      Type: BlattWeisskopf
-      MesonRadius: *par5
+    type: NonDynamic
+    form_factor:
+      type: BlattWeisskopf
+      meson_radius: *par5
   f(0)(980):
-    Type: RelativisticBreitWigner
-    PoleParameters:
-      Real: *par6
-      Imaginary: *par7
-    FormFactor:
-      Type: BlattWeisskopf
-      MesonRadius: *par8
+    type: RelativisticBreitWigner
+    pole_position: *par6
+    pole_width: *par7
+    form_factor:
+      type: BlattWeisskopf
+      meson_radius: *par8
   f(0)(1500):
-    Type: RelativisticBreitWigner
-    PoleParameters:
-      Real: *par9
-      Imaginary: *par10
-    FormFactor:
-      Type: BlattWeisskopf
-      MesonRadius: *par11
+    type: RelativisticBreitWigner
+    pole_position: *par9
+    pole_width: *par10
+    form_factor:
+      type: BlattWeisskopf
+      meson_radius: *par11

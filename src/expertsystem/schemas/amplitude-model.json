@@ -83,19 +83,17 @@
       "patternProperties": {
         "^.*$": {
           "type": "object",
-          "required": ["Type"],
+          "required": ["type"],
           "additionalProperties": true,
           "properties": {
-            "Type": {
-              "enum": ["NonDynamic", "Flatté", "RelativisticBreitWigner"]
-            },
-            "FormFactor": {
+            "type": { "object": "string" },
+            "form_factor": {
               "type": "object",
-              "required": ["Type", "MesonRadius"],
+              "required": ["type", "meson_radius"],
               "additionalProperties": false,
               "properties": {
-                "Type": { "const": "BlattWeisskopf" },
-                "MesonRadius": { "type": "string" }
+                "type": { "object": "string" },
+                "meson_radius": { "type": "string" }
               }
             }
           }

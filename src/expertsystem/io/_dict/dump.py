@@ -1,11 +1,10 @@
 """Dump recipe objects to `dict` instances for a YAML file."""
-from typing import Any, Optional
+from typing import Any
 
 import attr
 
 from expertsystem.amplitude.model import (
     AmplitudeModel,
-    BlattWeisskopf,
     CanonicalDecay,
     CoefficientAmplitude,
     CoherentIntensity,
@@ -18,10 +17,8 @@ from expertsystem.amplitude.model import (
     Kinematics,
     KinematicsType,
     Node,
-    NonDynamic,
     NormalizedIntensity,
     ParticleDynamics,
-    RelativisticBreitWigner,
     SequentialAmplitude,
     StrengthIntensity,
 )
@@ -81,38 +78,22 @@ def __kinematics_to_dict(kin: Kinematics) -> dict:
 
 
 def __dynamics_section_to_dict(particle_dynamics: ParticleDynamics) -> dict:
-    output_dict = dict()
-    for particle_name, dynamics in particle_dynamics.items():
-        output_dict[particle_name] = __dynamics_to_dict(dynamics)
-    return output_dict
+    return {
+        particle_name: from_dynamics(dynamics)
+        for particle_name, dynamics in particle_dynamics.items()
+    }
 
 
-def __dynamics_to_dict(dynamics: Dynamics) -> dict:
-    output: dict = {"Type": dynamics.__class__.__name__}
-    if isinstance(dynamics, NonDynamic):
-        output.update(__form_factor_to_dict(dynamics.form_factor))
-        return output
-    if isinstance(dynamics, RelativisticBreitWigner):
-        output["PoleParameters"] = {
-            "Real": dynamics.pole_position.name,
-            "Imaginary": dynamics.pole_width.name,
-        }
-        output.update(__form_factor_to_dict(dynamics.form_factor))
-        return output
-    raise NotImplementedError("No conversion for", dynamics)
-
-
-def __form_factor_to_dict(form_factor: Optional[FormFactor]) -> dict:
-    if form_factor is None:
-        return dict()
-    if isinstance(form_factor, BlattWeisskopf):
-        return {
-            "FormFactor": {
-                "Type": "BlattWeisskopf",
-                "MesonRadius": form_factor.meson_radius.name,
-            }
-        }
-    raise NotImplementedError("No conversion for", form_factor)
+def from_dynamics(dynamics: Dynamics) -> dict:
+    return {
+        "type": dynamics.__class__.__name__,
+        **attr.asdict(
+            dynamics,
+            recurse=True,
+            value_serializer=__value_serializer,
+            filter=lambda attr, value: attr.default != value,
+        ),
+    }
 
 
 def __intensity_to_dict(  # pylint: disable=too-many-return-statements
@@ -219,6 +200,18 @@ def __intensity_to_dict(  # pylint: disable=too-many-return-statements
 def __value_serializer(  # pylint: disable=unused-argument
     inst: type, field: attr.Attribute, value: Any
 ) -> Any:
+    if isinstance(value, FormFactor):
+        return {
+            "type": value.__class__.__name__,
+            **attr.asdict(
+                value,
+                filter=lambda attr, value: attr.default != value,
+                recurse=True,
+                value_serializer=__value_serializer,
+            ),
+        }
+    if isinstance(value, FitParameter):
+        return value.name
     if isinstance(value, Parity):
         return {"value": value.value}
     if isinstance(value, Spin):

@@ -115,20 +115,21 @@ def __build_particle_dynamics(
 
 
 def __build_dynamics(definition: dict, parameters: FitParameters) -> Dynamics:
-    dynamics_type = definition["Type"]
-    form_factor = definition.get("FormFactor")
+    dynamics_type = definition["type"]
+    form_factor = definition.get("form_factor")
     if form_factor is not None:
         form_factor = __build_form_factor(form_factor, parameters)
     if dynamics_type == "NonDynamic":
         return NonDynamic(form_factor)
     if dynamics_type == "RelativisticBreitWigner":
-        pole = definition["PoleParameters"]
-        pole_position = __safely_get_parameter(pole["Real"], parameters)
-        pole_width = __safely_get_parameter(pole["Imaginary"], parameters)
         return RelativisticBreitWigner(
             form_factor=form_factor,
-            pole_position=pole_position,
-            pole_width=pole_width,
+            pole_position=__safely_get_parameter(
+                definition["pole_position"], parameters
+            ),
+            pole_width=__safely_get_parameter(
+                definition["pole_width"], parameters
+            ),
         )
     raise ValueError(f'Dynamics type "{dynamics_type}" not defined')
 
@@ -136,9 +137,9 @@ def __build_dynamics(definition: dict, parameters: FitParameters) -> Dynamics:
 def __build_form_factor(
     definition: dict, parameters: FitParameters
 ) -> FormFactor:
-    form_factor_type = definition["Type"]
+    form_factor_type = definition["type"]
     if form_factor_type == "BlattWeisskopf":
-        par_name = definition["MesonRadius"]
+        par_name = definition["meson_radius"]
         meson_radius = __safely_get_parameter(par_name, parameters)
         return BlattWeisskopf(meson_radius)
     raise NotImplementedError(
