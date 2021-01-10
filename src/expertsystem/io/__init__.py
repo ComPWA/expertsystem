@@ -140,9 +140,9 @@ def _determine_type(definition: dict) -> type:
         "Intensity",
         "Kinematics",
         "Parameters",
-        "ParticleList",
+        "particles",
     }:
         return AmplitudeModel
-    if keys == {"ParticleList"}:
+    if keys == {"particles"}:
         return ParticleCollection
     raise NotImplementedError(f"Could not determine type from keys {keys}")

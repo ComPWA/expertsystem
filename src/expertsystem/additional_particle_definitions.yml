@@ -1,4 +1,4 @@
-ParticleList:
+particles:
   - name: Y(4260)
     pid: 11443
     mass: 4.300

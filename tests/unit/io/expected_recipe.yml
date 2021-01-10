@@ -356,7 +356,7 @@ Intensity:
                       RecoilFinalState:
                         - 2
 
-ParticleList:
+particles:
   - name: J/psi(1S)
     pid: 443
     mass: 3.0969

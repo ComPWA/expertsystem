@@ -59,11 +59,9 @@ def build_particle_collection(
 ) -> ParticleCollection:
     if do_validate:
         validate.particle_collection(definition)
-    definition = definition["ParticleList"]
-    particles = ParticleCollection()
-    for particle_def in definition:
-        particles.add(__build_particle(particle_def))
-    return particles
+    return ParticleCollection(
+        __build_particle(p) for p in definition["particles"]
+    )
 
 
 def __build_particle(definition: dict) -> Particle:

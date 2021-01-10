@@ -1,4 +1,4 @@
-ParticleList:
+particles:
   - name: Sigma(1385)+
     pid: 32241385
     mass: 1.383

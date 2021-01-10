@@ -96,7 +96,7 @@ class TestHelicityFormalism:
         assert len(jpsi_to_gamma_pi_pi_helicity_amplitude_model.dynamics) == 3
 
     def test_particle_section(self, imported_dict):
-        particle_list = imported_dict.get("ParticleList", imported_dict)
+        particle_list = imported_dict.get("particles", imported_dict)
         gamma = next(p for p in particle_list if p["name"] == "gamma")
         assert gamma["pid"] == 22
         assert gamma["mass"] == 0.0
@@ -167,13 +167,13 @@ class TestHelicityFormalism:
 
     @pytest.mark.parametrize(
         "section",
-        ["Dynamics", "Kinematics", "Parameters", "ParticleList"],
+        ["Dynamics", "Kinematics", "Parameters", "particles"],
     )
     def test_expected_recipe_shape(
         self, imported_dict, expected_dict, section
     ):
         name_tag = "Name"
-        if section == "ParticleList":
+        if section == "particles":
             name_tag = "name"
         expected_section = equalize_dict(expected_dict[section])
         imported_section = equalize_dict(imported_dict[section])
@@ -219,7 +219,7 @@ class TestCanonicalFormalism:
             )
 
     def test_particle_section(self, imported_dict):
-        particle_list = imported_dict["ParticleList"]
+        particle_list = imported_dict["particles"]
         gamma = next(p for p in particle_list if p["name"] == "gamma")
         assert gamma["pid"] == 22
         assert gamma["mass"] == 0.0

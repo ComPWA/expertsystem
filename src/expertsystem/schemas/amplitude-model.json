@@ -7,7 +7,7 @@
     "Parameters",
     "Dynamics",
     "Intensity",
-    "ParticleList"
+    "particles"
   ],
   "additionalProperties": false,
   "properties": {
@@ -103,7 +103,7 @@
       }
     },
     "Intensity": { "$ref": "#/definitions/Intensity/_recursion" },
-    "ParticleList": { "$ref": "particle-list.json#/definitions/ParticleList" }
+    "particles": { "$ref": "particle-list.json#/definitions/particles" }
   },
   "definitions": {
     "Intensity": {

@@ -2,9 +2,9 @@
   "$id": "particle-list.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["ParticleList"],
+  "required": ["particles"],
   "additionalProperties": false,
-  "properties": { "ParticleList": { "$ref": "#/definitions/ParticleList" } },
+  "properties": { "particles": { "$ref": "#/definitions/particles" } },
   "definitions": {
     "Parity": {
       "type": "object",
@@ -47,7 +47,7 @@
       },
       "additionalProperties": false
     },
-    "ParticleList": {
+    "particles": {
       "type": "array",
       "items": { "$ref": "#/definitions/Particle" }
     }

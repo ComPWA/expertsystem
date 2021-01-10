@@ -40,8 +40,7 @@ def from_amplitude_model(model: AmplitudeModel) -> dict:
 
 
 def from_particle_collection(particles: ParticleCollection) -> dict:
-    output = {"ParticleList": [from_particle(p) for p in particles]}
-    return output
+    return {"particles": [from_particle(p) for p in particles]}
 
 
 def from_particle(particle: Particle) -> dict:
