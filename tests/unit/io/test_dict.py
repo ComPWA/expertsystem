@@ -121,7 +121,7 @@ class TestHelicityFormalism:
         assert len(final_state) == 3
 
     def test_parameter_section(self, imported_dict):
-        parameter_list = imported_dict["Parameters"]
+        parameter_list = imported_dict["parameters"]
         assert len(parameter_list) == 11
         for parameter in parameter_list:
             assert "name" in parameter
@@ -129,7 +129,7 @@ class TestHelicityFormalism:
             assert parameter.get("fix", True)
 
     def test_dynamics_section(self, imported_dict):
-        parameter_list: list = imported_dict["Parameters"]
+        parameter_list: list = imported_dict["parameters"]
 
         def get_parameter(parameter_name: str) -> dict:
             for par in parameter_list:
@@ -167,7 +167,7 @@ class TestHelicityFormalism:
 
     @pytest.mark.parametrize(
         "section",
-        ["Dynamics", "Kinematics", "Parameters", "particles"],
+        ["Dynamics", "Kinematics", "parameters", "particles"],
     )
     def test_expected_recipe_shape(
         self, imported_dict, expected_dict, section
@@ -223,7 +223,7 @@ class TestCanonicalFormalism:
         assert pi0["isospin"]["magnitude"] == 1
 
     def test_parameter_section(self, imported_dict):
-        parameter_list = imported_dict["Parameters"]
+        parameter_list = imported_dict["parameters"]
         assert len(parameter_list) == 11
         for parameter in parameter_list:
             assert "name" in parameter

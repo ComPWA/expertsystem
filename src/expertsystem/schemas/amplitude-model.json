@@ -4,7 +4,7 @@
   "type": "object",
   "required": [
     "Kinematics",
-    "Parameters",
+    "parameters",
     "Dynamics",
     "Intensity",
     "particles"
@@ -47,7 +47,7 @@
         }
       }
     },
-    "Parameters": {
+    "parameters": {
       "title": "Parameter list",
       "description": "An array of parameters used throughout the amplitude model",
       "type": "array",

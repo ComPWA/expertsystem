@@ -1,6 +1,6 @@
 """Read recipe objects from a YAML file."""
 
-from typing import List, Optional
+from typing import Optional
 
 from expertsystem.amplitude.model import (
     AmplitudeModel,
@@ -37,7 +37,7 @@ from . import validate
 def build_amplitude_model(definition: dict) -> AmplitudeModel:
     validate.amplitude_model(definition)
     particles = build_particle_collection(definition, do_validate=False)
-    parameters = __build_fit_parameters(definition["Parameters"])
+    parameters = build_fit_parameters(definition)
     kinematics = __build_kinematics(definition["Kinematics"], particles)
     dynamics = __build_particle_dynamics(
         definition["Dynamics"], particles, parameters
@@ -75,12 +75,8 @@ def __build_particle(definition: dict) -> Particle:
     return Particle(**definition)
 
 
-def __build_fit_parameters(definition: List[dict]) -> FitParameters:
-    parameters = FitParameters()
-    for parameter_def in definition:
-        parameter = FitParameter(**parameter_def)
-        parameters.add(parameter)
-    return parameters
+def build_fit_parameters(definition: dict) -> FitParameters:
+    return FitParameters(FitParameter(**p) for p in definition["parameters"])
 
 
 def __build_kinematics(

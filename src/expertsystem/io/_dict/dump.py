@@ -1,5 +1,5 @@
 """Dump recipe objects to `dict` instances for a YAML file."""
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 import attr
 
@@ -10,6 +10,7 @@ from expertsystem.amplitude.model import (
     CoefficientAmplitude,
     CoherentIntensity,
     Dynamics,
+    FitParameter,
     FitParameters,
     FormFactor,
     HelicityDecay,
@@ -30,7 +31,7 @@ from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
 def from_amplitude_model(model: AmplitudeModel) -> dict:
     output_dict = {
         "Kinematics": __kinematics_to_dict(model.kinematics),
-        "Parameters": __parameters_to_dict(model.parameters),
+        **from_fit_parameters(model.parameters),
         "Intensity": __intensity_to_dict(model.intensity),
         **from_particle_collection(model.particles),
         "Dynamics": __dynamics_section_to_dict(model.dynamics),
@@ -51,8 +52,12 @@ def from_particle(particle: Particle) -> dict:
     )
 
 
-def __parameters_to_dict(parameters: FitParameters) -> List[dict]:
-    return [attr.asdict(par, recurse=True) for par in parameters.values()]
+def from_fit_parameters(parameters: FitParameters) -> dict:
+    return {"parameters": [from_fit_parameter(p) for p in parameters.values()]}
+
+
+def from_fit_parameter(parameter: FitParameter) -> dict:
+    return attr.asdict(parameter, recurse=True)
 
 
 def __kinematics_to_dict(kin: Kinematics) -> dict:

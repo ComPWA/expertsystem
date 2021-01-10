@@ -34,7 +34,7 @@ class FitParameters(abc.Mapping):
     ) -> None:
         self.__parameters: Dict[str, FitParameter] = dict()
         if parameters is not None:
-            if not isinstance(parameters, (list, set, tuple)):
+            if not isinstance(parameters, abc.Iterable):
                 raise ValueError(
                     f"Cannot construct a {self.__class__.__name__} "
                     f"from a {parameters.__class__.__name__}"
