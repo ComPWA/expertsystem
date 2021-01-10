@@ -94,10 +94,6 @@ class FitParameters(abc.Mapping):
         )
 
 
-class Dynamics(ABC):
-    pass
-
-
 class FormFactor(ABC):
     pass
 
@@ -108,15 +104,18 @@ class BlattWeisskopf(FormFactor):
 
 
 @attr.s
+class Dynamics:
+    form_factor: Optional[FormFactor] = attr.ib(default=None)
+
+
 class NonDynamic(Dynamics):
-    form_factor: BlattWeisskopf = attr.ib()
+    pass
 
 
 @attr.s
 class RelativisticBreitWigner(Dynamics):
-    pole_position: FitParameter = attr.ib()
-    pole_width: FitParameter = attr.ib()
-    form_factor: BlattWeisskopf = attr.ib()
+    pole_position: FitParameter = attr.ib(kw_only=True)
+    pole_width: FitParameter = attr.ib(kw_only=True)
 
 
 class ParticleDynamics(abc.Mapping):
