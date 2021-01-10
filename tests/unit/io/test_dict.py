@@ -97,21 +97,19 @@ class TestHelicityFormalism:
 
     def test_particle_section(self, imported_dict):
         particle_list = imported_dict.get("ParticleList", imported_dict)
-        gamma = particle_list["gamma"]
-        assert gamma["PID"] == 22
-        assert gamma["Mass"] == 0.0
-        gamma_qns = gamma["QuantumNumbers"]
-        assert gamma_qns["Spin"] == 1
-        assert gamma_qns["Charge"] == 0
-        assert gamma_qns["Parity"] == -1
-        assert gamma_qns["CParity"] == -1
+        gamma = next(p for p in particle_list if p["name"] == "gamma")
+        assert gamma["pid"] == 22
+        assert gamma["mass"] == 0.0
+        assert gamma["spin"] == 1.0
+        assert gamma["parity"]["value"] == -1
+        assert gamma["c_parity"]["value"] == -1
 
-        f0_980 = particle_list["f(0)(980)"]
-        assert f0_980["Width"] == 0.06
+        f0_980 = next(p for p in particle_list if p["name"] == "f(0)(980)")
+        assert f0_980["width"] == 0.06
 
-        pi0_qns = particle_list["pi0"]["QuantumNumbers"]
-        assert pi0_qns["IsoSpin"]["Value"] == 1
-        assert pi0_qns["IsoSpin"]["Projection"] == 0
+        pi0 = next(p for p in particle_list if p["name"] == "pi0")
+        assert pi0["isospin"]["magnitude"] == 1
+        assert pi0["isospin"]["projection"] == 0
 
     def test_kinematics_section(self, imported_dict):
         kinematics = imported_dict["Kinematics"]
@@ -174,6 +172,9 @@ class TestHelicityFormalism:
     def test_expected_recipe_shape(
         self, imported_dict, expected_dict, section
     ):
+        name_tag = "Name"
+        if section == "ParticleList":
+            name_tag = "name"
         expected_section = equalize_dict(expected_dict[section])
         imported_section = equalize_dict(imported_dict[section])
         if isinstance(expected_section, dict):
@@ -181,8 +182,12 @@ class TestHelicityFormalism:
             imported_items = list(imported_section.values())
             expected_items = list(expected_section.values())
         else:
-            expected_items = sorted(expected_section, key=lambda p: p["Name"])
-            imported_items = sorted(imported_section, key=lambda p: p["Name"])
+            expected_items = sorted(
+                expected_section, key=lambda p: p[name_tag]
+            )
+            imported_items = sorted(
+                imported_section, key=lambda p: p[name_tag]
+            )
         assert len(imported_items) == len(expected_items)
         for imported, expected in zip(imported_items, expected_items):
             assert imported == expected
@@ -215,15 +220,14 @@ class TestCanonicalFormalism:
 
     def test_particle_section(self, imported_dict):
         particle_list = imported_dict["ParticleList"]
-        gamma = particle_list["gamma"]
-        assert gamma["PID"] == 22
-        assert gamma["Mass"] == 0.0
-        gamma_qns = gamma["QuantumNumbers"]
-        assert gamma_qns["CParity"] == -1
-        f0_980 = particle_list["f(0)(980)"]
-        assert f0_980["Width"] == 0.06
-        pi0_qns = particle_list["pi0"]["QuantumNumbers"]
-        assert pi0_qns["IsoSpin"]["Value"] == 1
+        gamma = next(p for p in particle_list if p["name"] == "gamma")
+        assert gamma["pid"] == 22
+        assert gamma["mass"] == 0.0
+        assert gamma["c_parity"]["value"] == -1
+        f0_980 = next(p for p in particle_list if p["name"] == "f(0)(980)")
+        assert f0_980["width"] == 0.06
+        pi0 = next(p for p in particle_list if p["name"] == "pi0")
+        assert pi0["isospin"]["magnitude"] == 1
 
     def test_parameter_section(self, imported_dict):
         parameter_list = imported_dict["Parameters"]

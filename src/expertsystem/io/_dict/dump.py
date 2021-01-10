@@ -1,5 +1,7 @@
 """Dump recipe objects to `dict` instances for a YAML file."""
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, List, Optional
+
+import attr
 
 from expertsystem.amplitude.model import (
     AmplitudeModel,
@@ -38,70 +40,17 @@ def from_amplitude_model(model: AmplitudeModel) -> dict:
 
 
 def from_particle_collection(particles: ParticleCollection) -> dict:
-    output = {p.name: from_particle(p) for p in particles}
-    output = {"ParticleList": output}
+    output = {"ParticleList": [from_particle(p) for p in particles]}
     return output
 
 
 def from_particle(particle: Particle) -> dict:
-    output_dict: Dict[str, Union[float, int, dict]] = {
-        "PID": particle.pid,
-        "Mass": particle.mass,
-    }
-    if particle.width != 0.0:
-        output_dict["Width"] = particle.width
-    output_dict["QuantumNumbers"] = __to_quantum_number_dict(particle)
-    return output_dict
-
-
-def __to_quantum_number_dict(
-    particle: Particle,
-) -> Dict[str, Union[float, int, Dict[str, float]]]:
-    output_dict: Dict[str, Union[float, int, Dict[str, float]]] = {
-        "Spin": __attempt_to_int(particle.spin),
-        "Charge": int(particle.charge),
-    }
-    optional_qn: List[
-        Tuple[str, Union[Optional[Parity], Spin, int], Union[Callable, int]]
-    ] = [
-        ("Parity", particle.parity, int),
-        ("CParity", particle.c_parity, int),
-        ("GParity", particle.g_parity, int),
-        ("Strangeness", particle.strangeness, int),
-        ("Charmness", particle.charmness, int),
-        ("Bottomness", particle.bottomness, int),
-        ("Topness", particle.topness, int),
-        ("BaryonNumber", particle.baryon_number, int),
-        ("ElectronLN", particle.electron_lepton_number, int),
-        ("MuonLN", particle.muon_lepton_number, int),
-        ("TauLN", particle.tau_lepton_number, int),
-    ]
-    for key, value, converter in optional_qn:
-        if value in [0, None]:
-            continue
-        output_dict[key] = converter(  # type: ignore
-            value
-        )  # pylint: disable=not-callable
-    if particle.isospin is not None:
-        output_dict["IsoSpin"] = __from_spin(particle.isospin)
-    return output_dict
-
-
-def __from_spin(instance: Spin) -> Union[Dict[str, Union[float, int]], int]:
-    if instance.magnitude == 0:
-        return 0
-    return {
-        "Value": __attempt_to_int(instance.magnitude),
-        "Projection": __attempt_to_int(instance.projection),
-    }
-
-
-def __attempt_to_int(value: Union[Spin, float, int]) -> Union[float, int]:
-    if isinstance(value, Spin):
-        value = float(value)
-    if isinstance(value, float) and value.is_integer():
-        return int(value)
-    return value
+    return attr.asdict(
+        particle,
+        recurse=True,
+        value_serializer=__value_serializer,
+        filter=lambda attr, value: attr.default != value,
+    )
 
 
 def __parameters_to_dict(parameters: FitParameters) -> List[dict]:
@@ -268,3 +217,16 @@ def __intensity_to_dict(  # pylint: disable=too-many-return-statements
             }
         return output_dict
     raise NotImplementedError("No conversion defined for", node)
+
+
+def __value_serializer(  # pylint: disable=unused-argument
+    inst: type, field: attr.Attribute, value: Any
+) -> Any:
+    if isinstance(value, Parity):
+        return {"value": value.value}
+    if isinstance(value, Spin):
+        return {
+            "magnitude": value.magnitude,
+            "projection": value.projection,
+        }
+    return value
