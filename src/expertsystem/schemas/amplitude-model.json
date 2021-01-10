@@ -65,7 +65,7 @@
             "type": "number",
             "title": "Starting value of the fit parameter"
           },
-          "is_fixed": { "type": "boolean" },
+          "fix": { "type": "boolean" },
           "min": {
             "type": "number",
             "title": "Lower boundary of the fit range"

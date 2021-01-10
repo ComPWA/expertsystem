@@ -22,21 +22,21 @@ parameters:
     value: 0.0
   - name: &par5 MesonRadius_J/psi(1S)
     value: 1.0
-    is_fixed: true
+    fix: true
   - name: &par6 Position_f(0)(980)
     value: 0.99
   - name: &par7 Width_f(0)(980)
     value: 0.06
   - name: &par8 MesonRadius_f(0)(980)
     value: 1.0
-    is_fixed: true
+    fix: true
   - name: &par9 Position_f(0)(1500)
     value: 1.506
   - name: &par10 Width_f(0)(1500)
     value: 0.112
   - name: &par11 MesonRadius_f(0)(1500)
     value: 1.0
-    is_fixed: true
+    fix: true
 
 Intensity:
   Class: StrengthIntensity
