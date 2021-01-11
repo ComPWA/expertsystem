@@ -117,23 +117,23 @@
       "_recursion": {
         "type": "object",
         "properties": {
-          "Class": { "$ref": "#/definitions/Intensity/_types" }
+          "type": { "$ref": "#/definitions/Intensity/_types" }
         },
-        "if": { "properties": { "Class": { "const": "StrengthIntensity" } } },
+        "if": { "properties": { "type": { "const": "StrengthIntensity" } } },
         "then": { "$ref": "#/definitions/Intensity/Strength" },
         "else": {
           "if": {
-            "properties": { "Class": { "const": "NormalizedIntensity" } }
+            "properties": { "type": { "const": "NormalizedIntensity" } }
           },
           "then": { "$ref": "#/definitions/Intensity/Normalized" },
           "else": {
             "if": {
-              "properties": { "Class": { "const": "IncoherentIntensity" } }
+              "properties": { "type": { "const": "IncoherentIntensity" } }
             },
             "then": { "$ref": "#/definitions/Intensity/Incoherent" },
             "else": {
               "if": {
-                "properties": { "Class": { "const": "CoherentIntensity" } }
+                "properties": { "type": { "const": "CoherentIntensity" } }
               },
               "then": { "$ref": "#/definitions/Intensity/Coherent" }
             }
@@ -142,10 +142,10 @@
       },
       "Strength": {
         "type": "object",
-        "required": ["Class", "Intensity", "Strength"],
+        "required": ["type", "Intensity", "Strength"],
         "additionalProperties": false,
         "properties": {
-          "Class": { "$ref": "#/definitions/Intensity/_types" },
+          "type": { "$ref": "#/definitions/Intensity/_types" },
           "Component": { "type": "string" },
           "Strength": {
             "type": "string",
@@ -160,10 +160,10 @@
       },
       "Normalized": {
         "type": "object",
-        "required": ["Class", "Intensity"],
+        "required": ["type", "Intensity"],
         "additionalProperties": false,
         "properties": {
-          "Class": { "$ref": "#/definitions/Intensity/_types" },
+          "type": { "$ref": "#/definitions/Intensity/_types" },
           "Intensity": {
             "$ref": "#/definitions/Intensity/_recursion",
             "title": "The intensity with which to multiply the (optional) strength coefficient"
@@ -172,10 +172,10 @@
       },
       "Incoherent": {
         "type": "object",
-        "required": ["Class", "Intensities"],
+        "required": ["type", "Intensities"],
         "additionalProperties": false,
         "properties": {
-          "Class": { "$ref": "#/definitions/Intensity/_types" },
+          "type": { "$ref": "#/definitions/Intensity/_types" },
           "Intensities": {
             "type": "array",
             "title": "List of intensities that will be added up incoherently",
@@ -185,10 +185,10 @@
       },
       "Coherent": {
         "type": "object",
-        "required": ["Class", "Amplitudes"],
+        "required": ["type", "Amplitudes"],
         "additionalProperties": false,
         "properties": {
-          "Class": { "$ref": "#/definitions/Intensity/_types" },
+          "type": { "$ref": "#/definitions/Intensity/_types" },
           "Component": { "type": "string" },
           "Amplitudes": {
             "type": "array",
@@ -209,29 +209,29 @@
       "_recursion": {
         "type": "object",
         "properties": {
-          "Class": { "$ref": "#/definitions/Amplitude/_types" }
+          "type": { "$ref": "#/definitions/Amplitude/_types" }
         },
         "if": {
-          "properties": { "Class": { "const": "CoefficientAmplitude" } }
+          "properties": { "type": { "const": "CoefficientAmplitude" } }
         },
         "then": { "$ref": "#/definitions/Amplitude/Coefficient" },
         "else": {
           "if": {
-            "properties": { "Class": { "const": "SequentialAmplitude" } }
+            "properties": { "type": { "const": "SequentialAmplitude" } }
           },
           "then": { "$ref": "#/definitions/Amplitude/Sequential" },
           "else": {
-            "if": { "properties": { "Class": { "const": "HelicityDecay" } } },
+            "if": { "properties": { "type": { "const": "HelicityDecay" } } },
             "then": { "$ref": "#/definitions/Amplitude/HelicityDecay" }
           }
         }
       },
       "Coefficient": {
         "type": "object",
-        "required": ["Class", "Magnitude", "Phase", "Amplitude"],
+        "required": ["type", "Magnitude", "Phase", "Amplitude"],
         "additionalProperties": false,
         "properties": {
-          "Class": { "$ref": "#/definitions/Amplitude/_types" },
+          "type": { "$ref": "#/definitions/Amplitude/_types" },
           "Component": { "type": "string" },
           "PreFactor": { "type": "number" },
           "Magnitude": { "type": "string" },
@@ -241,10 +241,10 @@
       },
       "Sequential": {
         "type": "object",
-        "required": ["Class", "Amplitudes"],
+        "required": ["type", "Amplitudes"],
         "additionalProperties": false,
         "properties": {
-          "Class": { "$ref": "#/definitions/Amplitude/_types" },
+          "type": { "$ref": "#/definitions/Amplitude/_types" },
           "Amplitudes": {
             "type": "array",
             "items": { "$ref": "#/definitions/Amplitude/_recursion" }
@@ -253,10 +253,10 @@
       },
       "HelicityDecay": {
         "type": "object",
-        "required": ["Class", "DecayParticle", "DecayProducts"],
+        "required": ["type", "DecayParticle", "DecayProducts"],
         "additionalProperties": false,
         "properties": {
-          "Class": { "$ref": "#/definitions/Amplitude/_types" },
+          "type": { "$ref": "#/definitions/Amplitude/_types" },
           "DecayParticle": {
             "type": "object",
             "required": ["Name", "Helicity"],

@@ -160,7 +160,7 @@ def __safely_get_parameter(
 def __build_intensity(
     definition: dict, particles: ParticleCollection, parameters: FitParameters
 ) -> IntensityNode:
-    intensity_type = definition["Class"]
+    intensity_type = definition["type"]
     if intensity_type == "StrengthIntensity":
         strength = parameters[definition["Strength"]]
         component = str(definition["Component"])
@@ -202,7 +202,7 @@ def __build_intensity(
 def __build_amplitude(  # pylint: disable=too-many-locals
     definition: dict, particles: ParticleCollection, parameters: FitParameters
 ) -> AmplitudeNode:
-    amplitude_type = definition["Class"]
+    amplitude_type = definition["type"]
     if amplitude_type == "CoefficientAmplitude":
         component = definition["Component"]
         magnitude = parameters[definition["Magnitude"]]

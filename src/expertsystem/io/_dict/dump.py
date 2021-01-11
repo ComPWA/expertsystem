@@ -101,19 +101,19 @@ def __intensity_to_dict(  # pylint: disable=too-many-return-statements
 ) -> dict:
     if isinstance(node, StrengthIntensity):
         return {
-            "Class": "StrengthIntensity",
+            "type": "StrengthIntensity",
             "Component": node.component,
             "Strength": node.strength.name,
             "Intensity": __intensity_to_dict(node.intensity),
         }
     if isinstance(node, NormalizedIntensity):
         return {
-            "Class": "NormalizedIntensity",
+            "type": "NormalizedIntensity",
             "Intensity": __intensity_to_dict(node.intensity),
         }
     if isinstance(node, IncoherentIntensity):
         return {
-            "Class": "IncoherentIntensity",
+            "type": "IncoherentIntensity",
             "Intensities": [
                 __intensity_to_dict(intensity)
                 for intensity in node.intensities
@@ -121,7 +121,7 @@ def __intensity_to_dict(  # pylint: disable=too-many-return-statements
         }
     if isinstance(node, CoherentIntensity):
         return {
-            "Class": "CoherentIntensity",
+            "type": "CoherentIntensity",
             "Component": node.component,
             "Amplitudes": [
                 __intensity_to_dict(intensity) for intensity in node.amplitudes
@@ -129,7 +129,7 @@ def __intensity_to_dict(  # pylint: disable=too-many-return-statements
         }
     if isinstance(node, CoefficientAmplitude):
         output_dict: dict = {
-            "Class": "CoefficientAmplitude",
+            "type": "CoefficientAmplitude",
             "Component": node.component,
         }
         if node.prefactor is not None:
@@ -140,14 +140,14 @@ def __intensity_to_dict(  # pylint: disable=too-many-return-statements
         return output_dict
     if isinstance(node, SequentialAmplitude):
         return {
-            "Class": "SequentialAmplitude",
+            "type": "SequentialAmplitude",
             "Amplitudes": [
                 __intensity_to_dict(intensity) for intensity in node.amplitudes
             ],
         }
     if isinstance(node, (HelicityDecay, CanonicalDecay)):
         output_dict = {
-            "Class": "HelicityDecay",
+            "type": "HelicityDecay",
             "DecayParticle": {
                 "Name": node.decaying_particle.particle.name,
                 "Helicity": node.decaying_particle.helicity,

@@ -163,7 +163,7 @@ class TestHelicityFormalism:
 
     def test_intensity_section(self, imported_dict):
         intensity = imported_dict["intensity"]
-        assert intensity["Class"] == "IncoherentIntensity"
+        assert intensity["type"] == "IncoherentIntensity"
         assert len(intensity["Intensities"]) == 4
 
     @pytest.mark.parametrize(
