@@ -5,7 +5,7 @@
   "required": [
     "Kinematics",
     "parameters",
-    "Dynamics",
+    "dynamics",
     "Intensity",
     "particles"
   ],
@@ -77,7 +77,7 @@
         }
       }
     },
-    "Dynamics": {
+    "dynamics": {
       "type": "object",
       "additionalProperties": false,
       "patternProperties": {

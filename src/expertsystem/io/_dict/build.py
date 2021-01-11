@@ -40,7 +40,7 @@ def build_amplitude_model(definition: dict) -> AmplitudeModel:
     parameters = build_fit_parameters(definition)
     kinematics = __build_kinematics(definition["Kinematics"], particles)
     dynamics = __build_particle_dynamics(
-        definition["Dynamics"], particles, parameters
+        definition["dynamics"], particles, parameters
     )
     intensity = __build_intensity(
         definition["Intensity"], particles, parameters

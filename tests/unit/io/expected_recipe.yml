@@ -422,7 +422,7 @@ particles:
       magnitude: 0.0
       projection: 0.0
 
-Dynamics:
+dynamics:
   J/psi(1S):
     type: NonDynamic
     form_factor:

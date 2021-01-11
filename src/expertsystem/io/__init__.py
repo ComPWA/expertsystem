@@ -147,7 +147,7 @@ def _get_file_extension(filename: str) -> str:
 def _determine_type(definition: dict) -> type:
     keys = set(definition.keys())
     if keys == {
-        "Dynamics",
+        "dynamics",
         "Intensity",
         "Kinematics",
         "parameters",

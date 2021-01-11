@@ -138,7 +138,7 @@ class TestHelicityFormalism:
                     return par
             raise LookupError(f'Could not find parameter  "{parameter_name}"')
 
-        dynamics = imported_dict["Dynamics"]
+        dynamics = imported_dict["dynamics"]
         assert len(dynamics) == 3
 
         j_psi = dynamics["J/psi(1S)"]
@@ -168,7 +168,7 @@ class TestHelicityFormalism:
 
     @pytest.mark.parametrize(
         "section",
-        ["Dynamics", "Kinematics", "parameters", "particles"],
+        ["dynamics", "Kinematics", "parameters", "particles"],
     )
     def test_expected_recipe_shape(
         self, imported_dict, expected_dict, section
