@@ -29,7 +29,7 @@ def from_amplitude_model(model: AmplitudeModel) -> dict:
     output_dict = {
         "Kinematics": __kinematics_to_dict(model.kinematics),
         **from_fit_parameters(model.parameters),
-        "Intensity": __intensity_to_dict(model.intensity),
+        "intensity": __intensity_to_dict(model.intensity),
         **from_particle_collection(model.particles),
         "dynamics": __dynamics_section_to_dict(model.dynamics),
     }

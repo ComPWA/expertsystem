@@ -148,7 +148,7 @@ def _determine_type(definition: dict) -> type:
     keys = set(definition.keys())
     if keys == {
         "dynamics",
-        "Intensity",
+        "intensity",
         "Kinematics",
         "parameters",
         "particles",

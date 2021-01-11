@@ -43,7 +43,7 @@ def build_amplitude_model(definition: dict) -> AmplitudeModel:
         definition["dynamics"], particles, parameters
     )
     intensity = __build_intensity(
-        definition["Intensity"], particles, parameters
+        definition["intensity"], particles, parameters
     )
     return AmplitudeModel(
         particles=particles,

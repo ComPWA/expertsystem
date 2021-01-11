@@ -162,7 +162,7 @@ class TestHelicityFormalism:
             )
 
     def test_intensity_section(self, imported_dict):
-        intensity = imported_dict["Intensity"]
+        intensity = imported_dict["intensity"]
         assert intensity["Class"] == "IncoherentIntensity"
         assert len(intensity["Intensities"]) == 4
 
@@ -231,7 +231,7 @@ class TestCanonicalFormalism:
             assert "value" in parameter
 
     def test_clebsch_gordan(self, imported_dict):
-        incoherent_intensity = imported_dict["Intensity"]
+        incoherent_intensity = imported_dict["intensity"]
         coherent_intensity = incoherent_intensity["Intensities"][0]
         coefficient_amplitude = coherent_intensity["Amplitudes"][0]
         sequential_amplitude = coefficient_amplitude["Amplitude"]

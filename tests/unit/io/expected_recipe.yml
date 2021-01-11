@@ -38,7 +38,7 @@ parameters:
     value: 1.0
     fix: true
 
-Intensity:
+intensity:
   Class: StrengthIntensity
   Component: incoherent_with_strength
   Strength: strength_incoherent

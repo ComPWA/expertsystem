@@ -6,7 +6,7 @@
     "Kinematics",
     "parameters",
     "dynamics",
-    "Intensity",
+    "intensity",
     "particles"
   ],
   "additionalProperties": false,
@@ -100,7 +100,7 @@
         }
       }
     },
-    "Intensity": { "$ref": "#/definitions/Intensity/_recursion" },
+    "intensity": { "$ref": "#/definitions/Intensity/_recursion" },
     "particles": { "$ref": "particle-list.json#/definitions/particles" }
   },
   "definitions": {
