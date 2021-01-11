@@ -24,6 +24,10 @@ def test_serialization(
     io.write(exported, filename)
     asdict = io.asdict(exported)
     imported = io.fromdict(asdict)
+    io.write(
+        imported,
+        output_dir + f"test_write_read_{formalism}.imported.{file_extension}",
+    )
     assert isinstance(imported, AmplitudeModel)
     assert exported.particles == imported.particles
     assert exported.parameters == imported.parameters

@@ -40,320 +40,320 @@ parameters:
 
 intensity:
   type: StrengthIntensity
-  Component: incoherent_with_strength
-  Strength: strength_incoherent
-  Intensity:
+  component: incoherent_with_strength
+  strength: strength_incoherent
+  intensity:
     type: NormalizedIntensity
-    Intensity:
+    intensity:
       type: IncoherentIntensity
-      Intensities:
+      intensities:
         - type: CoherentIntensity
-          Component: coherent_J/psi(1S)_-1_to_gamma_-1+pi0_0+pi0_0
-          Amplitudes:
+          component: coherent_J/psi(1S)_-1_to_gamma_-1+pi0_0+pi0_0
+          amplitudes:
             - type: CoefficientAmplitude
-              Component: J/psi(1S)_-1_to_f(0)(980)_0+gamma_-1;f(0)(980)_0_to_pi0_0+pi0_0;
-              Magnitude: *par1
-              Phase: *par2
-              Amplitude:
+              component: J/psi(1S)_-1_to_f(0)(980)_0+gamma_-1;f(0)(980)_0_to_pi0_0+pi0_0;
+              magnitude: *par1
+              phase: *par2
+              amplitude:
                 type: SequentialAmplitude
-                Amplitudes:
+                amplitudes:
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: J/psi(1S)
-                      Helicity: -1.0
-                    DecayProducts:
-                      - Name: f(0)(980)
-                        FinalState:
+                    decaying_particle:
+                      particle: J/psi(1S)
+                      helicity: -1.0
+                    decay_products:
+                      - particle: f(0)(980)
+                        final_state_ids:
                           - 3
                           - 4
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState:
+                        helicity: 0.0
+                      - particle: gamma
+                        final_state_ids:
                           - 2
-                        Helicity: -1.0
+                        helicity: -1.0
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: f(0)(980)
-                      Helicity: 0.0
-                    DecayProducts:
-                      - Name: pi0
-                        FinalState:
+                    decaying_particle:
+                      particle: f(0)(980)
+                      helicity: 0.0
+                    decay_products:
+                      - particle: pi0
+                        final_state_ids:
                           - 3
-                        Helicity: -0.0
-                      - Name: pi0
-                        FinalState:
+                        helicity: -0.0
+                      - particle: pi0
+                        final_state_ids:
                           - 4
-                        Helicity: -0.0
-                    RecoilSystem:
-                      RecoilFinalState:
+                        helicity: -0.0
+                    recoil_system:
+                      recoil_final_state:
                         - 2
             - type: CoefficientAmplitude
-              Component: J/psi(1S)_-1_to_f(0)(1500)_0+gamma_-1;f(0)(1500)_0_to_pi0_0+pi0_0;
-              Magnitude: *par3
-              Phase: *par4
-              Amplitude:
+              component: J/psi(1S)_-1_to_f(0)(1500)_0+gamma_-1;f(0)(1500)_0_to_pi0_0+pi0_0;
+              magnitude: *par3
+              phase: *par4
+              amplitude:
                 type: SequentialAmplitude
-                Amplitudes:
+                amplitudes:
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: J/psi(1S)
-                      Helicity: -1.0
-                    DecayProducts:
-                      - Name: f(0)(1500)
-                        FinalState:
+                    decaying_particle:
+                      particle: J/psi(1S)
+                      helicity: -1.0
+                    decay_products:
+                      - particle: f(0)(1500)
+                        final_state_ids:
                           - 3
                           - 4
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState:
+                        helicity: 0.0
+                      - particle: gamma
+                        final_state_ids:
                           - 2
-                        Helicity: -1.0
+                        helicity: -1.0
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: f(0)(1500)
-                      Helicity: 0.0
-                    DecayProducts:
-                      - Name: pi0
-                        FinalState:
+                    decaying_particle:
+                      particle: f(0)(1500)
+                      helicity: 0.0
+                    decay_products:
+                      - particle: pi0
+                        final_state_ids:
                           - 3
-                        Helicity: -0.0
-                      - Name: pi0
-                        FinalState:
+                        helicity: -0.0
+                      - particle: pi0
+                        final_state_ids:
                           - 4
-                        Helicity: -0.0
-                    RecoilSystem:
-                      RecoilFinalState:
-                        - 2
-        - type: CoherentIntensity
-          Component: coherent_J/psi(1S)_1_to_gamma_-1+pi0_0+pi0_0
-          Amplitudes:
-            - type: CoefficientAmplitude
-              Component: J/psi(1S)_1_to_f(0)(980)_0+gamma_-1;f(0)(980)_0_to_pi0_0+pi0_0;
-              Magnitude: *par1
-              Phase: *par2
-              Amplitude:
-                type: SequentialAmplitude
-                Amplitudes:
-                  - type: HelicityDecay
-                    DecayParticle:
-                      Name: J/psi(1S)
-                      Helicity: 1.0
-                    DecayProducts:
-                      - Name: f(0)(980)
-                        FinalState:
-                          - 3
-                          - 4
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState:
-                          - 2
-                        Helicity: -1.0
-                  - type: HelicityDecay
-                    DecayParticle:
-                      Name: f(0)(980)
-                      Helicity: 0.0
-                    DecayProducts:
-                      - Name: pi0
-                        FinalState:
-                          - 3
-                        Helicity: -0.0
-                      - Name: pi0
-                        FinalState:
-                          - 4
-                        Helicity: -0.0
-                    RecoilSystem:
-                      RecoilFinalState:
-                        - 2
-            - type: CoefficientAmplitude
-              Component: J/psi(1S)_1_to_f(0)(1500)_0+gamma_-1;f(0)(1500)_0_to_pi0_0+pi0_0;
-              Magnitude: *par3
-              Phase: *par4
-              Amplitude:
-                type: SequentialAmplitude
-                Amplitudes:
-                  - type: HelicityDecay
-                    DecayParticle:
-                      Name: J/psi(1S)
-                      Helicity: 1.0
-                    DecayProducts:
-                      - Name: f(0)(1500)
-                        FinalState:
-                          - 3
-                          - 4
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState:
-                          - 2
-                        Helicity: -1.0
-                  - type: HelicityDecay
-                    DecayParticle:
-                      Name: f(0)(1500)
-                      Helicity: 0.0
-                    DecayProducts:
-                      - Name: pi0
-                        FinalState:
-                          - 3
-                        Helicity: -0.0
-                      - Name: pi0
-                        FinalState:
-                          - 4
-                        Helicity: -0.0
-                    RecoilSystem:
-                      RecoilFinalState:
+                        helicity: -0.0
+                    recoil_system:
+                      recoil_final_state:
                         - 2
         - type: CoherentIntensity
-          Component: coherent_J/psi(1S)_-1_to_gamma_1+pi0_0+pi0_0
-          Amplitudes:
+          component: coherent_J/psi(1S)_1_to_gamma_-1+pi0_0+pi0_0
+          amplitudes:
             - type: CoefficientAmplitude
-              Component: J/psi(1S)_-1_to_f(0)(980)_0+gamma_1;f(0)(980)_0_to_pi0_0+pi0_0;
-              Magnitude: *par1
-              Phase: *par2
-              Amplitude:
+              component: J/psi(1S)_1_to_f(0)(980)_0+gamma_-1;f(0)(980)_0_to_pi0_0+pi0_0;
+              magnitude: *par1
+              phase: *par2
+              amplitude:
                 type: SequentialAmplitude
-                Amplitudes:
+                amplitudes:
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: J/psi(1S)
-                      Helicity: -1.0
-                    DecayProducts:
-                      - Name: f(0)(980)
-                        FinalState:
+                    decaying_particle:
+                      particle: J/psi(1S)
+                      helicity: 1.0
+                    decay_products:
+                      - particle: f(0)(980)
+                        final_state_ids:
                           - 3
                           - 4
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState:
+                        helicity: 0.0
+                      - particle: gamma
+                        final_state_ids:
                           - 2
-                        Helicity: 1.0
+                        helicity: -1.0
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: f(0)(980)
-                      Helicity: 0.0
-                    DecayProducts:
-                      - Name: pi0
-                        FinalState:
+                    decaying_particle:
+                      particle: f(0)(980)
+                      helicity: 0.0
+                    decay_products:
+                      - particle: pi0
+                        final_state_ids:
                           - 3
-                        Helicity: -0.0
-                      - Name: pi0
-                        FinalState:
+                        helicity: -0.0
+                      - particle: pi0
+                        final_state_ids:
                           - 4
-                        Helicity: -0.0
-                    RecoilSystem:
-                      RecoilFinalState:
+                        helicity: -0.0
+                    recoil_system:
+                      recoil_final_state:
                         - 2
             - type: CoefficientAmplitude
-              Component: J/psi(1S)_-1_to_f(0)(1500)_0+gamma_1;f(0)(1500)_0_to_pi0_0+pi0_0;
-              Magnitude: *par3
-              Phase: *par4
-              Amplitude:
+              component: J/psi(1S)_1_to_f(0)(1500)_0+gamma_-1;f(0)(1500)_0_to_pi0_0+pi0_0;
+              magnitude: *par3
+              phase: *par4
+              amplitude:
                 type: SequentialAmplitude
-                Amplitudes:
+                amplitudes:
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: J/psi(1S)
-                      Helicity: -1.0
-                    DecayProducts:
-                      - Name: f(0)(1500)
-                        FinalState:
+                    decaying_particle:
+                      particle: J/psi(1S)
+                      helicity: 1.0
+                    decay_products:
+                      - particle: f(0)(1500)
+                        final_state_ids:
                           - 3
                           - 4
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState:
+                        helicity: 0.0
+                      - particle: gamma
+                        final_state_ids:
                           - 2
-                        Helicity: 1.0
+                        helicity: -1.0
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: f(0)(1500)
-                      Helicity: 0.0
-                    DecayProducts:
-                      - Name: pi0
-                        FinalState:
+                    decaying_particle:
+                      particle: f(0)(1500)
+                      helicity: 0.0
+                    decay_products:
+                      - particle: pi0
+                        final_state_ids:
                           - 3
-                        Helicity: -0.0
-                      - Name: pi0
-                        FinalState:
+                        helicity: -0.0
+                      - particle: pi0
+                        final_state_ids:
                           - 4
-                        Helicity: -0.0
-                    RecoilSystem:
-                      RecoilFinalState:
+                        helicity: -0.0
+                    recoil_system:
+                      recoil_final_state:
                         - 2
         - type: CoherentIntensity
-          Component: coherent_J/psi(1S)_1_to_gamma_1+pi0_0+pi0_0
-          Amplitudes:
+          component: coherent_J/psi(1S)_-1_to_gamma_1+pi0_0+pi0_0
+          amplitudes:
             - type: CoefficientAmplitude
-              Component: J/psi(1S)_1_to_f(0)(980)_0+gamma_1;f(0)(980)_0_to_pi0_0+pi0_0;
-              Magnitude: *par1
-              Phase: *par2
-              Amplitude:
+              component: J/psi(1S)_-1_to_f(0)(980)_0+gamma_1;f(0)(980)_0_to_pi0_0+pi0_0;
+              magnitude: *par1
+              phase: *par2
+              amplitude:
                 type: SequentialAmplitude
-                Amplitudes:
+                amplitudes:
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: J/psi(1S)
-                      Helicity: 1.0
-                    DecayProducts:
-                      - Name: f(0)(980)
-                        FinalState:
+                    decaying_particle:
+                      particle: J/psi(1S)
+                      helicity: -1.0
+                    decay_products:
+                      - particle: f(0)(980)
+                        final_state_ids:
                           - 3
                           - 4
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState:
+                        helicity: 0.0
+                      - particle: gamma
+                        final_state_ids:
                           - 2
-                        Helicity: 1.0
+                        helicity: 1.0
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: f(0)(980)
-                      Helicity: 0.0
-                    DecayProducts:
-                      - Name: pi0
-                        FinalState:
+                    decaying_particle:
+                      particle: f(0)(980)
+                      helicity: 0.0
+                    decay_products:
+                      - particle: pi0
+                        final_state_ids:
                           - 3
-                        Helicity: -0.0
-                      - Name: pi0
-                        FinalState:
+                        helicity: -0.0
+                      - particle: pi0
+                        final_state_ids:
                           - 4
-                        Helicity: -0.0
-                    RecoilSystem:
-                      RecoilFinalState:
+                        helicity: -0.0
+                    recoil_system:
+                      recoil_final_state:
                         - 2
             - type: CoefficientAmplitude
-              Component: J/psi(1S)_1_to_f(0)(1500)_0+gamma_1;f(0)(1500)_0_to_pi0_0+pi0_0;
-              Magnitude: *par3
-              Phase: *par4
-              Amplitude:
+              component: J/psi(1S)_-1_to_f(0)(1500)_0+gamma_1;f(0)(1500)_0_to_pi0_0+pi0_0;
+              magnitude: *par3
+              phase: *par4
+              amplitude:
                 type: SequentialAmplitude
-                Amplitudes:
+                amplitudes:
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: J/psi(1S)
-                      Helicity: 1.0
-                    DecayProducts:
-                      - Name: f(0)(1500)
-                        FinalState:
+                    decaying_particle:
+                      particle: J/psi(1S)
+                      helicity: -1.0
+                    decay_products:
+                      - particle: f(0)(1500)
+                        final_state_ids:
                           - 3
                           - 4
-                        Helicity: 0.0
-                      - Name: gamma
-                        FinalState:
+                        helicity: 0.0
+                      - particle: gamma
+                        final_state_ids:
                           - 2
-                        Helicity: 1.0
+                        helicity: 1.0
                   - type: HelicityDecay
-                    DecayParticle:
-                      Name: f(0)(1500)
-                      Helicity: 0.0
-                    DecayProducts:
-                      - Name: pi0
-                        FinalState:
+                    decaying_particle:
+                      particle: f(0)(1500)
+                      helicity: 0.0
+                    decay_products:
+                      - particle: pi0
+                        final_state_ids:
                           - 3
-                        Helicity: -0.0
-                      - Name: pi0
-                        FinalState:
+                        helicity: -0.0
+                      - particle: pi0
+                        final_state_ids:
                           - 4
-                        Helicity: -0.0
-                    RecoilSystem:
-                      RecoilFinalState:
+                        helicity: -0.0
+                    recoil_system:
+                      recoil_final_state:
+                        - 2
+        - type: CoherentIntensity
+          component: coherent_J/psi(1S)_1_to_gamma_1+pi0_0+pi0_0
+          amplitudes:
+            - type: CoefficientAmplitude
+              component: J/psi(1S)_1_to_f(0)(980)_0+gamma_1;f(0)(980)_0_to_pi0_0+pi0_0;
+              magnitude: *par1
+              phase: *par2
+              amplitude:
+                type: SequentialAmplitude
+                amplitudes:
+                  - type: HelicityDecay
+                    decaying_particle:
+                      particle: J/psi(1S)
+                      helicity: 1.0
+                    decay_products:
+                      - particle: f(0)(980)
+                        final_state_ids:
+                          - 3
+                          - 4
+                        helicity: 0.0
+                      - particle: gamma
+                        final_state_ids:
+                          - 2
+                        helicity: 1.0
+                  - type: HelicityDecay
+                    decaying_particle:
+                      particle: f(0)(980)
+                      helicity: 0.0
+                    decay_products:
+                      - particle: pi0
+                        final_state_ids:
+                          - 3
+                        helicity: -0.0
+                      - particle: pi0
+                        final_state_ids:
+                          - 4
+                        helicity: -0.0
+                    recoil_system:
+                      recoil_final_state:
+                        - 2
+            - type: CoefficientAmplitude
+              component: J/psi(1S)_1_to_f(0)(1500)_0+gamma_1;f(0)(1500)_0_to_pi0_0+pi0_0;
+              magnitude: *par3
+              phase: *par4
+              amplitude:
+                type: SequentialAmplitude
+                amplitudes:
+                  - type: HelicityDecay
+                    decaying_particle:
+                      particle: J/psi(1S)
+                      helicity: 1.0
+                    decay_products:
+                      - particle: f(0)(1500)
+                        final_state_ids:
+                          - 3
+                          - 4
+                        helicity: 0.0
+                      - particle: gamma
+                        final_state_ids:
+                          - 2
+                        helicity: 1.0
+                  - type: HelicityDecay
+                    decaying_particle:
+                      particle: f(0)(1500)
+                      helicity: 0.0
+                    decay_products:
+                      - particle: pi0
+                        final_state_ids:
+                          - 3
+                        helicity: -0.0
+                      - particle: pi0
+                        final_state_ids:
+                          - 4
+                        helicity: -0.0
+                    recoil_system:
+                      recoil_final_state:
                         - 2
 
 particles:

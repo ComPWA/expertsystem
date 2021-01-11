@@ -142,17 +142,17 @@
       },
       "Strength": {
         "type": "object",
-        "required": ["type", "Intensity", "Strength"],
+        "required": ["type", "intensity", "strength"],
         "additionalProperties": false,
         "properties": {
           "type": { "$ref": "#/definitions/Intensity/_types" },
-          "Component": { "type": "string" },
-          "Strength": {
+          "component": { "type": "string" },
+          "strength": {
             "type": "string",
             "title": "Coefficient when working with multiple terms",
             "description": "Should be the unique name of a parameter that is further specified in the Parameter section"
           },
-          "Intensity": {
+          "intensity": {
             "$ref": "#/definitions/Intensity/_recursion",
             "title": "The intensity with which to multiply the (optional) strength coefficient"
           }
@@ -160,11 +160,11 @@
       },
       "Normalized": {
         "type": "object",
-        "required": ["type", "Intensity"],
+        "required": ["type", "intensity"],
         "additionalProperties": false,
         "properties": {
           "type": { "$ref": "#/definitions/Intensity/_types" },
-          "Intensity": {
+          "intensity": {
             "$ref": "#/definitions/Intensity/_recursion",
             "title": "The intensity with which to multiply the (optional) strength coefficient"
           }
@@ -172,11 +172,11 @@
       },
       "Incoherent": {
         "type": "object",
-        "required": ["type", "Intensities"],
+        "required": ["type", "intensities"],
         "additionalProperties": false,
         "properties": {
           "type": { "$ref": "#/definitions/Intensity/_types" },
-          "Intensities": {
+          "intensities": {
             "type": "array",
             "title": "List of intensities that will be added up incoherently",
             "items": { "$ref": "#/definitions/Intensity/_recursion" }
@@ -185,12 +185,12 @@
       },
       "Coherent": {
         "type": "object",
-        "required": ["type", "Amplitudes"],
+        "required": ["type", "amplitudes"],
         "additionalProperties": false,
         "properties": {
           "type": { "$ref": "#/definitions/Intensity/_types" },
-          "Component": { "type": "string" },
-          "Amplitudes": {
+          "component": { "type": "string" },
+          "amplitudes": {
             "type": "array",
             "items": { "$ref": "#/definitions/Amplitude/_recursion" }
           }
@@ -203,7 +203,8 @@
         "enum": [
           "CoefficientAmplitude",
           "SequentialAmplitude",
-          "HelicityDecay"
+          "HelicityDecay",
+          "CanonicalDecay"
         ]
       },
       "_recursion": {
@@ -228,100 +229,30 @@
       },
       "Coefficient": {
         "type": "object",
-        "required": ["type", "Magnitude", "Phase", "Amplitude"],
+        "required": ["type", "magnitude", "phase", "amplitude"],
         "additionalProperties": false,
         "properties": {
           "type": { "$ref": "#/definitions/Amplitude/_types" },
-          "Component": { "type": "string" },
+          "component": { "type": "string" },
           "PreFactor": { "type": "number" },
-          "Magnitude": { "type": "string" },
-          "Phase": { "type": "string" },
-          "Amplitude": { "$ref": "#/definitions/Amplitude/_recursion" }
+          "magnitude": { "type": "string" },
+          "phase": { "type": "string" },
+          "amplitude": { "$ref": "#/definitions/Amplitude/_recursion" }
         }
       },
       "Sequential": {
         "type": "object",
-        "required": ["type", "Amplitudes"],
+        "required": ["type", "amplitudes"],
         "additionalProperties": false,
         "properties": {
           "type": { "$ref": "#/definitions/Amplitude/_types" },
-          "Amplitudes": {
+          "amplitudes": {
             "type": "array",
             "items": { "$ref": "#/definitions/Amplitude/_recursion" }
           }
         }
       },
-      "HelicityDecay": {
-        "type": "object",
-        "required": ["type", "DecayParticle", "DecayProducts"],
-        "additionalProperties": false,
-        "properties": {
-          "type": { "$ref": "#/definitions/Amplitude/_types" },
-          "DecayParticle": {
-            "type": "object",
-            "required": ["Name", "Helicity"],
-            "additionalProperties": false,
-            "properties": {
-              "Name": { "type": "string" },
-              "Helicity": { "type": "number" }
-            }
-          },
-          "DecayProducts": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["Name", "FinalState", "Helicity"],
-              "additionalProperties": false,
-              "properties": {
-                "Name": { "type": "string" },
-                "Helicity": { "type": "number" },
-                "FinalState": {
-                  "type": "array",
-                  "items": { "$ref": "#/definitions/StateID" }
-                }
-              }
-            }
-          },
-          "RecoilSystem": {
-            "type": "object",
-            "required": ["RecoilFinalState"],
-            "additionalProperties": false,
-            "properties": {
-              "RecoilFinalState": {
-                "type": "array",
-                "items": { "$ref": "#/definitions/StateID" }
-              },
-              "ParentRecoilFinalState": {
-                "type": "array",
-                "items": { "$ref": "#/definitions/StateID" }
-              }
-            }
-          },
-          "Canonical": {
-            "type": "object",
-            "required": ["LS", "s2s3"],
-            "additionalProperties": false,
-            "properties": {
-              "LS": {
-                "type": "object",
-                "required": ["ClebschGordan"],
-                "additionalProperties": false,
-                "properties": {
-                  "ClebschGordan": { "$ref": "#/definitions/ClebschGordan" }
-                }
-              },
-              "s2s3": {
-                "type": "object",
-                "required": ["ClebschGordan"],
-                "additionalProperties": false,
-                "properties": {
-                  "ClebschGordan": { "$ref": "#/definitions/ClebschGordan" }
-                }
-              }
-            }
-          }
-        }
-      }
+      "HelicityDecay": { "$ref": "#/definitions/HelicityDecay" }
     },
     "ClebschGordan": {
       "type": "object",
@@ -334,6 +265,56 @@
         "m1": { "type": "number" },
         "j2": { "type": "number" },
         "m2": { "type": "number" }
+      }
+    },
+    "HelicityDecay": {
+      "type": "object",
+      "required": ["type", "decaying_particle", "decay_products"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "$ref": "#/definitions/Amplitude/_types" },
+        "decaying_particle": {
+          "type": "object",
+          "required": ["particle", "helicity"],
+          "additionalProperties": false,
+          "properties": {
+            "particle": { "type": "string" },
+            "helicity": { "type": "number" }
+          }
+        },
+        "decay_products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["particle", "final_state_ids", "helicity"],
+            "additionalProperties": false,
+            "properties": {
+              "particle": { "type": "string" },
+              "helicity": { "type": "number" },
+              "final_state_ids": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/StateID" }
+              }
+            }
+          }
+        },
+        "recoil_system": {
+          "type": "object",
+          "required": ["recoil_final_state"],
+          "additionalProperties": false,
+          "properties": {
+            "recoil_final_state": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/StateID" }
+            },
+            "parent_recoil_final_state": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/StateID" }
+            }
+          }
+        },
+        "l_s": { "$ref": "#/definitions/ClebschGordan" },
+        "s2s3": { "$ref": "#/definitions/ClebschGordan" }
       }
     },
     "StateID": {

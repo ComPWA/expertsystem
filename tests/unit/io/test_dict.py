@@ -164,7 +164,7 @@ class TestHelicityFormalism:
     def test_intensity_section(self, imported_dict):
         intensity = imported_dict["intensity"]
         assert intensity["type"] == "IncoherentIntensity"
-        assert len(intensity["Intensities"]) == 4
+        assert len(intensity["intensities"]) == 4
 
     @pytest.mark.parametrize(
         "section",
@@ -232,14 +232,12 @@ class TestCanonicalFormalism:
 
     def test_clebsch_gordan(self, imported_dict):
         incoherent_intensity = imported_dict["intensity"]
-        coherent_intensity = incoherent_intensity["Intensities"][0]
-        coefficient_amplitude = coherent_intensity["Amplitudes"][0]
-        sequential_amplitude = coefficient_amplitude["Amplitude"]
-        helicity_decay = sequential_amplitude["Amplitudes"][0]
-        canonical_sum = helicity_decay["Canonical"]
-        assert list(canonical_sum) == ["LS", "s2s3"]
-        s2s3 = canonical_sum["s2s3"]["ClebschGordan"]
-        assert list(s2s3) == ["J", "M", "j1", "m1", "j2", "m2"]
+        coherent_intensity = incoherent_intensity["intensities"][0]
+        coefficient_amplitude = coherent_intensity["amplitudes"][0]
+        sequential_amplitude = coefficient_amplitude["amplitude"]
+        canonical_decay = sequential_amplitude["amplitudes"][0]
+        s2s3 = canonical_decay["s2s3"]
+        assert list(s2s3) == ["J", "M", "j_1", "m_1", "j_2", "m_2"]
         assert s2s3["J"] == 1.0
 
 

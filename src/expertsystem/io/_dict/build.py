@@ -1,6 +1,5 @@
 """Read recipe objects from a YAML file."""
 
-from typing import Optional
 
 from expertsystem.amplitude.model import (
     AmplitudeModel,
@@ -160,39 +159,32 @@ def __safely_get_parameter(
 def __build_intensity(
     definition: dict, particles: ParticleCollection, parameters: FitParameters
 ) -> IntensityNode:
-    intensity_type = definition["type"]
-    if intensity_type == "StrengthIntensity":
-        strength = parameters[definition["Strength"]]
-        component = str(definition["Component"])
+    intensity_type = eval(definition["type"])  # pylint: disable=eval-used
+    if intensity_type in {NormalizedIntensity, StrengthIntensity}:
+        intensity = __build_intensity(
+            definition["intensity"], particles, parameters
+        )
+        if intensity_type is NormalizedIntensity:
+            return NormalizedIntensity(intensity=intensity)
         return StrengthIntensity(
-            component=component,
-            strength=strength,
-            intensity=__build_intensity(
-                definition["Intensity"], particles, parameters
-            ),
+            component=str(definition["component"]),
+            strength=parameters[definition["Strength"]],
+            intensity=intensity,
         )
-    if intensity_type == "NormalizedIntensity":
-        return NormalizedIntensity(
-            intensity=__build_intensity(
-                definition["Intensity"], particles, parameters
-            )
-        )
-    if intensity_type == "IncoherentIntensity":
+    if intensity_type is IncoherentIntensity:
         return IncoherentIntensity(
             intensities=[
                 __build_intensity(item, particles, parameters)
-                for item in definition["Intensities"]
+                for item in definition["intensities"]
             ]
         )
-    if intensity_type == "CoherentIntensity":
-        component = str(definition["Component"])
-        amplitudes = [
-            __build_amplitude(item, particles, parameters)
-            for item in definition["Amplitudes"]
-        ]
+    if intensity_type is CoherentIntensity:
         return CoherentIntensity(
-            component=component,
-            amplitudes=amplitudes,
+            component=str(definition["component"]),
+            amplitudes=[
+                __build_amplitude(item, particles, parameters)
+                for item in definition["amplitudes"]
+            ],
         )
     raise SyntaxError(
         f"No conversion defined for intensity type {intensity_type}"
@@ -202,75 +194,53 @@ def __build_intensity(
 def __build_amplitude(  # pylint: disable=too-many-locals
     definition: dict, particles: ParticleCollection, parameters: FitParameters
 ) -> AmplitudeNode:
-    amplitude_type = definition["type"]
-    if amplitude_type == "CoefficientAmplitude":
-        component = definition["Component"]
-        magnitude = parameters[definition["Magnitude"]]
-        phase = parameters[definition["Phase"]]
-        amplitude = __build_amplitude(
-            definition["Amplitude"], particles, parameters
-        )
-        prefactor = definition.get("PreFactor")
+    amplitude_type = eval(definition["type"])  # pylint: disable=eval-used
+    if amplitude_type is CoefficientAmplitude:
         return CoefficientAmplitude(
-            component=component,
-            magnitude=magnitude,
-            phase=phase,
-            amplitude=amplitude,
-            prefactor=prefactor,
+            component=definition["component"],
+            magnitude=parameters[definition["magnitude"]],
+            phase=parameters[definition["phase"]],
+            amplitude=__build_amplitude(
+                definition["amplitude"], particles, parameters
+            ),
+            prefactor=definition.get("prefactor"),
         )
-    if amplitude_type == "SequentialAmplitude":
-        amplitudes = [
-            __build_amplitude(item, particles, parameters)
-            for item in definition["Amplitudes"]
-        ]
-        return SequentialAmplitude(amplitudes)
-    if amplitude_type == "HelicityDecay":
-        decay_particle_def = definition["DecayParticle"]
+    if amplitude_type is SequentialAmplitude:
+        return SequentialAmplitude(
+            amplitudes=[
+                __build_amplitude(item, particles, parameters)
+                for item in definition["amplitudes"]
+            ]
+        )
+    if amplitude_type in {CanonicalDecay, HelicityDecay}:
+        decaying_particle_def = definition["decaying_particle"]
         decaying_particle = HelicityParticle(
-            particle=particles[decay_particle_def["Name"]],
-            helicity=float(decay_particle_def["Helicity"]),
+            particle=particles[decaying_particle_def["particle"]],
+            helicity=decaying_particle_def["helicity"],
         )
         decay_products = [
             DecayProduct(
-                particles[item["Name"]],
-                float(item["Helicity"]),
-                list(item["FinalState"]),
+                particle=particles[item["particle"]],
+                helicity=item["helicity"],
+                final_state_ids=item["final_state_ids"],
             )
-            for item in definition["DecayProducts"]
+            for item in definition["decay_products"]
         ]
-        recoil_system: Optional[RecoilSystem] = None
-        recoil_def = definition.get("RecoilSystem", None)
-        if recoil_def is not None:
-            recoil_system = RecoilSystem(
-                recoil_final_state=recoil_def["RecoilFinalState"]
-            )
-        canonical_def = definition.get("Canonical", None)
-        if canonical_def is None:
+        recoil_system = definition.get("recoil_system", None)
+        if recoil_system is not None:
+            recoil_system = RecoilSystem(**recoil_system)
+        if amplitude_type is HelicityDecay:
             return HelicityDecay(
-                decaying_particle, decay_products, recoil_system
+                decaying_particle=decaying_particle,
+                decay_products=decay_products,
+                recoil_system=recoil_system,
             )
-        ls_def = canonical_def["LS"]["ClebschGordan"]
-        s2s3_def = canonical_def["s2s3"]["ClebschGordan"]
         return CanonicalDecay(
             decaying_particle=decaying_particle,
             decay_products=decay_products,
             recoil_system=recoil_system,
-            l_s=ClebschGordan(
-                J=float(ls_def["J"]),
-                M=float(ls_def["M"]),
-                j_1=float(ls_def["j1"]),
-                m_1=float(ls_def["m1"]),
-                j_2=float(ls_def["j2"]),
-                m_2=float(ls_def["m2"]),
-            ),
-            s2s3=ClebschGordan(
-                J=float(s2s3_def["J"]),
-                M=float(s2s3_def["M"]),
-                j_1=float(s2s3_def["j1"]),
-                m_1=float(s2s3_def["m1"]),
-                j_2=float(s2s3_def["j2"]),
-                m_2=float(s2s3_def["m2"]),
-            ),
+            l_s=ClebschGordan(**definition["l_s"]),
+            s2s3=ClebschGordan(**definition["s2s3"]),
         )
     raise SyntaxError(
         f"No conversion defined for amplitude type {amplitude_type}"

@@ -5,14 +5,12 @@ import attr
 
 from expertsystem.amplitude.model import (
     AmplitudeModel,
-    CanonicalDecay,
     CoefficientAmplitude,
     CoherentIntensity,
     Dynamics,
     FitParameter,
     FitParameters,
     FormFactor,
-    HelicityDecay,
     IncoherentIntensity,
     Kinematics,
     KinematicsType,
@@ -96,105 +94,49 @@ def from_dynamics(dynamics: Dynamics) -> dict:
     }
 
 
-def __intensity_to_dict(  # pylint: disable=too-many-return-statements
-    node: Node,
-) -> dict:
-    if isinstance(node, StrengthIntensity):
+def __intensity_to_dict(node: Node) -> dict:
+    output = {
+        "type": node.__class__.__name__,
+        **attr.asdict(
+            node,
+            filter=lambda field, value: field.name
+            not in [
+                "amplitudes",
+                "amplitude",
+                "intensities",
+                "intensity",
+            ]
+            and field.default != value,
+            recurse=True,
+            value_serializer=__value_serializer_particle_and_parameter,
+        ),
+    }
+    if isinstance(node, (NormalizedIntensity, StrengthIntensity)):
         return {
-            "type": "StrengthIntensity",
-            "Component": node.component,
-            "Strength": node.strength.name,
-            "Intensity": __intensity_to_dict(node.intensity),
-        }
-    if isinstance(node, NormalizedIntensity):
-        return {
-            "type": "NormalizedIntensity",
-            "Intensity": __intensity_to_dict(node.intensity),
+            **output,
+            "intensity": __intensity_to_dict(node.intensity),
         }
     if isinstance(node, IncoherentIntensity):
         return {
-            "type": "IncoherentIntensity",
-            "Intensities": [
+            **output,
+            "intensities": [
                 __intensity_to_dict(intensity)
                 for intensity in node.intensities
             ],
         }
-    if isinstance(node, CoherentIntensity):
+    if isinstance(node, (CoherentIntensity, SequentialAmplitude)):
         return {
-            "type": "CoherentIntensity",
-            "Component": node.component,
-            "Amplitudes": [
+            **output,
+            "amplitudes": [
                 __intensity_to_dict(intensity) for intensity in node.amplitudes
             ],
         }
     if isinstance(node, CoefficientAmplitude):
-        output_dict: dict = {
-            "type": "CoefficientAmplitude",
-            "Component": node.component,
-        }
-        if node.prefactor is not None:
-            output_dict["PreFactor"] = node.prefactor
-        output_dict["Magnitude"] = node.magnitude.name
-        output_dict["Phase"] = node.phase.name
-        output_dict["Amplitude"] = __intensity_to_dict(node.amplitude)
-        return output_dict
-    if isinstance(node, SequentialAmplitude):
         return {
-            "type": "SequentialAmplitude",
-            "Amplitudes": [
-                __intensity_to_dict(intensity) for intensity in node.amplitudes
-            ],
+            **output,
+            "amplitude": __intensity_to_dict(node.amplitude),
         }
-    if isinstance(node, (HelicityDecay, CanonicalDecay)):
-        output_dict = {
-            "type": "HelicityDecay",
-            "DecayParticle": {
-                "Name": node.decaying_particle.particle.name,
-                "Helicity": node.decaying_particle.helicity,
-            },
-            "DecayProducts": [
-                {
-                    "Name": decay_product.particle.name,
-                    "FinalState": decay_product.final_state_ids,
-                    "Helicity": decay_product.helicity,
-                }
-                for decay_product in node.decay_products
-            ],
-        }
-        if node.recoil_system is not None:
-            recoil_system = {
-                "RecoilFinalState": node.recoil_system.recoil_final_state
-            }
-            if node.recoil_system.parent_recoil_final_state is not None:
-                recoil_system[
-                    "ParentRecoilFinalState"
-                ] = node.recoil_system.parent_recoil_final_state
-            output_dict["RecoilSystem"] = recoil_system
-        if isinstance(node, CanonicalDecay):
-            output_dict["Canonical"] = {
-                "LS": {
-                    "ClebschGordan": {
-                        "J": node.l_s.J,
-                        "M": node.l_s.M,
-                        "j1": node.l_s.j_1,
-                        "m1": node.l_s.m_1,
-                        "j2": node.l_s.j_2,
-                        "m2": node.l_s.m_2,
-                    },
-                },
-                "s2s3": {
-                    "ClebschGordan": {
-                        "J": node.s2s3.J,
-                        "M": node.s2s3.M,
-                        "j1": node.s2s3.j_1,
-                        "m1": node.s2s3.m_1,
-                        "j2": node.s2s3.j_2,
-                        "m2": node.s2s3.m_2,
-                    }
-                },
-            }
-        return output_dict
-    raise NotImplementedError("No conversion defined for", node)
+    return output
 
 
 def __value_serializer(  # pylint: disable=unused-argument
@@ -219,4 +161,12 @@ def __value_serializer(  # pylint: disable=unused-argument
             "magnitude": value.magnitude,
             "projection": value.projection,
         }
+    return value
+
+
+def __value_serializer_particle_and_parameter(  # pylint: disable=unused-argument
+    inst: type, field: attr.Attribute, value: Any
+) -> Any:
+    if isinstance(value, (FitParameter, Particle)):
+        return value.name
     return value
