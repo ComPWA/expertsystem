@@ -112,7 +112,7 @@ class TestHelicityFormalism:
         assert pi0["isospin"]["projection"] == 0
 
     def test_kinematics_section(self, imported_dict):
-        kinematics = imported_dict["Kinematics"]
+        kinematics = imported_dict["kinematics"]
         initial_state = kinematics["InitialState"]
         final_state = kinematics["FinalState"]
         assert kinematics["Type"] == "Helicity"
@@ -168,7 +168,7 @@ class TestHelicityFormalism:
 
     @pytest.mark.parametrize(
         "section",
-        ["dynamics", "Kinematics", "parameters", "particles"],
+        ["dynamics", "kinematics", "parameters", "particles"],
     )
     def test_expected_recipe_shape(
         self, imported_dict, expected_dict, section

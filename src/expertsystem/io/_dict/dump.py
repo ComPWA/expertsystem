@@ -25,7 +25,7 @@ from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
 
 def from_amplitude_model(model: AmplitudeModel) -> dict:
     output_dict = {
-        "Kinematics": __kinematics_to_dict(model.kinematics),
+        "kinematics": __kinematics_to_dict(model.kinematics),
         **from_fit_parameters(model.parameters),
         "intensity": __intensity_to_dict(model.intensity),
         **from_particle_collection(model.particles),

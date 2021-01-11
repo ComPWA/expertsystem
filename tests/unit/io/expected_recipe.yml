@@ -1,4 +1,4 @@
-Kinematics:
+kinematics:
   Type: Helicity
   InitialState:
     - Particle: J/psi(1S)

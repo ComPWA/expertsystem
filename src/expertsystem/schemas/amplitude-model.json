@@ -3,7 +3,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "required": [
-    "Kinematics",
+    "kinematics",
     "parameters",
     "dynamics",
     "intensity",
@@ -11,7 +11,7 @@
   ],
   "additionalProperties": false,
   "properties": {
-    "Kinematics": {
+    "kinematics": {
       "title": "Kinematical description of the particle reaction",
       "type": "object",
       "required": ["Type", "InitialState", "FinalState"],

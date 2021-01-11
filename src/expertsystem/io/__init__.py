@@ -149,7 +149,7 @@ def _determine_type(definition: dict) -> type:
     if keys == {
         "dynamics",
         "intensity",
-        "Kinematics",
+        "kinematics",
         "parameters",
         "particles",
     }:
