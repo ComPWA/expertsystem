@@ -40,7 +40,7 @@ class TestFitParameters:
             parameters.add(dummy_par)
 
     @staticmethod
-    def test_remove():
+    def test_add():
         parameters = FitParameters()
         assert len(parameters) == 0
         par1 = FitParameter(name="p1", value=0.0)
