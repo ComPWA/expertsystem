@@ -21,6 +21,22 @@ import attr
 from expertsystem.particle import Particle, ParticleCollection
 
 
+@attr.s(frozen=True, eq=False, repr=False, hash=False)
+class ParameterName(abc.Hashable):
+    value: str = attr.ib(validator=attr.validators.instance_of(str))
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ParameterName):
+            return self.value == other.value
+        return self.value == other
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __repr__(self) -> str:
+        return self.value
+
+
 @attr.s
 class FitParameter:
     name: str = attr.ib()

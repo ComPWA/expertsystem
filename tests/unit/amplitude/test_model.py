@@ -1,3 +1,5 @@
+# pylint: disable=no-self-use
+
 import pytest
 
 from expertsystem.amplitude.model import (
@@ -7,6 +9,7 @@ from expertsystem.amplitude.model import (
     Kinematics,
     KinematicsType,
     NonDynamic,
+    ParameterName,
     ParticleDynamics,
     RelativisticBreitWigner,
     _assert_arg_type,
@@ -68,6 +71,26 @@ class TestKinematics:
         assert kinematics.id_to_particle(4) is pi0
         with pytest.raises(KeyError):
             kinematics.id_to_particle(5)
+
+
+class TestParameter:
+    def test_init(self):
+        with pytest.raises(TypeError):
+            ParameterName(1)  # type: ignore
+
+    def test_eq(self):
+        name = ParameterName("name1")
+        assert name == "name1"
+        assert name == ParameterName("name1")
+
+    def test_hash(self):
+        name = ParameterName("parameter")
+        assert repr(name) == "parameter"
+        assert str(name) == "parameter"
+
+    def test_repr(self):
+        name = ParameterName("parameter")
+        assert hash(name) == hash("parameter")
 
 
 class TestParticleDynamics:
