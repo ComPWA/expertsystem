@@ -1,5 +1,7 @@
 # pylint: disable=no-self-use
 
+from copy import deepcopy
+
 import attr
 import pytest
 
@@ -29,6 +31,13 @@ class TestFitParameter:
 
 
 class TestFitParameters:
+    @pytest.fixture(scope="session")
+    def dummy_parameters(
+        self,
+        jpsi_to_gamma_pi_pi_canonical_amplitude_model: AmplitudeModel,
+    ) -> FitParameters:
+        return jpsi_to_gamma_pi_pi_canonical_amplitude_model.parameters
+
     @staticmethod
     def test_add_exceptions():
         parameters = FitParameters()
@@ -49,14 +58,19 @@ class TestFitParameters:
         parameters.add(par1)
         assert list(parameters) == ["p2", "p1"]
 
-    def test_eval(
-        self,
-        jpsi_to_gamma_pi_pi_canonical_amplitude_model: AmplitudeModel,
-    ):
-        model = jpsi_to_gamma_pi_pi_canonical_amplitude_model
-        parameters = model.parameters
-        from_repr = eval(repr(parameters))  # pylint: disable=eval-used
-        assert from_repr == parameters
+    def test_eval(self, dummy_parameters: FitParameters):
+        from_repr = eval(repr(dummy_parameters))  # pylint: disable=eval-used
+        assert from_repr == dummy_parameters
+
+    def test_mutability(self, dummy_parameters: FitParameters):
+        parameters = deepcopy(dummy_parameters)
+        parameters["par1"] = FitParameter("par1", value=1)
+        parameters["par2"] = FitParameter("par2", value=1)
+        with pytest.raises(KeyError):
+            parameters["mismatch"] = FitParameter("par3", value=1)
+        assert len(parameters) == len(dummy_parameters) + 2
+        del parameters["par2"]
+        assert len(parameters) == len(dummy_parameters) + 1
 
 
 class TestKinematics:

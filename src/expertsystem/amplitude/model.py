@@ -28,7 +28,7 @@ class FitParameter:
     fix: bool = attr.ib(default=False)
 
 
-class FitParameters(abc.Mapping):
+class FitParameters(abc.MutableMapping):
     def __init__(
         self, parameters: Optional[Iterable[FitParameter]] = None
     ) -> None:
@@ -61,8 +61,18 @@ class FitParameters(abc.Mapping):
             return True
         raise NotImplementedError
 
+    def __delitem__(self, key: str) -> None:
+        del self.__parameters[key]
+
     def __getitem__(self, name: str) -> FitParameter:
         return self.__parameters[name]
+
+    def __setitem__(self, name: str, parameter: FitParameter) -> None:
+        if name != parameter.name:
+            raise KeyError(
+                f'Key ("{name}") is not be the same as the parameter name ("{parameter.name}")'
+            )
+        self.__parameters[parameter.name] = parameter
 
     def __iter__(self) -> Iterator[str]:
         return self.__parameters.__iter__()
