@@ -1,37 +1,30 @@
 """Dump recipe objects to `dict` instances for a YAML file."""
+from collections import abc
 from typing import Any
 
 import attr
 
 from expertsystem.amplitude.model import (
     AmplitudeModel,
-    CoefficientAmplitude,
-    CoherentIntensity,
-    Dynamics,
     FitParameter,
     FitParameters,
     FormFactor,
-    IncoherentIntensity,
     Kinematics,
     KinematicsType,
     Node,
-    NormalizedIntensity,
     ParticleDynamics,
-    SequentialAmplitude,
-    StrengthIntensity,
 )
 from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
 
 
 def from_amplitude_model(model: AmplitudeModel) -> dict:
-    output_dict = {
+    return {
         "kinematics": __kinematics_to_dict(model.kinematics),
         **from_fit_parameters(model.parameters),
-        "intensity": __intensity_to_dict(model.intensity),
+        "intensity": __asdict_with_type(model.intensity),
         **from_particle_collection(model.particles),
         "dynamics": __dynamics_section_to_dict(model.dynamics),
     }
-    return output_dict
 
 
 def from_particle_collection(particles: ParticleCollection) -> dict:
@@ -77,82 +70,20 @@ def __kinematics_to_dict(kin: Kinematics) -> dict:
 
 def __dynamics_section_to_dict(particle_dynamics: ParticleDynamics) -> dict:
     return {
-        particle_name: from_dynamics(dynamics)
+        particle_name: __asdict_with_type(dynamics)
         for particle_name, dynamics in particle_dynamics.items()
     }
-
-
-def from_dynamics(dynamics: Dynamics) -> dict:
-    return {
-        "type": dynamics.__class__.__name__,
-        **attr.asdict(
-            dynamics,
-            recurse=True,
-            value_serializer=__value_serializer,
-            filter=lambda attr, value: attr.default != value,
-        ),
-    }
-
-
-def __intensity_to_dict(node: Node) -> dict:
-    output = {
-        "type": node.__class__.__name__,
-        **attr.asdict(
-            node,
-            filter=lambda field, value: field.name
-            not in [
-                "amplitudes",
-                "amplitude",
-                "intensities",
-                "intensity",
-            ]
-            and field.default != value,
-            recurse=True,
-            value_serializer=__value_serializer_particle_and_parameter,
-        ),
-    }
-    if isinstance(node, (NormalizedIntensity, StrengthIntensity)):
-        return {
-            **output,
-            "intensity": __intensity_to_dict(node.intensity),
-        }
-    if isinstance(node, IncoherentIntensity):
-        return {
-            **output,
-            "intensities": [
-                __intensity_to_dict(intensity)
-                for intensity in node.intensities
-            ],
-        }
-    if isinstance(node, (CoherentIntensity, SequentialAmplitude)):
-        return {
-            **output,
-            "amplitudes": [
-                __intensity_to_dict(intensity) for intensity in node.amplitudes
-            ],
-        }
-    if isinstance(node, CoefficientAmplitude):
-        return {
-            **output,
-            "amplitude": __intensity_to_dict(node.amplitude),
-        }
-    return output
 
 
 def __value_serializer(  # pylint: disable=unused-argument
     inst: type, field: attr.Attribute, value: Any
 ) -> Any:
-    if isinstance(value, FormFactor):
-        return {
-            "type": value.__class__.__name__,
-            **attr.asdict(
-                value,
-                filter=lambda attr, value: attr.default != value,
-                recurse=True,
-                value_serializer=__value_serializer,
-            ),
-        }
-    if isinstance(value, FitParameter):
+    if isinstance(value, abc.Iterable):
+        if all(map(lambda p: isinstance(p, Node), value)):
+            return [__asdict_with_type(item) for item in value]
+    if isinstance(value, (FormFactor, Node)):
+        return __asdict_with_type(value)
+    if isinstance(value, (FitParameter, Particle)):
         return value.name
     if isinstance(value, Parity):
         return {"value": value.value}
@@ -164,9 +95,13 @@ def __value_serializer(  # pylint: disable=unused-argument
     return value
 
 
-def __value_serializer_particle_and_parameter(  # pylint: disable=unused-argument
-    inst: type, field: attr.Attribute, value: Any
-) -> Any:
-    if isinstance(value, (FitParameter, Particle)):
-        return value.name
-    return value
+def __asdict_with_type(instance: object) -> dict:
+    return {
+        "type": instance.__class__.__name__,
+        **attr.asdict(
+            instance,
+            filter=lambda attr, value: attr.default != value,
+            recurse=True,
+            value_serializer=__value_serializer,
+        ),
+    }
