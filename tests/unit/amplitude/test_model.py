@@ -1,3 +1,7 @@
+# pylint: disable=no-self-use
+
+from copy import deepcopy
+
 import pytest
 
 from expertsystem.amplitude.model import (
@@ -12,6 +16,27 @@ from expertsystem.amplitude.model import (
     _assert_arg_type,
 )
 from expertsystem.particle import ParticleCollection
+
+
+class TestAmplitudeModel:
+    def test_get_parameters(
+        self, jpsi_to_gamma_pi_pi_helicity_amplitude_model: AmplitudeModel
+    ):
+        model = jpsi_to_gamma_pi_pi_helicity_amplitude_model
+        parameters = list(model.get_parameters())
+        unique_parameters = list(model.get_unique_parameters())
+        assert len(parameters) == 23
+        assert len(unique_parameters) == 11
+        assert {p.name: p for p in unique_parameters} == dict(
+            model.parameters.items()
+        )
+
+    def test_find_parameter(
+        self, jpsi_to_gamma_pi_pi_helicity_amplitude_model: AmplitudeModel
+    ):
+        model = deepcopy(jpsi_to_gamma_pi_pi_helicity_amplitude_model)
+        width_f0_980 = model.find_parameter("Width_f(0)(980)")
+        assert width_f0_980.value == 0.06
 
 
 class TestFitParameters:

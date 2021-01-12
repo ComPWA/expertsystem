@@ -8,6 +8,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generator,
     Iterable,
     Iterator,
     List,
@@ -389,6 +390,46 @@ class AmplitudeModel:
     parameters: FitParameters = attr.ib()
     intensity: IntensityNode = attr.ib()
     dynamics: ParticleDynamics = attr.ib()
+
+    def find_parameter(self, name: str) -> FitParameter:
+        for par in self.get_parameters():
+            if par.name == name:
+                return par
+        raise KeyError(f'Could not find parameter "{name}"')
+
+    def get_parameters(self) -> Generator[FitParameter, None, None]:
+        yield from self.__yield_parameter(self.intensity)
+        yield from self.__yield_parameter(self.dynamics)
+
+    def get_unique_parameters(self) -> Generator[FitParameter, None, None]:
+        inventory: Dict[str, FitParameter] = dict()
+        for par in self.get_parameters():
+            existing_par = inventory.get(par.name)
+            if existing_par is None:
+                yield par
+                inventory[par.name] = par
+            elif existing_par is not par:
+                ValueError(
+                    f'There are two instances of {FitParameter.__name__} "{par.name}"',
+                    par,
+                    existing_par,
+                )
+
+    def __yield_parameter(
+        self, instance: object
+    ) -> Generator[FitParameter, None, None]:
+        if isinstance(instance, FitParameter):
+            yield instance
+        elif isinstance(instance, (ParticleDynamics,)):
+            for item in instance.values():
+                yield from self.__yield_parameter(item)
+        elif isinstance(instance, (list,)):
+            for item in instance:
+                yield from self.__yield_parameter(item)
+        elif attr.has(instance.__class__):
+            for field in attr.fields(instance.__class__):
+                field_value = getattr(instance, field.name)
+                yield from self.__yield_parameter(field_value)
 
 
 def _assert_arg_type(value: Any, value_type: type) -> None:
