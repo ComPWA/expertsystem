@@ -53,7 +53,7 @@ immutables==0.14
 importlib-metadata==3.4.0
 importlib-resources==3.0.0
 iniconfig==1.1.1
-ipykernel==5.4.2
+ipykernel==5.4.3
 ipython-genutils==0.2.0
 ipython==7.16.1
 ipywidgets==7.6.3
@@ -115,7 +115,7 @@ pydeps==1.9.13
 pydocstyle==5.1.1
 pydot==1.4.1
 pyflakes==2.2.0
-pygments==2.7.3
+pygments==2.7.4
 pylint==2.6.0
 pyparsing==2.4.7
 pyrsistent==0.17.3
