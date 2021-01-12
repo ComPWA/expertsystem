@@ -81,19 +81,16 @@ def build_fit_parameters(definition: dict) -> FitParameters:
 def __build_kinematics(
     definition: dict, particles: ParticleCollection
 ) -> Kinematics:
-    str_to_kinematics_type = {"Helicity": KinematicsType.Helicity}
-    kinematics_type = str_to_kinematics_type[definition["Type"]]
+    kinematics_type = eval(  # pylint: disable=eval-used
+        f'{KinematicsType.__name__}.{definition["type"]}'
+    )
     kinematics = Kinematics(
         kinematics_type=kinematics_type,
         particles=particles,
     )
-    for item in definition["InitialState"]:
-        state_id = int(item["ID"])
-        particle_name = str(item["Particle"])
+    for state_id, particle_name in definition["initial_state"].items():
         kinematics.add_initial_state(state_id, particle_name)
-    for item in definition["FinalState"]:
-        state_id = int(item["ID"])
-        particle_name = str(item["Particle"])
+    for state_id, particle_name in definition["final_state"].items():
         kinematics.add_final_state(state_id, particle_name)
     return kinematics
 

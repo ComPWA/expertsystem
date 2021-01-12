@@ -10,7 +10,6 @@ from expertsystem.amplitude.model import (
     FitParameters,
     FormFactor,
     Kinematics,
-    KinematicsType,
     Node,
     ParticleDynamics,
 )
@@ -53,18 +52,10 @@ def from_fit_parameter(parameter: FitParameter) -> dict:
 
 
 def __kinematics_to_dict(kin: Kinematics) -> dict:
-    if kin.kinematics_type == KinematicsType.Helicity:
-        kinematics_type = "Helicity"
-    else:
-        raise NotImplementedError("No conversion for", kin.kinematics_type)
     return {
-        "Type": kinematics_type,
-        "InitialState": [
-            {"Particle": p.name, "ID": i} for i, p in kin.initial_state.items()
-        ],
-        "FinalState": [
-            {"Particle": p.name, "ID": i} for i, p in kin.final_state.items()
-        ],
+        "type": kin.kinematics_type.name,
+        "initial_state": {i: p.name for i, p in kin.initial_state.items()},
+        "final_state": {i: p.name for i, p in kin.final_state.items()},
     }
 
 

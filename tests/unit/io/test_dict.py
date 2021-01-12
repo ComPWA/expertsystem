@@ -113,11 +113,11 @@ class TestHelicityFormalism:
 
     def test_kinematics_section(self, imported_dict):
         kinematics = imported_dict["kinematics"]
-        initial_state = kinematics["InitialState"]
-        final_state = kinematics["FinalState"]
-        assert kinematics["Type"] == "Helicity"
+        initial_state = kinematics["initial_state"]
+        final_state = kinematics["final_state"]
+        assert kinematics["type"] == "Helicity"
         assert len(initial_state) == 1
-        assert initial_state[0]["Particle"] == "J/psi(1S)"
+        assert initial_state[0] == "J/psi(1S)"
         assert len(final_state) == 3
 
     def test_parameter_section(self, imported_dict):

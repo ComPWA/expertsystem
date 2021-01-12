@@ -14,35 +14,25 @@
     "kinematics": {
       "title": "Kinematical description of the particle reaction",
       "type": "object",
-      "required": ["Type", "InitialState", "FinalState"],
+      "required": ["type", "initial_state", "final_state"],
       "additionalProperties": false,
       "properties": {
-        "Type": {
+        "type": {
           "enum": ["Helicity"],
           "title": "Formalism with which the reaction is studied"
         },
-        "InitialState": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["Particle", "ID"],
-            "additionalProperties": false,
-            "properties": {
-              "Particle": { "type": "string" },
-              "ID": { "$ref": "#/definitions/StateID" }
-            }
+        "initial_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9]+$": { "type": "string" }
           }
         },
-        "FinalState": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["Particle", "ID"],
-            "additionalProperties": false,
-            "properties": {
-              "Particle": { "type": "string" },
-              "ID": { "$ref": "#/definitions/StateID" }
-            }
+        "final_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9]+$": { "type": "string" }
           }
         }
       }
