@@ -234,7 +234,7 @@
         "properties": {
           "type": { "$ref": "#/definitions/Amplitude/_types" },
           "component": { "type": "string" },
-          "PreFactor": { "type": "number" },
+          "prefactor": { "type": "number" },
           "magnitude": { "type": "string" },
           "phase": { "type": "string" },
           "amplitude": { "$ref": "#/definitions/Amplitude/_recursion" }
