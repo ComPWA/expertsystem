@@ -10,26 +10,34 @@ kinematics:
 parameters:
   - name: &par1 Magnitude_J/psi(1S)_to_f(0)(980)_0+gamma_1;f(0)(980)_to_pi0_0+pi0_0;
     value: 1.0
+    fix: false
   - name: &par2 Phase_J/psi(1S)_to_f(0)(980)_0+gamma_1;f(0)(980)_to_pi0_0+pi0_0;
     value: 0.0
+    fix: false
   - name: &par3 Magnitude_J/psi(1S)_to_f(0)(1500)_0+gamma_1;f(0)(1500)_to_pi0_0+pi0_0;
     value: 1.0
+    fix: false
   - name: &par4 Phase_J/psi(1S)_to_f(0)(1500)_0+gamma_1;f(0)(1500)_to_pi0_0+pi0_0;
     value: 0.0
+    fix: false
   - name: &par5 MesonRadius_J/psi(1S)
     value: 1.0
     fix: true
   - name: &par6 Position_f(0)(980)
     value: 0.99
+    fix: false
   - name: &par7 Width_f(0)(980)
     value: 0.06
+    fix: false
   - name: &par8 MesonRadius_f(0)(980)
     value: 1.0
     fix: true
   - name: &par9 Position_f(0)(1500)
     value: 1.506
+    fix: false
   - name: &par10 Width_f(0)(1500)
     value: 0.112
+    fix: false
   - name: &par11 MesonRadius_f(0)(1500)
     value: 1.0
     fix: true

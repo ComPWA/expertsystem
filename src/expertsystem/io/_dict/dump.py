@@ -44,11 +44,7 @@ def from_fit_parameters(parameters: FitParameters) -> dict:
 
 
 def from_fit_parameter(parameter: FitParameter) -> dict:
-    return attr.asdict(
-        parameter,
-        recurse=True,
-        filter=lambda attr, value: attr.default != value,
-    )
+    return attr.asdict(parameter, recurse=True)
 
 
 def __kinematics_to_dict(kin: Kinematics) -> dict:

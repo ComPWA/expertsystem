@@ -126,7 +126,7 @@ class TestHelicityFormalism:
         for parameter in parameter_list:
             assert "name" in parameter
             assert "value" in parameter
-            assert parameter.get("fix", True)
+            assert isinstance(parameter["fix"], bool)
 
     def test_dynamics_section(self, imported_dict):
         parameter_list: list = imported_dict["parameters"]
