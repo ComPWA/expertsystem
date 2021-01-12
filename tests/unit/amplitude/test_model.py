@@ -1,3 +1,6 @@
+# pylint: disable=no-self-use
+
+import attr
 import pytest
 
 from expertsystem.amplitude.model import (
@@ -12,6 +15,17 @@ from expertsystem.amplitude.model import (
     _assert_arg_type,
 )
 from expertsystem.particle import ParticleCollection
+
+
+class TestFitParameter:
+    def test_immutability(self):
+        parameter = FitParameter(name="par1", value=0)
+        with pytest.raises(attr.exceptions.FrozenAttributeError):
+            parameter.name = "should not be mutable"
+        parameter.value = 666
+        parameter.fix = True
+        other = FitParameter(name="par1", value=666, fix=True)
+        assert parameter == other
 
 
 class TestFitParameters:
@@ -35,7 +49,7 @@ class TestFitParameters:
         parameters.add(par1)
         assert list(parameters) == ["p2", "p1"]
 
-    def test_eval(  # pylint: disable=no-self-use
+    def test_eval(
         self,
         jpsi_to_gamma_pi_pi_canonical_amplitude_model: AmplitudeModel,
     ):
