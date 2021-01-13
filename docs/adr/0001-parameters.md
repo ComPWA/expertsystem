@@ -57,18 +57,14 @@ the value as listed in the `parameters` section of the `AmplitudeModel`.
 
 ## Considered Options
 
-### Option 0 (PROTOTYPE WIP)
-
+````{dropdown} Option 0: WIP
 ```{literalinclude} ./examples/0001/prototype.py
----
-lines: 4-
----
+
 ```
+````
 
-### Option 1: parameter _container_
-
+````{dropdown} Option 1: parameter _container_
 Remove `name` from the `FitParameter` class and give the `FitParameters`
-
 collection class the responsibility to keep track of 'names' of the
 `FitParameter`s as keys in a `dict`. In the `AmplitudeModel`, locations where a
 `FitParameter` should be inserted are indicated by an immutable (!) `str` that
@@ -84,9 +80,9 @@ It also allows one to couple `FitParameters`. See following snippet:
 ```{literalinclude} ./examples/0001/parameter_container.py
 
 ```
+````
 
-### Option 2: read-only parameter _manager_
-
+````{dropdown} Option 2: read-only parameter _manager_
 Remove the `FitParameters` collection class altogether and use something like
 immutable `InitialParameter` instances in the dynamics and intensity section of
 the `AmplitudeModel`. The `AmplitudeModel` then starts to serve as a read-only'
@@ -188,6 +184,7 @@ parameters["Width_f(0)(980)"] = 0.2  # name is immutable at this point
 # and then call builder again
 intensity(dataset, parameters)
 ```
+````
 
 ## Decision Outcome
 
