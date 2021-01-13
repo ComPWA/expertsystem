@@ -75,7 +75,12 @@ def __build_particle(definition: dict) -> Particle:
 
 
 def build_fit_parameters(definition: dict) -> FitParameters:
-    return FitParameters(FitParameter(**p) for p in definition["parameters"])
+    return FitParameters(
+        {
+            name: FitParameter(**p)
+            for name, p in definition["parameters"].items()
+        }
+    )
 
 
 def __build_kinematics(
@@ -118,14 +123,14 @@ def __build_dynamics(definition: dict, parameters: FitParameters) -> Dynamics:
     if dynamics_type == "NonDynamic":
         return NonDynamic(form_factor)
     if dynamics_type == "RelativisticBreitWigner":
+        pole_real = definition["pole_real"]
+        pole_imag = definition["pole_imag"]
+        __assert_if_parameter_exists(pole_real, parameters)
+        __assert_if_parameter_exists(pole_imag, parameters)
         return RelativisticBreitWigner(
             form_factor=form_factor,
-            pole_real=__safely_get_parameter(
-                definition["pole_real"], parameters
-            ),
-            pole_imag=__safely_get_parameter(
-                definition["pole_imag"], parameters
-            ),
+            pole_real=pole_real,
+            pole_imag=pole_imag,
         )
     raise ValueError(f'Dynamics type "{dynamics_type}" not defined')
 
@@ -136,21 +141,18 @@ def __build_form_factor(
     form_factor_type = definition["type"]
     if form_factor_type == "BlattWeisskopf":
         par_name = definition["meson_radius"]
-        meson_radius = __safely_get_parameter(par_name, parameters)
-        return BlattWeisskopf(meson_radius)
+        __assert_if_parameter_exists(par_name, parameters)
+        return BlattWeisskopf(par_name)
     raise NotImplementedError(
         f'Form factor "{form_factor_type}" does not exist'
     )
 
 
-def __safely_get_parameter(
-    name: str, parameters: FitParameters
-) -> FitParameter:
+def __assert_if_parameter_exists(name: str, parameters: FitParameters) -> None:
     if name not in parameters:
         raise SyntaxError(
             "Meson radius has not been defined in the Parameters section"
         )
-    return parameters[name]
 
 
 def __build_intensity(
@@ -163,9 +165,11 @@ def __build_intensity(
         )
         if intensity_type is NormalizedIntensity:
             return NormalizedIntensity(intensity=intensity)
+        par_name = definition["Strength"]
+        __assert_if_parameter_exists(par_name, parameters)
         return StrengthIntensity(
             component=str(definition["component"]),
-            strength=parameters[definition["Strength"]],
+            strength=par_name,
             intensity=intensity,
         )
     if intensity_type is IncoherentIntensity:
@@ -193,10 +197,14 @@ def __build_amplitude(  # pylint: disable=too-many-locals
 ) -> AmplitudeNode:
     amplitude_type = eval(definition["type"])  # pylint: disable=eval-used
     if amplitude_type is CoefficientAmplitude:
+        magnitude = definition["magnitude"]
+        phase = definition["phase"]
+        __assert_if_parameter_exists(magnitude, parameters)
+        __assert_if_parameter_exists(phase, parameters)
         return CoefficientAmplitude(
             component=definition["component"],
-            magnitude=parameters[definition["magnitude"]],
-            phase=parameters[definition["phase"]],
+            magnitude=magnitude,
+            phase=phase,
             amplitude=__build_amplitude(
                 definition["amplitude"], particles, parameters
             ),

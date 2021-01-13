@@ -4,17 +4,7 @@
 from abc import ABC
 from collections import abc
 from enum import Enum, auto
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Set,
-)
+from typing import Any, Dict, Iterator, List, Mapping, Optional, Sequence
 
 import attr
 
@@ -39,45 +29,34 @@ class ParameterName(abc.Hashable):
 
 @attr.s
 class FitParameter:
-    name: str = attr.ib()
     value: float = attr.ib()
     fix: bool = attr.ib(default=False)
 
 
 class FitParameters(abc.Mapping):
     def __init__(
-        self, parameters: Optional[Iterable[FitParameter]] = None
+        self, parameters: Optional[Mapping[str, FitParameter]] = None
     ) -> None:
         self.__parameters: Dict[str, FitParameter] = dict()
         if parameters is not None:
-            if not isinstance(parameters, abc.Iterable):
-                raise ValueError(
-                    f"Cannot construct a {self.__class__.__name__} "
-                    f"from a {parameters.__class__.__name__}"
-                )
-            self.__parameters.update(
-                {
-                    par.name: par
-                    for par in parameters
-                    if isinstance(par, FitParameter)
-                }
-            )
-
-    @property
-    def parameter_names(self) -> Set[str]:
-        return set(self.__parameters)
+            if not isinstance(parameters, abc.Mapping):
+                raise TypeError("Argument parameters is not a mapping")
+            if not all(map(lambda p: isinstance(p, str), parameters)):
+                raise TypeError("Not all keys are str")
+            if not all(
+                map(lambda p: isinstance(p, FitParameter), parameters.values())
+            ):
+                raise TypeError("Not all values are FitParameter")
+            self.__parameters = parameters  # type: ignore
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, FitParameters):
-            if self.parameter_names != other.parameter_names:
-                return False
-            for par_name in self.keys():
-                if self[par_name] != other[par_name]:
-                    return False
-            return True
+            return dict(self) == dict(other)
         raise NotImplementedError
 
     def __getitem__(self, name: str) -> FitParameter:
+        if not isinstance(name, str):
+            name = str(name)
         return self.__parameters[name]
 
     def __iter__(self) -> Iterator[str]:
@@ -87,27 +66,11 @@ class FitParameters(abc.Mapping):
         return len(self.__parameters)
 
     def __repr__(self) -> str:
-        output = f"{self.__class__.__name__}(["
-        for parameter in sorted(
-            self.__parameters.values(), key=lambda p: p.name
-        ):
-            output += f"\n    {parameter},"
-        output += "\n])"
-        return output
+        return repr(self.__parameters)
 
-    def add(self, parameter: FitParameter) -> None:
+    def __setitem__(self, name: str, parameter: FitParameter) -> None:
         _assert_arg_type(parameter, FitParameter)
-        if parameter.name in self.__parameters:
-            raise KeyError(f'Parameter "{parameter.name}" already exists')
-        self.__parameters[parameter.name] = parameter
-
-    def filter(  # noqa: A003
-        self, function: Callable[[FitParameter], bool]
-    ) -> "FitParameters":
-        """Search by `FitParameter` properties with a :code:`lambda` function."""
-        return FitParameters(
-            [parameter for parameter in self.values() if function(parameter)]
-        )
+        self.__parameters[name] = parameter
 
 
 class FormFactor(ABC):
@@ -116,7 +79,10 @@ class FormFactor(ABC):
 
 @attr.s
 class BlattWeisskopf(FormFactor):
-    meson_radius: FitParameter = attr.ib()
+    meson_radius: ParameterName = attr.ib(
+        on_setattr=attr.setters.frozen,
+        converter=ParameterName,
+    )
 
 
 @attr.s
@@ -130,8 +96,16 @@ class NonDynamic(Dynamics):
 
 @attr.s
 class RelativisticBreitWigner(Dynamics):
-    pole_real: FitParameter = attr.ib(kw_only=True)
-    pole_imag: FitParameter = attr.ib(kw_only=True)
+    pole_real: ParameterName = attr.ib(
+        kw_only=True,
+        on_setattr=attr.setters.frozen,
+        converter=ParameterName,
+    )
+    pole_imag: ParameterName = attr.ib(
+        kw_only=True,
+        on_setattr=attr.setters.frozen,
+        converter=ParameterName,
+    )
 
 
 class ParticleDynamics(abc.MutableMapping):
@@ -161,9 +135,12 @@ class ParticleDynamics(abc.MutableMapping):
                 f'Particle "{particle_name}" not in {ParticleCollection.__name__}'
             )
         for field in attr.fields(dynamics.__class__):
-            if field.type is FitParameter:
-                parameter = getattr(dynamics, field.name)
-                self.__register_parameter(parameter)
+            if field.type is ParameterName:
+                par_name = getattr(dynamics, field.name)
+                if par_name not in self.__parameters:
+                    raise KeyError(
+                        f'Parameter "{par_name}" has not been registered'
+                    )
         self.__dynamics[particle_name] = dynamics
 
     def __iter__(self) -> Iterator[str]:
@@ -189,39 +166,26 @@ class ParticleDynamics(abc.MutableMapping):
         if not relativistic:
             raise NotImplementedError
         particle = self.__particles[particle_name]
-        pole_real = FitParameter(
-            name=f"Position_{particle.name}", value=particle.mass
+        pole_real_name = f"Position_{particle.name}"
+        pole_imag_name = f"Width_{particle.name}"
+        self.__parameters[pole_real_name] = FitParameter(
+            value=particle.mass, fix=False
         )
-        pole_imag = FitParameter(
-            name=f"Width_{particle.name}", value=particle.width
+        self.__parameters[pole_imag_name] = FitParameter(
+            value=particle.width, fix=False
         )
-        self.__register_parameter(pole_real)
-        self.__register_parameter(pole_imag)
         dynamics = RelativisticBreitWigner(
-            pole_real=pole_real,
-            pole_imag=pole_imag,
+            pole_real=pole_real_name,
+            pole_imag=pole_imag_name,
             form_factor=self.__create_form_factor(particle.name),
         )
         self[particle_name] = dynamics
         return dynamics
 
     def __create_form_factor(self, particle_name: str) -> BlattWeisskopf:
-        meson_radius = FitParameter(
-            name=f"MesonRadius_{particle_name}",
-            value=1.0,
-            fix=True,
-        )
-        self.__register_parameter(meson_radius)
-        return BlattWeisskopf(meson_radius)
-
-    def __register_parameter(self, parameter: FitParameter) -> None:
-        if parameter.name in self.__parameters:
-            if parameter is not self.__parameters[parameter.name]:
-                raise ValueError(
-                    f'Fit parameter "{parameter.name}" already exists'
-                )
-        else:
-            self.__parameters.add(parameter)
+        par_name = f"MesonRadius_{particle_name}"
+        self.__parameters[par_name] = FitParameter(value=1.0, fix=True)
+        return BlattWeisskopf(par_name)
 
 
 class KinematicsType(Enum):
@@ -326,8 +290,14 @@ class SequentialAmplitude(AmplitudeNode):
 @attr.s
 class CoefficientAmplitude(AmplitudeNode):
     component: str = attr.ib()
-    magnitude: FitParameter = attr.ib()
-    phase: FitParameter = attr.ib()
+    magnitude: ParameterName = attr.ib(
+        on_setattr=attr.setters.frozen,
+        converter=ParameterName,
+    )
+    phase: ParameterName = attr.ib(
+        on_setattr=attr.setters.frozen,
+        converter=ParameterName,
+    )
     amplitude: AmplitudeNode = attr.ib()
     prefactor: Optional[float] = attr.ib(default=None)
 
@@ -335,7 +305,10 @@ class CoefficientAmplitude(AmplitudeNode):
 @attr.s
 class StrengthIntensity(IntensityNode):
     component: str = attr.ib()
-    strength: FitParameter = attr.ib()
+    strength: str = attr.ib(
+        on_setattr=attr.setters.frozen,
+        converter=ParameterName,
+    )
     intensity: IntensityNode = attr.ib()
 
 

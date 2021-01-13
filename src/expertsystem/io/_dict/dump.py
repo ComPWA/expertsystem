@@ -11,6 +11,7 @@ from expertsystem.amplitude.model import (
     FormFactor,
     Kinematics,
     Node,
+    ParameterName,
     ParticleDynamics,
 )
 from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
@@ -40,7 +41,11 @@ def from_particle(particle: Particle) -> dict:
 
 
 def from_fit_parameters(parameters: FitParameters) -> dict:
-    return {"parameters": [from_fit_parameter(p) for p in parameters.values()]}
+    return {
+        "parameters": {
+            name: from_fit_parameter(p) for name, p in parameters.items()
+        }
+    }
 
 
 def from_fit_parameter(parameter: FitParameter) -> dict:
@@ -62,7 +67,7 @@ def __dynamics_section_to_dict(particle_dynamics: ParticleDynamics) -> dict:
     }
 
 
-def __value_serializer(  # pylint: disable=unused-argument
+def __value_serializer(  # pylint: disable=unused-argument,too-many-return-statements
     inst: type, field: attr.Attribute, value: Any
 ) -> Any:
     if isinstance(value, abc.Iterable):
@@ -70,7 +75,9 @@ def __value_serializer(  # pylint: disable=unused-argument
             return [__asdict_with_type(item) for item in value]
     if isinstance(value, (FormFactor, Node)):
         return __asdict_with_type(value)
-    if isinstance(value, (FitParameter, Particle)):
+    if isinstance(value, ParameterName):
+        return str(value)
+    if isinstance(value, Particle):
         return value.name
     if isinstance(value, Parity):
         return {"value": value.value}
