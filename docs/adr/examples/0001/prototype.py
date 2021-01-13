@@ -1,4 +1,4 @@
-# pylint: disable=fixme
+# pylint: disable=fixme,import-error
 # noqa
 
 import graphviz  # type: ignore
