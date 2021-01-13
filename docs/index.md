@@ -101,6 +101,7 @@ maxdepth: 2
 install
 usage
 interactive
+adr
 API <api/expertsystem>
 Develop <https://pwa.readthedocs.io/develop.html>
 ```
