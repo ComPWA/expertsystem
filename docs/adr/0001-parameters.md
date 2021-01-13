@@ -1,4 +1,5 @@
 <!-- markdownlint-disable MD013 -->
+<!-- cspell:ignore elif getattr isinstance literalinclude setattr staticmethod -->
 
 # [ADR-0001] How to handle model parameters
 
@@ -55,6 +56,14 @@ the value as listed in the `parameters` section of the `AmplitudeModel`.
   which that entry points.
 
 ## Considered Options
+
+### Option 0 (PROTOTYPE WIP)
+
+```{literalinclude} ./examples/0001/prototype.py
+---
+lines: 4-
+---
+```
 
 ### Option 1: parameter _container_
 
