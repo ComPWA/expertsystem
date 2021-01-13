@@ -86,6 +86,7 @@
         "setuptools",
         "spflueger",
         "struct",
+        "sympy",
         "tensorwaves",
         "toctree",
         "topness",

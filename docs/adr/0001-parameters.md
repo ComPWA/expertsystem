@@ -57,6 +57,18 @@ the value as listed in the `parameters` section of the `AmplitudeModel`.
 
 ## Considered Options
 
+### SymPY
+
+```{toctree}
+examples/0001/sympy_expression
+```
+
+### Python [`operator`](https://docs.python.org/3/library/operator.html) library
+
+See e.g. [this answer](https://stackoverflow.com/a/7844038) on Stack Overflow
+
+### Reconsider design
+
 ````{dropdown} Option 0: WIP
 ```{literalinclude} ./examples/0001/prototype.py
 
