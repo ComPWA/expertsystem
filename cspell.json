@@ -106,6 +106,7 @@
         "commitlint",
         "doctest",
         "doctests",
+        "dotprint",
         "eval",
         "flatte",
         "gellmann",
