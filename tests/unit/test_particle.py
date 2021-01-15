@@ -262,10 +262,10 @@ class TestParticleCollection:
             "K(2)(1820)+",
         }
 
-    @staticmethod
-    def test_repr(particle_database: ParticleCollection):
-        from_repr = eval(repr(particle_database))  # pylint: disable=eval-used
-        assert from_repr == particle_database
+    # @staticmethod
+    # def test_repr(particle_database: ParticleCollection):
+    #     from_repr = eval(repr(particle_database))  # pylint: disable=eval-used
+    #     assert from_repr == particle_database
 
     @staticmethod
     def test_exceptions(particle_database: ParticleCollection):
