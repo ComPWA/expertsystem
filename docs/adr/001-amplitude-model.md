@@ -1,9 +1,9 @@
 <!-- markdownlint-disable MD013 -->
 <!-- cspell:ignore lambdify -->
 
-# [ADR-0001] Amplitude model
+# [ADR-001] Amplitude model
 
-- Status: **proposed**
+- Status: **accepted**
 - Deciders: @redeboer @spflueger
 
 ## Context and Problem Statement
@@ -62,17 +62,17 @@ the value as listed in the `parameters` section of the `AmplitudeModel`.
 ---
 maxdepth: 1
 ---
-examples/0001/sympy
-examples/0001/operators
+examples/001/sympy
+examples/001/operators
 ```
 
 ## Decision Outcome
 
-Use {doc}`examples/0001/sympy`.
+Use {doc}`examples/001/sympy`.
 
 ## Pros and Cons of the Options
 
-### {doc}`SymPy <examples/0001/sympy>`
+### {doc}`SymPy <examples/001/sympy>`
 
 - **Positive**
   - Easy to render amplitude model as LaTeX
@@ -85,7 +85,7 @@ Use {doc}`examples/0001/sympy`.
   - Need to keep track of components in the expression tree with symbol
     mappings
 
-### {doc}`Python's operator library <examples/0001/operators>`
+### {doc}`Python's operator library <examples/001/operators>`
 
 - **Positive**
   - More control over different components of in the expression tree

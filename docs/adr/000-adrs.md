@@ -1,6 +1,6 @@
 <!-- cSpell:ignore ADRs, joelparkerhenderson, MADR, Nygard's -->
 
-# [ADR-0000] Use ADRs
+# [ADR-000] Use ADRs
 
 Status: **accepted**
 
