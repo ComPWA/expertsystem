@@ -26,7 +26,7 @@ flake8-rst-docstrings==0.0.14
 flake8==3.8.4
 gprof2dot==2019.11.30
 hepunits==2.0.1
-identify==1.5.12
+identify==1.5.13
 importlib-metadata==3.4.0
 iniconfig==1.1.1
 ipython-genutils==0.2.0
