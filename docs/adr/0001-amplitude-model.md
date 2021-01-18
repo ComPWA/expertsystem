@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD013 -->
 <!-- cspell:ignore lambdify -->
 
-# [ADR-0001] How to handle model parameters
+# [ADR-0001] Amplitude model
 
 - Status: **proposed**
 - Deciders: @redeboer @spflueger
