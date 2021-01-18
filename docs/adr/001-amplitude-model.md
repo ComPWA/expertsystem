@@ -21,7 +21,7 @@ following requirements:
    optimized with regard to a certain estimator.
 
 Currently
-([v0.6.9](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8)), the
+([v0.6.8](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8)), the
 [`AmplitudeModel`](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8/api/expertsystem.amplitude.model.html#expertsystem.amplitude.model.AmplitudeModel)
 contains five **sections** (instances of specific classes):
 
@@ -79,8 +79,10 @@ Use {doc}`examples/001/sympy`.
   - Use
     [`lambdify`](https://docs.sympy.org/latest/tutorial/basic_operations.html#lambdify)
     to convert the expression to any back-end
-  - Use `Expr.subs` (substitute) to couple parameters or replace components of
-    the model, for instance to set custom dynamics
+  - Use
+    [`Expr.subs`](https://docs.sympy.org/latest/modules/core.html#sympy.core.basic.Basic.subs)
+    (substitute) to couple parameters or replace components of the model, for
+    instance to set custom dynamics
 - **Negative**
   - Need to keep track of components in the expression tree with symbol
     mappings
