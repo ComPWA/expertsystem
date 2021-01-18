@@ -1,4 +1,5 @@
 <!-- markdownlint-disable MD013 -->
+<!-- cspell:ignore lambdify -->
 
 # [ADR-0001] How to handle model parameters
 
@@ -67,31 +68,26 @@ examples/0001/operators
 
 ## Decision Outcome
 
-<!-- TODO -->
+Use {doc}`examples/0001/sympy`.
 
-<!--
-### Positive Consequences
+## Pros and Cons of the Options
 
-### Negative Consequences
--->
+### {doc}`SymPy <examples/0001/sympy>`
 
-## Pros and Cons of the Options <!-- optional -->
+- **Positive**
+  - Easy to render amplitude model as LaTeX
+  - Use
+    [`lambdify`](https://docs.sympy.org/latest/tutorial/basic_operations.html#lambdify)
+    to convert the expression to any back-end
+  - Use `Expr.subs` (substitute) to couple parameters or replace components of
+    the model, for instance to set custom dynamics
+- **Negative**
+  - Need to keep track of components in the expression tree with symbol
+    mappings
 
-<!--
-### [option 1]
+### {doc}`Python's operator library <examples/0001/operators>`
 
-[example | description | pointer to more information | …]
-
-- Good, because [argument a]
-- Good, because [argument b]
-- Bad, because [argument c]
-
-### [option 2]
-
-[example | description | pointer to more information | …]
-
-- Good, because [argument a]
-- Good, because [argument b]
-- Bad, because [argument c]
-- … numbers of pros and cons can vary
--->
+- **Positive**
+  - More control over different components of in the expression tree
+- **Negative**
+  - Essentially re-inventing SymPy
