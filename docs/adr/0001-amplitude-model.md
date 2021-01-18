@@ -13,15 +13,16 @@ From the perspective of a PWA fitter package, the responsibility of the
 for a function that is to be fitted to a dataset. Such a **function** has the
 following requirements:
 
-1. It should be able to compute a list of real-valued intensities 𝐯𝐞𝐜⟨ℝ⟩(𝑚)
-   from a dataset of four-momenta 𝐯𝐞𝐜<ℝⁿ⁴>(𝑚). Here, 𝑚 is the number of events
-   and 𝑛 is the number of final state particles.
+1. It should be able to compute a list of real-valued intensities
+   $\mathbb{R}^m$ from a dataset of four-momenta
+   $\mathbb{R}^{m\times n\times4}$, where $m$ is the number of events and $n$
+   is the number of final state particles.
 2. It should contain **parameters** that can be tweaked, so that they can be
    optimized with regard to a certain estimator.
 
 Currently
-([v0.6.7](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.7)), the
-[`AmplitudeModel`](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.7/api/expertsystem.amplitude.model.html#expertsystem.amplitude.model.AmplitudeModel)
+([v0.6.9](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8)), the
+[`AmplitudeModel`](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8/api/expertsystem.amplitude.model.html#expertsystem.amplitude.model.AmplitudeModel)
 contains five **sections** (instances of specific classes):
 
 - `kinematics`: defines initial and final state
