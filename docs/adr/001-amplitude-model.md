@@ -9,9 +9,9 @@
 ## Context and Problem Statement
 
 From the perspective of a PWA fitter package, the responsibility of the
-`expertsystem` is to construct an `AmplitudeModel` that can serve as a template
-for a function that is to be fitted to a dataset. Such a **function** has the
-following requirements:
+`expertsystem` is to construct an `AmplitudeModel` that serves as blueprint for
+a function that can be evaluated. Such a **function** has the following
+requirements:
 
 1. It should be able to compute a list of real-valued intensities
    $\mathbb{R}^m$ from a dataset of four-momenta
@@ -19,6 +19,28 @@ following requirements:
    is the number of final state particles.
 2. It should contain **parameters** that can be tweaked, so that they can be
    optimized with regard to a certain estimator.
+
+Requirements for the `AmplitudeModel`:
+
+1. The `AmplitudeModel` has to be convertible to a function which can be
+   evaluated using various computation backends (numpy, tensorflow, theano,
+   jax, ...)
+2. Ideally, the model should be complete in the sense that it contains all
+   information to construct the complete model. This means that some "common"
+   functions like a Breit-Wigner and Blatt Weisskopf form factors should also
+   be contained inside the `AmplitudeModel`. This guarantees reproducibility!
+3. Adding new operators/models should not trigger many code modifications
+   (open-closed principle). E.g adding new dynamics or formalisms.
+4. Extendable
+   1. Add or replace current parts of an existing model. For example replace
+      the dynamics part of some decay.
+   2. Change a function plus a dataset to and estimator function. This is a
+      subtle but important point. The function should hide its details (which
+      backend and its mathematical expression) and yet be extendable to an
+      estimator.
+5. Definition and easy extraction of components. Components are certain sub
+   parts of complete mathematical expression. Needed for calculation of fit
+   fractions, or plotting individual parts of the intensity.
 
 Currently
 ([v0.6.8](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8)), the
@@ -55,6 +77,12 @@ the value as listed in the `parameters` section of the `AmplitudeModel`.
   a name that can be changed, but that results in a mismatch between the key
   that is used in the `parameters` section and the name of the parameter to
   which that entry points.
+- [ComPWA#226](https://github.com/ComPWA/ComPWA/issues/226): Use a math
+  language for the blueprint of the function. This was also discussed early to
+  mid 2020, but dropped in favor of custom python code + amplitf. The reasoning
+  was that the effort of writing some new math language plus generators
+  converting a mathematical expression into a function (using various backends)
+  requires too much manpower.
 
 ## Considered Options
 
