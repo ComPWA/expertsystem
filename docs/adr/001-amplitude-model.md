@@ -94,6 +94,8 @@ examples/001/sympy
 examples/001/operators
 ```
 
+- Customized python code (current state)
+
 ## Decision Outcome
 
 Use {doc}`examples/001/sympy`.
@@ -104,6 +106,10 @@ Use {doc}`examples/001/sympy`.
 
 - **Positive**
   - Easy to render amplitude model as LaTeX
+  - Model description is complete! Absolutely all information about the model
+    is included. (reproducibility)
+  - Follows open-closed principle. New models and formalism can be added
+    without any changes to other interfacing components (here: tensorwaves)
   - Use
     [`lambdify`](https://docs.sympy.org/latest/tutorial/basic_operations.html#lambdify)
     to convert the expression to any back-end
@@ -112,6 +118,8 @@ Use {doc}`examples/001/sympy`.
     (substitute) to couple parameters or replace components of the model, for
     instance to set custom dynamics
 - **Negative**
+  - `lambdify` becomes a core dependency while its behavior cannot be modified,
+    but is defined by `sympy`.
   - Need to keep track of components in the expression tree with symbol
     mappings
 
@@ -119,5 +127,20 @@ Use {doc}`examples/001/sympy`.
 
 - **Positive**
   - More control over different components of in the expression tree
+  - More control over convert functionality to functions
+  - less dependencies
 - **Negative**
   - Essentially re-inventing SymPy
+
+### Customized python code (current state)
+
+- **Positive**
+  - "Faster" implementation / prototyping possible compared to python operators
+  - less dependencies
+- **Negative**
+  - Not open-closed to new models
+  - Conversion to various backends not DRY
+  - Function replacement or extension feature becomes very difficult to handle.
+  - Model is not complete, since no complete mathematical description is used.
+    For example Breit-Wigner functions are referred to directly and their
+    implementations is not defined in the amplitude model.
