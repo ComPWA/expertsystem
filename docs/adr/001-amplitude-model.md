@@ -23,46 +23,27 @@ requirements:
 Requirements for the `AmplitudeModel`:
 
 1. The `AmplitudeModel` has to be convertible to a function which can be
-   evaluated using various computation back-ends (numpy, tensorflow, theano,
-   jax, ...)
+   **evaluated using various computation back-ends** (numpy, tensorflow,
+   theano, jax, ...)
 2. Ideally, the model should be complete in the sense that it contains all
    information to construct the complete model. This means that some "common"
-   functions like a Breit-Wigner and Blatt Weisskopf form factors should also
-   be contained inside the `AmplitudeModel`. This guarantees reproducibility!
+   functions like a Breit-Wigner and Blatt-Weisskopf form factors should also
+   be contained inside the `AmplitudeModel`. This guarantees
+   **reproducibility**!
 3. Adding new operators/models should not trigger many code modifications
-   (open-closed principle). E.g adding new dynamics or formalisms.
-4. Extendable
-   1. Add or replace current parts of an existing model. For example replace
-      the dynamics part of some decay.
-   2. Change a function plus a dataset to and estimator function. This is a
-      subtle but important point. The function should hide its details (which
-      backend and its mathematical expression) and yet be extendable to an
-      estimator.
-5. Definition and easy extraction of components. Components are certain sub
-   parts of complete mathematical expression. Needed for calculation of fit
-   fractions, or plotting individual parts of the intensity.
-
-Currently
-([v0.6.8](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8)), the
-[`AmplitudeModel`](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8/api/expertsystem.amplitude.model.html#expertsystem.amplitude.model.AmplitudeModel)
-contains five **sections** (instances of specific classes):
-
-- `kinematics`: defines initial and final state
-- `particles`: particle definitions (spin, etc.)
-- `dynamics`: a mapping that defines which dynamics type to apply to which
-  particle
-- `intensity`: the actual amplitude model that is to be converted by a fitter
-  package into a function as described above
-- `parameters`: an inventory of parameters that are used in `intensity` and
-  `dynamics`
-
-This structure can be represented in YAML, see an example
-[here](https://github.com/ComPWA/expertsystem/blob/f4f1c55/tests/unit/io/expected_recipe.yml).
-
-A fitter package converts `intensity` together with `dynamics` into a function.
-Any references to parameters that `intensity` or `dynamics` contain are
-converted into a parameter of the function. The parameters are initialized with
-the value as listed in the `parameters` section of the `AmplitudeModel`.
+   ([open-closed principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle)),
+   for instance adding new dynamics or formalisms.
+4. Extendible:
+   - Add or replace current parts of an existing model. For example replace the
+     dynamics part of some decay.
+   - Change a function plus a dataset to an estimator function. This is a
+     subtle but important point. The function should hide its details (which
+     backend and its mathematical expression) and yet be extendable to an
+     estimator.
+5. Definition and easy extraction of components. Components are certain
+   sub-parts of the complete mathematical expression. This is at least needed
+   for the calculation of fit fractions, or plotting individual parts of the
+   intensity.
 
 ## Decision Drivers
 
@@ -86,6 +67,32 @@ the value as listed in the `parameters` section of the `AmplitudeModel`.
 
 ## Considered Options
 
+### Current set-up
+
+Currently
+([v0.6.8](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8)), the
+[`AmplitudeModel`](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8/api/expertsystem.amplitude.model.html#expertsystem.amplitude.model.AmplitudeModel)
+contains five **sections** (instances of specific classes):
+
+- `kinematics`: defines initial and final state
+- `particles`: particle definitions (spin, etc.)
+- `dynamics`: a mapping that defines which dynamics type to apply to which
+  particle
+- `intensity`: the actual amplitude model that is to be converted by a fitter
+  package into a function as described above
+- `parameters`: an inventory of parameters that are used in `intensity` and
+  `dynamics`
+
+This structure can be represented in YAML, see an example
+[here](https://github.com/ComPWA/expertsystem/blob/f4f1c55/tests/unit/io/expected_recipe.yml).
+
+A fitter package converts `intensity` together with `dynamics` into a function.
+Any references to parameters that `intensity` or `dynamics` contain are
+converted into a parameter of the function. The parameters are initialized with
+the value as listed in the `parameters` section of the `AmplitudeModel`.
+
+### Alternative solutions
+
 ```{toctree}
 ---
 maxdepth: 1
@@ -93,8 +100,6 @@ maxdepth: 1
 examples/001/sympy
 examples/001/operators
 ```
-
-- Customized python code (current state)
 
 ## Decision Outcome
 
@@ -109,7 +114,7 @@ Use {doc}`examples/001/sympy`.
   - Model description is complete! Absolutely all information about the model
     is included. (reproducibility)
   - Follows open-closed principle. New models and formalism can be added
-    without any changes to other interfacing components (here: tensorwaves)
+    without any changes to other interfacing components (here: `tensorwaves`)
   - Use
     [`lambdify`](https://docs.sympy.org/latest/tutorial/basic_operations.html#lambdify)
     to convert the expression to any back-end
@@ -128,7 +133,7 @@ Use {doc}`examples/001/sympy`.
 - **Positive**
   - More control over different components of in the expression tree
   - More control over convert functionality to functions
-  - less dependencies
+  - No additional dependencies
 - **Negative**
   - Essentially re-inventing SymPy
 
@@ -136,7 +141,7 @@ Use {doc}`examples/001/sympy`.
 
 - **Positive**
   - "Faster" implementation / prototyping possible compared to python operators
-  - less dependencies
+  - No additional dependencies
 - **Negative**
   - Not open-closed to new models
   - Conversion to various back-ends not DRY
