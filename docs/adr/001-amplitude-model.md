@@ -1,5 +1,5 @@
 <!-- markdownlint-disable MD013 -->
-<!-- cspell:ignore lambdify -->
+<!-- cspell:ignore amplitf lambdify -->
 
 # [ADR-001] Amplitude model
 
@@ -23,7 +23,7 @@ requirements:
 Requirements for the `AmplitudeModel`:
 
 1. The `AmplitudeModel` has to be convertible to a function which can be
-   evaluated using various computation backends (numpy, tensorflow, theano,
+   evaluated using various computation back-ends (numpy, tensorflow, theano,
    jax, ...)
 2. Ideally, the model should be complete in the sense that it contains all
    information to construct the complete model. This means that some "common"
@@ -79,10 +79,10 @@ the value as listed in the `parameters` section of the `AmplitudeModel`.
   which that entry points.
 - [ComPWA#226](https://github.com/ComPWA/ComPWA/issues/226): Use a math
   language for the blueprint of the function. This was also discussed early to
-  mid 2020, but dropped in favor of custom python code + amplitf. The reasoning
-  was that the effort of writing some new math language plus generators
-  converting a mathematical expression into a function (using various backends)
-  requires too much manpower.
+  mid 2020, but dropped in favor of custom python code + `amplitf`. The
+  reasoning was that the effort of writing some new math language plus
+  generators converting a mathematical expression into a function (using
+  various back-ends) requires too much manpower.
 
 ## Considered Options
 
@@ -139,7 +139,7 @@ Use {doc}`examples/001/sympy`.
   - less dependencies
 - **Negative**
   - Not open-closed to new models
-  - Conversion to various backends not DRY
+  - Conversion to various back-ends not DRY
   - Function replacement or extension feature becomes very difficult to handle.
   - Model is not complete, since no complete mathematical description is used.
     For example Breit-Wigner functions are referred to directly and their
