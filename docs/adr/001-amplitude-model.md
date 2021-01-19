@@ -103,7 +103,15 @@ examples/001/operators
 
 ## Decision Outcome
 
-Use {doc}`examples/001/sympy`.
+Use {doc}`examples/001/sympy`. Initially, we leave the existing amplitude
+builders (modules
+[`helicity_decay`](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8/api/expertsystem.amplitude.helicity_decay.html)
+and
+[`canonical_decay`](https://pwa.readthedocs.io/projects/expertsystem/en/0.6.8/api/expertsystem.amplitude.canonical_decay.html))
+alongside a SymPy implementation, so that it's possible to compare the results.
+Once it turns out the this set-up results in the same results and a comparable
+performance, we replace the old amplitude builders with the new SymPy
+implementation.
 
 ## Pros and Cons of the Options
 
