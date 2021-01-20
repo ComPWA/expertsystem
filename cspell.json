@@ -138,6 +138,7 @@
         "nbody",
         "nbsphinx",
         "noqa",
+        "nsimplify",
         "pandoc",
         "permalinks",
         "phsp",
