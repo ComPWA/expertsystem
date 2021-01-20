@@ -1,6 +1,9 @@
 # cspell: disable srepr
 # pylint: disable=invalid-name,no-self-use
 
+import operator
+from functools import reduce
+
 import sympy as sy
 
 
@@ -32,3 +35,11 @@ class TestSymbol:
         assert x is y
         x.name = "I am x"
         assert y.name == "I am x"
+
+    def test_product(self):
+        symbols = [
+            sy.Symbol("x"),
+            sy.Symbol("y"),
+            sy.Symbol("z"),
+        ]
+        reduce(operator.mul, symbols)
