@@ -155,12 +155,12 @@ nitpick_ignore = [
     ("py:class", "EdgeType"),
     ("py:class", "NoneType"),
     ("py:class", "StateTransitionGraph"),
-    ("py:class", "_EdgeType"),
-    ("py:class", "_T"),
+    ("py:class", "ValueType"),
     ("py:class", "a set-like object providing a view on D's items"),
     ("py:class", "a set-like object providing a view on D's keys"),
     ("py:class", "an object providing a view on D's values"),
     ("py:class", "typing_extensions.Protocol"),
+    ("py:obj", "expertsystem.amplitude.sympy.ValueType"),
 ]
 
 # Intersphinx settings
@@ -179,6 +179,7 @@ intersphinx_mapping = {
     "pwa": ("https://pwa.readthedocs.io", None),
     "pycompwa": ("https://compwa.github.io", None),
     "python": ("https://docs.python.org/3", None),
+    "sympy": ("https://docs.sympy.org/latest", None),
     "tensorwaves": (
         "https://pwa.readthedocs.io/projects/tensorwaves/en/stable",
         None,
