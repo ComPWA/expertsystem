@@ -16,7 +16,6 @@ on:
 jobs:
   check_links:
     name: Check external links
-    if: github.event.pull_request.draft == false
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
