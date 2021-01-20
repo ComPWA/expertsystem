@@ -15,6 +15,7 @@ from expertsystem.reaction import Result
 from .canonical_decay import CanonicalAmplitudeGenerator
 from .helicity_decay import HelicityAmplitudeGenerator
 from .model import AmplitudeModel
+from .sympy import ModelInfo, SympyHelicityAmplitudeGenerator
 
 
 def generate(result: Result) -> AmplitudeModel:
@@ -36,3 +37,8 @@ def generate(result: Result) -> AmplitudeModel:
             f'No amplitude generator for formalism type "{formalism_type}"'
         )
     return amplitude_generator.generate(result)
+
+
+def generate_sympy(result: Result) -> ModelInfo:
+    amplitude_generator = SympyHelicityAmplitudeGenerator(result)
+    return amplitude_generator.generate()
