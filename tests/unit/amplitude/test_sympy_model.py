@@ -7,4 +7,5 @@ def test_generate(jpsi_to_gamma_pi_pi_helicity_solutions: Result):
     sympy_model = generate_sympy(result)
     assert len(sympy_model.initial_values) == 2
     assert len(sympy_model.dynamics) == 4
-    assert len(sympy_model.components) == 12
+    assert len(sympy_model.intensities) == 4
+    assert len(sympy_model.amplitudes) == 8

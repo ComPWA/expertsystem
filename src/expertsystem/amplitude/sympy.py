@@ -42,7 +42,7 @@ class InitialValue(Generic[ValueType]):
     fix: bool = attr.ib()
 
 
-@attr.s
+@attr.s(kw_only=True)
 class SympyModel:
     kinematics: Kinematics = attr.ib(
         validator=attr.validators.instance_of(Kinematics)
@@ -51,7 +51,8 @@ class SympyModel:
         validator=attr.validators.instance_of(ParticleCollection)
     )
     intensity_model: sy.Expr = attr.ib(default=None)
-    components: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
+    intensities: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
+    amplitudes: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
     dynamics: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
     initial_values: Dict[sy.Symbol, InitialValue] = attr.ib(default=dict())
 
@@ -312,18 +313,18 @@ class SympyHelicityAmplitudeGenerator:
         graph_group: List[StateTransitionGraph[ParticleWithSpin]],
     ) -> sy.Symbol:
         graph_group_label = _get_graph_group_unique_label(graph_group)
-        component_symbol = sy.Function(fR"I[{graph_group_label}]")(x)
-        amplitudes: List[sy.Expr] = list()
+        symbol = sy.Function(fR"I[{graph_group_label}]")(x)
+        expression: List[sy.Expr] = list()
         for graph in graph_group:
             sequential_graphs = (
                 perform_external_edge_identical_particle_combinatorics(graph)
             )
             for seq_graph in sequential_graphs:
-                amplitudes.append(self.__generate_sequential_decay(seq_graph))
-        self.__model.components[component_symbol] = sum(
-            map(lambda a: Dagger(a) * a, amplitudes)
+                expression.append(self.__generate_sequential_decay(seq_graph))
+        self.__model.intensities[symbol] = sum(
+            map(lambda a: Dagger(a) * a, expression)
         )
-        return component_symbol
+        return symbol
 
     def __generate_sequential_decay(
         self, graph: StateTransitionGraph[ParticleWithSpin]
@@ -334,7 +335,7 @@ class SympyHelicityAmplitudeGenerator:
         ]
         sequential_amplitudes = reduce(operator.mul, partial_decays_symbols)
 
-        component_symbol = sy.Function(
+        symbol = sy.Function(
             f"A[{self.name_generator.generate_unique_amplitude_name(graph)}]"
         )(x)
         coefficient = self.__generate_amplitude_coefficient(graph)
@@ -342,8 +343,8 @@ class SympyHelicityAmplitudeGenerator:
         expression = coefficient * sequential_amplitudes
         if prefactor is not None:
             expression = prefactor * expression
-        self.__model.components[component_symbol] = expression
-        return component_symbol
+        self.__model.amplitudes[symbol] = expression
+        return symbol
 
     def _generate_partial_decay(
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
