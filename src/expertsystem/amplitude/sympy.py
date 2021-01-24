@@ -43,18 +43,28 @@ class InitialValue(Generic[ValueType]):
 
 
 @attr.s(kw_only=True)
-class SympyModel:
+class SympyModel:  # pylint: disable=too-many-instance-attributes
     kinematics: Kinematics = attr.ib(
         validator=attr.validators.instance_of(Kinematics)
     )
     particles: ParticleCollection = attr.ib(
         validator=attr.validators.instance_of(ParticleCollection)
     )
-    intensity_model: sy.Expr = attr.ib(default=None)
+    top_expression: sy.Expr = attr.ib(default=None)
     intensities: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
     amplitudes: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
     dynamics: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
     initial_values: Dict[sy.Symbol, InitialValue] = attr.ib(default=dict())
+
+    @property
+    def full_expression(self) -> Optional[sy.Expr]:
+        if self.top_expression is None:
+            return None
+        return (
+            self.top_expression.subs(self.intensities)
+            .subs(self.amplitudes)
+            .subs(self.dynamics)
+        )
 
 
 class _SympyHelicityAmplitudeNameGenerator:
@@ -283,7 +293,7 @@ class SympyHelicityAmplitudeGenerator:
         )
 
     def generate(self) -> sy.Expr:
-        self.__model.intensity_model = self.__generate_intensities()
+        self.__model.top_expression = self.__generate_intensities()
         return self.__model
 
     def __generate_intensities(self) -> sy.Expr:
