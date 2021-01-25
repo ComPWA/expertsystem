@@ -39,9 +39,6 @@ class HelicityKinematics:
            (:meth:`register_invariant_mass`, :meth:`register_helicity_angles`,
            :meth:`register_subsystem`) first.
         2. Then convert events to these kinematic variables.
-
-    For additional functionality check :meth:`phase_space_volume` and
-    :meth:`is_within_phase_space`.
     """
 
     reaction_info: Kinematics = attr.ib()
@@ -59,9 +56,8 @@ class HelicityKinematics:
             final_state: collection of particle unique id's
 
         Return:
-            A `str` key representing the invariant mass. It can be used to
-            retrieve this invariant mass from the dataset returned by
-            :meth:`~convert`.
+            A `str` key representing the invariant mass. Can be used as a name
+            for `sympy.core.symbol.Symbol`.
 
         """
         logging.debug("registering invariant mass in kinematics")
@@ -83,8 +79,8 @@ class HelicityKinematics:
             subsystem: SubSystem to which the registered angles correspond.
 
         Return:
-            A pair of `str` keys representing the angles. They can be used to
-            retrieve the angles from the dataset returned by :meth:`~convert`.
+            A pair of `str` keys representing the angles. Can be used as a name
+            for `sympy.core.symbol.Symbol`.
 
         """
         logging.debug("registering helicity angles in kinematics")
@@ -116,8 +112,7 @@ class HelicityKinematics:
 
         Return:
             A tuple of `str` keys representing the :math:`(s, \theta, \phi)`.
-            They can be used to retrieve the kinematic data from the dataset
-            returned by :meth:`~convert`.
+            Can be used as a name for `sympy.core.symbol.Symbol`.
 
         """
         state_fs: list = []
