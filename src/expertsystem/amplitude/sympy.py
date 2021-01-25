@@ -4,16 +4,7 @@ import logging
 import operator
 from collections import abc
 from functools import reduce
-from typing import (
-    Dict,
-    Generic,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    TypeVar,
-    Union,
-)
+from typing import Dict, Generic, List, Optional, Tuple, TypeVar, Union
 
 import attr
 import sympy as sy
@@ -35,6 +26,7 @@ from ._graph_info import (
     get_prefactor,
     group_graphs_same_initial_and_final,
 )
+from .kinematics import HelicityKinematics, SubSystem
 from .model import Kinematics
 
 ValueType = TypeVar("ValueType", float, complex)
@@ -410,7 +402,7 @@ class SympyHelicityAmplitudeGenerator:
         self.__model.expression.amplitudes[symbol] = expression
         return symbol
 
-    def _generate_partial_decay(
+    def _generate_partial_decay(  # pylint: disable=too-many-locals
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> sy.Symbol:
         in_edge_ids = graph.get_edge_ids_ingoing_to_node(node_id)
@@ -426,10 +418,13 @@ class SympyHelicityAmplitudeGenerator:
             edge_props = graph.get_edge_props(out_edge_id)
             children.append(_HelicityParticle(*edge_props))
 
-        # todo: get kinematic info (final state ids) for relevant edges
-        decay_products_fs_ids = ([], [])
-        recoil_fs_ids = []
-        parent_recoil_fs_ids = []
+        # TODO: get kinematic info (final state ids) for relevant edges
+        decay_products_fs_ids: Tuple[Tuple[int, ...], Tuple[int, ...]] = (
+            (),
+            (),
+        )
+        recoil_fs_ids: Tuple[int, ...] = ()
+        parent_recoil_fs_ids: Tuple[int, ...] = ()
         inv_mass, theta, phi = self.__generate_kinematic_variables(
             decay_products_fs_ids, recoil_fs_ids, parent_recoil_fs_ids
         )
@@ -462,9 +457,11 @@ class SympyHelicityAmplitudeGenerator:
 
     def __generate_kinematic_variables(
         self,
-        decay_products_final_state_ids: Tuple[Sequence[int], Sequence[int]],
-        recoil_final_state_ids: Sequence[int],
-        parent_recoil_final_state_ids: Sequence[int],
+        decay_products_final_state_ids: Tuple[
+            Tuple[int, ...], Tuple[int, ...]
+        ],
+        recoil_final_state_ids: Tuple[int, ...],
+        parent_recoil_final_state_ids: Tuple[int, ...],
     ) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
         """Generate kinematic sympy variables of a helicity decay.
 
@@ -473,8 +470,23 @@ class SympyHelicityAmplitudeGenerator:
         - helicity angle theta
         - helicity angle phi
         """
-        # TODO: generate symbols here
-        return (sy.Symbol("inv_mass"), sy.Symbol("theta"), sy.Symbol("phi"))
+        kinematics = HelicityKinematics(reaction_info=self.__model.kinematics)
+        subsystem = SubSystem(
+            final_states=decay_products_final_state_ids,
+            recoil_state=recoil_final_state_ids,
+            parent_recoil_state=parent_recoil_final_state_ids,
+        )
+        theta_name, phi_name = kinematics.register_helicity_angles(subsystem)
+        inv_mass_name = kinematics.register_invariant_mass(
+            decay_products_final_state_ids[  # TODO: What is the meaning of these tuples?
+                0
+            ]
+        )
+        return (
+            sy.Symbol(inv_mass_name),
+            sy.Symbol(theta_name),
+            sy.Symbol(phi_name),
+        )
 
     def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[ParticleWithSpin]
