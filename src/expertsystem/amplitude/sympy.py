@@ -2,8 +2,9 @@
 
 import logging
 import operator
+from collections import abc
 from functools import reduce
-from typing import Dict, Generic, List, Optional, Tuple, TypeVar
+from typing import Dict, Generic, List, Optional, Tuple, TypeVar, Union
 
 import attr
 import sympy as sy
@@ -37,34 +38,78 @@ class _HelicityParticle:
 
 
 @attr.s
-class InitialValue(Generic[ValueType]):
+class ParameterProperties(Generic[ValueType]):
     value: ValueType = attr.ib()
     fix: bool = attr.ib()
 
 
+@attr.s(on_setattr=attr.setters.frozen)
+class SuggestedParameterValues(abc.MutableMapping):
+    parameters: Dict[sy.Symbol, ParameterProperties] = attr.ib(default=dict())
+
+    def __delitem__(self, key: Union[sy.Symbol, str]) -> None:
+        if isinstance(key, str):
+            key = sy.Symbol(key)
+        del self.parameters[key]
+
+    def __getitem__(self, key: Union[sy.Symbol, str]) -> ParameterProperties:
+        if isinstance(key, str):
+            key = sy.Symbol(key)
+        return self.parameters[key]
+
+    def __iter__(self) -> sy.Symbol:
+        return iter(self.parameters)
+
+    def __len__(self) -> int:
+        return len(self.parameters)
+
+    def __setitem__(
+        self, key: Union[sy.Symbol, str], value: ParameterProperties
+    ) -> None:
+        if isinstance(key, str):
+            key = sy.Symbol(key)
+        if not isinstance(value, ParameterProperties):
+            raise ValueError(
+                f"Value has to be of type {ParameterProperties.__name__},"
+                f" but is of type {value.__class__.__name__}"
+            )
+        self.parameters[key] = value
+
+
 @attr.s(kw_only=True)
 class SympyModel:  # pylint: disable=too-many-instance-attributes
+    top: sy.Expr = attr.ib(default=None)
+    intensities: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
+    amplitudes: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
+    dynamics: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
+
+    @property
+    def full_expression(self) -> Optional[sy.Expr]:
+        if self.top is None:
+            return None
+        return (
+            self.top.subs(self.intensities)
+            .subs(self.amplitudes)
+            .subs(self.dynamics)
+        )
+
+
+@attr.s(kw_only=True)
+class ModelInfo:  # pylint: disable=too-many-instance-attributes
     kinematics: Kinematics = attr.ib(
         validator=attr.validators.instance_of(Kinematics)
     )
     particles: ParticleCollection = attr.ib(
         validator=attr.validators.instance_of(ParticleCollection)
     )
-    top_expression: sy.Expr = attr.ib(default=None)
-    intensities: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
-    amplitudes: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
-    dynamics: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
-    initial_values: Dict[sy.Symbol, InitialValue] = attr.ib(default=dict())
-
-    @property
-    def full_expression(self) -> Optional[sy.Expr]:
-        if self.top_expression is None:
-            return None
-        return (
-            self.top_expression.subs(self.intensities)
-            .subs(self.amplitudes)
-            .subs(self.dynamics)
-        )
+    expression: SympyModel = attr.ib(
+        default=SympyModel(),
+        validator=attr.validators.instance_of(SympyModel),
+    )
+    parameters: SuggestedParameterValues = attr.ib(
+        default=SuggestedParameterValues(),
+        validator=attr.validators.instance_of(SuggestedParameterValues),
+    )
 
 
 class _SympyHelicityAmplitudeNameGenerator:
@@ -287,13 +332,13 @@ class SympyHelicityAmplitudeGenerator:
             )
         particles = generate_particle_collection(self.__graphs)
         kinematics = generate_kinematics(reaction_result)
-        self.__model = SympyModel(
+        self.__model = ModelInfo(
             particles=particles,
             kinematics=kinematics,
         )
 
     def generate(self) -> sy.Expr:
-        self.__model.top_expression = self.__generate_intensities()
+        self.__model.expression.top = self.__generate_intensities()
         return self.__model
 
     def __generate_intensities(self) -> sy.Expr:
@@ -331,7 +376,7 @@ class SympyHelicityAmplitudeGenerator:
             )
             for seq_graph in sequential_graphs:
                 expression.append(self.__generate_sequential_decay(seq_graph))
-        self.__model.intensities[symbol] = sum(
+        self.__model.expression.intensities[symbol] = sum(
             map(lambda a: Dagger(a) * a, expression)
         )
         return symbol
@@ -353,7 +398,7 @@ class SympyHelicityAmplitudeGenerator:
         expression = coefficient * sequential_amplitudes
         if prefactor is not None:
             expression = prefactor * expression
-        self.__model.amplitudes[symbol] = expression
+        self.__model.expression.amplitudes[symbol] = expression
         return symbol
 
     def _generate_partial_decay(
@@ -393,7 +438,7 @@ class SympyHelicityAmplitudeGenerator:
             fR"D[{parent_label} \to {decay_product_description}]"
         )(x)
         suggested_dynamics = sy.Id(x)  # identity function
-        self.__model.dynamics[dynamics] = suggested_dynamics
+        self.__model.expression.dynamics[dynamics] = suggested_dynamics
         return wigner_d * dynamics
 
     def __generate_amplitude_coefficient(
@@ -409,7 +454,7 @@ class SympyHelicityAmplitudeGenerator:
             graph
         )
         coefficient_symbol = sy.Symbol(f"C[{suffix}]")
-        self.__model.initial_values[coefficient_symbol] = InitialValue(
+        self.__model.parameters[coefficient_symbol] = ParameterProperties(
             complex(1, 0), fix=False
         )
         return coefficient_symbol
