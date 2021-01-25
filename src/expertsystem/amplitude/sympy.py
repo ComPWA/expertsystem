@@ -90,15 +90,13 @@ class SuggestedParameterValues(abc.MutableMapping):
 
 @attr.s(kw_only=True)
 class SympyModel:  # pylint: disable=too-many-instance-attributes
-    top: sy.Expr = attr.ib(default=None)
+    top: sy.Expr = attr.ib()
     intensities: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
     amplitudes: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
     dynamics: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
 
     @property
-    def full_expression(self) -> Optional[sy.Expr]:
-        if self.top is None:
-            return None
+    def full_expression(self) -> sy.Expr:
         return (
             self.top.subs(self.intensities)
             .subs(self.amplitudes)
@@ -115,7 +113,6 @@ class ModelInfo:  # pylint: disable=too-many-instance-attributes
         validator=attr.validators.instance_of(ParticleCollection)
     )
     expression: SympyModel = attr.ib(
-        default=SympyModel(),
         validator=attr.validators.instance_of(SympyModel),
     )
     parameters: SuggestedParameterValues = attr.ib(
@@ -343,16 +340,26 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             raise ValueError(
                 "Helicity amplitude model requires exactly one initial state"
             )
-        particles = generate_particle_collection(self.__graphs)
-        kinematics = generate_kinematics(reaction_result)
-        self.__model = ModelInfo(
-            particles=particles,
-            kinematics=kinematics,
-        )
+        self.__particles = generate_particle_collection(self.__graphs)
+        self.__kinematics = generate_kinematics(reaction_result)
+        self.__intensities: Dict[sy.Function, sy.Function] = dict()
+        self.__amplitudes: Dict[sy.Function, sy.Function] = dict()
+        self.__dynamics: Dict[sy.Function, sy.Function] = dict()
+        self.__parameters = SuggestedParameterValues()
 
-    def generate(self) -> sy.Expr:
-        self.__model.expression.top = self.__generate_intensities()
-        return self.__model
+    def generate(self) -> ModelInfo:
+        top = self.__generate_intensities()
+        return ModelInfo(
+            particles=self.__particles,
+            kinematics=self.__kinematics,
+            expression=SympyModel(
+                top=top,
+                intensities=self.__intensities,
+                amplitudes=self.__amplitudes,
+                dynamics=self.__dynamics,
+            ),
+            parameters=self.__parameters,
+        )
 
     def __generate_intensities(self) -> sy.Expr:
         graph_groups = group_graphs_same_initial_and_final(self.__graphs)
@@ -391,7 +398,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
                 expression.append(self.__generate_sequential_decay(seq_graph))
         amplitude_sum = sum(expression)
         coherent_intensity = sy.conjugate(amplitude_sum) * amplitude_sum
-        self.__model.expression.intensities[symbol] = coherent_intensity
+        self.__intensities[symbol] = coherent_intensity
         return symbol
 
     def __generate_sequential_decay(
@@ -411,7 +418,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         expression = coefficient * sequential_amplitudes
         if prefactor is not None:
             expression = prefactor * expression
-        self.__model.expression.amplitudes[symbol] = expression
+        self.__amplitudes[symbol] = expression
         return symbol
 
     def _generate_partial_decay(  # pylint: disable=too-many-locals
@@ -487,7 +494,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             fR"D[{parent_label} \to {decay_product_description}]"
         )(inv_mass)
         suggested_dynamics = 1
-        self.__model.expression.dynamics[dynamics] = suggested_dynamics
+        self.__dynamics[dynamics] = suggested_dynamics
         return wigner_d * dynamics
 
     def __generate_kinematic_variables(
@@ -503,7 +510,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         - helicity angle theta
         - helicity angle phi
         """
-        kinematics = HelicityKinematics(reaction_info=self.__model.kinematics)
+        kinematics = HelicityKinematics(reaction_info=self.__kinematics)
         subsystem = SubSystem(
             final_states=decay_products_final_state_ids,
             recoil_state=recoil_final_state_ids,
@@ -525,7 +532,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             graph
         )
         coefficient_symbol = sy.Symbol(f"C[{suffix}]")
-        self.__model.parameters[coefficient_symbol] = ParameterProperties(
+        self.__parameters[coefficient_symbol] = ParameterProperties(
             complex(1, 0), fix=False
         )
         return coefficient_symbol
