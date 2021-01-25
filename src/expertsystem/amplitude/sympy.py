@@ -476,17 +476,8 @@ class SympyHelicityAmplitudeGenerator:
             recoil_state=recoil_final_state_ids,
             parent_recoil_state=parent_recoil_final_state_ids,
         )
-        theta_name, phi_name = kinematics.register_helicity_angles(subsystem)
-        inv_mass_name = kinematics.register_invariant_mass(
-            decay_products_final_state_ids[  # TODO: What is the meaning of these tuples?
-                0
-            ]
-        )
-        return (
-            sy.Symbol(inv_mass_name),
-            sy.Symbol(theta_name),
-            sy.Symbol(phi_name),
-        )
+        inv_mass, theta, phi = kinematics.register_subsystem(subsystem)
+        return sy.Symbol(inv_mass), sy.Symbol(theta), sy.Symbol(phi)
 
     def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[ParticleWithSpin]
