@@ -10,7 +10,6 @@ from typing import (
     Iterable,
     List,
     Optional,
-    Sequence,
     Tuple,
     TypeVar,
     Union,
@@ -30,11 +29,15 @@ from expertsystem.reaction.quantum_numbers import ParticleWithSpin
 from expertsystem.reaction.topology import StateTransitionGraph
 
 from ._graph_info import (
+    determine_attached_final_state,
     generate_kinematics,
     generate_particle_collection,
+    get_parent_recoil_edge,
     get_prefactor,
+    get_recoil_edge,
     group_graphs_same_initial_and_final,
 )
+from .kinematics import HelicityKinematics, SubSystem
 from .model import Kinematics
 
 ValueType = TypeVar("ValueType", float, complex)
@@ -323,7 +326,7 @@ def _generate_particles_string(
     return output_string[:-1]
 
 
-class SympyHelicityAmplitudeGenerator:
+class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attributes
     """Amplitude model generator for the helicity formalism."""
 
     def __init__(self, reaction_result: Result) -> None:
@@ -386,9 +389,9 @@ class SympyHelicityAmplitudeGenerator:
             )
             for seq_graph in sequential_graphs:
                 expression.append(self.__generate_sequential_decay(seq_graph))
-        self.__model.expression.intensities[symbol] = sum(
-            map(lambda a: abs(a) ** 2, expression)
-        )
+        amplitude_sum = sum(expression)
+        coherent_intensity = sy.conjugate(amplitude_sum) * amplitude_sum
+        self.__model.expression.intensities[symbol] = coherent_intensity
         return symbol
 
     def __generate_sequential_decay(
@@ -411,7 +414,7 @@ class SympyHelicityAmplitudeGenerator:
         self.__model.expression.amplitudes[symbol] = expression
         return symbol
 
-    def _generate_partial_decay(
+    def _generate_partial_decay(  # pylint: disable=too-many-locals
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> sy.Symbol:
         in_edge_ids = graph.topology.get_edge_ids_ingoing_to_node(node_id)
@@ -424,23 +427,48 @@ class SympyHelicityAmplitudeGenerator:
         edge_id = next(iter(in_edge_ids))
         parent = _HelicityParticle(*graph.get_edge_props(edge_id))
         children: List[_HelicityParticle] = list()
+        decay_products_fs_ids_list: List[List[int]] = list()
         for out_edge_id in out_edge_ids:
             edge_props = graph.get_edge_props(out_edge_id)
             children.append(_HelicityParticle(*edge_props))
+            final_state_ids = determine_attached_final_state(
+                graph.topology, out_edge_id
+            )
+            decay_products_fs_ids_list.append(final_state_ids)
+        decay_products_fs_ids: Tuple[Tuple[int, ...], ...] = tuple(
+            tuple(x) for x in decay_products_fs_ids_list
+        )
 
-        # todo: get kinematic info (final state ids) for relevant edges
-        decay_products_fs_ids = ([], [])
-        recoil_fs_ids = []
-        parent_recoil_fs_ids = []
+        recoil_final_state: Tuple[int, ...] = tuple()
+        parent_recoil_final_state: Tuple[int, ...] = tuple()
+
+        in_edge_id = next(iter(in_edge_ids))
+        ingoing_edge_id = in_edge_id
+        recoil_edge_id = get_recoil_edge(graph.topology, ingoing_edge_id)
+        if recoil_edge_id is not None:
+            recoil_final_state = tuple(
+                determine_attached_final_state(graph.topology, recoil_edge_id)
+            )
+            parent_recoil_edge_id = get_parent_recoil_edge(
+                graph.topology, ingoing_edge_id
+            )
+            if parent_recoil_edge_id is not None:
+                parent_recoil_final_state = tuple(
+                    determine_attached_final_state(
+                        graph.topology, parent_recoil_edge_id
+                    )
+                )
         inv_mass, theta, phi = self.__generate_kinematic_variables(
-            decay_products_fs_ids, recoil_fs_ids, parent_recoil_fs_ids
+            decay_products_fs_ids,
+            recoil_final_state,
+            parent_recoil_final_state,
         )
 
         wigner_d = Wigner.D(
             j=sy.nsimplify(parent.particle.spin),
             m=sy.nsimplify(parent.helicity),
-            mp=sy.nsimplify(children[0].helicity - children[0].helicity),
-            alpha=phi,
+            mp=sy.nsimplify(children[0].helicity - children[1].helicity),
+            alpha=-phi,
             beta=theta,
             gamma=0,
         )
@@ -464,9 +492,9 @@ class SympyHelicityAmplitudeGenerator:
 
     def __generate_kinematic_variables(
         self,
-        decay_products_final_state_ids: Tuple[Sequence[int], Sequence[int]],
-        recoil_final_state_ids: Sequence[int],
-        parent_recoil_final_state_ids: Sequence[int],
+        decay_products_final_state_ids: Tuple[Tuple[int, ...], ...],
+        recoil_final_state_ids: Tuple[int, ...],
+        parent_recoil_final_state_ids: Tuple[int, ...],
     ) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
         """Generate kinematic sympy variables of a helicity decay.
 
@@ -475,8 +503,14 @@ class SympyHelicityAmplitudeGenerator:
         - helicity angle theta
         - helicity angle phi
         """
-        # TODO: generate symbols here
-        return (sy.Symbol("inv_mass"), sy.Symbol("theta"), sy.Symbol("phi"))
+        kinematics = HelicityKinematics(reaction_info=self.__model.kinematics)
+        subsystem = SubSystem(
+            final_states=decay_products_final_state_ids,
+            recoil_state=recoil_final_state_ids,
+            parent_recoil_state=parent_recoil_final_state_ids,
+        )
+        inv_mass, theta, phi = kinematics.register_subsystem(subsystem)
+        return sy.Symbol(inv_mass), sy.Symbol(theta), sy.Symbol(phi)
 
     def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[ParticleWithSpin]
