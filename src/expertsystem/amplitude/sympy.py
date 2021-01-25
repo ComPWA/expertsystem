@@ -9,7 +9,6 @@ from typing import Dict, Generic, List, Optional, Tuple, TypeVar, Union
 import attr
 import sympy as sy
 from sympy.abc import x
-from sympy.physics.quantum.dagger import Dagger
 from sympy.physics.quantum.spin import Rotation as Wigner
 
 from expertsystem.particle import Particle, ParticleCollection
@@ -381,7 +380,7 @@ class SympyHelicityAmplitudeGenerator:
             for seq_graph in sequential_graphs:
                 expression.append(self.__generate_sequential_decay(seq_graph))
         self.__model.expression.intensities[symbol] = sum(
-            map(lambda a: Dagger(a) * a, expression)
+            map(lambda a: abs(a) ** 2, expression)
         )
         return symbol
 
