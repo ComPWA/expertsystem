@@ -475,7 +475,7 @@ class SympyHelicityAmplitudeGenerator:
         dynamics = sy.Function(
             fR"D[{parent_label} \to {decay_product_description}]"
         )(inv_mass)
-        suggested_dynamics = sy.Id(x)  # identity function
+        suggested_dynamics = 1
         self.__model.expression.dynamics[dynamics] = suggested_dynamics
         return wigner_d * dynamics
 
