@@ -66,6 +66,7 @@
         "gell",
         "gordan",
         "graphviz",
+        "hankel",
         "helicities",
         "helicity",
         "htmlcov",
@@ -164,6 +165,7 @@
         "unsrt",
         "untracked",
         "virtualenv",
-        "virtualenvwrapper"
+        "virtualenvwrapper",
+        "ylabel"
     ]
 }
