@@ -114,6 +114,7 @@
         "doctest",
         "doctests",
         "dotprint",
+        "epem",
         "eval",
         "flatte",
         "gellmann",
