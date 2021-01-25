@@ -498,7 +498,11 @@ class SympyHelicityAmplitudeGenerator:
             parent_recoil_state=parent_recoil_final_state_ids,
         )
         inv_mass, theta, phi = kinematics.register_subsystem(subsystem)
-        return sy.Symbol(inv_mass), sy.Symbol(theta), sy.Symbol(phi)
+        return (
+            sy.Symbol(inv_mass, real=True),
+            sy.Symbol(theta, real=True),
+            sy.Symbol(phi, real=True),
+        )
 
     def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[ParticleWithSpin]
