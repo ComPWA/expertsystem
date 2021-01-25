@@ -379,9 +379,9 @@ class SympyHelicityAmplitudeGenerator:
             )
             for seq_graph in sequential_graphs:
                 expression.append(self.__generate_sequential_decay(seq_graph))
-        self.__model.expression.intensities[symbol] = sum(
-            map(lambda a: abs(a) ** 2, expression)
-        )
+        amplitude_sum = sum(expression)
+        coherent_intensity = sy.conjugate(amplitude_sum) * amplitude_sum
+        self.__model.expression.intensities[symbol] = coherent_intensity
         return symbol
 
     def __generate_sequential_decay(
@@ -455,8 +455,8 @@ class SympyHelicityAmplitudeGenerator:
         wigner_d = Wigner.D(
             j=sy.Rational(parent.particle.spin),
             m=sy.Rational(parent.helicity),
-            mp=sy.Rational(children[0].helicity - children[0].helicity),
-            alpha=phi,
+            mp=sy.Rational(children[0].helicity - children[1].helicity),
+            alpha=-phi,
             beta=theta,
             gamma=0,
         )
