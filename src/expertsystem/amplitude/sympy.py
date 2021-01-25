@@ -417,11 +417,13 @@ class SympyHelicityAmplitudeGenerator:
             edge_props = graph.get_edge_props(out_edge_id)
             children.append(_HelicityParticle(*edge_props))
 
-        wigner_d = Wigner.d(
+        wigner_d = Wigner.D(
             j=parent.particle.spin,
             m=parent.helicity,
             mp=children[0].helicity - children[0].helicity,
-            beta=x,
+            alpha=x,  # TODO: phi  # pylint: disable=fixme
+            beta=x,  # TODO: theta  # pylint: disable=fixme
+            gamma=0,
         )
         decay_product_description = " ".join(
             child.particle.name
