@@ -21,9 +21,12 @@ from expertsystem.reaction.quantum_numbers import ParticleWithSpin
 from expertsystem.reaction.topology import StateTransitionGraph
 
 from ._graph_info import (
+    determine_attached_final_state,
     generate_kinematics,
     generate_particle_collection,
+    get_parent_recoil_edge,
     get_prefactor,
+    get_recoil_edge,
     group_graphs_same_initial_and_final,
 )
 from .kinematics import HelicityKinematics, SubSystem
@@ -414,19 +417,40 @@ class SympyHelicityAmplitudeGenerator:
 
         parent = _HelicityParticle(*graph.get_edge_props(in_edge_ids[0]))
         children: List[_HelicityParticle] = list()
+        decay_products_fs_ids_list: List[List[int]] = list()
         for out_edge_id in out_edge_ids:
             edge_props = graph.get_edge_props(out_edge_id)
             children.append(_HelicityParticle(*edge_props))
-
-        # TODO: get kinematic info (final state ids) for relevant edges
-        decay_products_fs_ids: Tuple[Tuple[int, ...], Tuple[int, ...]] = (
-            (),
-            (),
+            final_state_ids = determine_attached_final_state(
+                graph, out_edge_id
+            )
+            decay_products_fs_ids_list.append(final_state_ids)
+        decay_products_fs_ids: Tuple[Tuple[int, ...], ...] = tuple(
+            tuple(x) for x in decay_products_fs_ids_list
         )
-        recoil_fs_ids: Tuple[int, ...] = ()
-        parent_recoil_fs_ids: Tuple[int, ...] = ()
+
+        recoil_final_state: Tuple[int, ...] = tuple()
+        parent_recoil_final_state: Tuple[int, ...] = tuple()
+
+        ingoing_edge_id = in_edge_ids[0]
+        recoil_edge_id = get_recoil_edge(graph, ingoing_edge_id)
+        if recoil_edge_id is not None:
+            recoil_final_state = tuple(
+                determine_attached_final_state(graph, recoil_edge_id)
+            )
+            parent_recoil_edge_id = get_parent_recoil_edge(
+                graph, ingoing_edge_id
+            )
+            if parent_recoil_edge_id is not None:
+                parent_recoil_final_state = tuple(
+                    determine_attached_final_state(
+                        graph, parent_recoil_edge_id
+                    )
+                )
         inv_mass, theta, phi = self.__generate_kinematic_variables(
-            decay_products_fs_ids, recoil_fs_ids, parent_recoil_fs_ids
+            decay_products_fs_ids,
+            recoil_final_state,
+            parent_recoil_final_state,
         )
 
         wigner_d = Wigner.D(
@@ -457,9 +481,7 @@ class SympyHelicityAmplitudeGenerator:
 
     def __generate_kinematic_variables(
         self,
-        decay_products_final_state_ids: Tuple[
-            Tuple[int, ...], Tuple[int, ...]
-        ],
+        decay_products_final_state_ids: Tuple[Tuple[int, ...], ...],
         recoil_final_state_ids: Tuple[int, ...],
         parent_recoil_final_state_ids: Tuple[int, ...],
     ) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
