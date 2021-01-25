@@ -4,7 +4,16 @@ import logging
 import operator
 from collections import abc
 from functools import reduce
-from typing import Dict, Generic, List, Optional, Tuple, TypeVar, Union
+from typing import (
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 import attr
 import sympy as sy
@@ -417,12 +426,20 @@ class SympyHelicityAmplitudeGenerator:
             edge_props = graph.get_edge_props(out_edge_id)
             children.append(_HelicityParticle(*edge_props))
 
+        # todo: get kinematic info (final state ids) for relevant edges
+        decay_products_fs_ids = ([], [])
+        recoil_fs_ids = []
+        parent_recoil_fs_ids = []
+        inv_mass, theta, phi = self.__generate_kinematic_variables(
+            decay_products_fs_ids, recoil_fs_ids, parent_recoil_fs_ids
+        )
+
         wigner_d = Wigner.D(
-            j=parent.particle.spin,
-            m=parent.helicity,
-            mp=children[0].helicity - children[0].helicity,
-            alpha=x,  # TODO: phi  # pylint: disable=fixme
-            beta=x,  # TODO: theta  # pylint: disable=fixme
+            j=sy.Rational(parent.particle.spin),
+            m=sy.Rational(parent.helicity),
+            mp=sy.Rational(children[0].helicity - children[0].helicity),
+            alpha=phi,
+            beta=theta,
             gamma=0,
         )
         decay_product_description = " ".join(
@@ -438,10 +455,26 @@ class SympyHelicityAmplitudeGenerator:
         )
         dynamics = sy.Function(
             fR"D[{parent_label} \to {decay_product_description}]"
-        )(x)
+        )(inv_mass)
         suggested_dynamics = sy.Id(x)  # identity function
         self.__model.expression.dynamics[dynamics] = suggested_dynamics
         return wigner_d * dynamics
+
+    def __generate_kinematic_variables(
+        self,
+        decay_products_final_state_ids: Tuple[Sequence[int], Sequence[int]],
+        recoil_final_state_ids: Sequence[int],
+        parent_recoil_final_state_ids: Sequence[int],
+    ) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
+        """Generate kinematic sympy variables of a helicity decay.
+
+        Kinematic variables are:
+        - invariant mass
+        - helicity angle theta
+        - helicity angle phi
+        """
+        # TODO: generate symbols here
+        return (sy.Symbol("inv_mass"), sy.Symbol("theta"), sy.Symbol("phi"))
 
     def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[ParticleWithSpin]
