@@ -29,3 +29,19 @@ class TestSuggestedParameterValues:
         parameters2 = container()
         parameters2[sy.Symbol("par3")] = ParameterProperties(1)
         assert len(parameters2) == 1
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "value",
+        [
+            int(1),
+            float(1.0),
+            complex(1.0, 1.0),
+        ],
+    )
+    def test_key_value_conversion(value):
+        parameters = SuggestedParameterValues()
+        parameters["par1"] = value
+        assert "par1" in parameters
+        assert sy.Symbol("par1") in parameters
+        assert parameters["par1"].value == value
