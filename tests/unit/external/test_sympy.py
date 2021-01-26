@@ -14,6 +14,14 @@ class TestSymbol:
         assert x == y
         assert x is y
         assert hash(x) == hash(y)
+        f = sy.Function("h")
+        g = sy.Function("h")
+        assert f is g
+        assert f is g
+        f = sy.Function("h")(x)
+        g = sy.Function("h")(x)
+        assert f is g
+        assert f is g
 
     def test_name(self):
         # pylint: disable=no-member
