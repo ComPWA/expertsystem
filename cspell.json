@@ -167,6 +167,7 @@
         "untracked",
         "virtualenv",
         "virtualenvwrapper",
-        "ylabel"
+        "ylabel",
+        "ylim"
     ]
 }
