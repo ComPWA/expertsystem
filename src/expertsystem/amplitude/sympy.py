@@ -57,9 +57,7 @@ class ParameterProperties(Generic[ValueType]):
 
 @attr.s(on_setattr=attr.setters.frozen)
 class SuggestedParameterValues(abc.MutableMapping):
-    parameters: Dict[sy.Symbol, ParameterProperties] = attr.ib(
-        default=attr.Factory(dict)
-    )
+    parameters: Dict[sy.Symbol, ParameterProperties] = attr.ib(factory=dict)
 
     def __delitem__(self, key: Union[sy.Symbol, str]) -> None:
         if isinstance(key, str):
@@ -98,9 +96,9 @@ class SuggestedParameterValues(abc.MutableMapping):
 @attr.s(kw_only=True)
 class SympyModel:  # pylint: disable=too-many-instance-attributes
     top: sy.Expr = attr.ib()
-    intensities: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
-    amplitudes: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
-    dynamics: Dict[sy.Function, sy.Function] = attr.ib(default=dict())
+    intensities: Dict[sy.Function, sy.Function] = attr.ib(factory=dict)
+    amplitudes: Dict[sy.Function, sy.Function] = attr.ib(factory=dict)
+    dynamics: Dict[sy.Function, sy.Function] = attr.ib(factory=dict)
 
     @property
     def full_expression(self) -> sy.Expr:
