@@ -41,7 +41,7 @@ def blatt_weisskopf(
 def relativistic_breit_wigner(
     mass: sy.Symbol, mass0: sy.Symbol, gamma0: sy.Symbol
 ) -> sy.Expr:
-    return gamma0 / (mass0 ** 2 - mass ** 2 - gamma0 * mass0 * sy.I)
+    return gamma0 * mass0 / (mass0 ** 2 - mass ** 2 - gamma0 * mass0 * sy.I)
 
 
 def relativistic_breit_wigner_with_form_factor(  # pylint: disable=too-many-arguments
