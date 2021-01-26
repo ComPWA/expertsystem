@@ -111,6 +111,7 @@
         "codemirror",
         "colab",
         "commitlint",
+        "displaystyle",
         "doctest",
         "doctests",
         "dotprint",
@@ -167,6 +168,8 @@
         "untracked",
         "virtualenv",
         "virtualenvwrapper",
+        "xlabel",
+        "xlim",
         "ylabel",
         "ylim"
     ]
