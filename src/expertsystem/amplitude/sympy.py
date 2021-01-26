@@ -40,7 +40,7 @@ from ._graph_info import (
 from .kinematics import HelicityKinematics, SubSystem
 from .model import Kinematics
 
-ValueType = TypeVar("ValueType", float, complex)
+ValueType = TypeVar("ValueType", float, complex, int)
 
 
 @attr.s(auto_attribs=True)
@@ -81,15 +81,22 @@ class SuggestedParameterValues(abc.MutableMapping):
         return len(self.__parameters)
 
     def __setitem__(
-        self, key: Union[sy.Symbol, str], value: ParameterProperties
+        self,
+        key: Union[sy.Symbol, str],
+        value: Union[ParameterProperties, ValueType],
     ) -> None:
         if isinstance(key, str):
             key = sy.Symbol(key)
         if not isinstance(value, ParameterProperties):
-            raise ValueError(
-                f"Value has to be of type {ParameterProperties.__name__},"
-                f" but is of type {value.__class__.__name__}"
-            )
+            if not isinstance(
+                value,
+                ValueType.__constraints__,  # type: ignore  # pylint: disable=no-member
+            ):
+                raise ValueError(
+                    f"Cannot convert {value.__class__.__name__}"
+                    f" to {ParameterProperties.__name__}"
+                )
+            value = ParameterProperties(value)
         self.__parameters[key] = value
 
 
