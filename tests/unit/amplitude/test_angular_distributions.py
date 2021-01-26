@@ -7,13 +7,14 @@ import pytest
 import sympy as sy
 
 import expertsystem as es
+from expertsystem.particle import ParticleCollection
 
 
 def calculate_sympy_integral(
     intensity: Any,
     integration_variables: List[sy.Symbol],
     jacobi_determinant: Optional[Any] = None,
-) -> Any:
+) -> sy.Expr:
     if jacobi_determinant is None:
         for int_var in integration_variables:
             if "theta" in int_var.name:
@@ -54,7 +55,7 @@ def normalize(
 
 class TestEpemToDmD0Pip:
     @pytest.fixture(scope="class")
-    def sympy_model(self) -> sy.Expr:
+    def sympy_model(self, particle_database: ParticleCollection) -> sy.Expr:
         epem = es.particle.Particle(
             name="EpEm",
             pid=12345678,
@@ -63,7 +64,7 @@ class TestEpemToDmD0Pip:
             parity=es.particle.Parity(-1),
             c_parity=es.particle.Parity(-1),
         )
-        particles = es.io.load_pdg()
+        particles = ParticleCollection(particle_database)
         particles.add(epem)
 
         result = es.generate_transitions(
@@ -76,17 +77,10 @@ class TestEpemToDmD0Pip:
 
         amplitude_model = es.amplitude.generate_sympy(result)
         sympy_model = amplitude_model.expression
-        sympy_model.dynamics = {
-            k: 1.0 + sy.I * 0.0 for k in sympy_model.dynamics.keys()
-        }
-        # replace coefficients with 1
-        assert sympy_model.full_expression is not None
+        sympy_model.dynamics = {k: 1 for k in sympy_model.dynamics.keys()}
         full_model = sy.simplify(
             sympy_model.full_expression.subs(
-                {
-                    param: props.value
-                    for param, props in amplitude_model.parameters.items()
-                }
+                {k: p.value for k, p in amplitude_model.parameters.items()}
             )
             .doit()
             .expand(complex=True)
@@ -175,7 +169,6 @@ class TestD1ToD0PiPi:
             k: 1.0 + sy.I * 0.0 for k in sympy_model.dynamics.keys()
         }
         # replace coefficients with 1
-        assert sympy_model.full_expression is not None
         full_model = sy.simplify(
             sympy_model.full_expression.subs(
                 {
