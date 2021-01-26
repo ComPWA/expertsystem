@@ -43,7 +43,7 @@ class _HelicityParticle:
 @attr.s
 class ParameterProperties(Generic[ValueType]):
     value: ValueType = attr.ib()
-    fix: bool = attr.ib()
+    fix: bool = attr.ib(default=False)
 
 
 @attr.s(on_setattr=attr.setters.frozen)
