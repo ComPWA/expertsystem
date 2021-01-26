@@ -21,17 +21,11 @@ def test_generate(jpsi_to_gamma_pi_pi_helicity_solutions: Result):
 class TestSuggestedParameterValues:
     @staticmethod
     @pytest.mark.parametrize("container", [SuggestedParameterValues, dict])
-    def test_singleton(container):
+    def test_not_singleton(container):
         parameters1 = container()
         parameters1[sy.Symbol("par1")] = ParameterProperties(1)
         parameters1[sy.Symbol("par2")] = ParameterProperties(2)
         assert len(parameters1) == 2
         parameters2 = container()
         parameters2[sy.Symbol("par3")] = ParameterProperties(1)
-        if isinstance(container, dict):
-            assert (
-                len(parameters2)
-                == 3  # TODO: investigate why 3?  # pylint: disable=fixme
-            )
-        elif isinstance(container, SuggestedParameterValues):
-            assert len(parameters2) == 1
+        assert len(parameters2) == 1

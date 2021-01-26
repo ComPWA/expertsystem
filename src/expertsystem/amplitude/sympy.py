@@ -55,25 +55,30 @@ class ParameterProperties(Generic[ValueType]):
     fix: bool = attr.ib(default=False)
 
 
-@attr.s(on_setattr=attr.setters.frozen)
 class SuggestedParameterValues(abc.MutableMapping):
-    parameters: Dict[sy.Symbol, ParameterProperties] = attr.ib(default=dict())
+    def __init__(
+        self, parameters: Optional[Dict[sy.Symbol, ParameterProperties]] = None
+    ) -> None:
+        self.__parameters: Dict[sy.Symbol, ParameterProperties] = dict()
+        if parameters is not None:
+            for key, value in parameters.items():
+                self[key] = value
 
     def __delitem__(self, key: Union[sy.Symbol, str]) -> None:
         if isinstance(key, str):
             key = sy.Symbol(key)
-        del self.parameters[key]
+        del self.__parameters[key]
 
     def __getitem__(self, key: Union[sy.Symbol, str]) -> ParameterProperties:
         if isinstance(key, str):
             key = sy.Symbol(key)
-        return self.parameters[key]
+        return self.__parameters[key]
 
     def __iter__(self) -> sy.Symbol:
-        return iter(self.parameters)
+        return iter(self.__parameters)
 
     def __len__(self) -> int:
-        return len(self.parameters)
+        return len(self.__parameters)
 
     def __setitem__(
         self, key: Union[sy.Symbol, str], value: ParameterProperties
@@ -85,7 +90,7 @@ class SuggestedParameterValues(abc.MutableMapping):
                 f"Value has to be of type {ParameterProperties.__name__},"
                 f" but is of type {value.__class__.__name__}"
             )
-        self.parameters[key] = value
+        self.__parameters[key] = value
 
 
 @attr.s(kw_only=True)
