@@ -313,7 +313,7 @@ def _generate_particles_string(
     return output_string[:-1]
 
 
-class SympyHelicityAmplitudeGenerator:
+class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attributes
     """Amplitude model generator for the helicity formalism."""
 
     def __init__(self, reaction_result: Result) -> None:
