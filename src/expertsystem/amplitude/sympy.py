@@ -402,7 +402,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             for seq_graph in sequential_graphs:
                 expression.append(self.__generate_sequential_decay(seq_graph))
         amplitude_sum = sum(expression)
-        coherent_intensity = sy.conjugate(amplitude_sum) * amplitude_sum
+        coherent_intensity = abs(amplitude_sum) ** 2
         self.__intensities[symbol] = coherent_intensity
         return symbol
 
