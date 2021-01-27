@@ -462,26 +462,23 @@ class StateTransitionGraph(Generic[EdgeType]):
             self.edge_props[edge_id1] = value2
 
 
-class InteractionNode:  # pylint: disable=too-few-public-methods
+@attr.s
+class InteractionNode:
     """Struct-like definition of an interaction node."""
 
-    def __init__(
-        self,
-        type_name: str,
-        number_of_ingoing_edges: int,
-        number_of_outgoing_edges: int,
-    ) -> None:
-        if not isinstance(number_of_ingoing_edges, int):
-            raise TypeError("NumberOfIngoingEdges must be an integer")
-        if not isinstance(number_of_outgoing_edges, int):
-            raise TypeError("NumberOfOutgoingEdges must be an integer")
-        if number_of_ingoing_edges < 1:
+    type_name: str = attr.ib(converter=str)
+    number_of_ingoing_edges: int = attr.ib(
+        validator=attr.validators.instance_of(int)
+    )
+    number_of_outgoing_edges: int = attr.ib(
+        validator=attr.validators.instance_of(int)
+    )
+
+    def __attrs_post_init__(self) -> None:
+        if self.number_of_ingoing_edges < 1:
             raise ValueError("NumberOfIngoingEdges has to be larger than 0")
-        if number_of_outgoing_edges < 1:
+        if self.number_of_outgoing_edges < 1:
             raise ValueError("NumberOfOutgoingEdges has to be larger than 0")
-        self.type_name = str(type_name)
-        self.number_of_ingoing_edges = int(number_of_ingoing_edges)
-        self.number_of_outgoing_edges = int(number_of_outgoing_edges)
 
 
 class SimpleStateTransitionTopologyBuilder:
