@@ -22,9 +22,9 @@ def generate(result: Result) -> AmplitudeModel:
 
     The type of amplitude model (`.HelicityAmplitudeGenerator` or
     `.CanonicalAmplitudeGenerator`) is determined from the
-    `.Result.formalism_type`.
+    `.ExecutionInfo.formalism_type`.
     """
-    formalism_type = result.formalism_type
+    formalism_type = result.execution_info.formalism_type
     if formalism_type is None:
         raise ValueError(f"Result does not have a formalism type:\n{result}")
     if formalism_type == "helicity":
