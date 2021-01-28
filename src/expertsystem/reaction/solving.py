@@ -167,10 +167,7 @@ def _convert_non_executed_rules_to_names(
 
 
 @attr.s(on_setattr=attr.setters.frozen)
-class QNResult:
-    """Defines a result to a problem set processed by the solving code."""
-
-    solutions: List[QuantumNumberSolution] = attr.ib(factory=list)
+class ExecutionInfo:
     not_executed_node_rules: Dict[int, Set[str]] = attr.ib(
         factory=lambda: defaultdict(set)
     )
@@ -184,33 +181,61 @@ class QNResult:
         factory=lambda: defaultdict(set)
     )
 
-    def __attrs_post_init__(self) -> None:
-        if self.solutions and (
-            self.violated_node_rules or self.violated_edge_rules
-        ):
-            raise ValueError(
-                "Invalid Result! Found solutions, but also violated rules."
-            )
+    def extend(
+        self, other_result: "ExecutionInfo", intersect_violations: bool = False
+    ) -> None:
+        for key, rules in other_result.not_executed_node_rules.items():
+            self.not_executed_node_rules[key].update(rules)
 
-    def extend(self, other_result: "QNResult") -> None:
-        if self.solutions or other_result.solutions:
-            self.solutions.extend(other_result.solutions)
-            self.not_executed_node_rules.clear()
-            self.violated_node_rules.clear()
-            self.not_executed_edge_rules.clear()
-            self.violated_edge_rules.clear()
-        else:
-            for key, rules in other_result.not_executed_node_rules.items():
-                self.not_executed_node_rules[key].update(rules)
+        for key, rules in other_result.not_executed_edge_rules.items():
+            self.not_executed_edge_rules[key].update(rules)
 
-            for key, rules in other_result.not_executed_edge_rules.items():
-                self.not_executed_edge_rules[key].update(rules)
-
-            for key, rules2 in other_result.violated_node_rules.items():
+        for key, rules2 in other_result.violated_node_rules.items():
+            if intersect_violations:
+                self.violated_node_rules[key] &= rules2
+            else:
                 self.violated_node_rules[key].update(rules2)
 
-            for key, rules2 in other_result.violated_edge_rules.items():
+        for key, rules2 in other_result.violated_edge_rules.items():
+            if intersect_violations:
+                self.violated_edge_rules[key] &= rules2
+            else:
                 self.violated_edge_rules[key].update(rules2)
+
+    def clear(self) -> None:
+        self.not_executed_node_rules.clear()
+        self.violated_node_rules.clear()
+        self.not_executed_edge_rules.clear()
+        self.violated_edge_rules.clear()
+
+
+@attr.s(on_setattr=attr.setters.frozen)
+class QNResult:
+    """Defines a result to a problem set processed by the solving code."""
+
+    solutions: List[QuantumNumberSolution] = attr.ib(factory=list)
+    execution_info: ExecutionInfo = attr.ib(ExecutionInfo())
+
+    def __attrs_post_init__(self) -> None:
+        if self.solutions and (
+            self.execution_info.violated_node_rules
+            or self.execution_info.violated_edge_rules
+        ):
+            raise ValueError(
+                f"Invalid {self.__class__.__name__}!"
+                f" Found {len(self.solutions)} solutions, but also violated rules.",
+                self.execution_info.violated_node_rules,
+                self.execution_info.violated_edge_rules,
+            )
+
+    def extend(self, other: "QNResult") -> None:
+        if self.solutions or other.solutions:
+            self.solutions.extend(other.solutions)
+            self.execution_info.clear()
+        else:
+            self.execution_info.extend(
+                other.execution_info, intersect_violations=False
+            )
 
 
 class Solver(ABC):
@@ -424,10 +449,12 @@ def validate_full_solution(problem_set: QNProblemSet) -> QNResult:
     if node_violated_rules or node_not_executed_rules:
         return QNResult(
             [],
-            _convert_non_executed_rules_to_names(node_not_executed_rules),
-            _convert_violated_rules_to_names(node_violated_rules),
-            _convert_non_executed_rules_to_names(edge_not_executed_rules),
-            _convert_violated_rules_to_names(edge_violated_rules),
+            ExecutionInfo(
+                _convert_non_executed_rules_to_names(node_not_executed_rules),
+                _convert_violated_rules_to_names(node_violated_rules),
+                _convert_non_executed_rules_to_names(edge_not_executed_rules),
+                _convert_violated_rules_to_names(edge_violated_rules),
+            ),
         )
     return QNResult(
         [
@@ -577,10 +604,12 @@ class CSPSolver(Solver):
 
         return QNResult(
             full_particle_solutions,
-            _convert_non_executed_rules_to_names(node_not_executed_rules),
-            _convert_violated_rules_to_names(node_not_satisfied_rules),
-            _convert_non_executed_rules_to_names(edge_not_executed_rules),
-            _convert_violated_rules_to_names(edge_not_satisfied_rules),
+            ExecutionInfo(
+                _convert_non_executed_rules_to_names(node_not_executed_rules),
+                _convert_violated_rules_to_names(node_not_satisfied_rules),
+                _convert_non_executed_rules_to_names(edge_not_executed_rules),
+                _convert_violated_rules_to_names(edge_not_satisfied_rules),
+            ),
         )
 
     def __clear(self) -> None:

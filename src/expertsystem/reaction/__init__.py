@@ -88,6 +88,7 @@ from .quantum_numbers import (
 from .solving import (
     CSPSolver,
     EdgeSettings,
+    ExecutionInfo,
     GraphEdgePropertyMap,
     GraphElementProperties,
     GraphSettings,
@@ -112,49 +113,6 @@ class SolvingMode(Enum):
     """find "likeliest" solutions only"""
     Full = auto()
     """find all possible solutions"""
-
-
-@attr.s(on_setattr=attr.setters.frozen)
-class ExecutionInfo:
-    not_executed_node_rules: Dict[int, Set[str]] = attr.ib(
-        factory=lambda: defaultdict(set)
-    )
-    violated_node_rules: Dict[int, Set[str]] = attr.ib(
-        factory=lambda: defaultdict(set)
-    )
-    not_executed_edge_rules: Dict[int, Set[str]] = attr.ib(
-        factory=lambda: defaultdict(set)
-    )
-    violated_edge_rules: Dict[int, Set[str]] = attr.ib(
-        factory=lambda: defaultdict(set)
-    )
-
-    def extend(
-        self, other_result: "ExecutionInfo", intersect_violations: bool = False
-    ) -> None:
-        for key, rules in other_result.not_executed_node_rules.items():
-            self.not_executed_node_rules[key].update(rules)
-
-        for key, rules in other_result.not_executed_edge_rules.items():
-            self.not_executed_edge_rules[key].update(rules)
-
-        for key, rules2 in other_result.violated_node_rules.items():
-            if intersect_violations:
-                self.violated_node_rules[key] &= rules2
-            else:
-                self.violated_node_rules[key].update(rules2)
-
-        for key, rules2 in other_result.violated_edge_rules.items():
-            if intersect_violations:
-                self.violated_edge_rules[key] &= rules2
-            else:
-                self.violated_edge_rules[key].update(rules2)
-
-    def clear(self) -> None:
-        self.not_executed_node_rules.clear()
-        self.violated_node_rules.clear()
-        self.not_executed_edge_rules.clear()
-        self.violated_edge_rules.clear()
 
 
 @attr.s(on_setattr=attr.setters.frozen)
@@ -834,12 +792,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
 
         return Result(
             solutions,
-            ExecutionInfo(
-                violated_edge_rules=qn_result.violated_edge_rules,
-                violated_node_rules=qn_result.violated_node_rules,
-                not_executed_node_rules=qn_result.not_executed_node_rules,
-                not_executed_edge_rules=qn_result.not_executed_edge_rules,
-            ),
+            qn_result.execution_info,
             formalism_type=self.__formalism_type,
         )
 
@@ -932,10 +885,11 @@ def check_reaction_violations(
             },
         )
 
-        if edge_check_result.violated_edge_rules:
+        execution_info = edge_check_result.execution_info
+        if execution_info.violated_edge_rules:
             raise ValueError(
                 f"Some edges violate"
-                f" {edge_check_result.violated_edge_rules.values()}"
+                f" {execution_info.violated_edge_rules.values()}"
             )
 
     def create_n_body_topology() -> Topology:
@@ -979,7 +933,7 @@ def check_reaction_violations(
                     i: edge_qn_conservation_rules for i in topology.nodes
                 },
                 edge_rules={},
-            ).violated_node_rules[node_id]
+            ).execution_info.violated_node_rules[node_id]
         }
 
     # Using a n-body topology is enough, to determine the violations reliably
@@ -1032,7 +986,7 @@ def check_reaction_violations(
     for facts in initial_facts_list:
         rule_violations = _check_violations(
             facts=facts, node_rules=conservation_rules, edge_rules={}
-        ).violated_node_rules[node_id]
+        ).execution_info.violated_node_rules[node_id]
         conservation_rule_violations.append(rule_violations)
 
     # first add rules which consistently fail
