@@ -128,7 +128,6 @@ class ExecutionInfo:
     violated_edge_rules: Dict[int, Set[str]] = attr.ib(
         factory=lambda: defaultdict(set)
     )
-    formalism_type: Optional[str] = attr.ib(default=None)
 
     def extend(
         self, other_result: "ExecutionInfo", intersect_violations: bool = False
@@ -169,6 +168,7 @@ class Result:
         factory=list
     )
     execution_info: ExecutionInfo = attr.ib(ExecutionInfo())
+    formalism_type: Optional[str] = attr.ib(default=None)
 
     def __attrs_post_init__(self) -> None:
         if self.solutions and (
@@ -795,8 +795,8 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 final_result.execution_info.violated_node_rules,
                 final_result.execution_info.not_executed_edge_rules,
                 final_result.execution_info.violated_edge_rules,
-                formalism_type=self.formalism_type,
             ),
+            formalism_type=self.formalism_type,
         )
 
     def _solve(
@@ -839,8 +839,8 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 violated_node_rules=qn_result.violated_node_rules,
                 not_executed_node_rules=qn_result.not_executed_node_rules,
                 not_executed_edge_rules=qn_result.not_executed_edge_rules,
-                formalism_type=self.__formalism_type,
             ),
+            formalism_type=self.__formalism_type,
         )
 
 
