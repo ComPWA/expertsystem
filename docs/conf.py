@@ -200,6 +200,7 @@ linkcheck_anchors = False
 # Settings for myst_nb
 execution_excludepatterns = [
     "adr/001/*",
+    "adr/002/*",
 ]
 execution_timeout = -1
 nb_output_stderr = "remove"
