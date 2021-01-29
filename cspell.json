@@ -76,6 +76,7 @@
         "itertools",
         "jsonschema",
         "jupyter",
+        "lambdify",
         "mathbb",
         "mypy",
         "nishijima",
