@@ -510,10 +510,10 @@ def test_external_edge_identical_particle_combinatorics(
     assert len(comb_graphs) == result_graph_count
 
     ref_mapping_fs = _create_edge_id_particle_mapping(
-        comb_graphs[0], comb_graphs[0].get_final_state_edge_ids()
+        comb_graphs[0], comb_graphs[0].topology.outgoing_edge_ids
     )
     ref_mapping_is = _create_edge_id_particle_mapping(
-        comb_graphs[0], comb_graphs[0].get_initial_state_edge_ids()
+        comb_graphs[0], comb_graphs[0].topology.incoming_edge_ids
     )
 
     for group in comb_graphs[1:]:

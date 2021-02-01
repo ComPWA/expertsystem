@@ -3,7 +3,7 @@
 See :doc:`/usage/visualization` for more info.
 """
 
-from typing import Any, Callable, Iterable, List, Optional
+from typing import Any, Callable, Iterable, List, Optional, Union
 
 from expertsystem.particle import Particle, ParticleCollection
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
@@ -46,12 +46,18 @@ def graph_to_dot(graph: StateTransitionGraph) -> str:
 
 
 def __graph_to_dot_content(
-    graph: StateTransitionGraph, prefix: str = ""
+    graph: Union[StateTransitionGraph, Topology], prefix: str = ""
 ) -> str:
     dot_source = ""
-    top = graph.get_initial_state_edge_ids()
-    outs = graph.get_final_state_edge_ids()
-    for edge_id in top + outs:
+    if isinstance(graph, StateTransitionGraph):
+        topology = graph.topology
+    elif isinstance(graph, Topology):
+        topology = graph
+    else:
+        raise NotImplementedError
+    top = topology.incoming_edge_ids
+    outs = topology.outgoing_edge_ids
+    for edge_id in top | outs:
         dot_source += _DOT_DEFAULT_NODE.format(
             prefix + __node_name(edge_id), __edge_label(graph, edge_id)
         )
@@ -84,7 +90,9 @@ def __rank_string(node_edge_ids: Iterable[int], prefix: str = "") -> str:
     return _DOT_RANK_SAME.format(name_string)
 
 
-def __edge_label(graph: StateTransitionGraph, edge_id: int) -> str:
+def __edge_label(
+    graph: Union[StateTransitionGraph, Topology], edge_id: int
+) -> str:
     if isinstance(graph, StateTransitionGraph):
         edge_prop = graph.get_edge_props(edge_id)
         if not edge_prop:

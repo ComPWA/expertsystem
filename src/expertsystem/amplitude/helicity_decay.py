@@ -45,8 +45,8 @@ def _group_graphs_same_initial_and_final(
         Tuple[tuple, tuple], List[StateTransitionGraph[ParticleWithSpin]]
     ] = dict()
     for graph in graphs:
-        ise = graph.get_final_state_edge_ids()
-        fse = graph.get_initial_state_edge_ids()
+        ise = graph.topology.outgoing_edge_ids
+        fse = graph.topology.incoming_edge_ids
         graph_group = (
             tuple(
                 sorted(
@@ -85,8 +85,8 @@ def _get_graph_group_unique_label(
     label = ""
     if graph_group:
         first_graph = next(iter(graph_group))
-        ise = first_graph.topology.get_initial_state_edge_ids()
-        fse = first_graph.topology.get_final_state_edge_ids()
+        ise = first_graph.topology.incoming_edge_ids
+        fse = first_graph.topology.outgoing_edge_ids
         is_names = _get_name_hel_list(first_graph, ise)
         fs_names = _get_name_hel_list(first_graph, fse)
         label += (
@@ -106,7 +106,7 @@ def _determine_attached_final_state(
     the root).
     """
     final_state_edge_ids = []
-    all_final_state_edges = topology.get_final_state_edge_ids()
+    all_final_state_edges = topology.outgoing_edge_ids
     current_edges = [edge_id]
     while current_edges:
         temp_current_edges = current_edges

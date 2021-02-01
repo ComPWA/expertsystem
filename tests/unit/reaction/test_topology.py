@@ -190,9 +190,9 @@ class TestTopology:
         topology = two_to_three_decay  # shorter name
         assert get_originating_node_list(topology, edge_ids=[0]) == []
         assert get_originating_node_list(topology, edge_ids=[5, 6]) == [2, 2]
-        assert topology.get_initial_state_edge_ids() == [0, 1]
-        assert topology.get_final_state_edge_ids() == [4, 5, 6]
-        assert topology.get_intermediate_state_edge_ids() == [2, 3]
+        assert topology.incoming_edge_ids == {0, 1}
+        assert topology.outgoing_edge_ids == {4, 5, 6}
+        assert topology.intermediate_edge_ids == {2, 3}
 
     @staticmethod
     def test_swap_edges(two_to_three_decay: Topology):
@@ -237,12 +237,9 @@ def test_create_isobar_topologies(
         n_expected_nodes = n_final - 1
         n_intermediate_edges = n_final - 2
         for topology in topologies:
-            assert len(topology.get_initial_state_edge_ids()) == n_initial
-            assert len(topology.get_final_state_edge_ids()) == n_final
-            assert (
-                len(topology.get_intermediate_state_edge_ids())
-                == n_intermediate_edges
-            )
+            assert len(topology.incoming_edge_ids) == n_initial
+            assert len(topology.outgoing_edge_ids) == n_final
+            assert len(topology.intermediate_edge_ids) == n_intermediate_edges
             assert len(topology.nodes) == n_expected_nodes
 
 
@@ -266,7 +263,7 @@ def test_create_n_body_topology(n_initial: int, n_final: int, exception):
             create_n_body_topology(n_initial, n_final)
     else:
         topology = create_n_body_topology(n_initial, n_final)
-        assert len(topology.get_initial_state_edge_ids()) == n_initial
-        assert len(topology.get_final_state_edge_ids()) == n_final
-        assert len(topology.get_intermediate_state_edge_ids()) == 0
+        assert len(topology.incoming_edge_ids) == n_initial
+        assert len(topology.outgoing_edge_ids) == n_final
+        assert len(topology.intermediate_edge_ids) == 0
         assert len(topology.nodes) == 1

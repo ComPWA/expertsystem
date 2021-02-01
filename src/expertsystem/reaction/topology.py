@@ -105,8 +105,37 @@ class Topology:
     nodes: FrozenSet[int] = attr.ib(converter=frozenset)
     edges: FrozenDict[int, Edge] = attr.ib(converter=FrozenDict)
 
+    incoming_edge_ids: FrozenSet[int] = attr.ib(init=False, repr=False)
+    outgoing_edge_ids: FrozenSet[int] = attr.ib(init=False, repr=False)
+    intermediate_edge_ids: FrozenSet[int] = attr.ib(init=False, repr=False)
+
     def __attrs_post_init__(self) -> None:
         self.__verify()
+        object.__setattr__(
+            self,
+            "incoming_edge_ids",
+            frozenset(
+                edge_id
+                for edge_id, edge in self.edges.items()
+                if edge.originating_node_id is None
+            ),
+        )
+        object.__setattr__(
+            self,
+            "outgoing_edge_ids",
+            frozenset(
+                edge_id
+                for edge_id, edge in self.edges.items()
+                if edge.ending_node_id is None
+            ),
+        )
+        object.__setattr__(
+            self,
+            "intermediate_edge_ids",
+            frozenset(self.edges)
+            ^ self.incoming_edge_ids
+            ^ self.outgoing_edge_ids,
+        )
 
     def __verify(self) -> None:
         """Verify if there are no dangling edges or nodes."""
@@ -152,34 +181,6 @@ class Topology:
         """
         raise NotImplementedError
 
-    def get_initial_state_edge_ids(self) -> List[int]:
-        return sorted(
-            [
-                edge_id
-                for edge_id, edge in self.edges.items()
-                if edge.originating_node_id is None
-            ]
-        )
-
-    def get_final_state_edge_ids(self) -> List[int]:
-        return sorted(
-            [
-                edge_id
-                for edge_id, edge in self.edges.items()
-                if edge.ending_node_id is None
-            ]
-        )
-
-    def get_intermediate_state_edge_ids(self) -> List[int]:
-        return sorted(
-            [
-                edge_id
-                for edge_id, edge in self.edges.items()
-                if edge.ending_node_id is not None
-                and edge.originating_node_id is not None
-            ]
-        )
-
     def get_edge_ids_ingoing_to_node(self, node_id: int) -> List[int]:
         return [
             edge_id
@@ -195,7 +196,7 @@ class Topology:
         ]
 
     def get_originating_final_state_edge_ids(self, node_id: int) -> List[int]:
-        fs_edges = self.get_final_state_edge_ids()
+        fs_edges = self.outgoing_edge_ids
         edge_list = []
         temp_edge_list = self.get_edge_ids_outgoing_from_node(node_id)
         while temp_edge_list:
@@ -215,7 +216,7 @@ class Topology:
     def get_originating_initial_state_edge_ids(
         self, node_id: int
     ) -> List[int]:
-        is_edges = self.get_initial_state_edge_ids()
+        is_edges = self.incoming_edge_ids
         edge_list = []
         temp_edge_list = self.get_edge_ids_ingoing_to_node(node_id)
         while temp_edge_list:
@@ -580,14 +581,14 @@ class StateTransitionGraph(Generic[EdgeType]):
     def edges(self) -> FrozenDict[int, Edge]:
         return self.topology.edges
 
-    def get_initial_state_edge_ids(self) -> List[int]:
-        return self.topology.get_initial_state_edge_ids()
+    def get_initial_state_edge_ids(self) -> FrozenSet[int]:
+        return self.topology.incoming_edge_ids
 
-    def get_final_state_edge_ids(self) -> List[int]:
-        return self.topology.get_final_state_edge_ids()
+    def get_final_state_edge_ids(self) -> FrozenSet[int]:
+        return self.topology.outgoing_edge_ids
 
-    def get_intermediate_state_edge_ids(self) -> List[int]:
-        return self.topology.get_intermediate_state_edge_ids()
+    def get_intermediate_state_edge_ids(self) -> FrozenSet[int]:
+        return self.topology.intermediate_edge_ids
 
     def get_edge_ids_ingoing_to_node(self, node_id: int) -> List[int]:
         return [
