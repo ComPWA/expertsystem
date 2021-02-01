@@ -35,10 +35,12 @@ ADR:
 
 ## Decision drivers
 
+<!--
 ### Solution requirements
 
-1. <!-- Requirement 1 -->
-2. <!-- Requirement 2 -->
+1. Requirement 1
+2. Requirement 2
+-->
 
 ## Considered solutions
 
@@ -82,11 +84,11 @@ with links (using e.g. {ref} or {doc}) to the proposed solutions.
   2.
 -->
 
+<!--
 ### Requirement evaluation
 
 See [requirements](#solution-requirements).
 
-<!--
 |          | 1   | 2   | 3   | ... |
 | -------- | --- | --- | --- | --- |
 | Option 1 |     |     |     |     |
