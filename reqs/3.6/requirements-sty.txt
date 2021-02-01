@@ -36,6 +36,7 @@ jsonschema==3.2.0
 jupyter-core==4.7.1
 lazy-object-proxy==1.4.3
 mccabe==0.6.1
+mpmath==1.1.0
 mypy-extensions==0.4.3
 mypy==0.800
 nbformat==5.1.2
@@ -66,12 +67,13 @@ regex==2020.11.13
 restructuredtext-lint==1.3.2
 six==1.15.0
 snowballstemmer==2.1.0
+sympy==1.7.1
 toml==0.10.2
 tqdm==4.56.0
 traitlets==4.3.3
 typed-ast==1.4.2
 typing-extensions==3.7.4.3 ; python_version < "3.8.0"
-virtualenv==20.4.1
+virtualenv==20.4.2
 wrapt==1.12.1
 zipp==3.4.0
 
