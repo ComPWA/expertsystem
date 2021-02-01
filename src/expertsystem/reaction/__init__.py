@@ -242,9 +242,7 @@ class Result:
                     new_edge_props[edge_id] = edge_props[0]
             inventory.append(
                 StateTransitionGraph[Particle](
-                    topology=Topology(
-                        nodes=set(graph.nodes), edges=graph.edges
-                    ),
+                    topology=graph.topology,
                     node_props={
                         i: node_props
                         for i, node_props in zip(
@@ -320,9 +318,7 @@ class Result:
                 }
                 inventory.append(
                     StateTransitionGraph[ParticleCollection](
-                        topology=Topology(
-                            nodes=set(graph.nodes), edges=graph.edges
-                        ),
+                        topology=graph.topology,
                         node_props={
                             i: graph.get_node_props(i) for i in graph.nodes
                         },

@@ -208,7 +208,10 @@ def make_ls_test_graph(
     angular_momentum_magnitude, coupled_spin_magnitude, particle
 ):
     graph = StateTransitionGraph[ParticleWithSpin](
-        topology=Topology(nodes={0}, edges={0: Edge(None, 0)}),
+        topology=Topology(
+            nodes={0},  # type: ignore
+            edges={0: Edge(None, 0)},
+        ),
         node_props={
             0: InteractionProperties(
                 s_magnitude=coupled_spin_magnitude,
@@ -224,7 +227,10 @@ def make_ls_test_graph_scrambled(
     angular_momentum_magnitude, coupled_spin_magnitude, particle
 ):
     graph = StateTransitionGraph[ParticleWithSpin](
-        topology=Topology(nodes={0}, edges={0: Edge(None, 0)}),
+        topology=Topology(
+            nodes={0},  # type: ignore
+            edges={0: Edge(None, 0)},
+        ),
         node_props={
             0: InteractionProperties(
                 l_magnitude=angular_momentum_magnitude,
