@@ -494,7 +494,9 @@ class SimpleStateTransitionTopologyBuilder:
     ) -> None:
         if not isinstance(interaction_node_set, list):
             raise TypeError("interaction_node_set must be a list")
-        self.interaction_node_set = list(interaction_node_set)
+        self.interaction_node_set: List[InteractionNode] = list(
+            interaction_node_set
+        )
 
     def build_graphs(
         self, number_of_initial_edges: int, number_of_final_edges: int
