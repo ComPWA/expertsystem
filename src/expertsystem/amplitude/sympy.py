@@ -158,19 +158,29 @@ class SympyModel:  # pylint: disable=too-many-instance-attributes
 
 @attr.s(kw_only=True)
 class ModelInfo:  # pylint: disable=too-many-instance-attributes
-    kinematics: Kinematics = attr.ib(
-        validator=attr.validators.instance_of(Kinematics)
-    )
-    particles: ParticleCollection = attr.ib(
-        validator=attr.validators.instance_of(ParticleCollection)
+    transitions: List[StateTransitionGraph[ParticleWithSpin]] = attr.ib(
+        on_setattr=attr.setters.frozen
     )
     expression: SympyModel = attr.ib(
         validator=attr.validators.instance_of(SympyModel),
     )
     parameters: SuggestedParameterValues = attr.ib(
-        default=SuggestedParameterValues(),
         validator=attr.validators.instance_of(SuggestedParameterValues),
+        init=False,
     )
+    kinematics: Kinematics = attr.ib(
+        validator=attr.validators.instance_of(Kinematics),
+        init=False,
+    )
+    particles: ParticleCollection = attr.ib(
+        validator=attr.validators.instance_of(ParticleCollection),
+        init=False,
+    )
+
+    def __attrs_post_init__(self) -> None:
+        self.parameters = SuggestedParameterValues()
+        self.kinematics = generate_kinematics(self.transitions)
+        self.particles = generate_particle_collection(self.transitions)
 
     def set_dynamics(
         self,
@@ -420,10 +430,8 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
 
     def __initialize_model(self) -> None:
         self.__model = ModelInfo(
-            particles=generate_particle_collection(self.__graphs),
-            kinematics=generate_kinematics(self.__graphs),
+            transitions=self.__graphs,
             expression=SympyModel(top=1),
-            parameters=SuggestedParameterValues(),
         )
 
     def generate(self) -> ModelInfo:
