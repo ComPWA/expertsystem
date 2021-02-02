@@ -83,14 +83,11 @@ class TestInteractionNode:
 class TestSimpleStateTransitionTopologyBuilder:
     @staticmethod
     def test_two_body_states():
-        four_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
-
+        two_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
         simple_builder = SimpleStateTransitionTopologyBuilder(
-            [four_body_decay_node]
+            [two_body_decay_node]
         )
-
-        all_graphs = simple_builder.build_graphs(1, 3)
-
+        all_graphs = simple_builder.build(1, 3)
         assert len(all_graphs) == 1
 
 

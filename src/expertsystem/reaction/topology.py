@@ -333,7 +333,7 @@ class SimpleStateTransitionTopologyBuilder:
             interaction_node_set
         )
 
-    def build_graphs(
+    def build(
         self, number_of_initial_edges: int, number_of_final_edges: int
     ) -> List[Topology]:
         number_of_initial_edges = int(number_of_initial_edges)

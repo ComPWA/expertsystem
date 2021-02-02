@@ -564,7 +564,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         return _group_by_strength(problem_sets)
 
     def __build_topologies(self) -> List[Topology]:
-        all_graphs = self.topology_builder.build_graphs(
+        all_graphs = self.topology_builder.build(
             len(self.initial_state), len(self.final_state)
         )
         logging.info(f"number of topology graphs: {len(all_graphs)}")
@@ -926,9 +926,7 @@ def check_reaction_violations(
                 )
             ]
         )
-        return topology_builder.build_graphs(
-            len(initial_state), len(final_state)
-        )[0]
+        return topology_builder.build(len(initial_state), len(final_state))[0]
 
     def check_edge_qn_conservation() -> Set[FrozenSet[str]]:
         """Check if edge quantum numbers are conserved.

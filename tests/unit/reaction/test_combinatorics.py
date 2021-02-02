@@ -27,7 +27,7 @@ def three_body_decay() -> Topology:
     simple_builder = SimpleStateTransitionTopologyBuilder(
         [two_body_decay_node]
     )
-    all_graphs = simple_builder.build_graphs(1, 3)
+    all_graphs = simple_builder.build(1, 3)
     return all_graphs[0]
 
 
