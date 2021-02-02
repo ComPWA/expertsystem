@@ -2,7 +2,6 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from expertsystem.amplitude.model import Kinematics
 from expertsystem.particle import ParticleCollection, Spin
-from expertsystem.reaction import Result
 from expertsystem.reaction.quantum_numbers import ParticleWithSpin
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
 
@@ -155,8 +154,10 @@ def generate_particle_collection(
     return particles
 
 
-def generate_kinematics(result: Result) -> Kinematics:
-    graph = next(iter(result.transitions))
+def generate_kinematics(
+    graphs: List[StateTransitionGraph[ParticleWithSpin]],
+) -> Kinematics:
+    graph = next(iter(graphs))
     return Kinematics.from_graph(graph)
 
 

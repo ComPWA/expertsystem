@@ -393,7 +393,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
                 "Helicity amplitude model requires exactly one initial state"
             )
         self.__particles = generate_particle_collection(self.__graphs)
-        self.__kinematics = generate_kinematics(reaction_result)
+        self.__kinematics = generate_kinematics(self.__graphs)
         self.__intensities: Dict[sy.Symbol, sy.Expr] = dict()
         self.__amplitudes: Dict[sy.Symbol, sy.Expr] = dict()
         self.__dynamics: Dict[sy.Symbol, sy.Expr] = dict()

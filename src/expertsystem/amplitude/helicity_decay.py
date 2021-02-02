@@ -215,7 +215,7 @@ class HelicityAmplitudeGenerator:
         initial_state = get_initial_state[0].name
 
         self.particles = generate_particle_collection(graphs)
-        self.kinematics = generate_kinematics(reaction_result)
+        self.kinematics = generate_kinematics(graphs)
         self.dynamics = ParticleDynamics(self.particles, self.fit_parameters)
         if self.top_node_no_dynamics:
             self.dynamics.set_non_dynamic(initial_state)
