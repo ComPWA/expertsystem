@@ -392,41 +392,33 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             raise ValueError(
                 "Helicity amplitude model requires exactly one initial state"
             )
-        self.__particles = generate_particle_collection(self.__graphs)
-        self.__kinematics = generate_kinematics(self.__graphs)
-        self.__intensities: Dict[sy.Symbol, sy.Expr] = dict()
-        self.__amplitudes: Dict[sy.Symbol, sy.Expr] = dict()
-        self.__dynamics: Dict[sy.Symbol, sy.Expr] = dict()
-        self.__parameters = SuggestedParameterValues()
+        self.__initialize_model()
+
+    def __initialize_model(self) -> None:
+        self.__model = ModelInfo(
+            particles=generate_particle_collection(self.__graphs),
+            kinematics=generate_kinematics(self.__graphs),
+            expression=SympyModel(top=1),
+            parameters=SuggestedParameterValues(),
+        )
 
     def generate(self) -> ModelInfo:
-        top = self.__generate_intensities()
-        return ModelInfo(
-            particles=self.__particles,
-            kinematics=self.__kinematics,
-            expression=SympyModel(
-                top=top,
-                intensities=self.__intensities,
-                amplitudes=self.__amplitudes,
-                dynamics=self.__dynamics,
-            ),
-            parameters=self.__parameters,
-        )
+        self.__initialize_model()
+        self.__generate_intensities()
+        return self.__model
 
     def __generate_intensities(self) -> sy.Expr:
         graph_groups = group_graphs_same_initial_and_final(self.__graphs)
         logging.debug("There are %d graph groups", len(graph_groups))
 
         self.__create_parameter_couplings(graph_groups)
-        coherent_intensities = [
+        for graph_group in graph_groups:
             self.__generate_coherent_intensity(graph_group)
-            for graph_group in graph_groups
-        ]
+        coherent_intensities = self.__model.expression.intensities
         if len(coherent_intensities) == 0:
             raise ValueError("List of coherent intensities cannot be empty")
-        if len(coherent_intensities) == 1:
-            return coherent_intensities[0]
-        return sum(coherent_intensities)
+        self.__model.expression.top = sum(coherent_intensities)
+        return self.__model.expression.top
 
     def __create_parameter_couplings(
         self, graph_groups: List[List[StateTransitionGraph[ParticleWithSpin]]]
@@ -450,7 +442,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
                 expression.append(self.__generate_sequential_decay(seq_graph))
         amplitude_sum = sum(expression)
         coherent_intensity = abs(amplitude_sum) ** 2
-        self.__intensities[symbol] = coherent_intensity
+        self.__model.expression.intensities[symbol] = coherent_intensity
         return symbol
 
     def __generate_sequential_decay(
@@ -470,7 +462,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         expression = coefficient * sequential_amplitudes
         if prefactor is not None:
             expression = prefactor * expression
-        self.__amplitudes[symbol] = expression
+        self.__model.expression.amplitudes[symbol] = expression
         return symbol
 
     def _generate_partial_decay(  # pylint: disable=too-many-locals
@@ -560,7 +552,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         dynamics_symbol = sy.Symbol(
             fR"D[{parent_label} \to {decay_product_description}]"
         )
-        self.__dynamics[dynamics_symbol] = expression
+        self.__model.expression.dynamics[dynamics_symbol] = expression
         return dynamics_symbol
 
     def __generate_amplitude_coefficient(
@@ -576,7 +568,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             graph
         )
         coefficient_symbol = sy.Symbol(f"C[{suffix}]")
-        self.__parameters[coefficient_symbol] = ParameterProperties(
+        self.__model.parameters[coefficient_symbol] = ParameterProperties(
             complex(1, 0), fix=False
         )
         return coefficient_symbol
