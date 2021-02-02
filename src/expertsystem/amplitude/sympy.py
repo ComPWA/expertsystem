@@ -36,7 +36,7 @@ from ._graph_info import (
     get_recoil_edge,
     group_graphs_same_initial_and_final,
 )
-from .kinematics import HelicityKinematics, SubSystem
+from .kinematics import generate_kinematic_variables
 from .model import Kinematics
 
 ValueType = TypeVar("ValueType", float, complex, int)
@@ -469,10 +469,13 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
                         graph.topology, parent_recoil_edge_id
                     )
                 )
-        _, theta, phi = self.__generate_kinematic_variables(
-            decay_products_fs_ids,
-            recoil_final_state,
-            parent_recoil_final_state,
+        _, theta, phi = sy.symbols(
+            generate_kinematic_variables(
+                decay_products_fs_ids,
+                recoil_final_state,
+                parent_recoil_final_state,
+            ),
+            real=True,
         )
 
         wigner_d = Wigner.D(
@@ -500,28 +503,6 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         suggested_dynamics = 1
         self.__dynamics[dynamics_symbol] = suggested_dynamics
         return wigner_d * dynamics_symbol
-
-    @staticmethod
-    def __generate_kinematic_variables(
-        decay_products_final_state_ids: Tuple[Tuple[int, ...], ...],
-        recoil_final_state_ids: Tuple[int, ...],
-        parent_recoil_final_state_ids: Tuple[int, ...],
-    ) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
-        """Generate kinematic sympy variables of a helicity decay.
-
-        Kinematic variables are:
-        - invariant mass
-        - helicity angle theta
-        - helicity angle phi
-        """
-        kinematics = HelicityKinematics()
-        subsystem = SubSystem(
-            final_states=decay_products_final_state_ids,
-            recoil_state=recoil_final_state_ids,
-            parent_recoil_state=parent_recoil_final_state_ids,
-        )
-        inv_mass, theta, phi = kinematics.register_subsystem(subsystem)
-        return sy.Symbol(inv_mass), sy.Symbol(theta), sy.Symbol(phi)
 
     def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[ParticleWithSpin]
