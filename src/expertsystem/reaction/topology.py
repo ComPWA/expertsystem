@@ -512,12 +512,14 @@ class SimpleStateTransitionTopologyBuilder:
 
         logging.info("building topology graphs...")
         # result list
-        graph_tuple_list = []
+        graph_tuple_list: List[Tuple[Topology, List[int]]] = []
         # create seed graph
         seed_graph = Topology()
         current_open_end_edges = list(range(number_of_initial_edges))
         seed_graph.add_edges(current_open_end_edges)
-        extendable_graph_list = [(seed_graph, current_open_end_edges)]
+        extendable_graph_list: List[Tuple[Topology, List[int]]] = [
+            (seed_graph, current_open_end_edges)
+        ]
 
         while extendable_graph_list:
             active_graph_list = extendable_graph_list
