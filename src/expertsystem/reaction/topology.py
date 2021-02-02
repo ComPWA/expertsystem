@@ -411,6 +411,25 @@ class SimpleStateTransitionTopologyBuilder:
         return extended_graph_list
 
 
+def create_isobar_topologies(
+    number_of_initial_states: int, number_of_final_states: int
+) -> List[Topology]:
+    if number_of_initial_states != 1:
+        raise ValueError(
+            "Can only create an isobar decay if there's one initial state"
+        )
+    if number_of_final_states < 2:
+        raise ValueError(
+            "At least two final states required for an isobar decay"
+        )
+    builder = SimpleStateTransitionTopologyBuilder([InteractionNode(1, 2)])
+    topologies = builder.build(
+        number_of_initial_edges=number_of_initial_states,
+        number_of_final_edges=number_of_final_states,
+    )
+    return topologies
+
+
 def create_n_body_topology(
     number_of_initial_states: int, number_of_final_states: int
 ) -> Topology:

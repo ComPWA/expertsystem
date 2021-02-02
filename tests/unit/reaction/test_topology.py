@@ -1,4 +1,4 @@
-# pylint: disable=no-self-use, redefined-outer-name
+# pylint: disable=no-self-use, redefined-outer-name, too-many-arguments
 
 from copy import deepcopy
 
@@ -9,6 +9,7 @@ from expertsystem.reaction.topology import (
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
     Topology,
+    create_isobar_topologies,
     create_n_body_topology,
 )
 
@@ -190,6 +191,47 @@ class TestTopology:
         assert topology == two_to_three_decay
         topology.swap_edges(4, 6)
         assert topology != two_to_three_decay
+
+
+@pytest.mark.parametrize(
+    "n_initial, n_final, n_topologies, exception",
+    [
+        (1, 0, None, ValueError),
+        (0, 1, None, ValueError),
+        (0, 0, None, ValueError),
+        (1, 1, None, ValueError),
+        (2, 1, None, ValueError),
+        (1, 2, 1, None),
+        (1, 3, 1, None),
+        (1, 4, 2, None),
+        (1, 5, 5, None),
+        (1, 6, 16, None),
+        (1, 7, 61, None),
+        (1, 8, 272, None),
+    ],
+)
+def test_create_isobar_topologies(
+    n_initial: int,
+    n_final: int,
+    n_topologies: int,
+    exception,
+):
+    if exception is not None:
+        with pytest.raises(exception):
+            create_isobar_topologies(n_initial, n_final)
+    else:
+        topologies = create_isobar_topologies(n_initial, n_final)
+        assert len(topologies) == n_topologies
+        n_expected_nodes = n_final - 1
+        n_intermediate_edges = n_final - 2
+        for topology in topologies:
+            assert len(topology.get_initial_state_edge_ids()) == n_initial
+            assert len(topology.get_final_state_edge_ids()) == n_final
+            assert (
+                len(topology.get_intermediate_state_edge_ids())
+                == n_intermediate_edges
+            )
+            assert len(topology.nodes) == n_expected_nodes
 
 
 @pytest.mark.parametrize(
