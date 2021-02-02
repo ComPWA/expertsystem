@@ -84,10 +84,11 @@ def _get_graph_group_unique_label(
 ) -> str:
     label = ""
     if graph_group:
-        ise = graph_group[0].get_initial_state_edge_ids()
-        fse = graph_group[0].get_final_state_edge_ids()
-        is_names = _get_name_hel_list(graph_group[0], ise)
-        fs_names = _get_name_hel_list(graph_group[0], fse)
+        first_graph = next(iter(graph_group))
+        ise = first_graph.topology.get_initial_state_edge_ids()
+        fse = first_graph.topology.get_final_state_edge_ids()
+        is_names = _get_name_hel_list(first_graph, ise)
+        fs_names = _get_name_hel_list(first_graph, fse)
         label += (
             _generate_particles_string(is_names)
             + "_to_"
@@ -136,7 +137,7 @@ def _get_recoil_edge(
             f"The node with id {node_id} has more than 2 outgoing edges:\n"
             + str(graph)
         )
-    return outgoing_edges[0]
+    return next(iter(outgoing_edges))
 
 
 def _get_parent_recoil_edge(
@@ -152,7 +153,8 @@ def _get_parent_recoil_edge(
             f"The node with id {node_id} does not have a single ingoing edge!\n"
             + str(graph)
         )
-    return _get_recoil_edge(graph, ingoing_edges[0])
+    ingoing_edge = next(iter(ingoing_edges))
+    return _get_recoil_edge(graph, ingoing_edge)
 
 
 def _get_prefactor(
@@ -504,7 +506,7 @@ class HelicityAmplitudeGenerator:
         in_edge_ids = graph.get_edge_ids_ingoing_to_node(node_id)
         if len(in_edge_ids) != 1:
             raise ValueError("This node does not represent a two body decay!")
-        ingoing_edge_id = in_edge_ids[0]
+        ingoing_edge_id = next(iter(in_edge_ids))
         edge_props = graph.get_edge_props(ingoing_edge_id)
         helicity_particle = create_helicity_particle(edge_props)
         helicity_decay = HelicityDecay(helicity_particle, decay_products)
