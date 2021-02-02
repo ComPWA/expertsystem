@@ -444,12 +444,10 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         use_nbody_topology = False
         if topology_building == "isobar":
             if len(initial_state) == 1:
-                int_nodes.append(InteractionNode("TwoBodyDecay", 1, 2))
+                int_nodes.append(InteractionNode(1, 2))
         else:
             int_nodes.append(
-                InteractionNode(
-                    "NBodyScattering", len(initial_state), len(final_state)
-                )
+                InteractionNode(len(initial_state), len(final_state))
             )
             use_nbody_topology = True
             # turn of mass conservation, in case more than one initial state
@@ -920,11 +918,7 @@ def check_reaction_violations(
 
     def create_n_body_topology() -> Topology:
         topology_builder = SimpleStateTransitionTopologyBuilder(
-            [
-                InteractionNode(
-                    "NBodyScattering", len(initial_state), len(final_state)
-                )
-            ]
+            [InteractionNode(len(initial_state), len(final_state))]
         )
         return topology_builder.build(len(initial_state), len(final_state))[0]
 

@@ -301,7 +301,6 @@ class Topology:
 class InteractionNode:
     """Struct-like definition of an interaction node."""
 
-    type_name: str = attr.ib(converter=str)
     number_of_ingoing_edges: int = attr.ib(
         validator=attr.validators.instance_of(int)
     )

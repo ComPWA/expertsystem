@@ -53,28 +53,23 @@ class TestEdge:
 class TestInteractionNode:
     @staticmethod
     def test_constructor_exceptions():
-        dummy_type_name = "type_name"
         with pytest.raises(TypeError):
             assert InteractionNode(
-                dummy_type_name,
                 number_of_ingoing_edges="has to be int",  # type: ignore
                 number_of_outgoing_edges=2,
             )
         with pytest.raises(TypeError):
             assert InteractionNode(
-                dummy_type_name,
                 number_of_outgoing_edges="has to be int",  # type: ignore
                 number_of_ingoing_edges=2,
             )
         with pytest.raises(ValueError):
             assert InteractionNode(
-                dummy_type_name,
                 number_of_outgoing_edges=0,
                 number_of_ingoing_edges=1,
             )
         with pytest.raises(ValueError):
             assert InteractionNode(
-                dummy_type_name,
                 number_of_outgoing_edges=1,
                 number_of_ingoing_edges=0,
             )
@@ -83,7 +78,7 @@ class TestInteractionNode:
 class TestSimpleStateTransitionTopologyBuilder:
     @staticmethod
     def test_two_body_states():
-        two_body_decay_node = InteractionNode("TwoBodyDecay", 1, 2)
+        two_body_decay_node = InteractionNode(1, 2)
         simple_builder = SimpleStateTransitionTopologyBuilder(
             [two_body_decay_node]
         )
