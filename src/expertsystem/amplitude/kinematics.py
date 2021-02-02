@@ -178,3 +178,25 @@ class HelicityKinematics:
         invmass_name = self.register_invariant_mass(list(set(state_fs)))
         angle_names = self.register_helicity_angles(subsystem)
         return (invmass_name,) + angle_names
+
+
+def generate_kinematic_variables(
+    decay_products_final_state_ids: Tuple[Tuple[int, ...], Tuple[int, ...]],
+    recoil_final_state_ids: Tuple[int, ...],
+    parent_recoil_final_state_ids: Tuple[int, ...],
+) -> Tuple[str, str, str]:
+    """Generate kinematic sympy variables of a helicity decay.
+
+    Kinematic variables are:
+    - invariant mass
+    - helicity angle theta
+    - helicity angle phi
+    """
+    kinematics = HelicityKinematics()
+    subsystem = SubSystem(
+        final_states=decay_products_final_state_ids,
+        recoil_state=recoil_final_state_ids,
+        parent_recoil_state=parent_recoil_final_state_ids,
+    )
+    inv_mass, theta, phi = kinematics.register_subsystem(subsystem)
+    return inv_mass, theta, phi
