@@ -589,18 +589,10 @@ class StateTransitionGraph(Generic[EdgeType]):
         return self.topology.intermediate_edge_ids
 
     def get_edge_ids_ingoing_to_node(self, node_id: int) -> Set[int]:
-        return {
-            edge_id
-            for edge_id, edge in self.topology.edges.items()
-            if edge.ending_node_id == node_id
-        }
+        return self.topology.get_edge_ids_ingoing_to_node(node_id)
 
     def get_edge_ids_outgoing_from_node(self, node_id: int) -> Set[int]:
-        return {
-            edge_id
-            for edge_id, edge in self.topology.edges.items()
-            if edge.originating_node_id == node_id
-        }
+        return self.topology.get_edge_ids_outgoing_from_node(node_id)
 
     def get_node_props(self, node_id: int) -> InteractionProperties:
         return self.__node_props[node_id]
@@ -644,9 +636,7 @@ class StateTransitionGraph(Generic[EdgeType]):
             Callable[[InteractionProperties, InteractionProperties], bool]
         ] = None,
     ) -> bool:
-        if self.nodes != other.nodes:
-            return False
-        if self.edges != other.edges:
+        if self.topology != other.topology:
             return False
         if edge_comparator is not None:
             for i in self.edges:
