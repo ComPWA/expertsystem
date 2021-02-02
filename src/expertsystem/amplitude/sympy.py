@@ -50,6 +50,52 @@ class State:
     spin_projection: float = attr.ib(converter=float)
 
 
+@attr.s(frozen=True, auto_attribs=True)
+class _EdgeWithState:
+    edge_id: int
+    state: State
+
+    @classmethod
+    def from_graph(
+        cls, graph: StateTransitionGraph, edge_id: int
+    ) -> "_EdgeWithState":
+        particle, spin_projection = graph.get_edge_props(edge_id)
+        return cls(
+            edge_id=edge_id,
+            state=State(
+                particle=particle,
+                spin_projection=spin_projection,
+            ),
+        )
+
+
+@attr.s(frozen=True, auto_attribs=True)
+class _TwoBodyDecay:
+    parent: _EdgeWithState
+    children: Tuple[_EdgeWithState, _EdgeWithState]
+
+    @classmethod
+    def from_graph(
+        cls, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
+    ) -> "_TwoBodyDecay":
+        in_edge_ids = graph.topology.get_edge_ids_ingoing_to_node(node_id)
+        out_edge_ids = graph.topology.get_edge_ids_outgoing_from_node(node_id)
+        if len(in_edge_ids) != 1 or len(out_edge_ids) != 2:
+            raise ValueError(
+                f"Node {node_id} does not represent a 1-to-2 body decay!"
+            )
+
+        ingoing_edge_id = next(iter(in_edge_ids))
+        out_edge_id1, out_edge_id2 = tuple(out_edge_ids)
+        return cls(
+            parent=_EdgeWithState.from_graph(graph, ingoing_edge_id),
+            children=(
+                _EdgeWithState.from_graph(graph, out_edge_id1),
+                _EdgeWithState.from_graph(graph, out_edge_id2),
+            ),
+        )
+
+
 @attr.s
 class ParameterProperties(Generic[ValueType]):
     value: ValueType = attr.ib()
@@ -430,40 +476,30 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
     def _generate_partial_decay(  # pylint: disable=too-many-locals
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> sy.Symbol:
-        in_edge_ids = graph.topology.get_edge_ids_ingoing_to_node(node_id)
-        out_edge_ids = graph.topology.get_edge_ids_outgoing_from_node(node_id)
-        if len(in_edge_ids) != 1 or len(out_edge_ids) != 2:
-            raise ValueError(
-                f"Node {node_id} does not represent a 1-to-2 body decay!"
-            )
-
-        in_edge_id = next(iter(in_edge_ids))
-        parent = State(*graph.get_edge_props(in_edge_id))
-        children: List[State] = list()
-        decay_products_fs_ids_list: List[List[int]] = list()
-        for out_edge_id in out_edge_ids:
-            edge_props = graph.get_edge_props(out_edge_id)
-            children.append(State(*edge_props))
-            final_state_ids = determine_attached_final_state(
-                graph.topology, out_edge_id
-            )
-            decay_products_fs_ids_list.append(final_state_ids)
-        decay_products_fs_ids: Tuple[Tuple[int, ...], ...] = tuple(
-            tuple(x) for x in decay_products_fs_ids_list
+        decay = _TwoBodyDecay.from_graph(graph, node_id)
+        decay_products_fs_ids = (
+            tuple(
+                determine_attached_final_state(
+                    graph.topology, decay.children[0].edge_id
+                )
+            ),
+            tuple(
+                determine_attached_final_state(
+                    graph.topology, decay.children[1].edge_id
+                )
+            ),
         )
 
         recoil_final_state: Tuple[int, ...] = tuple()
         parent_recoil_final_state: Tuple[int, ...] = tuple()
 
-        in_edge_id = next(iter(in_edge_ids))
-        ingoing_edge_id = in_edge_id
-        recoil_edge_id = get_recoil_edge(graph.topology, ingoing_edge_id)
+        recoil_edge_id = get_recoil_edge(graph.topology, decay.parent.edge_id)
         if recoil_edge_id is not None:
             recoil_final_state = tuple(
                 determine_attached_final_state(graph.topology, recoil_edge_id)
             )
             parent_recoil_edge_id = get_parent_recoil_edge(
-                graph.topology, ingoing_edge_id
+                graph.topology, decay.parent.edge_id
             )
             if parent_recoil_edge_id is not None:
                 parent_recoil_final_state = tuple(
@@ -481,25 +517,26 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         )
 
         wigner_d = Wigner.D(
-            j=sy.nsimplify(parent.particle.spin),
-            m=sy.nsimplify(parent.spin_projection),
+            j=sy.nsimplify(decay.parent.state.particle.spin),
+            m=sy.nsimplify(decay.parent.state.spin_projection),
             mp=sy.nsimplify(
-                children[0].spin_projection - children[1].spin_projection
+                decay.children[0].state.spin_projection
+                - decay.children[1].state.spin_projection
             ),
             alpha=-phi,
             beta=theta,
             gamma=0,
         )
         decay_product_description = " ".join(
-            child.particle.name
-            if child.particle.latex is None
-            else child.particle.latex
-            for child in children
+            child.state.particle.name
+            if child.state.particle.latex is None
+            else child.state.particle.latex
+            for child in decay.children
         )
         parent_label = (
-            parent.particle.name
-            if parent.particle.latex is None
-            else parent.particle.latex
+            decay.parent.state.particle.name
+            if decay.parent.state.particle.latex is None
+            else decay.parent.state.particle.latex
         )
         dynamics_symbol = sy.Symbol(
             fR"D[{parent_label} \to {decay_product_description}]"
