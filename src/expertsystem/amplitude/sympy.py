@@ -42,10 +42,12 @@ from .model import Kinematics
 ValueType = TypeVar("ValueType", float, complex, int)
 
 
-@attr.s(frozen=True, auto_attribs=True)
-class _HelicityParticle:
-    particle: Particle
-    helicity: float
+@attr.s(frozen=True)
+class State:
+    particle: Particle = attr.ib(
+        validator=attr.validators.instance_of(Particle)
+    )
+    spin_projection: float = attr.ib(converter=float)
 
 
 @attr.s
@@ -435,13 +437,13 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
                 f"Node {node_id} does not represent a 1-to-2 body decay!"
             )
 
-        edge_id = next(iter(in_edge_ids))
-        parent = _HelicityParticle(*graph.get_edge_props(edge_id))
-        children: List[_HelicityParticle] = list()
+        in_edge_id = next(iter(in_edge_ids))
+        parent = State(*graph.get_edge_props(in_edge_id))
+        children: List[State] = list()
         decay_products_fs_ids_list: List[List[int]] = list()
         for out_edge_id in out_edge_ids:
             edge_props = graph.get_edge_props(out_edge_id)
-            children.append(_HelicityParticle(*edge_props))
+            children.append(State(*edge_props))
             final_state_ids = determine_attached_final_state(
                 graph.topology, out_edge_id
             )
@@ -480,8 +482,10 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
 
         wigner_d = Wigner.D(
             j=sy.nsimplify(parent.particle.spin),
-            m=sy.nsimplify(parent.helicity),
-            mp=sy.nsimplify(children[0].helicity - children[1].helicity),
+            m=sy.nsimplify(parent.spin_projection),
+            mp=sy.nsimplify(
+                children[0].spin_projection - children[1].spin_projection
+            ),
             alpha=-phi,
             beta=theta,
             gamma=0,
