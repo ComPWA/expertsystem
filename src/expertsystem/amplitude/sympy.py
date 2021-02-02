@@ -42,7 +42,7 @@ from .model import Kinematics
 ValueType = TypeVar("ValueType", float, complex, int)
 
 
-@attr.s(auto_attribs=True)
+@attr.s(frozen=True, auto_attribs=True)
 class _HelicityParticle:
     particle: Particle
     helicity: float
