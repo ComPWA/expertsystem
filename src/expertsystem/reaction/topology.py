@@ -322,7 +322,9 @@ class StateTransitionGraph(Generic[EdgeType]):
     topology: Topology = attr.ib(converter=_copy_topology)
     node_props: Dict[int, InteractionProperties] = attr.ib(factory=dict)
     edge_props: Dict[int, EdgeType] = attr.ib(factory=dict)
-    graph_node_properties_comparator: Optional[Callable] = attr.ib(
+    graph_node_properties_comparator: Optional[
+        Callable[[InteractionProperties, InteractionProperties], bool]
+    ] = attr.ib(
         default=None,
         validator=attr.validators.optional(attr.validators.is_callable()),
         on_setattr=attr.setters.NO_OP,
