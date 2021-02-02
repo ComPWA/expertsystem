@@ -383,7 +383,7 @@ class SimpleStateTransitionTopologyBuilder:
 
     def build(
         self, number_of_initial_edges: int, number_of_final_edges: int
-    ) -> List[Topology]:
+    ) -> FrozenSet[Topology]:
         number_of_initial_edges = int(number_of_initial_edges)
         number_of_final_edges = int(number_of_final_edges)
         if number_of_initial_edges < 1:
@@ -419,10 +419,10 @@ class SimpleStateTransitionTopologyBuilder:
 
         logging.info("finished building topology graphs...")
         # strip the current open end edges list from the result graph tuples
-        topologies = []
+        topologies: Set[Topology] = set()
         for graph_tuple in graph_tuple_list:
-            topologies.append(graph_tuple[0].freeze())
-        return topologies
+            topologies.add(graph_tuple[0].freeze())
+        return frozenset(topologies)
 
     def _extend_graph(
         self, pair: Tuple[_MutableTopology, Sequence[int]]
@@ -464,7 +464,7 @@ class SimpleStateTransitionTopologyBuilder:
 
 def create_isobar_topologies(
     number_of_initial_states: int, number_of_final_states: int
-) -> List[Topology]:
+) -> FrozenSet[Topology]:
     if number_of_initial_states != 1:
         raise ValueError(
             "Can only create an isobar decay if there's one initial state"
@@ -478,7 +478,7 @@ def create_isobar_topologies(
         number_of_initial_edges=number_of_initial_states,
         number_of_final_edges=number_of_final_states,
     )
-    return topologies
+    return frozenset(topologies)
 
 
 def create_n_body_topology(
