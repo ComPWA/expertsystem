@@ -476,6 +476,17 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
     def _generate_partial_decay(  # pylint: disable=too-many-locals
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> sy.Symbol:
+        wigner_d = self._generate_wigner_d(graph, node_id)
+        suggested_dynamics = 1
+        dynamics_symbol = self._set_dynamics(
+            graph, node_id, suggested_dynamics
+        )
+        return wigner_d * dynamics_symbol
+
+    @staticmethod
+    def _generate_wigner_d(
+        graph: StateTransitionGraph[ParticleWithSpin], node_id: int
+    ) -> sy.Symbol:
         decay = _TwoBodyDecay.from_graph(graph, node_id)
         decay_products_fs_ids = (
             tuple(
@@ -516,7 +527,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             real=True,
         )
 
-        wigner_d = Wigner.D(
+        return Wigner.D(
             j=sy.nsimplify(decay.parent.state.particle.spin),
             m=sy.nsimplify(decay.parent.state.spin_projection),
             mp=sy.nsimplify(
@@ -527,6 +538,14 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             beta=theta,
             gamma=0,
         )
+
+    def _set_dynamics(
+        self,
+        graph: StateTransitionGraph[ParticleWithSpin],
+        node_id: int,
+        expression: sy.Expr,
+    ) -> sy.Symbol:
+        decay = _TwoBodyDecay.from_graph(graph, node_id)
         decay_product_description = " ".join(
             child.state.particle.name
             if child.state.particle.latex is None
@@ -541,9 +560,8 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         dynamics_symbol = sy.Symbol(
             fR"D[{parent_label} \to {decay_product_description}]"
         )
-        suggested_dynamics = 1
-        self.__dynamics[dynamics_symbol] = suggested_dynamics
-        return wigner_d * dynamics_symbol
+        self.__dynamics[dynamics_symbol] = expression
+        return dynamics_symbol
 
     def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[ParticleWithSpin]
