@@ -1,7 +1,7 @@
 """Implementation of the helicity formalism for amplitude model generation."""
 
 import logging
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from expertsystem.particle import ParticleCollection, Spin
 from expertsystem.reaction import Result
@@ -189,7 +189,7 @@ def _generate_kinematics(result: Result) -> Kinematics:
 
 
 def _generate_particles_string(
-    name_hel_list: List[Tuple[str, float]],
+    name_hel_list: Iterable[Tuple[str, float]],
     use_helicity: bool = True,
     make_parity_partner: bool = False,
 ) -> str:
@@ -206,7 +206,7 @@ def _generate_particles_string(
 
 
 def _get_name_hel_list(
-    graph: StateTransitionGraph[ParticleWithSpin], edge_ids: List[int]
+    graph: StateTransitionGraph[ParticleWithSpin], edge_ids: Iterable[int]
 ) -> List[Tuple[str, float]]:
     name_hel_list = []
     for i in edge_ids:
@@ -430,7 +430,8 @@ class HelicityAmplitudeGenerator:
         return incoherent_intensity
 
     def __create_parameter_couplings(
-        self, graph_groups: List[List[StateTransitionGraph[ParticleWithSpin]]]
+        self,
+        graph_groups: Iterable[List[StateTransitionGraph[ParticleWithSpin]]],
     ) -> None:
         for graph_group in graph_groups:
             for graph in graph_group:
