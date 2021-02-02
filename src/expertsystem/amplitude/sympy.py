@@ -501,8 +501,8 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         self.__dynamics[dynamics_symbol] = suggested_dynamics
         return wigner_d * dynamics_symbol
 
+    @staticmethod
     def __generate_kinematic_variables(
-        self,
         decay_products_final_state_ids: Tuple[Tuple[int, ...], ...],
         recoil_final_state_ids: Tuple[int, ...],
         parent_recoil_final_state_ids: Tuple[int, ...],
@@ -514,7 +514,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         - helicity angle theta
         - helicity angle phi
         """
-        kinematics = HelicityKinematics(reaction_info=self.__kinematics)
+        kinematics = HelicityKinematics()
         subsystem = SubSystem(
             final_states=decay_products_final_state_ids,
             recoil_state=recoil_final_state_ids,
