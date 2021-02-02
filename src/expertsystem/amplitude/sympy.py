@@ -17,7 +17,6 @@ from typing import (
 
 import attr
 import sympy as sy
-from sympy.abc import x
 from sympy.physics.quantum.spin import Rotation as Wigner
 
 from expertsystem.particle import Particle, ParticleCollection
@@ -96,9 +95,9 @@ class SuggestedParameterValues(abc.MutableMapping):
 @attr.s(kw_only=True)
 class SympyModel:  # pylint: disable=too-many-instance-attributes
     top: sy.Expr = attr.ib()
-    intensities: Dict[sy.Function, sy.Function] = attr.ib(factory=dict)
-    amplitudes: Dict[sy.Function, sy.Function] = attr.ib(factory=dict)
-    dynamics: Dict[sy.Function, sy.Function] = attr.ib(factory=dict)
+    intensities: Dict[sy.Symbol, sy.Expr] = attr.ib(factory=dict)
+    amplitudes: Dict[sy.Symbol, sy.Expr] = attr.ib(factory=dict)
+    dynamics: Dict[sy.Symbol, sy.Expr] = attr.ib(factory=dict)
 
     @property
     def full_expression(self) -> sy.Expr:
@@ -347,9 +346,9 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             )
         self.__particles = generate_particle_collection(self.__graphs)
         self.__kinematics = generate_kinematics(reaction_result)
-        self.__intensities: Dict[sy.Function, sy.Function] = dict()
-        self.__amplitudes: Dict[sy.Function, sy.Function] = dict()
-        self.__dynamics: Dict[sy.Function, sy.Function] = dict()
+        self.__intensities: Dict[sy.Symbol, sy.Expr] = dict()
+        self.__amplitudes: Dict[sy.Symbol, sy.Expr] = dict()
+        self.__dynamics: Dict[sy.Symbol, sy.Expr] = dict()
         self.__parameters = SuggestedParameterValues()
 
     def generate(self) -> ModelInfo:
@@ -393,7 +392,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         graph_group: List[StateTransitionGraph[ParticleWithSpin]],
     ) -> sy.Symbol:
         graph_group_label = _get_graph_group_unique_label(graph_group)
-        symbol = sy.Function(fR"I[{graph_group_label}]")(x)
+        symbol = sy.Symbol(fR"I[{graph_group_label}]")
         expression: List[sy.Expr] = list()
         for graph in graph_group:
             sequential_graphs = (
@@ -415,9 +414,9 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         ]
         sequential_amplitudes = reduce(operator.mul, partial_decays_symbols)
 
-        symbol = sy.Function(
+        symbol = sy.Symbol(
             f"A[{self.name_generator.generate_unique_amplitude_name(graph)}]"
-        )(x)
+        )
         coefficient = self.__generate_amplitude_coefficient(graph)
         prefactor = self.__generate_amplitude_prefactor(graph)
         expression = coefficient * sequential_amplitudes
@@ -471,7 +470,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
                         graph.topology, parent_recoil_edge_id
                     )
                 )
-        inv_mass, theta, phi = self.__generate_kinematic_variables(
+        _, theta, phi = self.__generate_kinematic_variables(
             decay_products_fs_ids,
             recoil_final_state,
             parent_recoil_final_state,
@@ -496,12 +495,12 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             if parent.particle.latex is None
             else parent.particle.latex
         )
-        dynamics = sy.Function(
+        dynamics_symbol = sy.Symbol(
             fR"D[{parent_label} \to {decay_product_description}]"
-        )(inv_mass)
+        )
         suggested_dynamics = 1
-        self.__dynamics[dynamics] = suggested_dynamics
-        return wigner_d * dynamics
+        self.__dynamics[dynamics_symbol] = suggested_dynamics
+        return wigner_d * dynamics_symbol
 
     def __generate_kinematic_variables(  # pylint: disable=no-self-use,unused-argument
         self,
