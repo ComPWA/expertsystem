@@ -9,6 +9,7 @@ from expertsystem.reaction.topology import (
     InteractionNode,
     SimpleStateTransitionTopologyBuilder,
     Topology,
+    create_n_body_topology,
 )
 
 
@@ -189,3 +190,29 @@ class TestTopology:
         assert topology == two_to_three_decay
         topology.swap_edges(4, 6)
         assert topology != two_to_three_decay
+
+
+@pytest.mark.parametrize(
+    "n_initial, n_final, exception",
+    [
+        (1, 0, ValueError),
+        (0, 1, ValueError),
+        (0, 0, ValueError),
+        (1, 1, None),
+        (2, 1, None),
+        (3, 1, None),
+        (1, 2, None),
+        (1, 3, None),
+        (2, 4, None),
+    ],
+)
+def test_create_n_body_topology(n_initial: int, n_final: int, exception):
+    if exception is not None:
+        with pytest.raises(exception):
+            create_n_body_topology(n_initial, n_final)
+    else:
+        topology = create_n_body_topology(n_initial, n_final)
+        assert len(topology.get_initial_state_edge_ids()) == n_initial
+        assert len(topology.get_final_state_edge_ids()) == n_final
+        assert len(topology.get_intermediate_state_edge_ids()) == 0
+        assert len(topology.nodes) == 1

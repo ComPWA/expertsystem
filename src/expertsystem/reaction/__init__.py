@@ -102,6 +102,7 @@ from .topology import (
     SimpleStateTransitionTopologyBuilder,
     StateTransitionGraph,
     Topology,
+    create_n_body_topology,
 )
 
 
@@ -916,12 +917,6 @@ def check_reaction_violations(
                 f" {edge_check_result.violated_edge_rules.values()}"
             )
 
-    def create_n_body_topology() -> Topology:
-        topology_builder = SimpleStateTransitionTopologyBuilder(
-            [InteractionNode(len(initial_state), len(final_state))]
-        )
-        return topology_builder.build(len(initial_state), len(final_state))[0]
-
     def check_edge_qn_conservation() -> Set[FrozenSet[str]]:
         """Check if edge quantum numbers are conserved.
 
@@ -957,7 +952,7 @@ def check_reaction_violations(
     # Using a n-body topology is enough, to determine the violations reliably
     # since only certain spin rules require the isobar model. These spin rules
     # are not required here though.
-    topology = create_n_body_topology()
+    topology = create_n_body_topology(len(initial_state), len(final_state))
     node_id = next(iter(topology.nodes))
 
     initial_facts = create_initial_facts(

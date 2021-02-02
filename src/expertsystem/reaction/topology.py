@@ -411,6 +411,32 @@ class SimpleStateTransitionTopologyBuilder:
         return extended_graph_list
 
 
+def create_n_body_topology(
+    number_of_initial_states: int, number_of_final_states: int
+) -> Topology:
+    n_in = number_of_initial_states
+    n_out = number_of_final_states
+    builder = SimpleStateTransitionTopologyBuilder(
+        [
+            InteractionNode(
+                number_of_ingoing_edges=n_in,
+                number_of_outgoing_edges=n_out,
+            )
+        ]
+    )
+    topologies = builder.build(
+        number_of_initial_edges=n_in,
+        number_of_final_edges=n_out,
+    )
+    decay_name = f"{n_in} to {n_out}"
+    if len(topologies) == 0:
+        raise ValueError(f"Could not create n-body decay for {decay_name}")
+    if len(topologies) > 1:
+        raise RuntimeError(f"Several n-body decays for {decay_name}")
+    topology = next(iter(topologies))
+    return topology
+
+
 def _attach_node_to_edges(
     graph: Tuple[Topology, Sequence[int]],
     interaction_node: InteractionNode,
