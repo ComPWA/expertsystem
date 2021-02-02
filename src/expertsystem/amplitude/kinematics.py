@@ -6,8 +6,6 @@ from typing import Dict, Iterable, Optional, Sequence, Tuple
 
 import attr
 
-from .model import Kinematics
-
 
 def _to_sorted_tuple(instance: Optional[Iterable[int]]) -> Tuple[int, ...]:
     if instance is None:
@@ -113,7 +111,6 @@ class HelicityKinematics:
         2. Then convert events to these kinematic variables.
     """
 
-    reaction_info: Kinematics = attr.ib()
     registered_inv_masses: Dict[Tuple[int, ...], str] = attr.ib(
         default=dict(), init=False
     )
