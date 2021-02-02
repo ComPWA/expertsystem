@@ -172,6 +172,30 @@ class ModelInfo:  # pylint: disable=too-many-instance-attributes
         validator=attr.validators.instance_of(SuggestedParameterValues),
     )
 
+    def set_dynamics(
+        self,
+        graph: StateTransitionGraph[ParticleWithSpin],
+        node_id: int,
+        expression: sy.Expr,
+    ) -> sy.Symbol:
+        decay = _TwoBodyDecay.from_graph(graph, node_id)
+        decay_product_description = " ".join(
+            child.state.particle.name
+            if child.state.particle.latex is None
+            else child.state.particle.latex
+            for child in decay.children
+        )
+        parent_label = (
+            decay.parent.state.particle.name
+            if decay.parent.state.particle.latex is None
+            else decay.parent.state.particle.latex
+        )
+        dynamics_symbol = sy.Symbol(
+            fR"D[{parent_label} \to {decay_product_description}]"
+        )
+        self.expression.dynamics[dynamics_symbol] = expression
+        return dynamics_symbol
+
 
 class _SympyHelicityAmplitudeNameGenerator:
     """Parameter name generator for the helicity formalism."""
@@ -470,7 +494,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
     ) -> sy.Symbol:
         wigner_d = self._generate_wigner_d(graph, node_id)
         suggested_dynamics = 1
-        dynamics_symbol = self._set_dynamics(
+        dynamics_symbol = self.__model.set_dynamics(
             graph, node_id, suggested_dynamics
         )
         return wigner_d * dynamics_symbol
@@ -530,30 +554,6 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
             beta=theta,
             gamma=0,
         )
-
-    def _set_dynamics(
-        self,
-        graph: StateTransitionGraph[ParticleWithSpin],
-        node_id: int,
-        expression: sy.Expr,
-    ) -> sy.Symbol:
-        decay = _TwoBodyDecay.from_graph(graph, node_id)
-        decay_product_description = " ".join(
-            child.state.particle.name
-            if child.state.particle.latex is None
-            else child.state.particle.latex
-            for child in decay.children
-        )
-        parent_label = (
-            decay.parent.state.particle.name
-            if decay.parent.state.particle.latex is None
-            else decay.parent.state.particle.latex
-        )
-        dynamics_symbol = sy.Symbol(
-            fR"D[{parent_label} \to {decay_product_description}]"
-        )
-        self.__model.expression.dynamics[dynamics_symbol] = expression
-        return dynamics_symbol
 
     def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[ParticleWithSpin]
