@@ -191,26 +191,6 @@ class Topology:
         """
         raise NotImplementedError
 
-    def get_originating_node_list(self, edge_ids: Iterable[int]) -> List[int]:
-        """Get list of node ids from which the supplied edges originate from.
-
-        Args:
-            edge_ids ([int]): list of edge ids for which the origin node is
-                searched for
-
-        Returns:
-            [int]: a list of node ids
-        """
-
-        def __get_originating_node(edge_id: int) -> Optional[int]:
-            return self.__edges[edge_id].originating_node_id
-
-        return [
-            node_id
-            for node_id in map(__get_originating_node, edge_ids)
-            if node_id
-        ]
-
     def get_initial_state_edge_ids(self) -> List[int]:
         return sorted(
             [
@@ -296,6 +276,27 @@ class Topology:
         popped_edge_id2 = self.__edges.pop(edge_id2)
         self.__edges[edge_id2] = popped_edge_id1
         self.__edges[edge_id1] = popped_edge_id2
+
+
+def get_originating_node_list(
+    topology: Topology, edge_ids: Iterable[int]
+) -> List[int]:
+    """Get list of node ids from which the supplied edges originate from.
+
+    Args:
+        edge_ids ([int]): list of edge ids for which the origin node is
+            searched for
+
+    Returns:
+        [int]: a list of node ids
+    """
+
+    def __get_originating_node(edge_id: int) -> Optional[int]:
+        return topology.edges[edge_id].originating_node_id
+
+    return [
+        node_id for node_id in map(__get_originating_node, edge_ids) if node_id
+    ]
 
 
 @attr.s
@@ -398,9 +399,9 @@ class SimpleStateTransitionTopologyBuilder:
                 )
                 # remove all combinations that originate from the same nodes
                 for comb1, comb2 in itertools.combinations(combis, 2):
-                    if topology.get_originating_node_list(
-                        comb1
-                    ) == topology.get_originating_node_list(comb2):
+                    if get_originating_node_list(
+                        topology, comb1
+                    ) == get_originating_node_list(topology, comb2):
                         combis.remove(comb2)
 
                 for combi in combis:
@@ -558,9 +559,6 @@ class StateTransitionGraph(Generic[EdgeType]):
             for edge_id, edge in self.topology.edges.items()
             if edge.originating_node_id == node_id
         ]
-
-    def get_originating_node_list(self, edge_ids: Iterable[int]) -> List[int]:
-        return self.topology.get_originating_node_list(edge_ids)
 
     def get_node_props(self, node_id: int) -> InteractionProperties:
         return self.__node_props[node_id]

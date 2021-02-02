@@ -11,6 +11,7 @@ from expertsystem.reaction.topology import (
     Topology,
     create_isobar_topologies,
     create_n_body_topology,
+    get_originating_node_list,
 )
 
 
@@ -176,8 +177,8 @@ class TestTopology:
     @staticmethod
     def test_getters(two_to_three_decay: Topology):
         topology = two_to_three_decay  # shorter name
-        assert topology.get_originating_node_list([0]) == []
-        assert topology.get_originating_node_list([5, 6]) == [2, 2]
+        assert get_originating_node_list(topology, edge_ids=[0]) == []
+        assert get_originating_node_list(topology, edge_ids=[5, 6]) == [2, 2]
         assert topology.get_initial_state_edge_ids() == [0, 1]
         assert topology.get_final_state_edge_ids() == [4, 5, 6]
         assert topology.get_intermediate_state_edge_ids() == [2, 3]
