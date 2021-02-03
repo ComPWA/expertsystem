@@ -237,7 +237,7 @@ class Result:
             ):
                 continue
             new_edge_props = dict()
-            for edge_id in graph.edges:
+            for edge_id in graph.topology.edges:
                 edge_props = graph.get_edge_props(edge_id)
                 if edge_props:
                     new_edge_props[edge_id] = edge_props[0]
@@ -247,7 +247,8 @@ class Result:
                     node_props={
                         i: node_props
                         for i, node_props in zip(
-                            graph.nodes, map(graph.get_node_props, graph.nodes)
+                            graph.topology.nodes,
+                            map(graph.get_node_props, graph.topology.nodes),
                         )
                         if node_props
                     },
@@ -277,7 +278,7 @@ class Result:
                 raise ValueError(
                     "Cannot merge graphs that don't have the same edge IDs"
                 )
-            for i in graph.edges:
+            for i in graph.topology.edges:
                 particle = graph.get_edge_props(i)
                 other_particles = merged_graph.get_edge_props(i)
                 if particle not in other_particles:
@@ -287,7 +288,7 @@ class Result:
             graph: StateTransitionGraph[Particle],
             merged_graph: StateTransitionGraph[ParticleCollection],
         ) -> bool:
-            if graph.edges != merged_graph.edges:
+            if graph.topology.edges != merged_graph.topology.edges:
                 return False
             for edge_id in (
                 graph.topology.incoming_edge_ids
@@ -315,13 +316,14 @@ class Result:
                     edge_id: ParticleCollection(
                         {graph.get_edge_props(edge_id)}
                     )
-                    for edge_id in graph.edges
+                    for edge_id in graph.topology.edges
                 }
                 inventory.append(
                     StateTransitionGraph[ParticleCollection](
                         topology=graph.topology,
                         node_props={
-                            i: graph.get_node_props(i) for i in graph.nodes
+                            i: graph.get_node_props(i)
+                            for i in graph.topology.nodes
                         },
                         edge_props=new_edge_props,
                     )

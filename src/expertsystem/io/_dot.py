@@ -63,7 +63,7 @@ def __graph_to_dot_content(
         )
     dot_source += __rank_string(top, prefix)
     dot_source += __rank_string(outs, prefix)
-    for i, edge in graph.edges.items():
+    for i, edge in topology.edges.items():
         j, k = edge.ending_node_id, edge.originating_node_id
         if j is None or k is None:
             dot_source += _DOT_DEFAULT_EDGE.format(

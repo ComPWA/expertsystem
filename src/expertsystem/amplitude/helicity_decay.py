@@ -158,7 +158,7 @@ def _get_prefactor(
 ) -> float:
     """Calculate the product of all prefactors defined in this graph."""
     prefactor = 1.0
-    for node_id in graph.nodes:
+    for node_id in graph.topology.nodes:
         node_props = graph.get_node_props(node_id)
         if node_props:
             temp_prefactor = __validate_float_type(node_props.parity_prefactor)
@@ -172,7 +172,7 @@ def _generate_particle_collection(
 ) -> ParticleCollection:
     particles = ParticleCollection()
     for graph in graphs:
-        for edge_props in map(graph.get_edge_props, graph.edges):
+        for edge_props in map(graph.get_edge_props, graph.topology.edges):
             particle, _ = edge_props
             if particle not in particles:
                 particles.add(particle)
@@ -254,7 +254,7 @@ class _HelicityAmplitudeNameGenerator:
     def register_amplitude_coefficient_name(
         self, graph: StateTransitionGraph[ParticleWithSpin]
     ) -> None:
-        for node_id in graph.nodes:
+        for node_id in graph.topology.nodes:
             (
                 coefficient_suffix,
                 parity_partner_coefficient_suffix,
@@ -309,7 +309,7 @@ class _HelicityAmplitudeNameGenerator:
         if isinstance(node_id, int):
             nodelist = frozenset({node_id})
         else:
-            nodelist = graph.nodes
+            nodelist = graph.topology.nodes
         for node in nodelist:
             (in_hel_info, out_hel_info) = self._retrieve_helicity_info(
                 graph, node
@@ -354,7 +354,7 @@ class _HelicityAmplitudeNameGenerator:
     ) -> str:
         """Generate unique suffix for a sequential amplitude graph."""
         output_suffix = ""
-        for node_id in graph.nodes:
+        for node_id in graph.topology.nodes:
             suffix = self.generate_amplitude_coefficient_name(graph, node_id)
             if suffix in self.parity_partner_coefficient_mapping:
                 suffix = self.parity_partner_coefficient_mapping[suffix]
@@ -457,7 +457,7 @@ class HelicityAmplitudeGenerator:
     ) -> AmplitudeNode:
         partial_decays: List[AmplitudeNode] = [
             self._generate_partial_decay(graph, node_id)
-            for node_id in graph.nodes
+            for node_id in graph.topology.nodes
         ]
         sequential_amplitudes = SequentialAmplitude(partial_decays)
 
@@ -551,7 +551,7 @@ class HelicityAmplitudeGenerator:
     ) -> Optional[float]:
         prefactor = _get_prefactor(graph)
         if prefactor != 1.0:
-            for node_id in graph.nodes:
+            for node_id in graph.topology.nodes:
                 raw_suffix = (
                     self.name_generator.generate_amplitude_coefficient_name(
                         graph, node_id

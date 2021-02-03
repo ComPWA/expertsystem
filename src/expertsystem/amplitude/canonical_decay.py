@@ -40,7 +40,7 @@ class _CanonicalAmplitudeNameGenerator(_HelicityAmplitudeNameGenerator):
         if isinstance(node_id, int):
             node_ids = frozenset({node_id})
         else:
-            node_ids = graph.nodes
+            node_ids = graph.topology.nodes
         for node in node_ids:
             name += (
                 super().generate_unique_amplitude_name(graph, node)[:-1]

@@ -235,7 +235,7 @@ def _remove_qns_from_graph(  # pylint: disable=too-many-branches
     qn_list: Set[Type[NodeQuantumNumber]],
 ) -> StateTransitionGraph[ParticleWithSpin]:
     new_node_props = {}
-    for node_id in graph.nodes:
+    for node_id in graph.topology.nodes:
         node_props = graph.get_node_props(node_id)
         new_node_props[node_id] = attr.evolve(
             node_props, **{x.__name__: None for x in qn_list}

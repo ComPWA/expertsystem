@@ -571,14 +571,6 @@ class StateTransitionGraph(Generic[EdgeType]):
         _assert_over_defined(self.topology.nodes, self.__node_props)
         _assert_over_defined(self.topology.edges, self.__edge_props)
 
-    @property
-    def nodes(self) -> FrozenSet[int]:
-        return frozenset(self.topology.nodes)
-
-    @property
-    def edges(self) -> FrozenDict[int, Edge]:
-        return self.topology.edges
-
     def get_node_props(self, node_id: int) -> InteractionProperties:
         return self.__node_props[node_id]
 
@@ -624,13 +616,13 @@ class StateTransitionGraph(Generic[EdgeType]):
         if self.topology != other.topology:
             return False
         if edge_comparator is not None:
-            for i in self.edges:
+            for i in self.topology.edges:
                 if not edge_comparator(
                     self.get_edge_props(i), other.get_edge_props(i)
                 ):
                     return False
         if node_comparator is not None:
-            for i in self.nodes:
+            for i in self.topology.nodes:
                 if not node_comparator(
                     self.get_node_props(i), other.get_node_props(i)
                 ):
