@@ -491,7 +491,7 @@ def _attach_node_to_edges(
 
 
 EdgeType = TypeVar("EdgeType")
-"""A TypeVar representing the type of edge properties."""
+"""A `~typing.TypeVar` representing the type of edge properties."""
 
 
 def _copy_topology(topology: Topology) -> Topology:
