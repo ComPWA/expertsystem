@@ -327,8 +327,9 @@ class _HelicityAmplitudeNameGenerator:
     def _retrieve_helicity_info(
         graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> Tuple[List[Tuple[str, float]], List[Tuple[str, float]]]:
-        in_edges = graph.get_edge_ids_ingoing_to_node(node_id)
-        out_edges = graph.get_edge_ids_outgoing_from_node(node_id)
+        topology = graph.topology
+        in_edges = topology.get_edge_ids_ingoing_to_node(node_id)
+        out_edges = topology.get_edge_ids_outgoing_from_node(node_id)
 
         in_names_hel_list = _get_name_hel_list(graph, in_edges)
         out_names_hel_list = _get_name_hel_list(graph, out_edges)
@@ -485,11 +486,12 @@ class HelicityAmplitudeGenerator:
             return HelicityParticle(particle, spin_projection)
 
         decay_products: List[DecayProduct] = list()
-        for out_edge_id in graph.get_edge_ids_outgoing_from_node(node_id):
+        topology = graph.topology
+        for out_edge_id in topology.get_edge_ids_outgoing_from_node(node_id):
             edge_props = graph.get_edge_props(out_edge_id)
             helicity_particle = create_helicity_particle(edge_props)
             final_state_ids = _determine_attached_final_state(
-                graph.topology, out_edge_id
+                topology, out_edge_id
             )
             decay_products.append(
                 DecayProduct(
@@ -499,7 +501,7 @@ class HelicityAmplitudeGenerator:
                 )
             )
 
-        in_edge_ids = graph.get_edge_ids_ingoing_to_node(node_id)
+        in_edge_ids = topology.get_edge_ids_ingoing_to_node(node_id)
         if len(in_edge_ids) != 1:
             raise ValueError("This node does not represent a two body decay!")
         ingoing_edge_id = next(iter(in_edge_ids))
@@ -507,18 +509,18 @@ class HelicityAmplitudeGenerator:
         helicity_particle = create_helicity_particle(edge_props)
         helicity_decay = HelicityDecay(helicity_particle, decay_products)
 
-        recoil_edge_id = _get_recoil_edge(graph.topology, ingoing_edge_id)
+        recoil_edge_id = _get_recoil_edge(topology, ingoing_edge_id)
         if recoil_edge_id is not None:
             helicity_decay.recoil_system = RecoilSystem(
-                _determine_attached_final_state(graph.topology, recoil_edge_id)
+                _determine_attached_final_state(topology, recoil_edge_id)
             )
             parent_recoil_edge_id = _get_parent_recoil_edge(
-                graph.topology, ingoing_edge_id
+                topology, ingoing_edge_id
             )
             if parent_recoil_edge_id is not None:
                 helicity_decay.recoil_system.parent_recoil_final_state = (
                     _determine_attached_final_state(
-                        graph.topology, parent_recoil_edge_id
+                        topology, parent_recoil_edge_id
                     )
                 )
 

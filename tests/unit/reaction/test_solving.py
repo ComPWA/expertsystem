@@ -41,7 +41,7 @@ class TestResult:
         collapsed_graphs = result.collapse_graphs()
         assert len(collapsed_graphs) == 1
         graph = next(iter(collapsed_graphs))
-        edge_id = next(iter(graph.get_intermediate_state_edge_ids()))
+        edge_id = next(iter(graph.topology.intermediate_edge_ids))
         f_resonances = pdg.filter(
             lambda p: p.name in ["f(0)(980)", "f(0)(1500)"]
         )

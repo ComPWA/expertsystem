@@ -579,21 +579,6 @@ class StateTransitionGraph(Generic[EdgeType]):
     def edges(self) -> FrozenDict[int, Edge]:
         return self.topology.edges
 
-    def get_initial_state_edge_ids(self) -> FrozenSet[int]:
-        return self.topology.incoming_edge_ids
-
-    def get_final_state_edge_ids(self) -> FrozenSet[int]:
-        return self.topology.outgoing_edge_ids
-
-    def get_intermediate_state_edge_ids(self) -> FrozenSet[int]:
-        return self.topology.intermediate_edge_ids
-
-    def get_edge_ids_ingoing_to_node(self, node_id: int) -> Set[int]:
-        return self.topology.get_edge_ids_ingoing_to_node(node_id)
-
-    def get_edge_ids_outgoing_from_node(self, node_id: int) -> Set[int]:
-        return self.topology.get_edge_ids_outgoing_from_node(node_id)
-
     def get_node_props(self, node_id: int) -> InteractionProperties:
         return self.__node_props[node_id]
 

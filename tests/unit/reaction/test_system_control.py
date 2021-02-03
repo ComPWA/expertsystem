@@ -376,7 +376,7 @@ def test_edge_swap(particle_database, initial_state, final_state):
 
     for graph in init_graphs:
         ref_mapping = _create_edge_id_particle_mapping(
-            graph, graph.get_final_state_edge_ids()
+            graph, graph.topology.outgoing_edge_ids
         )
         edge_keys = list(ref_mapping.keys())
         edge1 = edge_keys[0]
@@ -426,18 +426,18 @@ def test_match_external_edges(particle_database, initial_state, final_state):
     iter_graphs = iter(init_graphs)
     first_graph = next(iter_graphs)
     ref_mapping_fs = _create_edge_id_particle_mapping(
-        first_graph, first_graph.get_final_state_edge_ids()
+        first_graph, first_graph.topology.outgoing_edge_ids
     )
     ref_mapping_is = _create_edge_id_particle_mapping(
-        first_graph, first_graph.get_initial_state_edge_ids()
+        first_graph, first_graph.topology.incoming_edge_ids
     )
 
     for graph in iter_graphs:
         assert ref_mapping_fs == _create_edge_id_particle_mapping(
-            graph, graph.get_final_state_edge_ids()
+            graph, first_graph.topology.outgoing_edge_ids
         )
         assert ref_mapping_is == _create_edge_id_particle_mapping(
-            graph, graph.get_initial_state_edge_ids()
+            graph, first_graph.topology.incoming_edge_ids
         )
 
 
@@ -518,8 +518,8 @@ def test_external_edge_identical_particle_combinatorics(
 
     for group in comb_graphs[1:]:
         assert ref_mapping_fs == _create_edge_id_particle_mapping(
-            group, group.get_final_state_edge_ids()
+            group, group.topology.outgoing_edge_ids
         )
         assert ref_mapping_is == _create_edge_id_particle_mapping(
-            group, group.get_initial_state_edge_ids()
+            group, group.topology.incoming_edge_ids
         )
