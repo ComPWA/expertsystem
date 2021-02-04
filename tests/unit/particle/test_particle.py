@@ -115,8 +115,10 @@ class TestParity:
 
     @staticmethod
     def test_exceptions():
+        with pytest.raises(TypeError):
+            Parity(1.2)  # type: ignore
         with pytest.raises(ValueError):
-            Parity(1.2)
+            Parity(0)
 
 
 class TestParticle:

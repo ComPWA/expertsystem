@@ -30,24 +30,27 @@ from typing import (
 )
 
 import attr
+from attr.validators import instance_of
 from particle import Particle as PdgDatabase
 from particle.particle import enums
 
 
 @total_ordering
-class Parity(abc.Hashable):
-    """Safe, immutable data container for parity."""
+@attr.s(frozen=True, repr=False, eq=False, hash=True)
+class Parity:
+    value: int = attr.ib(validator=instance_of(int))
 
-    def __init__(self, value: Union[float, int, str]) -> None:
-        value = float(value)
-        if value not in [-1.0, +1.0]:
+    @value.validator
+    def __check_plusminus(  # type: ignore  # pylint: disable=no-self-use,unused-argument
+        self, _: attr.Attribute, value: int
+    ) -> None:
+        if value not in [-1, +1]:
             raise ValueError(f"Parity can only be +1 or -1, not {value}")
-        self.__value: int = int(value)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Parity):
-            return self.__value == other.value
-        return self.__value == other
+            return self.value == other.value
+        return self.value == other
 
     def __gt__(self, other: Any) -> bool:
         return self.value > int(other)
@@ -58,17 +61,8 @@ class Parity(abc.Hashable):
     def __neg__(self) -> "Parity":
         return Parity(-self.value)
 
-    def __hash__(self) -> int:
-        return self.__value
-
     def __repr__(self) -> str:
-        return (
-            f'{self.__class__.__name__}({"+1" if self.__value > 0 else "-1"})'
-        )
-
-    @property
-    def value(self) -> int:
-        return self.__value
+        return f'{self.__class__.__name__}({"+1" if self.value > 0 else "-1"})'
 
 
 def _to_float(value: SupportsFloat) -> float:
@@ -672,4 +666,4 @@ def __create_parity(parity_enum: enums.Parity) -> Optional[Parity]:
         return None
     if parity_enum == getattr(parity_enum, "o", None):  # particle < 0.14
         return None
-    return Parity(parity_enum)
+    return Parity(int(parity_enum))
