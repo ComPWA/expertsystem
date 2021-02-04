@@ -360,6 +360,11 @@ class TestSpin:
         assert float(isospin) == 1.5
         assert isospin.magnitude == 1.5
         assert isospin.projection == -0.5
+        isospin = Spin(1, -0.0)
+        assert isinstance(isospin.magnitude, float)
+        assert isinstance(isospin.projection, float)
+        assert isospin.magnitude == 1.0
+        assert isospin.projection == 0.0
 
     @staticmethod
     def test_hash():
