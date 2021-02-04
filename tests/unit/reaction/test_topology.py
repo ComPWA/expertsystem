@@ -1,6 +1,8 @@
 # flake8: noqa
 # pylint: disable=no-self-use, redefined-outer-name, too-many-arguments
 
+import typing
+
 import attr
 import pytest
 
@@ -55,6 +57,18 @@ class TestEdge:
         assert edge.get_connected_nodes() == {3}
         edge = Edge(ending_node_id=4)
         assert edge.get_connected_nodes() == {4}
+
+    @typing.no_type_check
+    def test_immutability(self):
+        edge = Edge(1, 2)
+        with pytest.raises(attr.exceptions.FrozenInstanceError):
+            edge.originating_node_id = None
+        with pytest.raises(attr.exceptions.FrozenInstanceError):
+            edge.originating_node_id += 1
+        with pytest.raises(attr.exceptions.FrozenInstanceError):
+            edge.ending_node_id = None
+        with pytest.raises(attr.exceptions.FrozenInstanceError):
+            edge.ending_node_id += 1
 
 
 class TestInteractionNode:
@@ -193,6 +207,23 @@ class TestTopology:
         assert topology.incoming_edge_ids == {0, 1}
         assert topology.outgoing_edge_ids == {4, 5, 6}
         assert topology.intermediate_edge_ids == {2, 3}
+
+    @staticmethod
+    @typing.no_type_check
+    def test_immutability(two_to_three_decay: Topology):
+        with pytest.raises(attr.exceptions.FrozenInstanceError):
+            two_to_three_decay.edges = {0: Edge(None, None)}
+        with pytest.raises(TypeError):
+            two_to_three_decay.edges[0] = Edge(None, None)
+        with pytest.raises(attr.exceptions.FrozenInstanceError):
+            two_to_three_decay.edges[0].ending_node_id = None
+        with pytest.raises(attr.exceptions.FrozenInstanceError):
+            two_to_three_decay.nodes = {0, 1}
+        with pytest.raises(AttributeError):
+            two_to_three_decay.nodes.add(2)
+        for node in two_to_three_decay.nodes:
+            node += 666
+        assert two_to_three_decay.nodes == {0, 1, 2}
 
     @staticmethod
     def test_swap_edges(two_to_three_decay: Topology):
