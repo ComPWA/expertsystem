@@ -8,8 +8,8 @@ from expertsystem.reaction.topology import Edge, Topology
 
 def test_dot_syntax(jpsi_to_gamma_pi_pi_helicity_solutions: Result):
     result = jpsi_to_gamma_pi_pi_helicity_solutions
-    for graph in result.transitions:
-        dot_data = io.convert_to_dot(graph)
+    for transition in result.transitions:
+        dot_data = io.convert_to_dot(transition)
         assert pydot.graph_from_dot_data(dot_data) is not None
     dot_data = io.convert_to_dot(result.transitions)
     assert pydot.graph_from_dot_data(dot_data) is not None
