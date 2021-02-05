@@ -5,6 +5,7 @@ from math import factorial
 import pytest
 
 from expertsystem.particle import ParticleCollection
+from expertsystem.reaction import Result
 from expertsystem.reaction.combinatorics import (
     _generate_kinematic_permutations,
     _generate_outer_edge_permutations,
@@ -13,6 +14,7 @@ from expertsystem.reaction.combinatorics import (
     _KinematicRepresentation,
     _safe_set_spin_projections,
     create_initial_facts,
+    perform_external_edge_identical_particle_combinatorics,
 )
 from expertsystem.reaction.topology import Topology, create_isobar_topologies
 
@@ -206,3 +208,23 @@ def test_generate_permutations(
     assert spin_permutations[1][2][1] == +1
     assert spin_permutations[2][0][1] == +1
     assert spin_permutations[3][0][1] == +1
+
+
+def test_perform_external_edge_identical_particle_combinatorics(
+    y_to_d0_d0bar_pi0_pi0,
+):
+    result: Result = y_to_d0_d0bar_pi0_pi0("helicity")
+    some_graph = next(iter(result.transitions))
+    outgoing_edge_ids = some_graph.topology.outgoing_edge_ids
+    final_states = {
+        i: some_graph.get_edge_props(i)[0].name for i in outgoing_edge_ids
+    }
+    assert final_states == {3: "D0", 4: "pi0", 5: "D~0", 6: "pi0"}
+    permutations = perform_external_edge_identical_particle_combinatorics(
+        some_graph
+    )
+    assert len(permutations) == 2
+    for graph in permutations:
+        assert {
+            i: graph.get_edge_props(i)[0].name for i in outgoing_edge_ids
+        } == final_states

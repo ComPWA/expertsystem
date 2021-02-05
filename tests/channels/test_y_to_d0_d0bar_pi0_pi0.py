@@ -1,7 +1,7 @@
 import pytest
 
 import expertsystem as es
-from expertsystem.reaction import InteractionTypes, StateTransitionManager
+from expertsystem.reaction import Result
 
 
 @pytest.mark.parametrize(
@@ -33,19 +33,8 @@ def test_simple(formalism_type, n_solutions, particle_database):
         ("canonical-helicity", 28),  # two different LS couplings 2*14 = 28
     ],
 )
-def test_full(formalism_type, n_solutions, particle_database):
-    stm = StateTransitionManager(
-        initial_state=[("Y(4260)", [-1, +1])],
-        final_state=["D0", "D~0", "pi0", "pi0"],
-        particles=particle_database,
-        allowed_intermediate_particles=["D*"],
-        formalism_type=formalism_type,
-        number_of_threads=1,
-    )
-    stm.set_allowed_interaction_types([InteractionTypes.Strong])
-    stm.add_final_state_grouping([["D0", "pi0"], ["D~0", "pi0"]])
-    problem_sets = stm.create_problem_sets()
-    result = stm.find_solutions(problem_sets)
+def test_full(y_to_d0_d0bar_pi0_pi0, formalism_type, n_solutions):
+    result: Result = y_to_d0_d0bar_pi0_pi0(formalism_type)
     assert len(result.transitions) == n_solutions
     model = es.generate_amplitudes(result)
     assert len(model.parameters) == 9
