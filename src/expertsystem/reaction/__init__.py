@@ -191,7 +191,7 @@ class _SolutionContainer:
 
 @attr.s(on_setattr=attr.setters.frozen)
 class Result:
-    solutions: List[StateTransitionGraph[ParticleWithSpin]] = attr.ib(
+    transitions: List[StateTransitionGraph[ParticleWithSpin]] = attr.ib(
         factory=list
     )
     formalism_type: Optional[str] = attr.ib(default=None)
@@ -217,16 +217,16 @@ class Result:
         ]
 
     def __get_first_graph(self) -> StateTransitionGraph[ParticleWithSpin]:
-        if len(self.solutions) == 0:
+        if len(self.transitions) == 0:
             raise ValueError(
                 f"No solutions in {self.__class__.__name__} object"
             )
-        return next(iter(self.solutions))
+        return next(iter(self.transitions))
 
     def get_intermediate_particles(self) -> ParticleCollection:
         """Extract the names of the intermediate state particles."""
         intermediate_states = ParticleCollection()
-        for graph in self.solutions:
+        for graph in self.transitions:
             for edge_props in map(
                 graph.get_edge_props,
                 graph.topology.intermediate_edge_ids,
@@ -246,7 +246,7 @@ class Result:
         .. seealso:: :doc:`/usage/visualization`
         """
         inventory: List[StateTransitionGraph[Particle]] = list()
-        for graph in self.solutions:
+        for graph in self.transitions:
             if any(
                 [
                     graph.compare(
@@ -1117,7 +1117,7 @@ def generate(  # pylint: disable=too-many-arguments
     ...     particles=es.io.load_pdg(),
     ...     topology_building="isobar",
     ... )
-    >>> len(result.solutions)
+    >>> len(result.transitions)
     4
     """
     if isinstance(initial_state, str) or (
