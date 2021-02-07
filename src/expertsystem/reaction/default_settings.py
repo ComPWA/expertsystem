@@ -3,7 +3,7 @@
 from copy import deepcopy
 from enum import Enum, auto
 from os.path import dirname, join, realpath
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from expertsystem.reaction.conservation_rules import (
     BaryonNumberConservation,
@@ -104,9 +104,9 @@ def _get_ang_mom_magnitudes(is_nbody: bool) -> List[float]:
 
 
 def __create_projections(
-    magnitudes: List[Union[int, float]]
+    magnitudes: Iterable[Union[int, float]]
 ) -> List[Union[int, float]]:
-    return magnitudes + list([-x for x in magnitudes if x > 0])
+    return list(magnitudes) + [-x for x in magnitudes if x > 0]
 
 
 def create_default_interaction_settings(
