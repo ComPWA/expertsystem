@@ -780,7 +780,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             final_result.execution_info.violated_edge_rules
             or final_result.execution_info.violated_node_rules
             or final_result.execution_info.not_executed_edge_rules
-            or final_result.execution_info.violated_node_rules
+            or final_result.execution_info.not_executed_node_rules
         ):
             raise RuntimeWarning(
                 "There were violated or non-executed conservation rules",
