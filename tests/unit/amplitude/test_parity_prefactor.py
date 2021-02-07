@@ -76,10 +76,9 @@ def test_parity_prefactor(
 
         assert isinstance(node_id, int)
 
-        assert (
-            relative_parity_prefactor
-            == solution.get_node_props(node_id).parity_prefactor
-        )
+        node_prop = solution.get_node_props(node_id)
+        assert node_prop is not None
+        assert relative_parity_prefactor == node_prop.parity_prefactor
 
     amplitude_model = es.generate_amplitudes(result)
     es.io.write(

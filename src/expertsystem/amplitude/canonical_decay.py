@@ -20,6 +20,8 @@ def _generate_clebsch_gordan_string(
     graph: StateTransitionGraph[ParticleWithSpin], node_id: int
 ) -> str:
     node_props = graph.get_node_props(node_id)
+    if node_props is None:
+        raise ValueError(f"No properties defined for node {node_id}")
     ang_orb_mom = __get_angular_momentum(node_props)
     spin = __get_coupled_spin(node_props)
     return f"_L_{ang_orb_mom.magnitude}_S_{spin.magnitude}"
@@ -73,6 +75,8 @@ def _clebsch_gordan_decorator(
             )
 
         node_props = graph.get_node_props(node_id)
+        if node_props is None:
+            raise ValueError(f"No properties defined for node {node_id}")
         ang_mom = __get_angular_momentum(node_props)
         if ang_mom.projection != 0.0:
             raise ValueError(f"Projection of L is non-zero!: {ang_mom}")

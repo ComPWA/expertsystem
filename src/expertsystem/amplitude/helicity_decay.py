@@ -261,7 +261,8 @@ class _HelicityAmplitudeNameGenerator:
                 priority_partner_coefficient_suffix,
             ) = self._generate_amplitude_coefficient_couple(graph, node_id)
 
-            if graph.get_node_props(node_id).parity_prefactor is None:
+            node_props = graph.get_node_props(node_id)
+            if node_props is not None and node_props.parity_prefactor is None:
                 continue
 
             if (

@@ -558,7 +558,7 @@ class StateTransitionGraph(Generic[EdgeType]):
     def __init__(
         self,
         topology: Topology,
-        node_props: Mapping[int, InteractionProperties],
+        node_props: Mapping[int, Optional[InteractionProperties]],
         edge_props: Mapping[int, EdgeType],
     ):
         self.__node_props = dict(node_props)
@@ -571,8 +571,8 @@ class StateTransitionGraph(Generic[EdgeType]):
         _assert_over_defined(self.topology.nodes, self.__node_props)
         _assert_over_defined(self.topology.edges, self.__edge_props)
 
-    def get_node_props(self, node_id: int) -> InteractionProperties:
-        return self.__node_props[node_id]
+    def get_node_props(self, node_id: int) -> Optional[InteractionProperties]:
+        return self.__node_props.get(node_id)
 
     def get_edge_props(self, edge_id: int) -> EdgeType:
         return self.__edge_props[edge_id]
@@ -610,7 +610,13 @@ class StateTransitionGraph(Generic[EdgeType]):
         other: "StateTransitionGraph",
         edge_comparator: Optional[Callable[[EdgeType, EdgeType], bool]] = None,
         node_comparator: Optional[
-            Callable[[InteractionProperties, InteractionProperties], bool]
+            Callable[
+                [
+                    Optional[InteractionProperties],
+                    Optional[InteractionProperties],
+                ],
+                bool,
+            ]
         ] = None,
     ) -> bool:
         if self.topology != other.topology:
