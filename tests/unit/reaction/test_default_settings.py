@@ -1,3 +1,7 @@
+from typing import List
+
+from expertsystem.particle import ParticleCollection
+from expertsystem.reaction.combinatorics import arange
 from expertsystem.reaction.default_settings import (
     InteractionTypes,
     create_default_interaction_settings,
@@ -8,8 +12,17 @@ from expertsystem.reaction.quantum_numbers import (
 )
 
 
-def test_create_default_interaction_settings():
-    settings = create_default_interaction_settings(formalism_type="helicity")
+def spin_range(lower: float, upper: float) -> List[float]:
+    return list(arange(lower, upper + 0.5, delta=0.5))
+
+
+def test_create_default_interaction_settings(
+    particle_database: ParticleCollection,
+):
+    settings = create_default_interaction_settings(
+        formalism_type="helicity",
+        particles=particle_database,
+    )
     assert set(settings) == set(InteractionTypes)
     for interaction_type in InteractionTypes:
         assert settings[interaction_type][0].qn_domains == {
@@ -20,30 +33,12 @@ def test_create_default_interaction_settings():
             EdgeQuantumNumbers.parity: [-1, 1],
             EdgeQuantumNumbers.c_parity: [-1, 1, None],
             EdgeQuantumNumbers.g_parity: [-1, 1, None],
-            EdgeQuantumNumbers.spin_magnitude: [0, 0.5, 1, 1.5, 2],
-            EdgeQuantumNumbers.spin_projection: [
-                0,
-                0.5,
-                1,
-                1.5,
-                2,
-                -0.5,
-                -1,
-                -1.5,
-                -2,
-            ],
+            EdgeQuantumNumbers.spin_magnitude: spin_range(0, 4),
+            EdgeQuantumNumbers.spin_projection: spin_range(-4, 4),
             EdgeQuantumNumbers.charge: [-2, -1, 0, 1, 2],
-            EdgeQuantumNumbers.isospin_magnitude: [0, 0.5, 1, 1.5],
-            EdgeQuantumNumbers.isospin_projection: [
-                0,
-                0.5,
-                1,
-                1.5,
-                -0.5,
-                -1,
-                -1.5,
-            ],
-            EdgeQuantumNumbers.strangeness: [-1, 0, 1],
+            EdgeQuantumNumbers.isospin_magnitude: spin_range(0.0, 1.5),
+            EdgeQuantumNumbers.isospin_projection: spin_range(-1.5, 1.5),
+            EdgeQuantumNumbers.strangeness: [-3, -2, -1, 0, 1, 2, 3],
             EdgeQuantumNumbers.charmness: [-1, 0, 1],
             EdgeQuantumNumbers.bottomness: [-1, 0, 1],
         }

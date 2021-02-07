@@ -477,17 +477,18 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             if len(initial_state) > 1:
                 mass_conservation_factor = None
 
+        if reload_pdg or len(self.__particles) == 0:
+            self.__particles = load_default_particles()
+
         if not self.interaction_type_settings:
             self.interaction_type_settings = (
                 create_default_interaction_settings(
                     formalism_type,
+                    self.__particles,
                     nbody_topology=use_nbody_topology,
                     mass_conservation_factor=mass_conservation_factor,
                 )
             )
-
-        if reload_pdg or len(self.__particles) == 0:
-            self.__particles = load_default_particles()
 
         self.__user_allowed_intermediate_particles = (
             allowed_intermediate_particles

@@ -5,6 +5,7 @@ from enum import Enum, auto
 from os.path import dirname, join, realpath
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
+from expertsystem.particle import ParticleCollection
 from expertsystem.reaction.conservation_rules import (
     BaryonNumberConservation,
     BottomnessConservation,
@@ -102,11 +103,12 @@ def _get_ang_mom_magnitudes(is_nbody: bool) -> List[float]:
 def __create_projections(
     magnitudes: Iterable[Union[int, float]]
 ) -> List[Union[int, float]]:
-    return list(magnitudes) + [-x for x in magnitudes if x > 0]
+    return sorted(list(magnitudes) + [-x for x in magnitudes if x > 0])
 
 
 def create_default_interaction_settings(
     formalism_type: str,
+    particles: ParticleCollection,
     nbody_topology: bool = False,
     mass_conservation_factor: Optional[float] = 5.0,
 ) -> Dict[InteractionTypes, Tuple[EdgeSettings, NodeSettings]]:
@@ -123,25 +125,63 @@ def create_default_interaction_settings(
         },
         rule_priorities=__EDGE_RULE_PRIORITIES,
         qn_domains={
-            EdgeQuantumNumbers.charge: [-2, -1, 0, 1, 2],
-            EdgeQuantumNumbers.baryon_number: [-1, 0, 1],
-            EdgeQuantumNumbers.electron_lepton_number: [-1, 0, 1],
-            EdgeQuantumNumbers.muon_lepton_number: [-1, 0, 1],
-            EdgeQuantumNumbers.tau_lepton_number: [-1, 0, 1],
-            EdgeQuantumNumbers.parity: [-1, 1],
-            EdgeQuantumNumbers.c_parity: [-1, 1, None],
-            EdgeQuantumNumbers.g_parity: [-1, 1, None],
-            EdgeQuantumNumbers.spin_magnitude: [0, 0.5, 1, 1.5, 2],
+            EdgeQuantumNumbers.charge: sorted({p.charge for p in particles}),
+            EdgeQuantumNumbers.baryon_number: sorted(
+                {p.baryon_number for p in particles}
+            ),
+            EdgeQuantumNumbers.electron_lepton_number: sorted(
+                {p.electron_lepton_number for p in particles}
+            ),
+            EdgeQuantumNumbers.muon_lepton_number: sorted(
+                {p.muon_lepton_number for p in particles}
+            ),
+            EdgeQuantumNumbers.tau_lepton_number: sorted(
+                {p.tau_lepton_number for p in particles}
+            ),
+            EdgeQuantumNumbers.parity: sorted(
+                {p.parity.value for p in particles if p.parity is not None}
+            ),
+            EdgeQuantumNumbers.c_parity: sorted(
+                {
+                    None if p.c_parity is None else p.c_parity.value
+                    for p in particles
+                },
+                key=lambda i: 999 if i is None else i,
+            ),
+            EdgeQuantumNumbers.g_parity: sorted(
+                {
+                    None if p.g_parity is None else p.g_parity.value
+                    for p in particles
+                },
+                key=lambda i: 999 if i is None else i,
+            ),
+            EdgeQuantumNumbers.spin_magnitude: sorted(
+                {p.spin for p in particles}
+            ),
             EdgeQuantumNumbers.spin_projection: __create_projections(
-                [0, 0.5, 1, 1.5, 2]
+                {p.spin for p in particles}
             ),
-            EdgeQuantumNumbers.isospin_magnitude: [0, 0.5, 1, 1.5],
+            EdgeQuantumNumbers.isospin_magnitude: sorted(
+                {
+                    0 if p.isospin is None else p.isospin.magnitude
+                    for p in particles
+                }
+            ),
             EdgeQuantumNumbers.isospin_projection: __create_projections(
-                [0, 0.5, 1, 1.5]
+                {
+                    0 if p.isospin is None else p.isospin.magnitude
+                    for p in particles
+                }
             ),
-            EdgeQuantumNumbers.charmness: [-1, 0, 1],
-            EdgeQuantumNumbers.strangeness: [-1, 0, 1],
-            EdgeQuantumNumbers.bottomness: [-1, 0, 1],
+            EdgeQuantumNumbers.charmness: sorted(
+                {p.charmness for p in particles}
+            ),
+            EdgeQuantumNumbers.strangeness: sorted(
+                {p.strangeness for p in particles}
+            ),
+            EdgeQuantumNumbers.bottomness: sorted(
+                {p.bottomness for p in particles}
+            ),
         },
     )
     formalism_node_settings = NodeSettings(
