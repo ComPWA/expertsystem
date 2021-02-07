@@ -89,17 +89,13 @@ class InteractionTypes(Enum):
 
 def _get_spin_magnitudes(is_nbody: bool) -> List[float]:
     if is_nbody:
-        return [
-            0,
-        ]
+        return [0]
     return [0, 0.5, 1, 1.5, 2]
 
 
 def _get_ang_mom_magnitudes(is_nbody: bool) -> List[float]:
     if is_nbody:
-        return [
-            0,
-        ]
+        return [0]
     return [0, 1, 2]
 
 
