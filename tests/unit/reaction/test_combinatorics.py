@@ -5,7 +5,6 @@ from math import factorial
 import pytest
 
 from expertsystem.particle import ParticleCollection
-from expertsystem.reaction import Result
 from expertsystem.reaction.combinatorics import (
     _generate_kinematic_permutations,
     _generate_outer_edge_permutations,
@@ -16,7 +15,13 @@ from expertsystem.reaction.combinatorics import (
     create_initial_facts,
     perform_external_edge_identical_particle_combinatorics,
 )
-from expertsystem.reaction.topology import Topology, create_isobar_topologies
+from expertsystem.reaction.quantum_numbers import ParticleWithSpin
+from expertsystem.reaction.topology import (
+    Edge,
+    StateTransitionGraph,
+    Topology,
+    create_isobar_topologies,
+)
 
 
 @pytest.fixture(scope="session")
@@ -211,20 +216,46 @@ def test_generate_permutations(
 
 
 def test_perform_external_edge_identical_particle_combinatorics(
-    y_to_d0_d0bar_pi0_pi0,
+    particle_database: ParticleCollection,
 ):
-    result: Result = y_to_d0_d0bar_pi0_pi0("helicity")
-    some_graph = next(iter(result.transitions))
-    outgoing_edge_ids = some_graph.topology.outgoing_edge_ids
-    final_states = {
-        i: some_graph.get_edge_props(i)[0].name for i in outgoing_edge_ids
-    }
-    assert final_states == {3: "D0", 4: "pi0", 5: "D~0", 6: "pi0"}
-    permutations = perform_external_edge_identical_particle_combinatorics(
-        some_graph
+    double_decay = Topology(
+        nodes={0, 1, 2},  # type: ignore
+        edges={
+            0: Edge(originating_node_id=None, ending_node_id=0),
+            1: Edge(originating_node_id=0, ending_node_id=1),
+            2: Edge(originating_node_id=0, ending_node_id=2),
+            3: Edge(originating_node_id=1, ending_node_id=None),
+            4: Edge(originating_node_id=1, ending_node_id=None),
+            5: Edge(originating_node_id=2, ending_node_id=None),
+            6: Edge(originating_node_id=2, ending_node_id=None),
+        },
     )
-    assert len(permutations) == 2
-    for graph in permutations:
-        assert {
-            i: graph.get_edge_props(i)[0].name for i in outgoing_edge_ids
-        } == final_states
+    graph = StateTransitionGraph[ParticleWithSpin](
+        topology=double_decay,
+        edge_props={
+            0: (particle_database["J/psi(1S)"], 0),
+            1: (particle_database["f(0)(980)"], 0),
+            2: (particle_database["f(0)(980)"], 0),
+            3: (particle_database["pi-"], 0),
+            4: (particle_database["pi+"], 0),
+            5: (particle_database["pi-"], 0),
+            6: (particle_database["pi+"], 0),
+        },
+        node_props={},
+    )
+    graphs = perform_external_edge_identical_particle_combinatorics(graph)
+    assert len(graphs) == 4
+
+    final_state_edge_ids = graph.topology.outgoing_edge_ids
+    get_final_state = lambda g: tuple(  # noqa: E731
+        g.get_edge_props(i)[0].name for i in final_state_edge_ids
+    )
+    get_originating_node = lambda g: tuple(  # noqa: E731
+        g.topology.edges[i].originating_node_id for i in final_state_edge_ids
+    )
+    for g in graphs:  # pylint: disable=invalid-name
+        assert get_final_state(g) == ("pi-", "pi+", "pi-", "pi+")
+    assert get_originating_node(graphs[0]) == (1, 1, 2, 2)
+    assert get_originating_node(graphs[1]) == (1, 2, 2, 1)
+    assert get_originating_node(graphs[2]) == (2, 1, 1, 2)
+    assert get_originating_node(graphs[3]) == (2, 2, 1, 1)
