@@ -6,7 +6,10 @@ See :doc:`/usage/visualization` for more info.
 from typing import Any, Callable, Iterable, List, Optional, Union
 
 from expertsystem.particle import Particle, ParticleCollection
-from expertsystem.reaction.quantum_numbers import ParticleWithSpin
+from expertsystem.reaction.quantum_numbers import (
+    InteractionProperties,
+    ParticleWithSpin,
+)
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
 
 _DOT_HEAD = """digraph {
@@ -76,6 +79,14 @@ def __graph_to_dot_content(
                 prefix + __node_name(i, j),
                 __get_edge_label(graph, i),
             )
+    if isinstance(graph, StateTransitionGraph):
+        for node_id in topology.nodes:
+            node_prop = graph.get_node_props(node_id)
+            if node_prop is not None:
+                node_label = __node_label(node_prop)
+                dot_source += _DOT_DEFAULT_NODE.format(
+                    f"{prefix}node{node_id}", node_label
+                )
     return dot_source
 
 
@@ -120,4 +131,23 @@ def __edge_label(
         return label
     if isinstance(edge_prop, ParticleCollection):
         return "\n".join(sorted(edge_prop.names))
+    raise NotImplementedError
+
+
+def __node_label(node_prop: Union[InteractionProperties]) -> str:
+    if isinstance(node_prop, InteractionProperties):
+        output = ""
+        if node_prop.l_magnitude is not None:
+            l_label = str(node_prop.l_magnitude)
+            if node_prop.l_projection is not None:
+                l_label = f"{(node_prop.l_magnitude, node_prop.l_projection)}"
+            output += f"l={l_label}\n"
+        if node_prop.s_magnitude is not None:
+            s_label = str(node_prop.s_magnitude)
+            if node_prop.s_projection is not None:
+                s_label = f"{(node_prop.s_magnitude, node_prop.s_projection)}"
+            output += f"s={s_label}\n"
+        if node_prop.parity_prefactor is not None:
+            output += f"P={node_prop.parity_prefactor}"
+        return output
     raise NotImplementedError
