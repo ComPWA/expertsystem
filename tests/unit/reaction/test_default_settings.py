@@ -12,7 +12,9 @@ from expertsystem.reaction.quantum_numbers import (
 
 
 @pytest.mark.parametrize("interaction_type", list(InteractionTypes))
-@pytest.mark.parametrize("formalism_type", ["canonical", "helicity"])
+@pytest.mark.parametrize(
+    "formalism_type", ["canonical", "canonical-helicity", "helicity"]
+)
 def test_create_default_interaction_settings(
     interaction_type: InteractionTypes,
     formalism_type: str,
@@ -44,11 +46,13 @@ def test_create_default_interaction_settings(
         NodeQuantumNumbers.l_magnitude: [0, 1, 2],
         NodeQuantumNumbers.s_magnitude: _halves_range(0, 2),
     }
-    if formalism_type == "canonical":
+    if "canonical" in formalism_type:
         expected[NodeQuantumNumbers.l_projection] = [-2, -1, 0, 1, 2]
         expected[NodeQuantumNumbers.s_projection] = _halves_range(-2, 2)
+    if formalism_type == "canonical-helicity":
+        expected[NodeQuantumNumbers.l_projection] = [0]
     if (
-        formalism_type == "helicity"
+        "helicity" in formalism_type
         and interaction_type != InteractionTypes.Weak
     ):
         expected[NodeQuantumNumbers.parity_prefactor] = [-1, 1]
