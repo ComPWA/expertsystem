@@ -251,7 +251,7 @@ def _get_ang_mom_magnitudes(is_nbody: bool) -> List[float]:
 def __create_projections(
     magnitudes: Iterable[Union[int, float]]
 ) -> List[Union[int, float]]:
-    return list(magnitudes) + [-x for x in magnitudes if x > 0]
+    return sorted(list(magnitudes) + [-x for x in magnitudes if x > 0])
 
 
 def _get_spin_magnitudes(is_nbody: bool) -> List[float]:
