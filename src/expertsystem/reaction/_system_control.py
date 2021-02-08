@@ -237,8 +237,6 @@ def _remove_qns_from_graph(  # pylint: disable=too-many-branches
     new_node_props = {}
     for node_id in graph.topology.nodes:
         node_props = graph.get_node_props(node_id)
-        if node_props is None:
-            continue
         new_node_props[node_id] = attr.evolve(
             node_props, **{x.__name__: None for x in qn_list}
         )
@@ -281,8 +279,8 @@ class NodePropertyComparator:
 
     def __call__(
         self,
-        node_props1: Optional[InteractionProperties],
-        node_props2: Optional[InteractionProperties],
+        node_props1: InteractionProperties,
+        node_props2: InteractionProperties,
     ) -> bool:
         return attr.evolve(
             node_props1,
