@@ -1,5 +1,8 @@
+import pytest
+
 from expertsystem.reaction.default_settings import (
     InteractionTypes,
+    _halves_range,
     create_default_interaction_settings,
 )
 from expertsystem.reaction.quantum_numbers import (
@@ -62,3 +65,19 @@ def test_create_default_interaction_settings():
         NodeQuantumNumbers.s_magnitude: [0, 0.5, 1, 1.5, 2],
         NodeQuantumNumbers.parity_prefactor: [-1, 1],
     }
+
+
+@pytest.mark.parametrize(
+    "start, stop, expected",
+    [
+        (-0.3, 0.5, None),
+        (-2.0, 0.5, [-2, -1.5, -1, -0.5, 0, 0.5]),
+        (-1, +1, [-1, -0.5, 0, 0.5, +1]),
+    ],
+)
+def test_halves_range(start: float, stop: float, expected: list):
+    if expected is None:
+        with pytest.raises(ValueError):
+            _halves_range(start, stop)
+    else:
+        assert _halves_range(start, stop) == expected

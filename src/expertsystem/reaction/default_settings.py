@@ -5,6 +5,8 @@ from enum import Enum, auto
 from os.path import dirname, join, realpath
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
+from expertsystem.reaction.combinatorics import arange
+
 from .conservation_rules import (
     BaryonNumberConservation,
     BottomnessConservation,
@@ -258,3 +260,14 @@ def _get_spin_magnitudes(is_nbody: bool) -> List[float]:
     if is_nbody:
         return [0]
     return [0, 0.5, 1, 1.5, 2]
+
+
+def _halves_range(start: float, stop: float) -> List[float]:
+    if start % 0.5 != 0.0:
+        raise ValueError(f"Start value {start} needs to be multiple of 0.5")
+    if stop % 0.5 != 0.0:
+        raise ValueError(f"Stop value {stop} needs to be multiple of 0.5")
+    return [
+        int(v) if v.is_integer() else v
+        for v in arange(start, stop + 0.25, delta=0.5)
+    ]
