@@ -12,15 +12,17 @@ from expertsystem.reaction.quantum_numbers import (
 
 
 @pytest.mark.parametrize("interaction_type", list(InteractionTypes))
+@pytest.mark.parametrize("nbody_topology", [False, True])
 @pytest.mark.parametrize(
     "formalism_type", ["canonical", "canonical-helicity", "helicity"]
 )
 def test_create_default_interaction_settings(
     interaction_type: InteractionTypes,
+    nbody_topology: bool,
     formalism_type: str,
 ):
     settings = create_default_interaction_settings(
-        formalism_type,
+        formalism_type, nbody_topology
     )
     assert set(settings) == set(InteractionTypes)
 
@@ -56,6 +58,12 @@ def test_create_default_interaction_settings(
         and interaction_type != InteractionTypes.Weak
     ):
         expected[NodeQuantumNumbers.parity_prefactor] = [-1, 1]
+    if nbody_topology:
+        expected[NodeQuantumNumbers.l_magnitude] = [0]
+        expected[NodeQuantumNumbers.s_magnitude] = [0]
+    if nbody_topology and formalism_type != "helicity":
+        expected[NodeQuantumNumbers.l_projection] = [0]
+        expected[NodeQuantumNumbers.s_projection] = [0]
     assert node_settings.qn_domains == expected
 
 
