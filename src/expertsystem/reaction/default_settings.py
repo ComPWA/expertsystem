@@ -5,7 +5,7 @@ from enum import Enum, auto
 from os.path import dirname, join, realpath
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
-from expertsystem.reaction.conservation_rules import (
+from .conservation_rules import (
     BaryonNumberConservation,
     BottomnessConservation,
     ChargeConservation,
@@ -33,11 +33,8 @@ from expertsystem.reaction.conservation_rules import (
     spin_magnitude_conservation,
     spin_validity,
 )
-from expertsystem.reaction.quantum_numbers import (
-    EdgeQuantumNumbers,
-    NodeQuantumNumbers,
-)
-from expertsystem.reaction.solving import EdgeSettings, NodeSettings
+from .quantum_numbers import EdgeQuantumNumbers, NodeQuantumNumbers
+from .solving import EdgeSettings, NodeSettings
 
 __EXPERT_SYSTEM_PATH = dirname(dirname(realpath(__file__)))
 __DEFAULT_PARTICLE_LIST_FILE = "additional_particle_definitions.yml"
