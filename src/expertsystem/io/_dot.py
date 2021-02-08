@@ -82,11 +82,10 @@ def __graph_to_dot_content(
     if isinstance(graph, StateTransitionGraph):
         for node_id in topology.nodes:
             node_prop = graph.get_node_props(node_id)
-            if node_prop is not None:
-                node_label = __node_label(node_prop)
-                dot_source += _DOT_DEFAULT_NODE.format(
-                    f"{prefix}node{node_id}", node_label
-                )
+            node_label = __node_label(node_prop)
+            dot_source += _DOT_DEFAULT_NODE.format(
+                f"{prefix}node{node_id}", node_label
+            )
     return dot_source
 
 
