@@ -23,29 +23,11 @@ def test_create_default_interaction_settings():
             EdgeQuantumNumbers.parity: [-1, 1],
             EdgeQuantumNumbers.c_parity: [-1, 1, None],
             EdgeQuantumNumbers.g_parity: [-1, 1, None],
-            EdgeQuantumNumbers.spin_magnitude: [0, 0.5, 1, 1.5, 2],
-            EdgeQuantumNumbers.spin_projection: [
-                -2,
-                -1.5,
-                -1,
-                -0.5,
-                0,
-                0.5,
-                1,
-                1.5,
-                2,
-            ],
+            EdgeQuantumNumbers.spin_magnitude: _halves_range(0, 2),
+            EdgeQuantumNumbers.spin_projection: _halves_range(-2, +2),
             EdgeQuantumNumbers.charge: [-2, -1, 0, 1, 2],
-            EdgeQuantumNumbers.isospin_magnitude: [0, 0.5, 1, 1.5],
-            EdgeQuantumNumbers.isospin_projection: [
-                -1.5,
-                -1,
-                -0.5,
-                0,
-                0.5,
-                1,
-                1.5,
-            ],
+            EdgeQuantumNumbers.isospin_magnitude: _halves_range(0, 1.5),
+            EdgeQuantumNumbers.isospin_projection: _halves_range(-1.5, +1.5),
             EdgeQuantumNumbers.strangeness: [-1, 0, 1],
             EdgeQuantumNumbers.charmness: [-1, 0, 1],
             EdgeQuantumNumbers.bottomness: [-1, 0, 1],
@@ -53,16 +35,16 @@ def test_create_default_interaction_settings():
 
     assert settings[InteractionTypes.Weak][1].qn_domains == {
         NodeQuantumNumbers.l_magnitude: [0, 1, 2],
-        NodeQuantumNumbers.s_magnitude: [0, 0.5, 1, 1.5, 2],
+        NodeQuantumNumbers.s_magnitude: _halves_range(0, 2),
     }
     assert settings[InteractionTypes.EM][1].qn_domains == {
         NodeQuantumNumbers.l_magnitude: [0, 1, 2],
-        NodeQuantumNumbers.s_magnitude: [0, 0.5, 1, 1.5, 2],
+        NodeQuantumNumbers.s_magnitude: _halves_range(0, 2),
         NodeQuantumNumbers.parity_prefactor: [-1, 1],
     }
     assert settings[InteractionTypes.Strong][1].qn_domains == {
         NodeQuantumNumbers.l_magnitude: [0, 1, 2],
-        NodeQuantumNumbers.s_magnitude: [0, 0.5, 1, 1.5, 2],
+        NodeQuantumNumbers.s_magnitude: _halves_range(0, 2),
         NodeQuantumNumbers.parity_prefactor: [-1, 1],
     }
 
