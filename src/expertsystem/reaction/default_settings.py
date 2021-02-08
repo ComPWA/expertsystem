@@ -112,13 +112,13 @@ def create_default_interaction_settings(
             EdgeQuantumNumbers.parity: [-1, 1],
             EdgeQuantumNumbers.c_parity: [-1, 1, None],
             EdgeQuantumNumbers.g_parity: [-1, 1, None],
-            EdgeQuantumNumbers.spin_magnitude: [0, 0.5, 1, 1.5, 2],
+            EdgeQuantumNumbers.spin_magnitude: _halves_range(0, 2),
             EdgeQuantumNumbers.spin_projection: __create_projections(
-                [0, 0.5, 1, 1.5, 2]
+                _halves_range(0, 2)
             ),
-            EdgeQuantumNumbers.isospin_magnitude: [0, 0.5, 1, 1.5],
+            EdgeQuantumNumbers.isospin_magnitude: _halves_range(0, 1.5),
             EdgeQuantumNumbers.isospin_projection: __create_projections(
-                [0, 0.5, 1, 1.5]
+                _halves_range(0, 1.5)
             ),
             EdgeQuantumNumbers.charmness: [-1, 0, 1],
             EdgeQuantumNumbers.strangeness: [-1, 0, 1],
@@ -259,7 +259,7 @@ def __create_projections(
 def _get_spin_magnitudes(is_nbody: bool) -> List[float]:
     if is_nbody:
         return [0]
-    return [0, 0.5, 1, 1.5, 2]
+    return _halves_range(0, 2)
 
 
 def _halves_range(start: float, stop: float) -> List[float]:
