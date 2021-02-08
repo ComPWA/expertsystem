@@ -42,7 +42,7 @@ def three_body_decay() -> Topology:
         [[["gamma", "pi0"]]],
     ],
 )
-def test_initialize_graph(
+def test_create_initial_facts(
     final_state_groupings,
     three_body_decay: Topology,
     particle_database: ParticleCollection,
