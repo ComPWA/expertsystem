@@ -84,24 +84,6 @@ class InteractionTypes(Enum):
     Weak = auto()
 
 
-def _get_spin_magnitudes(is_nbody: bool) -> List[float]:
-    if is_nbody:
-        return [0]
-    return [0, 0.5, 1, 1.5, 2]
-
-
-def _get_ang_mom_magnitudes(is_nbody: bool) -> List[float]:
-    if is_nbody:
-        return [0]
-    return [0, 1, 2]
-
-
-def __create_projections(
-    magnitudes: Iterable[Union[int, float]]
-) -> List[Union[int, float]]:
-    return list(magnitudes) + [-x for x in magnitudes if x > 0]
-
-
 def create_default_interaction_settings(
     formalism_type: str,
     nbody_topology: bool = False,
@@ -258,3 +240,21 @@ def create_default_interaction_settings(
     )
 
     return interaction_type_settings
+
+
+def _get_ang_mom_magnitudes(is_nbody: bool) -> List[float]:
+    if is_nbody:
+        return [0]
+    return [0, 1, 2]
+
+
+def __create_projections(
+    magnitudes: Iterable[Union[int, float]]
+) -> List[Union[int, float]]:
+    return list(magnitudes) + [-x for x in magnitudes if x > 0]
+
+
+def _get_spin_magnitudes(is_nbody: bool) -> List[float]:
+    if is_nbody:
+        return [0]
+    return [0, 0.5, 1, 1.5, 2]
