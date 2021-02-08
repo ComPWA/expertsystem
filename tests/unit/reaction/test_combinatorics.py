@@ -234,7 +234,7 @@ def test_perform_external_edge_identical_particle_combinatorics(
         topology=double_decay,
         edge_props={
             0: (particle_database["J/psi(1S)"], 0),
-            1: (particle_database["f(0)(980)"], 0),
+            1: (particle_database["rho(770)0"], 0),
             2: (particle_database["f(0)(980)"], 0),
             3: (particle_database["pi-"], 0),
             4: (particle_database["pi+"], 0),
