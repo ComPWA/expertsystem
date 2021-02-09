@@ -15,7 +15,11 @@ from expertsystem.reaction import Result
 from .canonical_decay import CanonicalAmplitudeGenerator
 from .helicity_decay import HelicityAmplitudeGenerator
 from .model import AmplitudeModel
-from .sympy import ModelInfo, SympyHelicityAmplitudeGenerator
+from .sympy import (
+    ModelInfo,
+    SympyCanonicalAmplitudeGenerator,
+    SympyHelicityAmplitudeGenerator,
+)
 
 
 def generate(result: Result) -> AmplitudeModel:
@@ -40,5 +44,15 @@ def generate(result: Result) -> AmplitudeModel:
 
 
 def generate_sympy(result: Result) -> ModelInfo:
-    amplitude_generator = SympyHelicityAmplitudeGenerator(result)
+    formalism_type = result.formalism_type
+    if formalism_type is None:
+        raise ValueError(f"Result does not have a formalism type:\n{result}")
+    if formalism_type == "helicity":
+        amplitude_generator = SympyHelicityAmplitudeGenerator(result)
+    elif formalism_type in ["canonical-helicity", "canonical"]:
+        amplitude_generator = SympyCanonicalAmplitudeGenerator(result)
+    else:
+        raise NotImplementedError(
+            f'No amplitude generator for formalism type "{formalism_type}"'
+        )
     return amplitude_generator.generate()

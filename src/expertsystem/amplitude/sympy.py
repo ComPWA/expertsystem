@@ -21,9 +21,10 @@ from typing import (
 
 import attr
 import sympy as sy
+from sympy.physics.quantum.cg import CG
 from sympy.physics.quantum.spin import Rotation as Wigner
 
-from expertsystem.particle import Particle, ParticleCollection
+from expertsystem.particle import Particle, ParticleCollection, Spin
 from expertsystem.reaction import Result
 from expertsystem.reaction.combinatorics import (
     perform_external_edge_identical_particle_combinatorics,
@@ -35,6 +36,8 @@ from ._graph_info import (
     determine_attached_final_state,
     generate_kinematics,
     generate_particle_collection,
+    get_angular_momentum,
+    get_coupled_spin,
     get_parent_recoil_edge,
     get_prefactor,
     get_recoil_edge,
@@ -269,8 +272,6 @@ class ModelInfo:  # pylint: disable=too-many-instance-attributes
 
 
 class _SympyHelicityAmplitudeNameGenerator:
-    """Parameter name generator for the helicity formalism."""
-
     def __init__(self) -> None:
         self.parity_partner_coefficient_mapping: Dict[str, str] = {}
 
@@ -408,6 +409,39 @@ class _SympyHelicityAmplitudeNameGenerator:
                 suffix = self.parity_partner_coefficient_mapping[suffix]
             output_suffix += suffix + ";"
         return output_suffix[:-1]
+
+
+class _SympyCanonicalAmplitudeNameGenerator(
+    _SympyHelicityAmplitudeNameGenerator
+):
+    def generate_unique_amplitude_name(
+        self,
+        graph: StateTransitionGraph[ParticleWithSpin],
+        node_id: Optional[int] = None,
+    ) -> str:
+        name = ""
+        if isinstance(node_id, int):
+            node_ids = frozenset({node_id})
+        else:
+            node_ids = graph.topology.nodes
+        for node in node_ids:
+            helicity_name = super().generate_unique_amplitude_name(graph, node)
+            name += (
+                helicity_name[:-1]
+                + self._generate_clebsch_gordan_string(graph, node)
+                + helicity_name[-1]
+                + ";"
+            )
+        return name
+
+    @staticmethod
+    def _generate_clebsch_gordan_string(
+        graph: StateTransitionGraph[ParticleWithSpin], node_id: int
+    ) -> str:
+        node_props = graph.get_node_props(node_id)
+        ang_orb_mom = sy.Rational(get_angular_momentum(node_props).magnitude)
+        spin = sy.Rational(get_coupled_spin(node_props).magnitude)
+        return f",L={ang_orb_mom},S={spin}"
 
 
 def _get_graph_group_unique_label(
@@ -665,3 +699,78 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
                     if coefficient_suffix != raw_suffix:
                         return prefactor
         return None
+
+
+class SympyCanonicalAmplitudeGenerator(SympyHelicityAmplitudeGenerator):
+    r"""Amplitude model generator for the canonical helicity formalism.
+
+    This class defines a full amplitude in the canonical formalism, using the
+    helicity formalism as a foundation. The key here is that we take the full
+    helicity intensity as a template, and just exchange the helicity amplitudes
+    :math:`F` as a sum of canonical amplitudes :math:`A`:
+
+    .. math::
+
+        F^J_{\lambda_1,\lambda_2} = \sum_{LS} \mathrm{norm}(A^J_{LS})C^2.
+
+    Here, :math:`C` stands for `Clebsch-Gordan factor
+    <https://en.wikipedia.org/wiki/Clebsch%E2%80%93Gordan_coefficients>`_.
+    """
+
+    def __init__(self, reaction_result: Result) -> None:
+        super().__init__(reaction_result)
+        self.name_generator = _SympyCanonicalAmplitudeNameGenerator()
+
+    def _generate_partial_decay(  # pylint: disable=too-many-locals
+        self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
+    ) -> sy.Symbol:
+        amplitude = super()._generate_partial_decay(graph, node_id)
+
+        node_props = graph.get_node_props(node_id)
+        ang_mom = get_angular_momentum(node_props)
+        spin = get_coupled_spin(node_props)
+        if ang_mom.projection != 0.0:
+            raise ValueError(f"Projection of L is non-zero!: {ang_mom}")
+
+        topology = graph.topology
+        in_edge_ids = topology.get_edge_ids_ingoing_to_node(node_id)
+        out_edge_ids = topology.get_edge_ids_outgoing_from_node(node_id)
+
+        in_edge_id = next(iter(in_edge_ids))
+        particle, spin_projection = graph.get_edge_props(in_edge_id)
+        parent_spin = Spin(
+            particle.spin,
+            spin_projection,
+        )
+
+        daughter_spins: List[Spin] = []
+        for out_edge_id in out_edge_ids:
+            particle, spin_projection = graph.get_edge_props(out_edge_id)
+            daughter_spin = Spin(
+                particle.spin,
+                spin_projection,
+            )
+            if daughter_spin is not None and isinstance(daughter_spin, Spin):
+                daughter_spins.append(daughter_spin)
+
+        decay_particle_lambda = (
+            daughter_spins[0].projection - daughter_spins[1].projection
+        )
+
+        cg_ls = CG(
+            j1=sy.nsimplify(ang_mom.magnitude),
+            m1=sy.nsimplify(ang_mom.projection),
+            j2=sy.nsimplify(spin.magnitude),
+            m2=sy.nsimplify(decay_particle_lambda),
+            j3=sy.nsimplify(parent_spin.magnitude),
+            m3=sy.nsimplify(decay_particle_lambda),
+        )
+        cg_ss = CG(
+            j1=sy.nsimplify(daughter_spins[0].magnitude),
+            m1=sy.nsimplify(daughter_spins[0].projection),
+            j2=sy.nsimplify(daughter_spins[1].magnitude),
+            m2=sy.nsimplify(-daughter_spins[1].projection),
+            j3=sy.nsimplify(spin.magnitude),
+            m3=sy.nsimplify(decay_particle_lambda),
+        )
+        return cg_ls * cg_ss * amplitude

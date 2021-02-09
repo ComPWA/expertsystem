@@ -2,7 +2,10 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from expertsystem.amplitude.model import Kinematics
 from expertsystem.particle import ParticleCollection, Spin
-from expertsystem.reaction.quantum_numbers import ParticleWithSpin
+from expertsystem.reaction.quantum_numbers import (
+    InteractionProperties,
+    ParticleWithSpin,
+)
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
 
 
@@ -206,3 +209,19 @@ def __validate_float_type(
             f"{interaction_property.__class__.__name__} is not of type {float.__name__}"
         )
     return interaction_property
+
+
+def get_angular_momentum(node_props: InteractionProperties) -> Spin:
+    l_mag = node_props.l_magnitude
+    l_proj = node_props.l_projection
+    if l_mag is None or l_proj is None:
+        raise TypeError("Angular momentum L not defined!", l_mag, l_proj)
+    return Spin(l_mag, l_proj)
+
+
+def get_coupled_spin(node_props: InteractionProperties) -> Spin:
+    s_mag = node_props.s_magnitude
+    s_proj = node_props.s_projection
+    if s_mag is None or s_proj is None:
+        raise TypeError("Coupled spin S not defined!")
+    return Spin(s_mag, s_proj)
