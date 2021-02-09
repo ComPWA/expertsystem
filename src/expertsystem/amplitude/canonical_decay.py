@@ -1,28 +1,17 @@
 """Implementation of the canonical formalism for amplitude model generation."""
 
-from typing import Any, Callable, List, Optional
+from typing import List, Optional
 
 from expertsystem.particle import Spin
-from expertsystem.reaction.quantum_numbers import (
-    InteractionProperties,
-    ParticleWithSpin,
-)
+from expertsystem.reaction.quantum_numbers import ParticleWithSpin
 from expertsystem.reaction.topology import StateTransitionGraph
 
+from ._graph_info import get_angular_momentum, get_coupled_spin
 from .helicity_decay import (
     HelicityAmplitudeGenerator,
     _HelicityAmplitudeNameGenerator,
 )
 from .model import CanonicalDecay, ClebschGordan, DecayNode, HelicityDecay
-
-
-def _generate_clebsch_gordan_string(
-    graph: StateTransitionGraph[ParticleWithSpin], node_id: int
-) -> str:
-    node_props = graph.get_node_props(node_id)
-    ang_orb_mom = __get_angular_momentum(node_props)
-    spin = __get_coupled_spin(node_props)
-    return f"_L_{ang_orb_mom.magnitude}_S_{spin.magnitude}"
 
 
 class _CanonicalAmplitudeNameGenerator(_HelicityAmplitudeNameGenerator):
@@ -44,27 +33,45 @@ class _CanonicalAmplitudeNameGenerator(_HelicityAmplitudeNameGenerator):
         for node in node_ids:
             name += (
                 super().generate_unique_amplitude_name(graph, node)[:-1]
-                + _generate_clebsch_gordan_string(graph, node)
+                + self._generate_clebsch_gordan_string(graph, node)
                 + ";"
             )
         return name
 
+    @staticmethod
+    def _generate_clebsch_gordan_string(
+        graph: StateTransitionGraph[ParticleWithSpin], node_id: int
+    ) -> str:
+        node_props = graph.get_node_props(node_id)
+        ang_orb_mom = get_angular_momentum(node_props)
+        spin = get_coupled_spin(node_props)
+        return f"_L_{ang_orb_mom.magnitude}_S_{spin.magnitude}"
 
-def _clebsch_gordan_decorator(
-    decay_generate_function: Callable[
-        [Any, StateTransitionGraph[ParticleWithSpin], int], DecayNode
-    ]
-) -> Callable[[Any, StateTransitionGraph[ParticleWithSpin], int], DecayNode]:
-    """Decorate a function with Clebsch-Gordan functionality.
 
-    Decorator method which adds two clebsch gordan coefficients based on the
-    translation of helicity amplitudes to canonical ones.
+class CanonicalAmplitudeGenerator(HelicityAmplitudeGenerator):
+    r"""Amplitude model generator for the canonical helicity formalism.
+
+    This class defines a full amplitude in the canonical formalism, using the
+    helicity formalism as a foundation. The key here is that we take the full
+    helicity intensity as a template, and just exchange the helicity amplitudes
+    :math:`F` as a sum of canonical amplitudes :math:`A`:
+
+    .. math::
+
+        F^J_{\lambda_1,\lambda_2} = \sum_{LS} \mathrm{norm}(A^J_{LS})C^2.
+
+    Here, :math:`C` stands for `Clebsch-Gordan factor
+    <https://en.wikipedia.org/wiki/Clebsch%E2%80%93Gordan_coefficients>`_.
     """
 
-    def wrapper(  # pylint: disable=too-many-locals
-        self: Any, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
+    def __init__(self, top_node_no_dynamics: bool = True) -> None:
+        super().__init__(top_node_no_dynamics)
+        self.name_generator = _CanonicalAmplitudeNameGenerator()
+
+    def _generate_partial_decay(  # pylint: disable=too-many-locals
+        self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> DecayNode:
-        amplitude = decay_generate_function(self, graph, node_id)
+        amplitude = super()._generate_partial_decay(graph, node_id)
         if isinstance(amplitude, HelicityDecay):
             helicity_decay = amplitude
         else:
@@ -73,11 +80,11 @@ def _clebsch_gordan_decorator(
             )
 
         node_props = graph.get_node_props(node_id)
-        ang_mom = __get_angular_momentum(node_props)
+        ang_mom = get_angular_momentum(node_props)
         if ang_mom.projection != 0.0:
             raise ValueError(f"Projection of L is non-zero!: {ang_mom}")
 
-        spin = __get_coupled_spin(node_props)
+        spin = get_coupled_spin(node_props)
         if not isinstance(spin, Spin):
             raise ValueError(
                 f"{spin.__class__.__name__} is not of type {Spin.__name__}"
@@ -131,48 +138,3 @@ def _clebsch_gordan_decorator(
             l_s=cg_ls,
             s2s3=cg_ss,
         )
-
-    return wrapper
-
-
-class CanonicalAmplitudeGenerator(HelicityAmplitudeGenerator):
-    r"""Amplitude model generator for the canonical helicity formalism.
-
-    This class defines a full amplitude in the canonical formalism, using the
-    helicity formalism as a foundation. The key here is that we take the full
-    helicity intensity as a template, and just exchange the helicity amplitudes
-    :math:`F` as a sum of canonical amplitudes :math:`A`:
-
-    .. math::
-
-        F^J_{\lambda_1,\lambda_2} = \sum_{LS} \mathrm{norm}(A^J_{LS})C^2.
-
-    Here, :math:`C` stands for `Clebsch-Gordan factor
-    <https://en.wikipedia.org/wiki/Clebsch%E2%80%93Gordan_coefficients>`_.
-    """
-
-    def __init__(self, top_node_no_dynamics: bool = True) -> None:
-        super().__init__(top_node_no_dynamics)
-        self.name_generator = _CanonicalAmplitudeNameGenerator()
-
-    @_clebsch_gordan_decorator
-    def _generate_partial_decay(  # type: ignore
-        self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
-    ) -> DecayNode:
-        return super()._generate_partial_decay(graph, node_id)
-
-
-def __get_angular_momentum(node_props: InteractionProperties) -> Spin:
-    l_mag = node_props.l_magnitude
-    l_proj = node_props.l_projection
-    if l_mag is None or l_proj is None:
-        raise TypeError("Angular momentum L not defined!")
-    return Spin(l_mag, l_proj)
-
-
-def __get_coupled_spin(node_props: InteractionProperties) -> Spin:
-    s_mag = node_props.s_magnitude
-    s_proj = node_props.s_projection
-    if s_mag is None or s_proj is None:
-        raise TypeError("Coupled spin S not defined!")
-    return Spin(s_mag, s_proj)
