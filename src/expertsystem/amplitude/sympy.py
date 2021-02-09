@@ -7,12 +7,16 @@ from functools import reduce
 from typing import (
     Dict,
     Generic,
+    ItemsView,
     Iterable,
+    KeysView,
     List,
+    Mapping,
     Optional,
     Tuple,
     TypeVar,
     Union,
+    ValuesView,
 )
 
 import attr
@@ -102,25 +106,70 @@ class ParameterProperties(Generic[ValueType]):
     fix: bool = attr.ib(default=False)
 
 
-@attr.s(on_setattr=attr.setters.frozen)
 class SuggestedParameterValues(abc.MutableMapping):
-    parameters: Dict[sy.Symbol, ParameterProperties] = attr.ib(factory=dict)
+    def __init__(
+        self,
+        parameters: Optional[
+            Mapping[
+                Union[sy.Symbol, str],
+                Union[ParameterProperties, complex, float],
+            ]
+        ] = None,
+    ) -> None:
+        self.__parameters: Dict[sy.Symbol, ParameterProperties] = dict()
+        if parameters is not None:
+            if not isinstance(parameters, abc.Mapping):
+                raise TypeError(
+                    f"{self.__class__.__name__} requires a mapping"
+                )
+            if not all(
+                map(lambda k: isinstance(k, (sy.Symbol, str)), parameters)
+            ):
+                raise TypeError(
+                    f"Not all keys are of type {sy.Symbol.__class__} or str"
+                )
+            if not all(
+                map(
+                    lambda v: isinstance(
+                        v, (ParameterProperties, complex, float)
+                    ),
+                    parameters.values(),
+                )
+            ):
+                raise TypeError(
+                    "Not all values are of type"
+                    f" {ParameterProperties.__class__} or complex or float"
+                )
+            for par, value in parameters.items():
+                if isinstance(par, sy.Symbol):
+                    par_symbol = par
+                else:
+                    par_symbol = sy.Symbol(par)
+                if isinstance(value, ParameterProperties):
+                    par_value = value
+                else:
+                    par_value = ParameterProperties(value)
+                self.__parameters[par_symbol] = par_value
 
     def __delitem__(self, key: Union[sy.Symbol, str]) -> None:
         if isinstance(key, str):
             key = sy.Symbol(key)
-        del self.parameters[key]
+        del self.__parameters[key]
 
     def __getitem__(self, key: Union[sy.Symbol, str]) -> ParameterProperties:
         if isinstance(key, str):
             key = sy.Symbol(key)
-        return self.parameters[key]
+        return self.__parameters[key]
 
     def __iter__(self) -> sy.Symbol:
-        return iter(self.parameters)
+        return iter(self.__parameters)
 
     def __len__(self) -> int:
-        return len(self.parameters)
+        return len(self.__parameters)
+
+    def __repr__(self) -> str:
+        str_dict = {p.name: v for p, v in self.items()}
+        return f"{self.__class__.__name__}({str_dict})"
 
     def __setitem__(
         self, key: Union[sy.Symbol, str], value: ParameterProperties
@@ -137,7 +186,19 @@ class SuggestedParameterValues(abc.MutableMapping):
                     f" to {ParameterProperties.__name__}"
                 )
             value = ParameterProperties(value)
-        self.parameters[key] = value
+        self.__parameters[key] = value
+
+    def keys(self) -> KeysView[sy.Symbol]:
+        return self.__parameters.keys()
+
+    def items(self) -> ItemsView[sy.Symbol, ParameterProperties]:
+        return self.__parameters.items()
+
+    def values(self) -> ValuesView[ParameterProperties]:
+        return self.__parameters.values()
+
+    def subs_values(self) -> Dict[sy.Symbol, Union[complex, float]]:
+        return {p: v.value for p, v in self.items()}
 
 
 @attr.s(kw_only=True)
