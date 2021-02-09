@@ -4,31 +4,32 @@
 from typing import Any, List, Optional, Sequence, Union
 
 import pytest
-import sympy
+import sympy as sy
 
 import expertsystem as es
+from expertsystem.particle import ParticleCollection
 
 
 def calculate_sympy_integral(
     intensity: Any,
-    integration_variables: List[sympy.Symbol],
+    integration_variables: List[sy.Symbol],
     jacobi_determinant: Optional[Any] = None,
-) -> Any:
+) -> sy.Expr:
     if jacobi_determinant is None:
         for int_var in integration_variables:
             if "theta" in int_var.name:
-                intensity *= sympy.sin(int_var)
+                intensity *= sy.sin(int_var)
     else:
         intensity *= jacobi_determinant
-    return sympy.trigsimp(
-        sympy.nsimplify(
-            sympy.re(
-                sympy.integrate(
+    return sy.trigsimp(
+        sy.nsimplify(
+            sy.re(
+                sy.integrate(
                     intensity,
                     *(
-                        (x, -sympy.pi, sympy.pi)
+                        (x, -sy.pi, sy.pi)
                         if "phi" in x.name
-                        else (x, 0, sympy.pi)
+                        else (x, 0, sy.pi)
                         for x in integration_variables
                     ),
                 )
@@ -39,22 +40,22 @@ def calculate_sympy_integral(
 
 
 def normalize(
-    sympy_expression: sympy.Expr, variable_names: Sequence[str]
-) -> sympy.Expr:
-    variables = [sympy.Symbol(x, real=True) for x in variable_names]
-    normalization = sympy.integrate(
+    sympy_expression: sy.Expr, variable_names: Sequence[str]
+) -> sy.Expr:
+    variables = [sy.Symbol(x, real=True) for x in variable_names]
+    normalization = sy.integrate(
         sympy_expression,
         *(
-            (x, -sympy.pi, sympy.pi) if "phi" in x.name else (x, 0, sympy.pi)
+            (x, -sy.pi, sy.pi) if "phi" in x.name else (x, 0, sy.pi)
             for x in variables
         ),
     )
-    return sympy.trigsimp((sympy_expression / normalization).expand(trig=True))
+    return sy.trigsimp((sympy_expression / normalization).expand(trig=True))
 
 
 class TestEpemToDmD0Pip:
     @pytest.fixture(scope="class")
-    def sympy_model(self) -> sympy.Expr:
+    def sympy_model(self, particle_database: ParticleCollection) -> sy.Expr:
         epem = es.particle.Particle(
             name="EpEm",
             pid=12345678,
@@ -63,7 +64,7 @@ class TestEpemToDmD0Pip:
             parity=es.particle.Parity(-1),
             c_parity=es.particle.Parity(-1),
         )
-        particles = es.io.load_pdg()
+        particles = ParticleCollection(particle_database)
         particles.add(epem)
 
         result = es.generate_transitions(
@@ -76,29 +77,23 @@ class TestEpemToDmD0Pip:
 
         amplitude_model = es.amplitude.generate_sympy(result)
         sympy_model = amplitude_model.expression
-        sympy_model.dynamics = {
-            k: 1.0 + sympy.I * 0.0 for k in sympy_model.dynamics.keys()
-        }
-        # replace coefficients with 1
-        full_model = sympy.simplify(
+        sympy_model.dynamics = {k: 1 for k in sympy_model.dynamics.keys()}
+        full_model = sy.simplify(
             sympy_model.full_expression.subs(
-                {
-                    param: props.value
-                    for param, props in amplitude_model.parameters.items()
-                }
+                amplitude_model.parameters.subs_values()
             )
             .doit()
             .expand(complex=True)
         )
-        assert sympy.im(full_model) == 0
-        return sympy.re(full_model)
+        assert sy.im(full_model) == 0
+        return sy.re(full_model)
 
     @pytest.mark.parametrize(
         "angular_variables, expected_distribution_function",  # type: ignore
         [
             (  # cos(theta) distribution from epem decay
                 "theta_3+4_2",
-                1 + sympy.cos(sympy.Symbol("theta_3+4_2", real=True)) ** 2,
+                1 + sy.cos(sy.Symbol("theta_3+4_2", real=True)) ** 2,
             ),
             (  # phi distribution of the epem decay
                 "phi_3+4_2",
@@ -107,31 +102,26 @@ class TestEpemToDmD0Pip:
             (  # cos(theta') distribution from D2*
                 "theta_3_4_vs_2",
                 1
-                - (
-                    2
-                    * sympy.cos(sympy.Symbol("theta_3_4_vs_2", real=True)) ** 2
-                    - 1
-                )
+                - (2 * sy.cos(sy.Symbol("theta_3_4_vs_2", real=True)) ** 2 - 1)
                 ** 2,
             ),
             (  # phi' distribution of the D2* decay
                 "phi_3_4_vs_2",
-                3
-                - 2 * sympy.sin(sympy.Symbol("phi_3_4_vs_2", real=True)) ** 2,
+                3 - 2 * sy.sin(sy.Symbol("phi_3_4_vs_2", real=True)) ** 2,
             ),
             (  # 2d distribution of the D2* decay
                 ["theta_3_4_vs_2", "phi_3_4_vs_2"],
-                (1 - sympy.cos(sympy.Symbol("theta_3_4_vs_2", real=True)) ** 2)
-                * (sympy.cos(sympy.Symbol("theta_3_4_vs_2", real=True)) ** 2)
-                * (2 + sympy.cos(2 * sympy.Symbol("phi_3_4_vs_2", real=True))),
+                (1 - sy.cos(sy.Symbol("theta_3_4_vs_2", real=True)) ** 2)
+                * (sy.cos(sy.Symbol("theta_3_4_vs_2", real=True)) ** 2)
+                * (2 + sy.cos(2 * sy.Symbol("phi_3_4_vs_2", real=True))),
             ),
         ],  # type: ignore
     )
     def test_angular_distributions(
         self,
         angular_variables: Union[str, Sequence[str]],
-        expected_distribution_function: sympy.Expr,
-        sympy_model: sympy.Expr,
+        expected_distribution_function: sy.Expr,
+        sympy_model: sy.Expr,
     ) -> None:
         if isinstance(angular_variables, str):
             angular_variables = (angular_variables,)
@@ -159,7 +149,7 @@ class TestEpemToDmD0Pip:
 
 class TestD1ToD0PiPi:
     @pytest.fixture(scope="class")
-    def sympy_model(self) -> sympy.Expr:
+    def sympy_model(self) -> sy.Expr:
         result = es.generate_transitions(
             initial_state=[("D(1)(2420)0", [-1])],
             final_state=[("D0", [0]), ("pi-", [0]), ("pi+", [0])],
@@ -169,17 +159,17 @@ class TestD1ToD0PiPi:
         amplitude_model = es.amplitude.generate_sympy(result)
 
         amplitude_model.parameters[
-            sympy.Symbol(
+            sy.Symbol(
                 "C[D_{1}(2420)^{0} \\to D^{*}(2010)^{+}_{0} \\pi^{-}_{0};"
                 "D^{*}(2010)^{+} \\to D^{0}_{0} \\pi^{+}_{0}]"
             )
         ].value = 0.5
         sympy_model = amplitude_model.expression
         sympy_model.dynamics = {
-            k: 1.0 + sympy.I * 0.0 for k in sympy_model.dynamics.keys()
+            k: 1.0 + sy.I * 0.0 for k in sympy_model.dynamics.keys()
         }
         # replace coefficients with 1
-        full_model = sympy.simplify(
+        full_model = sy.simplify(
             sympy_model.full_expression.subs(
                 {
                     param: props.value
@@ -189,37 +179,37 @@ class TestD1ToD0PiPi:
             .doit()
             .expand(complex=True)
         )
-        assert sympy.im(full_model) == 0
-        return sympy.re(full_model)
+        assert sy.im(full_model) == 0
+        return sy.re(full_model)
 
     @pytest.mark.parametrize(
         "angular_variables, expected_distribution_function",  # type: ignore
         [
             (  # theta distribution from D1 decay
                 "theta_3+4_2",
-                sympy.Rational(5, 4)
-                + sympy.Rational(3, 4)
-                * sympy.cos(sympy.Symbol("theta_3+4_2", real=True)) ** 2,
+                sy.Rational(5, 4)
+                + sy.Rational(3, 4)
+                * sy.cos(sy.Symbol("theta_3+4_2", real=True)) ** 2,
             ),
             (  # theta distribution from D*
                 "theta_3_4_vs_2",
                 1
-                - sympy.Rational(3, 4)
-                * sympy.cos(sympy.Symbol("theta_3_4_vs_2", real=True)) ** 2,
+                - sy.Rational(3, 4)
+                * sy.cos(sy.Symbol("theta_3_4_vs_2", real=True)) ** 2,
             ),
             (  # phi distribution of the D* decay
                 "phi_3_4_vs_2",
                 1
-                - sympy.Rational(4, 9)
-                * sympy.cos(2 * sympy.Symbol("phi_3_4_vs_2", real=True)),
+                - sy.Rational(4, 9)
+                * sy.cos(2 * sy.Symbol("phi_3_4_vs_2", real=True)),
             ),
         ],  # type: ignore
     )
     def test_angular_distributions(
         self,
         angular_variables: Union[str, Sequence[str]],
-        expected_distribution_function: sympy.Expr,
-        sympy_model: sympy.Expr,
+        expected_distribution_function: sy.Expr,
+        sympy_model: sy.Expr,
     ) -> None:
         if isinstance(angular_variables, str):
             angular_variables = (angular_variables,)
