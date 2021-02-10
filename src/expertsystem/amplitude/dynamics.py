@@ -1,39 +1,53 @@
-"""Lineshape functions that describe the dynamics."""
+# cspell:ignore Asner Nakamura
+# pylint: disable=invalid-name
+"""Standard lineshape functions that describe the dynamics."""
 
 import sympy as sy
 
 
-def hankel1(angular_momentum: sy.Symbol, x: sy.Symbol) -> sy.Expr:
-    x_sq = x ** 2
+def blatt_weisskopf(
+    q: sy.Symbol, d: sy.Symbol, angular_momentum: sy.Symbol
+) -> sy.Expr:
+    r"""Blatt-Weisskopf function (:math:`B_L`), up to :math:`L \leq 4`.
+
+    Each of these cases has been taken from
+    :cite:`chungPartialWaveAnalysis1995`, p. 415. For a good overview of where
+    to use these Blatt-Weisskopf functions, see
+    :cite:`asnerDalitzPlotAnalysis2006`.
+    """
+    z = (q * d) ** 2
     return sy.Piecewise(
         (
             1,
             sy.Eq(angular_momentum, 0),
         ),
         (
-            1 + x_sq,
+            sy.sqrt(2 * z / (z + 1)),
             sy.Eq(angular_momentum, 1),
         ),
         (
-            9 + x_sq * (3 + x_sq),
+            sy.sqrt(13 * z ** 2 / ((z - 3) * (z - 3) + 9 * z)),
             sy.Eq(angular_momentum, 2),
         ),
         (
-            225 + x_sq * (45 + x_sq * (6 + x_sq)),
+            sy.sqrt(
+                277
+                * z ** 3
+                / (z * (z - 15) * (z - 15) + 9 * (2 * z - 5) * (2 * z - 5))
+            ),
             sy.Eq(angular_momentum, 3),
         ),
         (
-            11025 + x_sq * (1575 + x_sq * (135 + x_sq * (10 + x_sq))),
+            sy.sqrt(
+                12746
+                * z ** 4
+                / (
+                    (z ** 2 - 45 * z + 105) * (z ** 2 - 45 * z + 105)
+                    + 25 * z * (2 * z - 21) * (2 * z - 21)
+                )
+            ),
             sy.Eq(angular_momentum, 4),
         ),
-    )
-
-
-def blatt_weisskopf(
-    q: sy.Symbol, q_r: sy.Symbol, angular_momentum: sy.Symbol
-) -> sy.Expr:
-    return sy.sqrt(
-        hankel1(angular_momentum, q) / hankel1(angular_momentum, q_r)
     )
 
 
@@ -52,20 +66,20 @@ def relativistic_breit_wigner_with_form_factor(  # pylint: disable=too-many-argu
     angular_momentum: sy.Symbol,
     meson_radius: sy.Symbol,
 ) -> sy.Expr:
-    q_squared = two_body_momentum_squared(mass, m_a, m_b)
-    q0_squared = two_body_momentum_squared(mass0, m_a, m_b)
-    ff2 = blatt_weisskopf(q_squared, meson_radius, angular_momentum)
-    ff02 = blatt_weisskopf(q0_squared, meson_radius, angular_momentum)
-    width = gamma0 * (mass0 / mass) * (ff2 / ff02)
-    width = width * sy.sqrt(q_squared / q0_squared)
-    return relativistic_breit_wigner(mass, mass0, width) * sy.sqrt(ff2)
+    q = breakup_momentum(mass, m_a, m_b)
+    q0 = breakup_momentum(mass0, m_a, m_b)
+    ff = blatt_weisskopf(q, meson_radius, angular_momentum)
+    ff0 = blatt_weisskopf(q0, meson_radius, angular_momentum)
+    width = gamma0 * (mass0 / mass) * (ff ** 2 / ff0 ** 2)
+    width = width * (q / q0)
+    return relativistic_breit_wigner(mass, mass0, width) * ff
 
 
-def two_body_momentum_squared(
-    m_d: sy.Symbol, m_a: sy.Symbol, m_b: sy.Symbol
+def breakup_momentum(
+    m_r: sy.Symbol, m_a: sy.Symbol, m_b: sy.Symbol
 ) -> sy.Expr:
-    return (
-        (m_d ** 2 - (m_a + m_b) ** 2)
-        * (m_d ** 2 - (m_a - m_b) ** 2)
-        / (4 * m_d ** 2)
+    return sy.sqrt(
+        (m_r ** 2 - (m_a + m_b) ** 2)
+        * (m_r ** 2 - (m_a - m_b) ** 2)
+        / (4 * m_r ** 2)
     )
