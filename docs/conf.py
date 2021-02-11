@@ -178,6 +178,7 @@ intersphinx_mapping = {
         "https://python-jsonschema.readthedocs.io/en/latest",
         None,
     ),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
     "mypy": ("https://mypy.readthedocs.io/en/stable", None),
     "pwa": ("https://pwa.readthedocs.io", None),
     "pycompwa": ("https://compwa.github.io", None),
