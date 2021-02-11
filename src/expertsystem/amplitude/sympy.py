@@ -2,7 +2,7 @@
 
 import logging
 import operator
-from collections import abc
+from collections import abc, defaultdict
 from functools import reduce
 from typing import (
     Dict,
@@ -240,6 +240,10 @@ class ModelInfo:  # pylint: disable=too-many-instance-attributes
         validator=attr.validators.instance_of(ParticleCollection),
         init=False,
     )
+    dynamics_parameters: Dict[sy.Symbol, Dict[sy.Symbol, float]] = attr.ib(
+        factory=lambda: defaultdict(dict),
+        init=False,
+    )
 
     def __attrs_post_init__(self) -> None:
         self.parameters = SuggestedParameterValues()
@@ -251,6 +255,7 @@ class ModelInfo:  # pylint: disable=too-many-instance-attributes
         graph: StateTransitionGraph[ParticleWithSpin],
         node_id: int,
         expression: sy.Expr,
+        parameters: Dict[sy.Symbol, float],
     ) -> sy.Symbol:
         decay = _TwoBodyDecay.from_graph(graph, node_id)
         decay_product_description = " ".join(
@@ -268,6 +273,20 @@ class ModelInfo:  # pylint: disable=too-many-instance-attributes
             fR"D[{parent_label} \to {decay_product_description}]"
         )
         self.expression.dynamics[dynamics_symbol] = expression
+
+        # update parameter dictionaries
+        new_parameters = SuggestedParameterValues(
+            {
+                k: v
+                for k, v in self.parameters.items()
+                if k not in self.dynamics_parameters[dynamics_symbol]
+            }
+        )
+        for par, value in parameters.items():
+            new_parameters[par] = ParameterProperties[float](value, False)
+        self.parameters = new_parameters
+        self.dynamics_parameters[dynamics_symbol] = parameters
+
         return dynamics_symbol
 
 
@@ -504,6 +523,50 @@ def _generate_particles_string(
     return output_string[:-1]
 
 
+def _generate_kinematic_variables(
+    graph: StateTransitionGraph[ParticleWithSpin], node_id: int
+) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
+    decay = _TwoBodyDecay.from_graph(graph, node_id)
+    decay_products_fs_ids = (
+        tuple(
+            determine_attached_final_state(
+                graph.topology, decay.children[0].edge_id
+            )
+        ),
+        tuple(
+            determine_attached_final_state(
+                graph.topology, decay.children[1].edge_id
+            )
+        ),
+    )
+
+    recoil_final_state: Tuple[int, ...] = tuple()
+    parent_recoil_final_state: Tuple[int, ...] = tuple()
+
+    recoil_edge_id = get_recoil_edge(graph.topology, decay.parent.edge_id)
+    if recoil_edge_id is not None:
+        recoil_final_state = tuple(
+            determine_attached_final_state(graph.topology, recoil_edge_id)
+        )
+        parent_recoil_edge_id = get_parent_recoil_edge(
+            graph.topology, decay.parent.edge_id
+        )
+        if parent_recoil_edge_id is not None:
+            parent_recoil_final_state = tuple(
+                determine_attached_final_state(
+                    graph.topology, parent_recoil_edge_id
+                )
+            )
+    return sy.symbols(
+        generate_kinematic_variables(
+            decay_products_fs_ids,
+            recoil_final_state,
+            parent_recoil_final_state,
+        ),
+        real=True,
+    )
+
+
 class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attributes
     """Amplitude model generator for the helicity formalism."""
 
@@ -598,7 +661,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         wigner_d = self._generate_wigner_d(graph, node_id)
         suggested_dynamics = 1
         dynamics_symbol = self.__model.set_dynamics(
-            graph, node_id, suggested_dynamics
+            graph, node_id, suggested_dynamics, {}
         )
         return wigner_d * dynamics_symbol
 
@@ -607,44 +670,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> sy.Symbol:
         decay = _TwoBodyDecay.from_graph(graph, node_id)
-        decay_products_fs_ids = (
-            tuple(
-                determine_attached_final_state(
-                    graph.topology, decay.children[0].edge_id
-                )
-            ),
-            tuple(
-                determine_attached_final_state(
-                    graph.topology, decay.children[1].edge_id
-                )
-            ),
-        )
-
-        recoil_final_state: Tuple[int, ...] = tuple()
-        parent_recoil_final_state: Tuple[int, ...] = tuple()
-
-        recoil_edge_id = get_recoil_edge(graph.topology, decay.parent.edge_id)
-        if recoil_edge_id is not None:
-            recoil_final_state = tuple(
-                determine_attached_final_state(graph.topology, recoil_edge_id)
-            )
-            parent_recoil_edge_id = get_parent_recoil_edge(
-                graph.topology, decay.parent.edge_id
-            )
-            if parent_recoil_edge_id is not None:
-                parent_recoil_final_state = tuple(
-                    determine_attached_final_state(
-                        graph.topology, parent_recoil_edge_id
-                    )
-                )
-        _, theta, phi = sy.symbols(
-            generate_kinematic_variables(
-                decay_products_fs_ids,
-                recoil_final_state,
-                parent_recoil_final_state,
-            ),
-            real=True,
-        )
+        _, theta, phi = _generate_kinematic_variables(graph, node_id)
 
         return Wigner.D(
             j=sy.nsimplify(decay.parent.state.particle.spin),

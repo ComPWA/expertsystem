@@ -57,7 +57,7 @@ def relativistic_breit_wigner(
     return gamma0 * mass0 / (mass0 ** 2 - mass ** 2 - gamma0 * mass0 * sy.I)
 
 
-def relativistic_breit_wigner_with_form_factor(  # pylint: disable=too-many-arguments
+def relativistic_breit_wigner_with_ff(  # pylint: disable=too-many-arguments
     mass: sy.Symbol,
     mass0: sy.Symbol,
     gamma0: sy.Symbol,
