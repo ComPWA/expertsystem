@@ -1,6 +1,10 @@
 # cspell:ignore Asner Nakamura
 # pylint: disable=invalid-name
-"""Standard lineshape functions that describe the dynamics."""
+
+"""Lineshape functions that describe the dynamics.
+
+.. seealso:: :doc:`/usage/dynamics`
+"""
 
 import sympy as sy
 
@@ -14,6 +18,11 @@ def blatt_weisskopf(
     :cite:`chungPartialWaveAnalysis1995`, p. 415. For a good overview of where
     to use these Blatt-Weisskopf functions, see
     :cite:`asnerDalitzPlotAnalysis2006`.
+
+    .. glue:math:: blatt_weisskopf
+        :label: blatt_weisskopf
+
+    See :ref:`usage/dynamics:_With_ form factor`.
     """
     z = (q * d) ** 2
     return sy.Piecewise(
@@ -54,6 +63,14 @@ def blatt_weisskopf(
 def relativistic_breit_wigner(
     mass: sy.Symbol, mass0: sy.Symbol, gamma0: sy.Symbol
 ) -> sy.Expr:
+    """Relativistic Breit-Wigner lineshape.
+
+    .. glue:math:: relativistic_breit_wigner
+        :label: relativistic_breit_wigner
+
+    See :ref:`usage/dynamics:_Without_ form factor` and
+    :cite:`asnerDalitzPlotAnalysis2006`.
+    """
     return gamma0 * mass0 / (mass0 ** 2 - mass ** 2 - gamma0 * mass0 * sy.I)
 
 
@@ -66,6 +83,16 @@ def relativistic_breit_wigner_with_ff(  # pylint: disable=too-many-arguments
     angular_momentum: sy.Symbol,
     meson_radius: sy.Symbol,
 ) -> sy.Expr:
+    """Relativistic Breit-Wigner with `.BlattWeisskopf` factor.
+
+    For :math:`l=0`, this lineshape has the following form:
+
+    .. glue:math:: relativistic_breit_wigner_with_ff
+        :label: relativistic_breit_wigner_with_ff
+
+    See :ref:`usage/dynamics:_With_ form factor` and
+    :cite:`asnerDalitzPlotAnalysis2006`.
+    """
     q = breakup_momentum(mass, m_a, m_b)
     q0 = breakup_momentum(mass0, m_a, m_b)
     ff = blatt_weisskopf(q, meson_radius, angular_momentum)
