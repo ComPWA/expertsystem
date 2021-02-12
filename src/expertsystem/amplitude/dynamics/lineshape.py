@@ -83,7 +83,7 @@ def relativistic_breit_wigner_with_ff(  # pylint: disable=too-many-arguments
     angular_momentum: sy.Symbol,
     meson_radius: sy.Symbol,
 ) -> sy.Expr:
-    """Relativistic Breit-Wigner with `.BlattWeisskopf` factor.
+    """Relativistic Breit-Wigner with `.blatt_weisskopf` factor.
 
     For :math:`l=0`, this lineshape has the following form:
 

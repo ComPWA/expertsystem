@@ -34,7 +34,6 @@ from expertsystem.reaction.topology import StateTransitionGraph
 
 from ._graph_info import (
     determine_attached_final_state,
-    generate_kinematics,
     generate_particle_collection,
     get_angular_momentum,
     get_coupled_spin,
@@ -43,8 +42,7 @@ from ._graph_info import (
     get_recoil_edge,
     group_graphs_same_initial_and_final,
 )
-from .kinematics import generate_kinematic_variables
-from .model import Kinematics
+from .kinematics import Kinematics, generate_kinematic_variables
 
 ValueType = TypeVar("ValueType", float, complex, int)
 
@@ -221,7 +219,7 @@ class SympyModel:  # pylint: disable=too-many-instance-attributes
 
 
 @attr.s(kw_only=True)
-class ModelInfo:  # pylint: disable=too-many-instance-attributes
+class HelicityModel:  # pylint: disable=too-many-instance-attributes
     transitions: List[StateTransitionGraph[ParticleWithSpin]] = attr.ib(
         on_setattr=attr.setters.frozen
     )
@@ -247,7 +245,8 @@ class ModelInfo:  # pylint: disable=too-many-instance-attributes
 
     def __attrs_post_init__(self) -> None:
         self.parameters = SuggestedParameterValues()
-        self.kinematics = generate_kinematics(self.transitions)
+        first_transition = next(iter(self.transitions))
+        self.kinematics = Kinematics.from_graph(first_transition)
         self.particles = generate_particle_collection(self.transitions)
 
     def set_dynamics(
@@ -290,7 +289,7 @@ class ModelInfo:  # pylint: disable=too-many-instance-attributes
         return dynamics_symbol
 
 
-class _SympyHelicityAmplitudeNameGenerator:
+class _HelicityAmplitudeNameGenerator:
     def __init__(self) -> None:
         self.parity_partner_coefficient_mapping: Dict[str, str] = {}
 
@@ -430,9 +429,7 @@ class _SympyHelicityAmplitudeNameGenerator:
         return output_suffix[:-1]
 
 
-class _SympyCanonicalAmplitudeNameGenerator(
-    _SympyHelicityAmplitudeNameGenerator
-):
+class _CanonicalAmplitudeNameGenerator(_HelicityAmplitudeNameGenerator):
     def generate_unique_amplitude_name(
         self,
         graph: StateTransitionGraph[ParticleWithSpin],
@@ -567,11 +564,11 @@ def _generate_kinematic_variables(
     )
 
 
-class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attributes
+class HelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attributes
     """Amplitude model generator for the helicity formalism."""
 
     def __init__(self, reaction_result: Result) -> None:
-        self.name_generator = _SympyHelicityAmplitudeNameGenerator()
+        self.name_generator = _HelicityAmplitudeNameGenerator()
         self.__graphs = reaction_result.transitions
         if len(self.__graphs) < 1:
             raise ValueError(
@@ -587,12 +584,12 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         self.__initialize_model()
 
     def __initialize_model(self) -> None:
-        self.__model = ModelInfo(
+        self.__model = HelicityModel(
             transitions=self.__graphs,
             expression=SympyModel(top=1),
         )
 
-    def generate(self) -> ModelInfo:
+    def generate(self) -> HelicityModel:
         self.__initialize_model()
         self.__generate_intensities()
         return self.__model
@@ -727,7 +724,7 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
         return None
 
 
-class SympyCanonicalAmplitudeGenerator(SympyHelicityAmplitudeGenerator):
+class CanonicalAmplitudeGenerator(HelicityAmplitudeGenerator):
     r"""Amplitude model generator for the canonical helicity formalism.
 
     This class defines a full amplitude in the canonical formalism, using the
@@ -745,7 +742,7 @@ class SympyCanonicalAmplitudeGenerator(SympyHelicityAmplitudeGenerator):
 
     def __init__(self, reaction_result: Result) -> None:
         super().__init__(reaction_result)
-        self.name_generator = _SympyCanonicalAmplitudeNameGenerator()
+        self.name_generator = _CanonicalAmplitudeNameGenerator()
 
     def _generate_partial_decay(  # pylint: disable=too-many-locals
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
