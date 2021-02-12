@@ -161,7 +161,7 @@ nitpick_ignore = [
     ("py:class", "a set-like object providing a view on D's keys"),
     ("py:class", "an object providing a view on D's values"),
     ("py:class", "typing_extensions.Protocol"),
-    ("py:obj", "expertsystem.amplitude.sympy.ValueType"),
+    ("py:obj", "expertsystem.amplitude.helicity.ValueType"),
     ("py:obj", "expertsystem.reaction.topology._K"),
     ("py:obj", "expertsystem.reaction.topology._V"),
 ]

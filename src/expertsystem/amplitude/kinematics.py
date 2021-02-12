@@ -2,9 +2,64 @@
 
 import logging
 from collections import abc
+from enum import Enum, auto
 from typing import Dict, Iterable, Optional, Sequence, Tuple
 
 import attr
+
+from expertsystem.particle import Particle
+from expertsystem.reaction import ParticleWithSpin, StateTransitionGraph
+
+
+class KinematicsType(Enum):
+    HELICITY = auto()
+
+
+def _determine_default_kinematics(
+    kinematics_type: Optional[KinematicsType],
+) -> KinematicsType:
+    if kinematics_type is None:
+        return KinematicsType.HELICITY
+    return kinematics_type
+
+
+@attr.s(frozen=True)
+class Kinematics:
+    initial_state: Dict[int, Particle] = attr.ib()
+    final_state: Dict[int, Particle] = attr.ib()
+    type: KinematicsType = attr.ib(  # noqa: A003
+        default=KinematicsType.HELICITY,
+        converter=_determine_default_kinematics,
+    )
+
+    def __attrs_post_init__(self) -> None:
+        overlapping_ids = set(self.initial_state) & set(self.final_state)
+        if len(overlapping_ids) > 0:
+            raise ValueError(
+                "Initial and final state have overlapping IDs",
+                overlapping_ids,
+            )
+
+    @property
+    def id_to_particle(self) -> Dict[int, Particle]:
+        return {**self.initial_state, **self.final_state}
+
+    @staticmethod
+    def from_graph(
+        graph: StateTransitionGraph[ParticleWithSpin],
+        kinematics_type: Optional[KinematicsType] = None,
+    ) -> "Kinematics":
+        initial_state = dict()
+        for state_id in graph.topology.incoming_edge_ids:
+            initial_state[state_id] = graph.get_edge_props(state_id)[0]
+        final_state = dict()
+        for state_id in graph.topology.outgoing_edge_ids:
+            final_state[state_id] = graph.get_edge_props(state_id)[0]
+        return Kinematics(
+            type=kinematics_type,
+            initial_state=initial_state,
+            final_state=final_state,
+        )
 
 
 def _to_sorted_tuple(instance: Optional[Iterable[int]]) -> Tuple[int, ...]:

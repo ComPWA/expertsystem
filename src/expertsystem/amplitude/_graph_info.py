@@ -1,6 +1,5 @@
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
-from expertsystem.amplitude.model import Kinematics
 from expertsystem.particle import ParticleCollection, Spin
 from expertsystem.reaction.quantum_numbers import (
     InteractionProperties,
@@ -155,13 +154,6 @@ def generate_particle_collection(
             if particle not in particles:
                 particles.add(particle)
     return particles
-
-
-def generate_kinematics(
-    graphs: List[StateTransitionGraph[ParticleWithSpin]],
-) -> Kinematics:
-    graph = next(iter(graphs))
-    return Kinematics.from_graph(graph)
 
 
 def generate_particles_string(

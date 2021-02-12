@@ -1,4 +1,4 @@
-"""Build {mod}`.lineshapes` with correct variable names and values."""
+"""Build :mod:`.lineshape` with correct variable names and values."""
 
 import inspect
 from collections import OrderedDict

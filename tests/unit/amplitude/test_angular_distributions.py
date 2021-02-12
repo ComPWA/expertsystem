@@ -75,7 +75,7 @@ class TestEpemToDmD0Pip:
             particles=particles,
         )
 
-        amplitude_model = es.amplitude.generate_sympy(result)
+        amplitude_model = es.amplitude.generate(result)
         sympy_model = amplitude_model.expression
         sympy_model.dynamics = {k: 1 for k in sympy_model.dynamics.keys()}
         full_model = sy.simplify(
@@ -156,7 +156,7 @@ class TestD1ToD0PiPi:
             allowed_intermediate_particles=["D*"],
             allowed_interaction_types="strong",
         )
-        amplitude_model = es.amplitude.generate_sympy(result)
+        amplitude_model = es.amplitude.generate(result)
 
         amplitude_model.parameters[
             sy.Symbol(

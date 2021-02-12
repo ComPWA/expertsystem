@@ -3,12 +3,12 @@
 import sympy as sy
 
 from expertsystem.amplitude._graph_info import determine_attached_final_state
-from expertsystem.amplitude.kinematics import HelicityKinematics
-from expertsystem.amplitude.sympy import (
-    ModelInfo,
+from expertsystem.amplitude.helicity import (
+    HelicityModel,
     _generate_kinematic_variables,
     _TwoBodyDecay,
 )
+from expertsystem.amplitude.kinematics import HelicityKinematics
 
 from .builder import (
     ResonanceDynamicsBuilder,
@@ -18,7 +18,7 @@ from .builder import (
 
 
 def set_resonance_dynamics(
-    model_info: ModelInfo,
+    model_info: HelicityModel,
     particle_name: str,
     builder: ResonanceDynamicsBuilder,
 ) -> None:
@@ -34,7 +34,7 @@ def set_resonance_dynamics(
     # Find all graphs that contain particle with name particle_name
     # and check that the graphs are kinematically identical.
     # This checking is currently more of a safety check, due to the structure
-    # of the StateTransitionGraph and the set_dynamics function in ModelInfo.
+    # of the StateTransitionGraph and the set_dynamics function in HelicityModel.
     # We do not want to call set_dynamics on every graph, so we only call it
     # once, but we have to make sure that all of the graphs are topologically
     # and kinematically identical. Otherwise this single set_dynamics call is
