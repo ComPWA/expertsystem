@@ -24,7 +24,7 @@ The `expertsystem` consists of three main components:
 
   `expertsystem.amplitude`
     ― a collection of tools to convert the `.StateTransitionGraph` solutions
-    found by `reaction` into an `.AmplitudeModel`. This module is specifically
+    found by `reaction` into an `.HelicityModel`. This module is specifically
     designed to create amplitude model templates for :doc:`PWA fitter packages
     <pwa:software>`.
 

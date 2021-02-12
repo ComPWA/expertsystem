@@ -1,8 +1,8 @@
 import pytest
 import sympy as sy
 
-from expertsystem.amplitude import generate_sympy
-from expertsystem.amplitude.sympy import (
+from expertsystem.amplitude import generate
+from expertsystem.amplitude.helicity import (
     ParameterProperties,
     SuggestedParameterValues,
 )
@@ -24,7 +24,7 @@ def test_generate(
         result = jpsi_to_gamma_pi_pi_helicity_solutions
     else:
         raise NotImplementedError
-    sympy_model = generate_sympy(result)
+    sympy_model = generate(result)
     assert len(sympy_model.parameters) == 2
     assert len(sympy_model.expression.dynamics) == 4
     assert len(sympy_model.expression.intensities) == 4
