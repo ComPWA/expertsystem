@@ -77,7 +77,8 @@ class TestEpemToDmD0Pip:
 
         amplitude_model = es.amplitude.generate(result)
         sympy_model = amplitude_model.expression
-        sympy_model.dynamics = {k: 1 for k in sympy_model.dynamics.keys()}
+        for k in sympy_model.dynamics:
+            sympy_model.dynamics[k] = 1
         full_model = sy.simplify(
             sympy_model.full_expression.subs(
                 amplitude_model.parameters.subs_values()
@@ -165,9 +166,8 @@ class TestD1ToD0PiPi:
             )
         ].value = 0.5
         sympy_model = amplitude_model.expression
-        sympy_model.dynamics = {
-            k: 1.0 + sy.I * 0.0 for k in sympy_model.dynamics.keys()
-        }
+        for k in sympy_model.dynamics:
+            sympy_model.dynamics[k] = 1.0 + sy.I * 0.0
         # replace coefficients with 1
         full_model = sy.simplify(
             sympy_model.full_expression.subs(
