@@ -43,6 +43,7 @@ from ._graph_info import (
     group_graphs_same_initial_and_final,
 )
 from .kinematics import Kinematics, generate_kinematic_variables
+from .sympy_wrappers import SymbolDefinitions
 
 ValueType = TypeVar("ValueType", float, complex, int)
 
@@ -205,9 +206,9 @@ class SuggestedParameterValues(abc.MutableMapping):
 @attr.s(kw_only=True)
 class SympyModel:  # pylint: disable=too-many-instance-attributes
     top: sy.Expr = attr.ib()
-    intensities: Dict[sy.Symbol, sy.Expr] = attr.ib(factory=dict)
-    amplitudes: Dict[sy.Symbol, sy.Expr] = attr.ib(factory=dict)
-    dynamics: Dict[sy.Symbol, sy.Expr] = attr.ib(factory=dict)
+    intensities: SymbolDefinitions = attr.ib(factory=SymbolDefinitions)
+    amplitudes: SymbolDefinitions = attr.ib(factory=SymbolDefinitions)
+    dynamics: SymbolDefinitions = attr.ib(factory=SymbolDefinitions)
 
     @property
     def full_expression(self) -> sy.Expr:
