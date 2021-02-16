@@ -9,12 +9,49 @@ from expertsystem.amplitude.helicity import (
     _TwoBodyDecay,
 )
 from expertsystem.amplitude.kinematics import HelicityKinematics
+from expertsystem.reaction.quantum_numbers import ParticleWithSpin
+from expertsystem.reaction.topology import StateTransitionGraph
 
 from .builder import (
     ResonanceDynamicsBuilder,
     TwoBodyKinematicVariableSet,
     verify_signature,
 )
+
+
+def _extract_angular_momentum(
+    transition: StateTransitionGraph[ParticleWithSpin], node_id: int
+) -> int:
+    node_props = transition.get_node_props(node_id)
+    if node_props.l_magnitude is not None:
+        return node_props.l_magnitude
+
+    edge_id = None
+    if len(transition.topology.get_edge_ids_ingoing_to_node(node_id)) == 1:
+        edge_id = tuple(
+            transition.topology.get_edge_ids_ingoing_to_node(node_id)
+        )[0]
+    elif (
+        len(transition.topology.get_edge_ids_outgoing_from_node(node_id)) == 1
+    ):
+        edge_id = tuple(
+            transition.topology.get_edge_ids_outgoing_from_node(node_id)
+        )[0]
+
+    if edge_id is None:
+        raise ValueError(
+            f"StateTransitionGraph does not have one to two body structure"
+            f" at node with id={node_id}"
+        )
+    spin_mag = transition.get_edge_props(edge_id)[0].spin
+
+    if spin_mag.is_integer():
+        return int(spin_mag)
+
+    raise ValueError(
+        f"Spin magnitude ({spin_mag}) of single particle state cannot be"
+        f" used as the angular momentum as it is not integral!"
+    )
 
 
 def set_resonance_dynamics(
@@ -71,9 +108,10 @@ def set_resonance_dynamics(
                     ),
                     helicity_theta=theta,
                     helicity_phi=phi,
-                    angular_momentum=transition.get_node_props(
-                        node_id
-                    ).l_magnitude,
+                    angular_momentum=_extract_angular_momentum(
+                        transition,
+                        node_id,
+                    ),
                 )
 
                 if not variable_set:
