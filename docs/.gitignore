@@ -2,3 +2,5 @@
 *.inv
 *build/
 api/
+
+!/usage/physics/helicity_angles.svg

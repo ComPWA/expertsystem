@@ -435,8 +435,9 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
                 graph.topology, out_edge_id
             )
             decay_products_fs_ids_list.append(final_state_ids)
-        decay_products_fs_ids: Tuple[Tuple[int, ...], ...] = tuple(
-            tuple(x) for x in decay_products_fs_ids_list
+        decay_products_fs_ids: Tuple[Tuple[int, ...], Tuple[int, ...]] = (
+            tuple(decay_products_fs_ids_list[0]),
+            tuple(decay_products_fs_ids_list[1]),
         )
 
         recoil_final_state: Tuple[int, ...] = tuple()
@@ -492,7 +493,9 @@ class SympyHelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attr
 
     def __generate_kinematic_variables(  # pylint: disable=no-self-use,unused-argument
         self,
-        decay_products_final_state_ids: Tuple[Tuple[int, ...], ...],
+        decay_products_final_state_ids: Tuple[
+            Tuple[int, ...], Tuple[int, ...]
+        ],
         recoil_final_state_ids: Tuple[int, ...],
         parent_recoil_final_state_ids: Tuple[int, ...],
     ) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
