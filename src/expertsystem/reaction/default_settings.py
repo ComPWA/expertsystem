@@ -106,7 +106,7 @@ def _get_ang_mom_magnitudes(is_nbody: bool) -> List[float]:
 def __create_projections(
     magnitudes: List[Union[int, float]]
 ) -> List[Union[int, float]]:
-    return magnitudes + list([-x for x in magnitudes if x > 0])
+    return magnitudes + [-x for x in magnitudes if x > 0]
 
 
 def create_default_interaction_settings(
