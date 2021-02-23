@@ -75,12 +75,9 @@ class TestEpemToDmD0Pip:
             particles=particles,
         )
 
-        amplitude_model = es.amplitude.generate(result)
-        sympy_model = amplitude_model.expression
-        for k in sympy_model.dynamics:
-            sympy_model.dynamics[k] = 1
+        amplitude_model = es.amplitude.get_builder(result).generate()
         full_model = sy.simplify(
-            sympy_model.full_expression.subs(
+            amplitude_model.expression.subs(
                 amplitude_model.parameters.subs_values()
             )
             .doit()
@@ -157,7 +154,7 @@ class TestD1ToD0PiPi:
             allowed_intermediate_particles=["D*"],
             allowed_interaction_types="strong",
         )
-        amplitude_model = es.amplitude.generate(result)
+        amplitude_model = es.amplitude.get_builder(result).generate()
 
         amplitude_model.parameters[
             sy.Symbol(
@@ -165,12 +162,9 @@ class TestD1ToD0PiPi:
                 "D^{*}(2010)^{+} \\to D^{0}_{0} \\pi^{+}_{0}]"
             )
         ].value = 0.5
-        sympy_model = amplitude_model.expression
-        for k in sympy_model.dynamics:
-            sympy_model.dynamics[k] = 1.0 + sy.I * 0.0
-        # replace coefficients with 1
+
         full_model = sy.simplify(
-            sympy_model.full_expression.subs(
+            amplitude_model.expression.subs(
                 {
                     param: props.value
                     for param, props in amplitude_model.parameters.items()

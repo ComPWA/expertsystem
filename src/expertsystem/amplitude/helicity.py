@@ -2,7 +2,7 @@
 
 import logging
 import operator
-from collections import abc, defaultdict
+from collections import abc
 from functools import reduce
 from typing import (
     Dict,
@@ -42,8 +42,16 @@ from ._graph_info import (
     get_recoil_edge,
     group_graphs_same_initial_and_final,
 )
-from .kinematics import Kinematics, generate_kinematic_variables
-from .sympy_wrappers import SymbolDefinitions
+from .dynamics.builder import (
+    ResonanceDynamicsBuilder,
+    TwoBodyKinematicVariableSet,
+    verify_signature,
+)
+from .kinematics import (
+    HelicityKinematics,
+    Kinematics,
+    generate_kinematic_variables,
+)
 
 ValueType = TypeVar("ValueType", float, complex, int)
 
@@ -203,91 +211,23 @@ class SuggestedParameterValues(abc.MutableMapping):
         return {p: v.value for p, v in self.items()}
 
 
-@attr.s(kw_only=True)
-class SympyModel:  # pylint: disable=too-many-instance-attributes
-    top: sy.Expr = attr.ib()
-    intensities: SymbolDefinitions = attr.ib(factory=SymbolDefinitions)
-    amplitudes: SymbolDefinitions = attr.ib(factory=SymbolDefinitions)
-    dynamics: SymbolDefinitions = attr.ib(factory=SymbolDefinitions)
-
-    @property
-    def full_expression(self) -> sy.Expr:
-        return (
-            self.top.subs(self.intensities)
-            .subs(self.amplitudes)
-            .subs(self.dynamics)
-        )
-
-
-@attr.s(kw_only=True)
-class HelicityModel:  # pylint: disable=too-many-instance-attributes
-    transitions: List[StateTransitionGraph[ParticleWithSpin]] = attr.ib(
-        on_setattr=attr.setters.frozen
+@attr.s(frozen=True)
+class HelicityModel:
+    expression: sy.Expr = attr.ib(
+        validator=attr.validators.instance_of(sy.Expr)
     )
-    expression: SympyModel = attr.ib(
-        validator=attr.validators.instance_of(SympyModel),
+    components: Dict[str, sy.Expr] = attr.ib(
+        validator=attr.validators.instance_of(dict)
     )
     parameters: SuggestedParameterValues = attr.ib(
-        validator=attr.validators.instance_of(SuggestedParameterValues),
-        init=False,
+        validator=attr.validators.instance_of(SuggestedParameterValues)
     )
     kinematics: Kinematics = attr.ib(
-        validator=attr.validators.instance_of(Kinematics),
-        init=False,
+        validator=attr.validators.instance_of(Kinematics)
     )
     particles: ParticleCollection = attr.ib(
-        validator=attr.validators.instance_of(ParticleCollection),
-        init=False,
+        validator=attr.validators.instance_of(ParticleCollection)
     )
-    dynamics_parameters: Dict[sy.Symbol, Dict[sy.Symbol, float]] = attr.ib(
-        factory=lambda: defaultdict(dict),
-        init=False,
-    )
-
-    def __attrs_post_init__(self) -> None:
-        self.parameters = SuggestedParameterValues()
-        first_transition = next(iter(self.transitions))
-        self.kinematics = Kinematics.from_graph(first_transition)
-        self.particles = generate_particle_collection(self.transitions)
-
-    def set_dynamics(
-        self,
-        graph: StateTransitionGraph[ParticleWithSpin],
-        node_id: int,
-        expression: sy.Expr,
-        parameters: Dict[sy.Symbol, float],
-    ) -> sy.Symbol:
-        decay = _TwoBodyDecay.from_graph(graph, node_id)
-        decay_product_description = " ".join(
-            child.state.particle.name
-            if child.state.particle.latex is None
-            else child.state.particle.latex
-            for child in decay.children
-        )
-        parent_label = (
-            decay.parent.state.particle.name
-            if decay.parent.state.particle.latex is None
-            else decay.parent.state.particle.latex
-        )
-        dynamics_symbol = sy.Symbol(
-            fR"D[{parent_label} \to {decay_product_description}]"
-        )
-        self.expression.dynamics[dynamics_symbol] = expression
-
-        # update parameter dictionaries
-        new_parameters = SuggestedParameterValues(
-            {
-                k: v
-                for k, v in self.parameters.items()
-                if k not in self.dynamics_parameters[dynamics_symbol]
-            }
-        )
-        for par, value in parameters.items():
-            new_parameters[par] = ParameterProperties[float](value, False)
-        self.parameters = new_parameters
-        self.dynamics_parameters[dynamics_symbol] = parameters
-
-        return dynamics_symbol
 
 
 class _HelicityAmplitudeNameGenerator:
@@ -521,6 +461,76 @@ def _generate_particles_string(
     return output_string[:-1]
 
 
+def _generate_kinematic_variable_set(
+    transition: StateTransitionGraph[ParticleWithSpin], node_id: int
+) -> TwoBodyKinematicVariableSet:
+    decay = _TwoBodyDecay.from_graph(transition, node_id)
+    inv_mass, theta, phi = _generate_kinematic_variables(transition, node_id)
+    kinematics = HelicityKinematics()
+    return TwoBodyKinematicVariableSet(
+        in_edge_inv_mass=inv_mass,
+        out_edge_inv_mass1=sy.Symbol(
+            kinematics.register_invariant_mass(
+                determine_attached_final_state(
+                    transition.topology,
+                    decay.children[0].edge_id,
+                )
+            ),
+            real=True,
+        ),
+        out_edge_inv_mass2=sy.Symbol(
+            kinematics.register_invariant_mass(
+                determine_attached_final_state(
+                    transition.topology,
+                    decay.children[1].edge_id,
+                )
+            ),
+            real=True,
+        ),
+        helicity_theta=theta,
+        helicity_phi=phi,
+        angular_momentum=_extract_angular_momentum(
+            transition,
+            node_id,
+        ),
+    )
+
+
+def _extract_angular_momentum(
+    transition: StateTransitionGraph[ParticleWithSpin], node_id: int
+) -> int:
+    node_props = transition.get_node_props(node_id)
+    if node_props.l_magnitude is not None:
+        return node_props.l_magnitude
+
+    edge_id = None
+    if len(transition.topology.get_edge_ids_ingoing_to_node(node_id)) == 1:
+        edge_id = tuple(
+            transition.topology.get_edge_ids_ingoing_to_node(node_id)
+        )[0]
+    elif (
+        len(transition.topology.get_edge_ids_outgoing_from_node(node_id)) == 1
+    ):
+        edge_id = tuple(
+            transition.topology.get_edge_ids_outgoing_from_node(node_id)
+        )[0]
+
+    if edge_id is None:
+        raise ValueError(
+            f"StateTransitionGraph does not have one to two body structure"
+            f" at node with id={node_id}"
+        )
+    spin_mag = transition.get_edge_props(edge_id)[0].spin
+
+    if spin_mag.is_integer():
+        return int(spin_mag)
+
+    raise ValueError(
+        f"Spin magnitude ({spin_mag}) of single particle state cannot be"
+        f" used as the angular momentum as it is not integral!"
+    )
+
+
 def _generate_kinematic_variables(
     graph: StateTransitionGraph[ParticleWithSpin], node_id: int
 ) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
@@ -565,12 +575,20 @@ def _generate_kinematic_variables(
     )
 
 
-class HelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attributes
+class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
     """Amplitude model generator for the helicity formalism."""
 
     def __init__(self, reaction_result: Result) -> None:
         self.name_generator = _HelicityAmplitudeNameGenerator()
         self.__graphs = reaction_result.transitions
+        self.__parameters: Dict[
+            sy.Symbol, Union[ParameterProperties, complex, float]
+        ] = dict()
+        self.__components: Dict[str, sy.Expr] = dict()
+        self.__dynamics_choices: Dict[
+            _TwoBodyDecay, ResonanceDynamicsBuilder
+        ] = dict()
+
         if len(self.__graphs) < 1:
             raise ValueError(
                 f"At least one {StateTransitionGraph.__name__} required to"
@@ -582,31 +600,73 @@ class HelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attribute
             raise ValueError(
                 "Helicity amplitude model requires exactly one initial state"
             )
-        self.__initialize_model()
 
-    def __initialize_model(self) -> None:
-        self.__model = HelicityModel(
-            transitions=self.__graphs,
-            expression=SympyModel(top=1),
-        )
+    def set_dynamics(
+        self, particle_name: str, dynamics_builder: ResonanceDynamicsBuilder
+    ) -> None:
+        verify_signature(dynamics_builder)
+        for transition in self.__graphs:
+            for node_id in transition.topology.nodes:
+                decay = _TwoBodyDecay.from_graph(transition, node_id)
+                decay_particle = decay.parent.state.particle
+                if decay_particle.name == particle_name:
+                    self.__dynamics_choices[decay] = dynamics_builder
 
     def generate(self) -> HelicityModel:
-        self.__initialize_model()
-        self.__generate_intensities()
-        return self.__model
+        self.__components = dict()
+        self.__parameters = dict()
+        some_graph = next(iter(self.__graphs))
+        return HelicityModel(
+            expression=self.__generate_intensity(),
+            components=self.__components,
+            parameters=SuggestedParameterValues(self.__parameters),
+            kinematics=Kinematics.from_graph(some_graph),
+            particles=generate_particle_collection(self.__graphs),
+        )
 
-    def __generate_intensities(self) -> sy.Expr:
+    def __generate_intensity(self) -> sy.Expr:
         graph_groups = group_graphs_same_initial_and_final(self.__graphs)
         logging.debug("There are %d graph groups", len(graph_groups))
 
         self.__create_parameter_couplings(graph_groups)
+        coherent_intensities = []
         for graph_group in graph_groups:
-            self.__generate_coherent_intensity(graph_group)
-        coherent_intensities = self.__model.expression.intensities
+            coherent_intensities.append(
+                self.__generate_coherent_intensity(graph_group)
+            )
         if len(coherent_intensities) == 0:
             raise ValueError("List of coherent intensities cannot be empty")
-        self.__model.expression.top = sum(coherent_intensities)
-        return self.__model.expression.top
+        return sum(coherent_intensities)
+
+    def __create_dynamics(
+        self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
+    ) -> sy.Expr:
+        decay = _TwoBodyDecay.from_graph(graph, node_id)
+        if decay in self.__dynamics_choices:
+            builder = self.__dynamics_choices[decay]
+            variable_set = _generate_kinematic_variable_set(graph, node_id)
+            expression, parameters = builder(
+                decay.parent.state.particle, variable_set
+            )
+            for par, value in parameters.items():
+                if par in self.__parameters:
+                    if isinstance(self.__parameters[par], ParameterProperties):
+                        previous_value = self.__parameters[par].value  # type: ignore
+                    else:
+                        previous_value = self.__parameters[par]
+
+                    if value != previous_value:
+                        logging.warning(
+                            f"Default value for parameter {par.name}"
+                            f" inconsistent {value} and {previous_value}"
+                        )
+                self.__parameters[par] = ParameterProperties[float](
+                    value, False
+                )
+
+            return expression
+
+        return 1
 
     def __create_parameter_couplings(
         self, graph_groups: List[List[StateTransitionGraph[ParticleWithSpin]]]
@@ -618,9 +678,8 @@ class HelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attribute
     def __generate_coherent_intensity(
         self,
         graph_group: List[StateTransitionGraph[ParticleWithSpin]],
-    ) -> sy.Symbol:
+    ) -> sy.Expr:
         graph_group_label = _get_graph_group_unique_label(graph_group)
-        symbol = sy.Symbol(fR"I[{graph_group_label}]")
         expression: List[sy.Expr] = list()
         for graph in graph_group:
             sequential_graphs = (
@@ -629,38 +688,34 @@ class HelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attribute
             for seq_graph in sequential_graphs:
                 expression.append(self.__generate_sequential_decay(seq_graph))
         amplitude_sum = sum(expression)
-        coherent_intensity = abs(amplitude_sum) ** 2
-        self.__model.expression.intensities[symbol] = coherent_intensity
-        return symbol
+        coh_intensity = abs(amplitude_sum) ** 2
+        self.__components[fR"I[{graph_group_label}]"] = coh_intensity
+        return coh_intensity
 
     def __generate_sequential_decay(
         self, graph: StateTransitionGraph[ParticleWithSpin]
-    ) -> sy.Symbol:
-        partial_decays_symbols: List[sy.Symbol] = [
+    ) -> sy.Expr:
+        partial_decays: List[sy.Symbol] = [
             self._generate_partial_decay(graph, node_id)
             for node_id in graph.topology.nodes
         ]
-        sequential_amplitudes = reduce(operator.mul, partial_decays_symbols)
+        sequential_amplitudes = reduce(operator.mul, partial_decays)
 
-        symbol = sy.Symbol(
-            f"A[{self.name_generator.generate_unique_amplitude_name(graph)}]"
-        )
         coefficient = self.__generate_amplitude_coefficient(graph)
         prefactor = self.__generate_amplitude_prefactor(graph)
         expression = coefficient * sequential_amplitudes
         if prefactor is not None:
             expression = prefactor * expression
-        self.__model.expression.amplitudes[symbol] = expression
-        return symbol
+        self.__components[
+            f"A[{self.name_generator.generate_unique_amplitude_name(graph)}]"
+        ] = expression
+        return expression
 
     def _generate_partial_decay(  # pylint: disable=too-many-locals
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
-    ) -> sy.Symbol:
+    ) -> sy.Expr:
         wigner_d = self._generate_wigner_d(graph, node_id)
-        suggested_dynamics = 1
-        dynamics_symbol = self.__model.set_dynamics(
-            graph, node_id, suggested_dynamics, {}
-        )
+        dynamics_symbol = self.__create_dynamics(graph, node_id)
         return wigner_d * dynamics_symbol
 
     @staticmethod
@@ -695,7 +750,7 @@ class HelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attribute
             graph
         )
         coefficient_symbol = sy.Symbol(f"C[{suffix}]")
-        self.__model.parameters[coefficient_symbol] = ParameterProperties(
+        self.__parameters[coefficient_symbol] = ParameterProperties(
             complex(1, 0), fix=False
         )
         return coefficient_symbol
@@ -725,7 +780,7 @@ class HelicityAmplitudeGenerator:  # pylint: disable=too-many-instance-attribute
         return None
 
 
-class CanonicalAmplitudeGenerator(HelicityAmplitudeGenerator):
+class CanonicalAmplitudeBuilder(HelicityAmplitudeBuilder):
     r"""Amplitude model generator for the canonical helicity formalism.
 
     This class defines a full amplitude in the canonical formalism, using the

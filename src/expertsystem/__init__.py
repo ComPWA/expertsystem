@@ -41,7 +41,6 @@ __all__ = [
     "io",
     # Facade functions
     "generate_transitions",
-    "generate_amplitudes",
     "check_reaction_violations",
 ]
 
@@ -53,6 +52,3 @@ generate_transitions = reaction.generate
 
 check_reaction_violations = reaction.check_reaction_violations
 """An alias to `.reaction.check_reaction_violations`."""
-
-generate_amplitudes = amplitude.generate
-"""An alias to `.amplitude.generate`."""
