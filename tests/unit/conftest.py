@@ -4,7 +4,6 @@ import logging
 import pytest
 
 import expertsystem as es
-from expertsystem.amplitude.dynamics import set_resonance_dynamics
 from expertsystem.amplitude.dynamics.builder import (
     create_relativistic_breit_wigner_with_ff,
 )
@@ -51,9 +50,9 @@ def jpsi_to_gamma_pi_pi_helicity_amplitude_model(
 
 
 def __create_model(result: Result) -> HelicityModel:
-    model = es.amplitude.generate(result)
+    model_builder = es.amplitude.get_builder(result)
     for name in result.get_intermediate_particles().names:
-        set_resonance_dynamics(
-            model, name, create_relativistic_breit_wigner_with_ff
+        model_builder.set_dynamics(
+            name, create_relativistic_breit_wigner_with_ff
         )
-    return model
+    return model_builder.generate()

@@ -9,26 +9,26 @@ optimize ('fit') its parameters so that they resemble the data set as good as
 possible.
 """
 
-
 from expertsystem.reaction import Result
 
-from .helicity import (
-    CanonicalAmplitudeGenerator,
-    HelicityAmplitudeGenerator,
-    HelicityModel,
-)
+from .helicity import CanonicalAmplitudeBuilder, HelicityAmplitudeBuilder
 
 
-def generate(result: Result) -> HelicityModel:
+def get_builder(result: Result) -> HelicityAmplitudeBuilder:
+    """Get the correct `.HelicityAmplitudeBuilder` for a `.Result`.
+
+    For instance, get `.CanonicalAmplitudeBuilder` if the
+    `~.Result.formalism_type` is :code:`"canonical-helicity"`.
+    """
     formalism_type = result.formalism_type
     if formalism_type is None:
         raise ValueError(f"Result does not have a formalism type:\n{result}")
     if formalism_type == "helicity":
-        amplitude_generator = HelicityAmplitudeGenerator(result)
+        amplitude_builder = HelicityAmplitudeBuilder(result)
     elif formalism_type in ["canonical-helicity", "canonical"]:
-        amplitude_generator = CanonicalAmplitudeGenerator(result)
+        amplitude_builder = CanonicalAmplitudeBuilder(result)
     else:
         raise NotImplementedError(
             f'No amplitude generator for formalism type "{formalism_type}"'
         )
-    return amplitude_generator.generate()
+    return amplitude_builder

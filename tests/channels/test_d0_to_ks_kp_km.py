@@ -20,5 +20,6 @@ def test_script():
         "a(2)(1320)-",
         "phi(1020)",
     }
-    model = es.generate_amplitudes(result)
+    model_builder = es.amplitude.get_builder(result)
+    model = model_builder.generate()
     assert len(model.parameters) == 5
