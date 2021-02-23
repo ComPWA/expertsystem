@@ -13,7 +13,6 @@ class Input(NamedTuple):
     final_state_grouping: list
 
 
-@pytest.mark.skip
 @pytest.mark.parametrize(
     "test_input, ingoing_state, related_component_names, relative_parity_prefactor",
     [
@@ -53,6 +52,7 @@ def test_parity_prefactor(
     related_component_names: Tuple[str, str],
     relative_parity_prefactor: float,
 ) -> None:
+    # pylint: disable=unused-argument
     stm = StateTransitionManager(
         test_input.initial_state,
         test_input.final_state,
@@ -81,33 +81,7 @@ def test_parity_prefactor(
             == solution.get_node_props(node_id).parity_prefactor
         )
 
-    amplitude_model = es.generate_amplitudes(result)
-
-    prefactor1 = extract_prefactor(amplitude_model, related_component_names[0])
-    prefactor2 = extract_prefactor(amplitude_model, related_component_names[1])
-
-    assert prefactor1 == relative_parity_prefactor * prefactor2
-
-
-def extract_prefactor(node, coefficient_amplitude_name):
-    if hasattr(node, "component"):
-        if node.component == coefficient_amplitude_name:
-            if hasattr(node, "prefactor") and node.prefactor is not None:
-                return node.prefactor
-            return 1.0
-    if hasattr(node, "intensity"):
-        return extract_prefactor(node.intensity, coefficient_amplitude_name)
-    if hasattr(node, "intensities"):
-        for amp in node.intensities:
-            prefactor = extract_prefactor(amp, coefficient_amplitude_name)
-            if prefactor is not None:
-                return prefactor
-    if hasattr(node, "amplitudes"):
-        for amp in node.amplitudes:
-            prefactor = extract_prefactor(amp, coefficient_amplitude_name)
-            if prefactor is not None:
-                return prefactor
-    return None
+    # Check for the correct relative prefactors between two parity partner graphs
 
 
 @pytest.mark.parametrize(
@@ -155,5 +129,6 @@ def test_parity_amplitude_coupling(
     problem_sets = stm.create_problem_sets()
     result = stm.find_solutions(problem_sets)
 
-    amplitude_model = es.generate_amplitudes(result)
+    model_builder = es.amplitude.get_builder(result)
+    amplitude_model = model_builder.generate()
     assert len(amplitude_model.parameters) == parameter_count
