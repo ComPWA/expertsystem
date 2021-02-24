@@ -10,6 +10,8 @@ import sympy as sy
 from expertsystem.particle import Particle
 
 from .lineshape import (
+    blatt_weisskopf,
+    breakup_momentum,
     relativistic_breit_wigner,
     relativistic_breit_wigner_with_ff,
 )
@@ -37,13 +39,32 @@ def create_non_dynamic(
     return (1, {})
 
 
+def create_non_dynamic_with_ff(
+    particle: Particle, variable_pool: TwoBodyKinematicVariableSet
+) -> Tuple[sy.Expr, Dict[sy.Symbol, float]]:
+    angular_momentum = variable_pool.angular_momentum
+    if angular_momentum is None:
+        raise ValueError(
+            "Angular momentum is not defined but is required in the form factor!"
+        )
+    q = breakup_momentum(
+        variable_pool.in_edge_inv_mass,
+        variable_pool.out_edge_inv_mass1,
+        variable_pool.out_edge_inv_mass2,
+    )
+    meson_radius = sy.Symbol(f"d_{particle.name}")
+    return (
+        blatt_weisskopf(q, meson_radius, angular_momentum),
+        {meson_radius: 1},
+    )
+
+
 def create_relativistic_breit_wigner(
     particle: Particle, variable_pool: TwoBodyKinematicVariableSet
 ) -> Tuple[sy.Expr, Dict[sy.Symbol, float]]:
     inv_mass = variable_pool.in_edge_inv_mass
     res_mass = sy.Symbol(f"m_{particle.name}")
     res_width = sy.Symbol(f"Gamma_{particle.name}")
-
     return (
         relativistic_breit_wigner(
             inv_mass,
