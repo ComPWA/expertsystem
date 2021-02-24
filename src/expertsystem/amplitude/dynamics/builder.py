@@ -87,10 +87,12 @@ def create_relativistic_breit_wigner_with_ff(
 class ResonanceDynamicsBuilder(Protocol):
     """Protocol that is used by `.set_dynamics`.
 
-    Follow this `~typing.Protocol` when defining a builder that is to be used
-    by `.set_dynamics`. For an example, see
+    Follow this `~typing.Protocol` when defining a builder function that is to
+    be used by `.set_dynamics`. For an example, see the source code
     `.create_relativistic_breit_wigner`, which creates a
     `.relativistic_breit_wigner`.
+
+    .. seealso:: :doc:`/usage/dynamics/custom`
     """
 
     def __call__(

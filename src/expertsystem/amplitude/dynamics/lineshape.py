@@ -3,7 +3,7 @@
 
 """Lineshape functions that describe the dynamics.
 
-.. seealso:: :doc:`/usage/dynamics`
+.. seealso:: :doc:`/usage/dynamics/lineshapes`
 """
 
 import sympy as sy
@@ -22,7 +22,7 @@ def blatt_weisskopf(
     .. glue:math:: blatt_weisskopf
         :label: blatt_weisskopf
 
-    See :ref:`usage/dynamics:_With_ form factor`.
+    See :ref:`usage/dynamics/lineshapes:_With_ form factor`.
     """
     z = (q * d) ** 2
     return sy.Piecewise(
@@ -68,7 +68,7 @@ def relativistic_breit_wigner(
     .. glue:math:: relativistic_breit_wigner
         :label: relativistic_breit_wigner
 
-    See :ref:`usage/dynamics:_Without_ form factor` and
+    See :ref:`usage/dynamics/lineshapes:_Without_ form factor` and
     :cite:`asnerDalitzPlotAnalysis2006`.
     """
     return gamma0 * mass0 / (mass0 ** 2 - mass ** 2 - gamma0 * mass0 * sy.I)
@@ -90,7 +90,7 @@ def relativistic_breit_wigner_with_ff(  # pylint: disable=too-many-arguments
     .. glue:math:: relativistic_breit_wigner_with_ff
         :label: relativistic_breit_wigner_with_ff
 
-    See :ref:`usage/dynamics:_With_ form factor` and
+    See :ref:`usage/dynamics/lineshapes:_With_ form factor` and
     :cite:`asnerDalitzPlotAnalysis2006`.
     """
     q = breakup_momentum(mass, m_a, m_b)
