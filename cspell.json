@@ -160,6 +160,7 @@
         "tolist",
         "tqdm",
         "unparse",
+        "unsrt",
         "untracked",
         "virtualenv",
         "virtualenvwrapper"
