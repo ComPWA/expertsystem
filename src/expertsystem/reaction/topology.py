@@ -17,6 +17,7 @@ from typing import (
     Collection,
     Dict,
     FrozenSet,
+    Generator,
     Generic,
     ItemsView,
     Iterable,
@@ -685,3 +686,40 @@ def _assert_over_defined(items: Collection, properties: Mapping) -> None:
             "Properties have been defined for items that don't exist."
             f" Available items: {existing}, over-defined: {over_defined}"
         )
+
+
+def get_time_ordered_nodes(topology: Topology) -> Tuple[int, ...]:
+    """Order node IDs from incoming edge to outgoing edge.
+
+    >>> from expertsystem.reaction.topology import (
+    ...     create_isobar_topologies,
+    ...     get_time_ordered_nodes,
+    ... )
+    >>> topologies = create_isobar_topologies(5)
+    >>> get_time_ordered_nodes(topologies[0])
+    (0, 1, 3, 2)
+    >>> get_time_ordered_nodes(topologies[1])
+    (0, 1, 2, 3)
+    """
+
+    def recursive_yield(node_id: int) -> Generator[int, None, None]:
+        yield node_id
+        for edge_id in sorted(
+            topology.get_edge_ids_outgoing_from_node(node_id)
+        ):
+            edge = topology.edges[edge_id]
+            if edge.ending_node_id is not None:
+                yield from recursive_yield(edge.ending_node_id)
+
+    n_incoming = len(topology.incoming_edge_ids)
+    if n_incoming != 1:
+        n_outgoing = len(topology.outgoing_edge_ids)
+        raise ValueError(
+            f"Can only order nodes by time for a 1-to-n topology. "
+            f"This is a {n_incoming}-to-{n_outgoing} topology"
+        )
+    incoming_edge_id = next(iter(topology.incoming_edge_ids))
+    starting_node = topology.edges[incoming_edge_id].ending_node_id
+    if starting_node is None:
+        raise ValueError("Cannot have a starting node of None")
+    return tuple(recursive_yield(starting_node))
