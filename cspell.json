@@ -175,6 +175,7 @@
         "seealso",
         "sharex",
         "startswith",
+        "sympify",
         "theano",
         "ticklabels",
         "tolist",
