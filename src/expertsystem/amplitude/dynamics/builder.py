@@ -10,7 +10,7 @@ import sympy as sy
 from expertsystem.particle import Particle
 
 from .lineshape import (
-    blatt_weisskopf,
+    BlattWeisskopf,
     breakup_momentum,
     relativistic_breit_wigner,
     relativistic_breit_wigner_with_ff,
@@ -54,7 +54,7 @@ def create_non_dynamic_with_ff(
     )
     meson_radius = sy.Symbol(f"d_{particle.name}")
     return (
-        blatt_weisskopf(q, meson_radius, angular_momentum),
+        BlattWeisskopf(q, meson_radius, angular_momentum),
         {meson_radius: 1},
     )
 

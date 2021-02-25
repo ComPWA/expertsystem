@@ -1,63 +1,141 @@
 # cspell:ignore Asner Nakamura
-# pylint: disable=invalid-name
-
+# pylint: disable=invalid-name,protected-access,unused-argument
 """Lineshape functions that describe the dynamics.
 
 .. seealso:: :doc:`/usage/dynamics/lineshapes`
 """
 
+from abc import abstractmethod
+from typing import Any, Callable, Type
+
 import sympy as sy
+from sympy.printing.latex import LatexPrinter
 
 
-def blatt_weisskopf(
-    q: sy.Symbol, d: sy.Symbol, angular_momentum: sy.Symbol
-) -> sy.Expr:
-    r"""Blatt-Weisskopf function (:math:`B_L`), up to :math:`L \leq 4`.
+class UnevaluatedExpression(sy.Expr):
+    @abstractmethod
+    def evaluate(self) -> sy.Expr:
+        pass
+
+    @abstractmethod
+    def _latex(self, printer: LatexPrinter, *args: Any) -> str:
+        """Provide a mathematical Latex representation for notebooks."""
+        args = tuple(map(printer._print, self.args))
+        return f"{self.__class__.__name__}{args}"
+
+
+def implement_expr(
+    n_args: int,
+) -> Callable[[Type[UnevaluatedExpression]], sy.Expr]:
+    """Decorator for classes that derive from `UnevaluatedExpression`.
+
+    Implement a `~object.__new__` and `~sympy.core.basic.Basic.doit` method for
+    a class that derives from `~sympy.core.expr.Expr` (via
+    `UnevaluatedExpression`). It is important to derive from
+    `~UnevaluatedExpression.evaluate` method has to be implemented
+    """
+
+    def decorator(decorated_class: Type[UnevaluatedExpression]) -> sy.Expr:
+        def new_method(
+            cls: Type,
+            *args: sy.Symbol,
+            **hints: Any,
+        ) -> bool:
+            if len(args) != n_args:
+                raise ValueError(
+                    f"{n_args} parameters expected, got {len(args)}"
+                )
+            args = sy.sympify(args)
+            evaluate = hints.get("evaluate", False)
+            if evaluate:
+                return sy.Expr.__new__(cls, *args).evaluate()  # type: ignore  # pylint: disable=no-member
+            return sy.Expr.__new__(cls, *args)
+
+        def doit_method(self: Any, **hints: Any) -> sy.Expr:
+            return type(self)(*self.args, **hints, evaluate=True)
+
+        decorated_class.__new__ = new_method  # type: ignore
+        decorated_class.doit = doit_method
+        return decorated_class
+
+    return decorator
+
+
+@implement_expr(n_args=3)
+class BlattWeisskopf(UnevaluatedExpression):
+    r"""Blatt-Weisskopf function :math:`B_L`, up to :math:`L \leq 4`.
+
+    Args:
+        q: Break-up momentum. Can be computed with `breakup_momentum`.
+        d: impact parameter :math:`d`, also called meson radius. Usually of the
+            order 1 fm.
+        angular_momentum: Angular momentum $L$ of the decaying particle.
+
+    .. glue:math:: BlattWeisskopf
+        :label: BlattWeisskopf
 
     Each of these cases has been taken from
     :cite:`chungPartialWaveAnalysis1995`, p. 415. For a good overview of where
     to use these Blatt-Weisskopf functions, see
     :cite:`asnerDalitzPlotAnalysis2006`.
 
-    .. glue:math:: blatt_weisskopf
-        :label: blatt_weisskopf
-
-    See :ref:`usage/dynamics/lineshapes:_With_ form factor`.
+    See also :ref:`usage/dynamics/lineshapes:Form factor`.
     """
-    z = (q * d) ** 2
-    return sy.Piecewise(
-        (
-            1,
-            sy.Eq(angular_momentum, 0),
-        ),
-        (
-            sy.sqrt(2 * z / (z + 1)),
-            sy.Eq(angular_momentum, 1),
-        ),
-        (
-            sy.sqrt(13 * z ** 2 / ((z - 3) * (z - 3) + 9 * z)),
-            sy.Eq(angular_momentum, 2),
-        ),
-        (
-            sy.sqrt(
-                277
-                * z ** 3
-                / (z * (z - 15) * (z - 15) + 9 * (2 * z - 5) * (2 * z - 5))
+
+    @property
+    def q(self) -> sy.Symbol:
+        """Break-up momentum."""
+        return self.args[0]
+
+    @property
+    def d(self) -> sy.Symbol:
+        """Impact parameter, also called meson radius."""
+        return self.args[1]
+
+    @property
+    def angular_momentum(self) -> sy.Symbol:
+        return self.args[2]
+
+    def evaluate(self) -> sy.Expr:
+        angular_momentum = self.angular_momentum
+        z = (self.q * self.d) ** 2
+        return sy.Piecewise(
+            (
+                1,
+                sy.Eq(angular_momentum, 0),
             ),
-            sy.Eq(angular_momentum, 3),
-        ),
-        (
-            sy.sqrt(
-                12746
-                * z ** 4
-                / (
-                    (z ** 2 - 45 * z + 105) * (z ** 2 - 45 * z + 105)
-                    + 25 * z * (2 * z - 21) * (2 * z - 21)
-                )
+            (
+                2 * z / (z + 1),
+                sy.Eq(angular_momentum, 1),
             ),
-            sy.Eq(angular_momentum, 4),
-        ),
-    )
+            (
+                13 * z ** 2 / ((z - 3) * (z - 3) + 9 * z),
+                sy.Eq(angular_momentum, 2),
+            ),
+            (
+                (
+                    277
+                    * z ** 3
+                    / (z * (z - 15) * (z - 15) + 9 * (2 * z - 5) * (2 * z - 5))
+                ),
+                sy.Eq(angular_momentum, 3),
+            ),
+            (
+                (
+                    12746
+                    * z ** 4
+                    / (
+                        (z ** 2 - 45 * z + 105) * (z ** 2 - 45 * z + 105)
+                        + 25 * z * (2 * z - 21) * (2 * z - 21)
+                    )
+                ),
+                sy.Eq(angular_momentum, 4),
+            ),
+        )
+
+    def _latex(self, printer: LatexPrinter, *args: Any) -> str:
+        l, q = tuple(map(printer._print, (self.angular_momentum, self.q)))
+        return fR"B_{l}\left({q}\right)"
 
 
 def relativistic_breit_wigner(
@@ -83,9 +161,9 @@ def relativistic_breit_wigner_with_ff(  # pylint: disable=too-many-arguments
     angular_momentum: sy.Symbol,
     meson_radius: sy.Symbol,
 ) -> sy.Expr:
-    """Relativistic Breit-Wigner with `.blatt_weisskopf` factor.
+    """Relativistic Breit-Wigner with `.BlattWeisskopf` factor.
 
-    For :math:`l=0`, this lineshape has the following form:
+    For :math:`L=0`, this lineshape has the following form:
 
     .. glue:math:: relativistic_breit_wigner_with_ff
         :label: relativistic_breit_wigner_with_ff
@@ -95,8 +173,8 @@ def relativistic_breit_wigner_with_ff(  # pylint: disable=too-many-arguments
     """
     q = breakup_momentum(mass, m_a, m_b)
     q0 = breakup_momentum(mass0, m_a, m_b)
-    ff = blatt_weisskopf(q, meson_radius, angular_momentum)
-    ff0 = blatt_weisskopf(q0, meson_radius, angular_momentum)
+    ff = BlattWeisskopf(q, meson_radius, angular_momentum)
+    ff0 = BlattWeisskopf(q0, meson_radius, angular_momentum)
     width = gamma0 * (mass0 / mass) * (ff ** 2 / ff0 ** 2)
     width = width * (q / q0)
     return relativistic_breit_wigner(mass, mass0, width) * ff
