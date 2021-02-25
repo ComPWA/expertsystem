@@ -86,6 +86,12 @@ def __graph_to_dot_content(
             dot_source += _DOT_DEFAULT_NODE.format(
                 f"{prefix}node{node_id}", node_label
             )
+    if isinstance(graph, Topology):
+        if len(topology.nodes) > 1:
+            for node_id in topology.nodes:
+                dot_source += _DOT_DEFAULT_NODE.format(
+                    f"{prefix}node{node_id}", f"({node_id})"
+                )
     return dot_source
 
 
