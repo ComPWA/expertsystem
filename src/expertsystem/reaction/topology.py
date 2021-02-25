@@ -30,6 +30,7 @@ from typing import (
     Set,
     Tuple,
     TypeVar,
+    Union,
     ValuesView,
 )
 
@@ -688,6 +689,61 @@ def _assert_over_defined(items: Collection, properties: Mapping) -> None:
         )
 
 
+RecursiveTuple = Tuple[Union[int, "RecursiveTuple"], ...]  # type: ignore
+"""Type description for a nested `tuple` for `get_decay_path_representation`."""
+
+
+def get_decay_path_representation(topology: Topology) -> RecursiveTuple:
+    """Group final state edges by their nested decay structure.
+
+    >>> from expertsystem.reaction.topology import (
+    ...     create_isobar_topologies,
+    ...     get_decay_path_representation,
+    ... )
+    >>> topology = create_isobar_topologies(3)[0]
+    >>> get_decay_path_representation(topology)
+    (0, (1, 2))
+    >>> topologies = create_isobar_topologies(4)
+    >>> get_decay_path_representation(topologies[0])
+    ((0, 1), (2, 3))
+    >>> get_decay_path_representation(topologies[1])
+    (0, (1, (2, 3)))
+    """
+
+    def recursive_yield(
+        edge_id: int,
+    ) -> Generator[Union[int, RecursiveTuple], None, None]:
+        edge = topology.edges[edge_id]
+        if edge.ending_node_id is not None:
+            next_edge_ids = topology.get_edge_ids_outgoing_from_node(
+                edge.ending_node_id
+            )
+            final_edges = sorted(
+                i
+                for i in next_edge_ids
+                if topology.edges[i].ending_node_id is None
+            )
+            if final_edges:
+                if len(final_edges) == 1:
+                    yield final_edges[0]
+                else:
+                    yield tuple(sorted(final_edges))
+            remaining_edge_ids = next_edge_ids ^ set(final_edges)
+            for i in sorted(remaining_edge_ids):
+                result = tuple(recursive_yield(i))
+                if len(result) == 1:
+                    yield result[0]
+                else:
+                    yield tuple(result)
+
+    __assert_one_incoming(topology)
+    incoming_edge_id = next(iter(topology.incoming_edge_ids))
+    result = tuple(recursive_yield(incoming_edge_id))
+    if len(result) == 1 and isinstance(result[0], tuple):
+        return result[0]
+    return result
+
+
 def get_time_ordered_nodes(topology: Topology) -> Tuple[int, ...]:
     """Order node IDs from incoming edge to outgoing edge.
 
@@ -711,6 +767,15 @@ def get_time_ordered_nodes(topology: Topology) -> Tuple[int, ...]:
             if edge.ending_node_id is not None:
                 yield from recursive_yield(edge.ending_node_id)
 
+    __assert_one_incoming(topology)
+    incoming_edge_id = next(iter(topology.incoming_edge_ids))
+    starting_node = topology.edges[incoming_edge_id].ending_node_id
+    if starting_node is None:
+        raise ValueError("Cannot have a starting node of None")
+    return tuple(recursive_yield(starting_node))
+
+
+def __assert_one_incoming(topology: Topology) -> None:
     n_incoming = len(topology.incoming_edge_ids)
     if n_incoming != 1:
         n_outgoing = len(topology.outgoing_edge_ids)
@@ -718,8 +783,3 @@ def get_time_ordered_nodes(topology: Topology) -> Tuple[int, ...]:
             f"Can only order nodes by time for a 1-to-n topology. "
             f"This is a {n_incoming}-to-{n_outgoing} topology"
         )
-    incoming_edge_id = next(iter(topology.incoming_edge_ids))
-    starting_node = topology.edges[incoming_edge_id].ending_node_id
-    if starting_node is None:
-        raise ValueError("Cannot have a starting node of None")
-    return tuple(recursive_yield(starting_node))

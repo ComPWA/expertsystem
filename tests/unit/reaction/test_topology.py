@@ -18,6 +18,7 @@ from expertsystem.reaction.topology import (
     _MutableTopology,
     create_isobar_topologies,
     create_n_body_topology,
+    get_decay_path_representation,
     get_originating_node_list,
     get_time_ordered_nodes,
 )
@@ -302,6 +303,70 @@ def test_create_n_body_topology(n_initial: int, n_final: int, exception):
         assert len(topology.outgoing_edge_ids) == n_final
         assert len(topology.intermediate_edge_ids) == 0
         assert len(topology.nodes) == 1
+
+
+@pytest.mark.parametrize(
+    "n_final_states, expected",
+    [
+        (
+            2,
+            [
+                (0, 1),
+            ],
+        ),
+        (
+            3,
+            [
+                (0, (1, 2)),
+            ],
+        ),
+        (
+            4,
+            [
+                ((0, 1), (2, 3)),
+                (0, (1, (2, 3))),
+            ],
+        ),
+        (
+            5,
+            [
+                ((0, (3, 4)), (1, 2)),
+                ((0, 1), (2, (3, 4))),
+                ((0, (1, 2)), (3, 4)),
+                (0, ((1, 2), (3, 4))),
+                (0, (1, (2, (3, 4)))),
+            ],
+        ),
+        (
+            6,
+            [
+                (((2, 3), (4, 5)), (0, 1)),
+                ((0, (2, 3)), (1, (4, 5))),
+                ((0, (3, (4, 5))), (1, 2)),
+                ((0, (4, 5)), (1, (2, 3))),
+                ((0, 1), ((2, 3), (4, 5))),
+                ((0, 1), (2, (3, (4, 5)))),
+                (((0, 1), (4, 5)), (2, 3)),
+                ((0, (1, (4, 5))), (2, 3)),
+                ((0, (1, 2)), (3, (4, 5))),
+                (((0, 1), (2, 3)), (4, 5)),
+                (0, ((1, (4, 5)), (2, 3))),
+                (0, ((1, 2), (3, (4, 5)))),
+                ((0, (1, (2, 3))), (4, 5)),
+                (0, ((1, (2, 3)), (4, 5))),
+                (0, (1, ((2, 3), (4, 5)))),
+                (0, (1, (2, (3, (4, 5))))),
+            ],
+        ),
+    ],
+)
+def test_get_decay_path_representation(
+    n_final_states: int, expected: Tuple[int, ...]
+):
+    topologies = create_isobar_topologies(n_final_states)
+    assert len(topologies) == len(expected)
+    for i, topology in enumerate(topologies):
+        assert get_decay_path_representation(topology) == expected[i]
 
 
 @pytest.mark.parametrize(
