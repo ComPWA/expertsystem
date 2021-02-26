@@ -92,6 +92,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
+    "sphinx.ext.todo",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
     "sphinx_panels",
@@ -145,7 +146,8 @@ html_theme_options = {
 }
 html_title = "PWA Expert System"
 pygments_style = "sphinx"
-todo_include_todos = False
+todo_include_todos = True
+todo_link_only = True
 viewcode_follow_imported_members = True
 
 # Cross-referencing configuration

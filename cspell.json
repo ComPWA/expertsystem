@@ -178,6 +178,7 @@
         "sympify",
         "theano",
         "ticklabels",
+        "todolist",
         "tolist",
         "tqdm",
         "unparse",
