@@ -162,6 +162,8 @@ nitpick_ignore = [
     ("py:class", "a set-like object providing a view on D's items"),
     ("py:class", "a set-like object providing a view on D's keys"),
     ("py:class", "an object providing a view on D's values"),
+    ("py:class", "sympy.matrices.expressions.matexpr.MatrixExpr"),
+    ("py:class", "sympy.matrices.expressions.matexpr.MatrixSymbol"),
     ("py:class", "typing_extensions.Protocol"),
     ("py:obj", "expertsystem.amplitude.helicity.ValueType"),
     ("py:obj", "expertsystem.reaction.topology._K"),
