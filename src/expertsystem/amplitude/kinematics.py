@@ -478,25 +478,32 @@ def reduce_ids(nested_list: list) -> Tuple[int, ...]:
 def nested_helicity_angles(
     momentum_pool: Dict[int, LorentzVector],
     nested_momenta_ids: list,
-) -> Dict[sy.Symbol, sy.Expr]:
-    helicity_angles = dict()
+) -> Tuple[Dict[sy.Symbol, sy.Expr], Dict[sy.Symbol, sy.Expr]]:
+    helicity_angles: Dict[sy.Symbol, sy.Expr] = dict()
+    intermediate_momenta: Dict[sy.Symbol, sy.Expr] = dict()
     for momentum_ids in nested_momenta_ids:
         if isinstance(momentum_ids, list):
             # recursively determine all momenta ids in the list
             sub_momenta_ids = reduce_ids(momentum_ids)
             if len(sub_momenta_ids) > 1:
+                # add all of these momenta together -> defines new subsystem
                 state = sy.MatAdd(
                     *[momentum_pool[i] for i in sub_momenta_ids],
                     evaluate=False,
                 )
 
+                # Register a symbol for the momentum of this state. This is
+                # required for the eventual lambdifying.
+                label = reduce(lambda x, y: x + str(y), sub_momenta_ids, "")
+                state_symbol = LorentzVector(f"p_{{{label}}}")
+                intermediate_momenta[state_symbol] = state
+
                 # determine angles and beta for current state
-                phi_state = Phi(state)
-                theta_state = Theta(state)
-                beta = Beta(state)
+                phi_state = Phi(state_symbol)
+                theta_state = Theta(state_symbol)
+                beta = Beta(state_symbol)
 
                 # register current angle variables
-                label = reduce(lambda x, y: x + str(y), sub_momenta_ids, "")
                 helicity_angles[sy.Symbol(f"phi_{label}")] = phi_state
                 helicity_angles[sy.Symbol(f"theta_{label}")] = theta_state
 
@@ -514,9 +521,10 @@ def nested_helicity_angles(
                 }
 
                 # call next recursion
-                angles = nested_helicity_angles(
+                angles, other_symbols = nested_helicity_angles(
                     new_momentum_pool, momentum_ids
                 )
                 helicity_angles.update(angles)
+                intermediate_momenta.update(other_symbols)
 
-    return helicity_angles
+    return helicity_angles, intermediate_momenta
