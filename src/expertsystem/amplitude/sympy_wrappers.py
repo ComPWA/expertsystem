@@ -122,11 +122,13 @@ class ArraySymbol(_ArrayExpr):
     https://github.com/sympy/sympy/pull/20943
     """
 
-    def __new__(cls, name: str, *shape: sy.Expr) -> "ArraySymbol":
+    def __new__(
+        cls, name: str, shape: Tuple[sy.Expr, ...], *args: Any
+    ) -> "ArraySymbol":
         if not isinstance(name, sy.core.symbol.Str):
             name = sy.core.symbol.Str(name)
-        sympified_shape = map(_sympify, shape)
-        obj = sy.Expr.__new__(cls, name, *sympified_shape)
+        sympified_shape = tuple(map(_sympify, shape))
+        obj = sy.Expr.__new__(cls, name, sympified_shape, *args)
         return obj
 
     @property
@@ -135,12 +137,12 @@ class ArraySymbol(_ArrayExpr):
 
     @property
     def shape(self) -> Tuple[int, ...]:
-        return self.args[1:]
+        return self.args[1]
 
     def __getitem__(
         self, indices: Union[int, slice, Tuple[Union[int, slice], ...]]
     ) -> "ArrayElement":
-        return ArrayElement(self, indices=indices)
+        return ArrayElement(self.name, self.shape, indices)
 
     def as_explicit(self) -> sy.ImmutableDenseNDimArray:
         data = [
@@ -158,7 +160,7 @@ class ArraySymbol(_ArrayExpr):
         return printer._print(self.name)
 
 
-class ArrayElement(_ArrayExpr):
+class ArrayElement(ArraySymbol):
     """An element of an array.
 
     https://github.com/sympy/sympy/pull/20943
@@ -166,35 +168,32 @@ class ArrayElement(_ArrayExpr):
 
     def __new__(
         cls,
-        array: ArraySymbol,
+        name: str,
+        shape: Tuple[int, ...],
         # https://stackoverflow.com/a/1685450
         indices: Union[int, slice, Tuple[Union[int, slice], ...]],
         *args: Any,
     ) -> "ArrayElement":
         if isinstance(indices, tuple):
-            if len(indices) > len(array.shape):
+            if len(indices) > len(shape):
                 raise KeyError(
-                    f"Array has rank {len(array.shape)},"
+                    f"Array has rank {len(shape)},"
                     f" but there are {len(indices)} indices"
                 )
-        for idx, dim in zip(_safe_iter(indices), array.shape):
+        for idx, dim in zip(_safe_iter(indices), shape):
             if isinstance(idx, (int, sy.core.numbers.Integer)) and isinstance(
                 dim, (int, sy.core.numbers.Integer)
             ):
                 if idx >= dim:
-                    raise KeyError(f"Index {idx} exceeds shape {array.shape})")
-        return sy.Expr.__new__(cls, array, indices, *args)
-
-    @property
-    def array(self) -> "ArraySymbol":
-        return self.args[0]
+                    raise KeyError(f"Index {idx} exceeds shape {shape})")
+        return sy.Expr.__new__(cls, name, shape, indices, *args)
 
     @property
     def indices(self) -> Tuple[Union[int, slice], ...]:
-        return self.args[1]
+        return self.args[2]
 
     def _latex(self, printer: LatexPrinter, *__: Any) -> str:
-        name = printer._print(self.array)
+        name = printer._print(self.name)
         indices = list()
         for idx in _safe_iter(self.indices):
             if isinstance(idx, slice):
@@ -207,7 +206,7 @@ class ArrayElement(_ArrayExpr):
         return self._sympystr(printer, args)
 
     def _sympystr(self, printer: StrPrinter, *__: Any) -> str:
-        name = printer._print(self.array)
+        name = printer._print(self.name)
         indices = list()
         for idx in _safe_iter(self.indices):
             if isinstance(idx, slice):
