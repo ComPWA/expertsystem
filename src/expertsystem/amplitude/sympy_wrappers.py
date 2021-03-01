@@ -1,12 +1,17 @@
-# cspell:ignore rpow rtruediv
+# cspell:ignore numpycode pycode rpow rtruediv
 # pylint: disable=no-member,protected-access,unused-argument
 """Tools that make using {mod}`sympy` as a library a bit easier."""
 
+import itertools
 from abc import abstractmethod
-from typing import Any, Callable, Tuple, Type
+from collections import abc
+from typing import Any, Callable, Iterable, Tuple, Type, Union
 
 import sympy as sy
+from sympy.core.sympify import _sympify
 from sympy.printing.latex import LatexPrinter
+from sympy.printing.pycode import NumPyPrinter
+from sympy.printing.str import StrPrinter
 
 
 class UnevaluatedExpression(sy.Expr):
@@ -103,3 +108,131 @@ def implement_mat_expr(
         return decorated_class
 
     return decorator
+
+
+# Needed until Sympy v1.8 is released
+# https://github.com/sympy/sympy/pull/20943
+class _ArrayExpr(sy.Expr):
+    _iterable = False  # needed for lambdify
+
+
+class ArraySymbol(_ArrayExpr):
+    """Symbol representing an array expression.
+
+    https://github.com/sympy/sympy/pull/20943
+    """
+
+    def __new__(cls, name: str, *shape: sy.Expr) -> "ArraySymbol":
+        if not isinstance(name, sy.core.symbol.Str):
+            name = sy.core.symbol.Str(name)
+        sympified_shape = map(_sympify, shape)
+        obj = sy.Expr.__new__(cls, name, *sympified_shape)
+        return obj
+
+    @property
+    def name(self) -> sy.core.symbol.Str:
+        return self.args[0]
+
+    @property
+    def shape(self) -> Tuple[int, ...]:
+        return self.args[1:]
+
+    def __getitem__(
+        self, indices: Union[int, slice, Tuple[Union[int, slice], ...]]
+    ) -> "ArrayElement":
+        return ArrayElement(self, indices=indices)
+
+    def as_explicit(self) -> sy.ImmutableDenseNDimArray:
+        data = [
+            self[i] for i in itertools.product(*[range(j) for j in self.shape])
+        ]
+        return sy.ImmutableDenseNDimArray(data).reshape(*self.shape)
+
+    def _latex(self, printer: LatexPrinter) -> str:
+        return printer._print(self.name)
+
+    def _numpycode(self, printer: NumPyPrinter) -> str:
+        return self._sympystr(printer)
+
+    def _sympystr(self, printer: StrPrinter) -> str:
+        return printer._print(self.name)
+
+
+class ArrayElement(_ArrayExpr):
+    """An element of an array.
+
+    https://github.com/sympy/sympy/pull/20943
+    """
+
+    def __new__(
+        cls,
+        array: ArraySymbol,
+        # https://stackoverflow.com/a/1685450
+        indices: Union[int, slice, Tuple[Union[int, slice], ...]],
+        *args: Any,
+    ) -> "ArrayElement":
+        if isinstance(indices, tuple):
+            if len(indices) > len(array.shape):
+                raise KeyError(
+                    f"Array has rank {len(array.shape)},"
+                    f" but there are {len(indices)} indices"
+                )
+        for idx, dim in zip(_safe_iter(indices), array.shape):
+            if isinstance(idx, (int, sy.core.numbers.Integer)) and isinstance(
+                dim, (int, sy.core.numbers.Integer)
+            ):
+                if idx >= dim:
+                    raise KeyError(f"Index {idx} exceeds shape {array.shape})")
+        return sy.Expr.__new__(cls, array, indices, *args)
+
+    @property
+    def array(self) -> "ArraySymbol":
+        return self.args[0]
+
+    @property
+    def indices(self) -> Tuple[Union[int, slice], ...]:
+        return self.args[1]
+
+    def _latex(self, printer: LatexPrinter, *__: Any) -> str:
+        name = printer._print(self.array)
+        indices = list()
+        for idx in _safe_iter(self.indices):
+            if isinstance(idx, slice):
+                indices.append(_slice_to_str(idx))
+            else:
+                indices.append(printer._print(idx))
+        return f"{name}_{{{','.join(indices)}}}"
+
+    def _numpycode(self, printer: NumPyPrinter, *args: Any) -> str:
+        return self._sympystr(printer, args)
+
+    def _sympystr(self, printer: StrPrinter, *__: Any) -> str:
+        name = printer._print(self.array)
+        indices = list()
+        for idx in _safe_iter(self.indices):
+            if isinstance(idx, slice):
+                indices.append(_slice_to_str(idx))
+            else:
+                indices.append(printer._print(idx))
+        return f"{name}[{', '.join(indices)}]"
+
+
+def _safe_iter(iterable: Any) -> Iterable:
+    if isinstance(iterable, abc.Iterable):
+        return iterable
+    return iter([iterable])
+
+
+def _slice_to_str(instance: slice) -> str:
+    slice_str = map(
+        lambda i: "" if i is None else str(i),
+        [
+            instance.start,
+            instance.stop,
+            instance.step,
+        ],
+    )
+    output = ":".join(slice_str)
+    if instance.step in {None, 1}:
+        return output[:-1]
+    return output
