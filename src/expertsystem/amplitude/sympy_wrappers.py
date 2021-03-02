@@ -125,14 +125,14 @@ class ArraySymbol(_ArrayExpr):
     def __new__(
         cls, name: str, shape: Tuple[sy.Expr, ...], *args: Any
     ) -> "ArraySymbol":
-        if not isinstance(name, sy.core.symbol.Str):
-            name = sy.core.symbol.Str(name)
+        if not isinstance(name, sy.Symbol):
+            name = sy.Symbol(name)
         sympified_shape = tuple(map(_sympify, shape))
         obj = sy.Expr.__new__(cls, name, sympified_shape, *args)
         return obj
 
     @property
-    def name(self) -> sy.core.symbol.Str:
+    def name(self) -> sy.Symbol:
         return self.args[0]
 
     @property
