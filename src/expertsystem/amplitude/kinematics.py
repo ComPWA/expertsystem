@@ -23,7 +23,7 @@ from ._graph_info import determine_attached_final_state
 
 
 @attr.s(frozen=True)
-class Kinematics:
+class ReactionInfo:
     initial_state: Dict[int, Particle] = attr.ib()
     final_state: Dict[int, Particle] = attr.ib()
 
@@ -42,14 +42,14 @@ class Kinematics:
     @staticmethod
     def from_graph(
         graph: StateTransitionGraph[ParticleWithSpin],
-    ) -> "Kinematics":
+    ) -> "ReactionInfo":
         initial_state = dict()
         for state_id in graph.topology.incoming_edge_ids:
             initial_state[state_id] = graph.get_edge_props(state_id)[0]
         final_state = dict()
         for state_id in graph.topology.outgoing_edge_ids:
             final_state[state_id] = graph.get_edge_props(state_id)[0]
-        return Kinematics(
+        return ReactionInfo(
             initial_state=initial_state,
             final_state=final_state,
         )

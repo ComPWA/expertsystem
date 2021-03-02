@@ -49,7 +49,7 @@ from .dynamics.builder import (
 )
 from .kinematics import (
     HelicityKinematics,
-    Kinematics,
+    ReactionInfo,
     generate_kinematic_variables,
 )
 
@@ -222,8 +222,8 @@ class HelicityModel:
     parameters: SuggestedParameterValues = attr.ib(
         validator=attr.validators.instance_of(SuggestedParameterValues)
     )
-    kinematics: Kinematics = attr.ib(
-        validator=attr.validators.instance_of(Kinematics)
+    kinematics: ReactionInfo = attr.ib(
+        validator=attr.validators.instance_of(ReactionInfo)
     )
     particles: ParticleCollection = attr.ib(
         validator=attr.validators.instance_of(ParticleCollection)
@@ -620,7 +620,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
             expression=self.__generate_intensity(),
             components=self.__components,
             parameters=SuggestedParameterValues(self.__parameters),
-            kinematics=Kinematics.from_graph(some_graph),
+            kinematics=ReactionInfo.from_graph(some_graph),
             particles=generate_particle_collection(self.__graphs),
         )
 
