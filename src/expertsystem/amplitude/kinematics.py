@@ -13,6 +13,7 @@ import sympy as sy
 from sympy.printing.latex import LatexPrinter
 
 from expertsystem.amplitude.sympy_wrappers import (
+    ArraySymbol,
     UnevaluatedExpression,
     implement_expr,
     implement_mat_expr,
@@ -267,48 +268,20 @@ def generate_kinematic_variables(
     return inv_mass, theta, phi
 
 
-class Metric(sy.MatrixExpr):  # pylint: disable=abstract-method
-    __metric = sy.diag(1, -1, -1, -1)
-
-    def __new__(cls: type, *args: Any, **hints: Any) -> "Metric":
-        evaluate = hints.get("evaluate", False)
-        if evaluate:
-            return sy.MatrixExpr.__new__(cls, *args).evaluate()  # type: ignore  # pylint: disable=no-member
-        return sy.MatrixExpr.__new__(cls, *args)
-
-    def evaluate(self) -> sy.Expr:
-        return self.__metric
-
-    @property
-    def shape(self) -> Tuple[int, int]:
-        return (4, 4)
-
-    def doit(self, **hints: Any) -> sy.Expr:
-        return self.__metric
-
-    def _latex(self, printer: LatexPrinter, *args: Any) -> str:
-        return R"\boldsymbol{\eta}"
-
-
-class LorentzVector(sy.MatrixSymbol):
-    __metric = Metric()
-
+class LorentzVector(ArraySymbol):
     def __new__(cls: type, *args: Any) -> "LorentzVector":
         if len(args) < 1:
             raise ValueError("Name required")
         name = args[0]
-        if not isinstance(name, (str, sy.core.symbol.Str)):
-            raise TypeError(
-                f"{name} is of type {type(name)} not of type {str.__name__}"
-            )
-        name = str(name)
-        return sy.MatrixSymbol.__new__(cls, name, 4, 1)
+        return ArraySymbol.__new__(cls, name, shape=(4,))
 
     def __abs__(self) -> sy.Expr:
         return self.norm()
 
     def dot(self, other: "LorentzVector") -> sy.Expr:
-        return sy.Mul(self.T, self.__metric, other)
+        return self[0] * other[0] - sum(
+            self[i] * other[i] for i in range(1, 4)
+        )
 
     def norm(self) -> sy.Expr:
         return sy.sqrt(self.norm_squared())
@@ -334,7 +307,7 @@ class P3Norm(UnevaluatedExpression):
 
     def evaluate(self) -> sy.Expr:
         vector3 = self.vector[1:]
-        return (vector3.T * vector3)[0]
+        return sy.sqrt(sum(vector3[i] * vector3[i] for i in range(3)))
 
     def _latex(self, printer: LatexPrinter, *args: Any) -> str:
         args = tuple(map(printer._print, self.args))
