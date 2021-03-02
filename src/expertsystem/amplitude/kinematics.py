@@ -9,6 +9,7 @@ from typing import Dict, Iterable, Optional, Sequence, Tuple
 
 import attr
 import numpy as np
+from numpy.lib.scimath import sqrt as complex_sqrt
 
 from expertsystem.io import convert_to_dot
 from expertsystem.particle import Particle
@@ -464,6 +465,38 @@ def get_rotation_matrix_y(angle: np.ndarray) -> np.ndarray:
             [zeros, zeros, ones, zeros],
             [zeros, -np.sin(angle), zeros, np.cos(angle)],
         ]
+    )
+
+
+def get_invariant_mass_label(topology: Topology, edge_id: int) -> str:
+    final_state_ids = determine_attached_final_state(topology, edge_id)
+    return f"m_{''.join(map(str, sorted(final_state_ids)))}"
+
+
+def compute_invariant_masses(
+    momentum_pool: Dict[int, np.ndarray], topology: Topology
+) -> Dict[str, np.ndarray]:
+    """Compute the invariant masses for all final state combinations."""
+    if topology.outgoing_edge_ids != set(momentum_pool):
+        raise ValueError(
+            f"Momentum IDs {set(momentum_pool)} do not match "
+            f"final state edge IDs {set(topology.outgoing_edge_ids)}"
+        )
+    invariant_masses = dict()
+    for edge_id in topology.edges:
+        attached_edge_ids = determine_attached_final_state(topology, edge_id)
+        total_momentum: np.ndarray = sum(  # type: ignore
+            momentum_pool[i] for i in attached_edge_ids
+        )
+        values = compute_invariant_mass(total_momentum)
+        name = get_invariant_mass_label(topology, edge_id)
+        invariant_masses[name] = values
+    return invariant_masses
+
+
+def compute_invariant_mass(four_momenta: np.ndarray) -> np.ndarray:
+    return complex_sqrt(
+        four_momenta[0] ** 2 - np.sum(four_momenta[1:] ** 2, axis=0)
     )
 
 

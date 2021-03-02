@@ -8,6 +8,8 @@ from expertsystem.amplitude.kinematics import (
     _to_sorted_tuple,
     _to_sorted_tuple_pair,
     compute_helicity_angles,
+    compute_invariant_mass,
+    compute_invariant_masses,
 )
 from expertsystem.reaction.topology import create_isobar_topologies
 
@@ -254,3 +256,48 @@ def test_compute_helicity_angles():
             expected_angles[angle_name],
             atol=1e-5,
         )
+
+
+@pytest.mark.parametrize(
+    "state_id, expected_mass",
+    [
+        (0, 0.13498),
+        (1, 0.00048 + 0.00032j),
+        (2, 0.13498),
+        (3, 0.13498),
+    ],
+)
+def test_compute_invariant_mass(state_id: int, expected_mass: float):
+    four_momenta = TEST_DATA[state_id]
+    n_events = 10
+    assert four_momenta.shape == (4, n_events)
+    inv_mass = compute_invariant_mass(TEST_DATA[state_id])
+    assert inv_mass.shape == (n_events,)
+    average_mass = np.average(inv_mass)
+    assert pytest.approx(average_mass, abs=1e-5) == expected_mass
+
+
+def test_compute_invariant_masses():
+    topologies = create_isobar_topologies(4)
+    topology = topologies[1]
+    invariant_masses = compute_invariant_masses(TEST_DATA, topology)
+    assert set(invariant_masses) == {
+        "m_0",
+        "m_0123",
+        "m_1",
+        "m_123",
+        "m_2",
+        "m_23",
+        "m_3",
+    }
+    for i in topology.outgoing_edge_ids:
+        inv_mass = invariant_masses[f"m_{i}"]
+        assert pytest.approx(inv_mass) == compute_invariant_mass(TEST_DATA[i])
+    jpsi_mass = np.average(invariant_masses["m_0123"])
+    assert pytest.approx(jpsi_mass, abs=1e-5) == 3.0969
+    assert pytest.approx(invariant_masses["m_123"]) == compute_invariant_mass(
+        TEST_DATA[1] + TEST_DATA[2] + TEST_DATA[3]
+    )
+    assert pytest.approx(invariant_masses["m_23"]) == compute_invariant_mass(
+        TEST_DATA[2] + TEST_DATA[3]
+    )
