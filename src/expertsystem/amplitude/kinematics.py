@@ -4,7 +4,6 @@
 import logging
 import textwrap
 from collections import abc
-from enum import Enum, auto
 from typing import Dict, Iterable, Optional, Sequence, Tuple
 
 import attr
@@ -23,26 +22,10 @@ from expertsystem.reaction import (
 from ._graph_info import determine_attached_final_state
 
 
-class KinematicsType(Enum):
-    HELICITY = auto()
-
-
-def _determine_default_kinematics(
-    kinematics_type: Optional[KinematicsType],
-) -> KinematicsType:
-    if kinematics_type is None:
-        return KinematicsType.HELICITY
-    return kinematics_type
-
-
 @attr.s(frozen=True)
 class Kinematics:
     initial_state: Dict[int, Particle] = attr.ib()
     final_state: Dict[int, Particle] = attr.ib()
-    type: KinematicsType = attr.ib(  # noqa: A003
-        default=KinematicsType.HELICITY,
-        converter=_determine_default_kinematics,
-    )
 
     def __attrs_post_init__(self) -> None:
         overlapping_ids = set(self.initial_state) & set(self.final_state)
@@ -59,7 +42,6 @@ class Kinematics:
     @staticmethod
     def from_graph(
         graph: StateTransitionGraph[ParticleWithSpin],
-        kinematics_type: Optional[KinematicsType] = None,
     ) -> "Kinematics":
         initial_state = dict()
         for state_id in graph.topology.incoming_edge_ids:
@@ -68,7 +50,6 @@ class Kinematics:
         for state_id in graph.topology.outgoing_edge_ids:
             final_state[state_id] = graph.get_edge_props(state_id)[0]
         return Kinematics(
-            type=kinematics_type,
             initial_state=initial_state,
             final_state=final_state,
         )
