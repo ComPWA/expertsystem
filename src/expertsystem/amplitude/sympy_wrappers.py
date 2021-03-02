@@ -5,7 +5,7 @@
 import itertools
 from abc import abstractmethod
 from collections import abc
-from typing import Any, Callable, Iterable, Tuple, Type, Union
+from typing import Any, Callable, Iterable, Set, Tuple, Type, Union
 
 import sympy as sy
 from sympy.core.sympify import _sympify
@@ -158,6 +158,10 @@ class ArraySymbol(_ArrayExpr):
 
     def _sympystr(self, printer: StrPrinter) -> str:
         return printer._print(self.name)
+
+    @property
+    def free_symbols(self) -> Set[sy.Symbol]:
+        return set((self.name,))
 
 
 class ArrayElement(ArraySymbol):
