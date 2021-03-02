@@ -5,6 +5,8 @@ from collections import abc
 from typing import Dict, Iterable, Optional, Sequence, Tuple
 
 import attr
+import numpy as np
+from numpy.lib.scimath import sqrt as complex_sqrt
 
 from expertsystem.particle import Particle
 from expertsystem.reaction import ParticleWithSpin, StateTransitionGraph
@@ -214,6 +216,12 @@ class HelicityKinematics:
         invmass_name = self.register_invariant_mass(list(set(state_fs)))
         angle_names = self.register_helicity_angles(subsystem)
         return (invmass_name,) + angle_names
+
+
+def compute_invariant_mass(four_momenta: np.ndarray) -> np.ndarray:
+    return complex_sqrt(
+        four_momenta[0] ** 2 - np.sum(four_momenta[1:] ** 2, axis=0)
+    )
 
 
 def generate_kinematic_variables(

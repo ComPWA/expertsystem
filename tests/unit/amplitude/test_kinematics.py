@@ -6,6 +6,7 @@ from expertsystem.amplitude.kinematics import (
     SubSystem,
     _to_sorted_tuple,
     _to_sorted_tuple_pair,
+    compute_invariant_mass,
 )
 
 # https://github.com/ComPWA/tensorwaves/blob/3d0ec44/tests/physics/helicity_formalism/test_helicity_angles.py#L61-L98
@@ -155,3 +156,22 @@ def test_to_sorted_tuple_pair(iterable, expected):
             _to_sorted_tuple_pair(iterable)
     else:
         assert _to_sorted_tuple_pair(iterable) == expected
+
+
+@pytest.mark.parametrize(
+    "state_id, expected_mass",
+    [
+        (2, 0.13498),
+        (3, 0.00048 + 0.00032j),
+        (4, 0.13498),
+        (5, 0.13498),
+    ],
+)
+def test_compute_invariant_mass(state_id: int, expected_mass: float):
+    four_momenta = TEST_DATA[state_id]
+    n_events = 10
+    assert four_momenta.shape == (4, n_events)
+    inv_mass = compute_invariant_mass(TEST_DATA[state_id])
+    assert inv_mass.shape == (n_events,)
+    average_mass = np.average(inv_mass)
+    assert pytest.approx(average_mass, abs=1e-5) == expected_mass
