@@ -53,9 +53,13 @@ def implement_expr(
                 return sy.Expr.__new__(cls, *args).evaluate()  # type: ignore
             return sy.Expr.__new__(cls, *args)
 
+        def _numpycode(self: sy.MatrixExpr, printer: NumPyPrinter) -> str:
+            return printer._print(self.evaluate())
+
         def doit_method(self: Any, **hints: Any) -> sy.Expr:
             return type(self)(*self.args, **hints, evaluate=True).doit()
 
+        decorated_class._numpycode = _numpycode
         decorated_class.__new__ = new_method  # type: ignore
         decorated_class.doit = doit_method
         return decorated_class
@@ -95,6 +99,9 @@ def implement_mat_expr(
             args_str = ", ".join(args)
             return fR"\mathbf{{{name}}}\left({args_str}\right)"
 
+        def _numpycode(self: sy.MatrixExpr, printer: NumPyPrinter) -> str:
+            return printer._print(self.evaluate())
+
         def doit(self: Any, **hints: Any) -> sy.Expr:
             return type(self)(*self.args, **hints, evaluate=True).doit()
 
@@ -102,6 +109,7 @@ def implement_mat_expr(
         decorated_class.doit = doit
         decorated_class._entry = _entry
         decorated_class._latex = _latex
+        decorated_class._numpycode = _numpycode
         decorated_class.__rpow__ = lambda s, o: s ** o
         decorated_class.__rtruediv__ = lambda s, o: s / o
         decorated_class.shape = property(lambda self: shape)
