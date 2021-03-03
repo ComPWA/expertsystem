@@ -1,3 +1,4 @@
+# cspell:ignore atol
 # pylint: disable=no-self-use
 import numpy as np
 import pytest
@@ -7,6 +8,7 @@ from expertsystem.amplitude.kinematics import (
     _to_sorted_tuple,
     _to_sorted_tuple_pair,
     compute_invariant_mass,
+    compute_nested_helicity_angles,
 )
 
 # https://github.com/ComPWA/tensorwaves/blob/3d0ec44/tests/physics/helicity_formalism/test_helicity_angles.py#L61-L98
@@ -175,3 +177,100 @@ def test_compute_invariant_mass(state_id: int, expected_mass: float):
     assert inv_mass.shape == (n_events,)
     average_mass = np.average(inv_mass)
     assert pytest.approx(average_mass, abs=1e-5) == expected_mass
+
+
+def test_compute_nested_helicity_angles():
+    expected_angles = {
+        "phi_345,2": np.array(
+            [
+                2.79758,
+                2.51292,
+                -1.07396,
+                -1.88051,
+                1.06433,
+                -2.30129,
+                2.36878,
+                -2.46888,
+                0.568649,
+                -2.8792,
+            ]
+        ),
+        "theta_345,2": np.arccos(
+            [
+                -0.914298,
+                -0.994127,
+                0.769715,
+                -0.918418,
+                0.462214,
+                0.958535,
+                0.496489,
+                -0.674376,
+                0.614968,
+                -0.0330843,
+            ]
+        ),
+        "phi_45,2,3": np.array(
+            [
+                1.04362,
+                1.87349,
+                0.160733,
+                -2.81088,
+                2.84379,
+                2.29128,
+                2.24539,
+                -1.20272,
+                0.615838,
+                2.98067,
+            ]
+        ),
+        "theta_45,2,3": np.arccos(
+            [
+                -0.772533,
+                0.163659,
+                0.556365,
+                0.133251,
+                -0.0264361,
+                0.227188,
+                -0.166924,
+                0.652761,
+                0.443122,
+                0.503577,
+            ]
+        ),
+        "phi_4": np.array(
+            [  # WARNING: subsystem solution (ComPWA) results in pi differences
+                -2.77203 + np.pi,
+                1.45339 - np.pi,
+                -2.51096 + np.pi,
+                2.71085 - np.pi,
+                -1.12706 + np.pi,
+                -3.01323 + np.pi,
+                2.07305 - np.pi,
+                0.502648 - np.pi,
+                -1.23689 + np.pi,
+                1.7605 - np.pi,
+            ]
+        ),
+        "theta_4": np.arccos(
+            [
+                0.460324,
+                -0.410464,
+                0.248566,
+                -0.301959,
+                -0.522502,
+                0.787267,
+                0.488066,
+                0.954167,
+                -0.553114,
+                0.00256349,
+            ]
+        ),
+    }
+    angles = compute_nested_helicity_angles(TEST_DATA, (((4, 5), 3), 2))
+    assert set(angles) == set(expected_angles)
+    for angle_name in angles:
+        np.testing.assert_allclose(
+            angles[angle_name],
+            expected_angles[angle_name],
+            atol=1e-5,
+        )

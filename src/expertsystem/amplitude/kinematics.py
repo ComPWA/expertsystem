@@ -1,8 +1,10 @@
+# cspell:ignore einsum
 """Kinematics of an amplitude model."""
 
 import logging
 from collections import abc
-from typing import Dict, Iterable, Optional, Sequence, Tuple
+from functools import reduce
+from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple, Union
 
 import attr
 import numpy as np
@@ -222,6 +224,161 @@ def compute_invariant_mass(four_momenta: np.ndarray) -> np.ndarray:
     return complex_sqrt(
         four_momenta[0] ** 2 - np.sum(four_momenta[1:] ** 2, axis=0)
     )
+
+
+DecayPath = Tuple[Union[int, "DecayPath"], Union[int, "DecayPath"]]  # type: ignore
+
+
+def compute_nested_helicity_angles(  # pylint: disable=too-many-locals
+    momentum_pool: Dict[int, np.ndarray], decay_path: DecayPath
+) -> Dict[str, np.ndarray]:
+    def __recursive_helicity_angles(  # pylint: disable=too-many-locals
+        momentum_pool: Dict[int, np.ndarray],
+        decay_path: DecayPath,
+        parent_stack: List[Set[int]],
+    ) -> Dict[str, np.ndarray]:
+        helicity_angles: Dict[str, np.ndarray] = {}
+        if all(map(lambda i: isinstance(i, int), decay_path)):
+            state = momentum_pool[decay_path[0]]
+            phi = compute_phi(state)
+            theta = compute_theta(state)
+            label = str(decay_path[0])
+            helicity_angles[f"theta_{label}"] = theta
+            helicity_angles[f"phi_{label}"] = phi
+        for i in (0, 1):
+            if isinstance(decay_path[i], abc.Iterable):
+                # recursively determine all momenta ids in the list
+                sub_momenta_ids = __reduce_ids(decay_path[i])  # type: ignore
+                if len(sub_momenta_ids) > 1:
+                    # add all of these momenta together -> defines new subsystem
+                    state = sum(  # type: ignore
+                        momentum_pool[i] for i in sub_momenta_ids
+                    )
+
+                    all_ids = __reduce_ids(decay_path)  # type: ignore
+                    parent_stack.append(set(all_ids) ^ set(sub_momenta_ids))
+
+                    # boost all of those momenta into this new subsystem
+                    phi = compute_phi(state)
+                    theta = compute_theta(state)
+                    p3_norm = np.sqrt(np.sum(state[1:] ** 2, axis=0))
+                    beta = p3_norm / state[0]
+                    new_momentum_pool = {
+                        k: np.einsum(
+                            "ij...,j...",
+                            get_boost_z_matrix(beta),
+                            np.einsum(
+                                "ij...,j...",
+                                get_rotation_matrix_y(-theta),
+                                np.einsum(
+                                    "ij...,j...",
+                                    get_rotation_matrix_z(-phi),
+                                    v,
+                                ).T,
+                            ).T,
+                        ).T
+                        for k, v in momentum_pool.items()
+                        if k in sub_momenta_ids
+                    }
+
+                    # register current angle variables
+                    label = reduce(
+                        lambda x, y: x + str(y), sub_momenta_ids, ""
+                    )
+                    for parent_ids in parent_stack:
+                        label += ","
+                        label += reduce(
+                            lambda x, y: x + str(y), sorted(parent_ids), ""
+                        )
+                    helicity_angles[f"theta_{label}"] = theta
+                    helicity_angles[f"phi_{label}"] = phi
+
+                    # call next recursion
+                    angles = __recursive_helicity_angles(
+                        new_momentum_pool,
+                        decay_path[i],  # type: ignore
+                        parent_stack,
+                    )
+                    helicity_angles.update(angles)
+
+        return helicity_angles
+
+    return __recursive_helicity_angles(
+        momentum_pool, decay_path, parent_stack=[]
+    )
+
+
+def compute_phi(state: np.ndarray) -> np.ndarray:
+    return np.arctan2(state[2], state[1])
+
+
+def compute_theta(state: np.ndarray) -> np.ndarray:
+    p3_norm = np.sqrt(np.sum(state[1:] ** 2, axis=0))
+    return np.arccos(state[3] / p3_norm)
+
+
+def compute_helicity_angles(
+    state: np.ndarray,
+) -> Tuple[np.ndarray, np.ndarray]:
+    phi = np.arctan2(state[2], state[1])
+    p3_norm = np.sqrt(np.sum(state[1:] ** 2, axis=0))
+    theta = np.arccos(state[3] / p3_norm)
+    return phi, theta
+
+
+def get_boost_z_matrix(beta: np.ndarray) -> np.ndarray:
+    n_events = len(beta)
+    gamma = 1 / np.sqrt(1 - beta ** 2)
+    zeros = np.zeros(n_events)
+    ones = np.ones(n_events)
+    return np.array(
+        [
+            [gamma, zeros, zeros, -gamma * beta],
+            [zeros, ones, zeros, zeros],
+            [zeros, zeros, ones, zeros],
+            [-gamma * beta, zeros, zeros, gamma],
+        ]
+    )
+
+
+def get_rotation_matrix_z(angle: np.ndarray) -> np.ndarray:
+    n_events = len(angle)
+    zeros = np.zeros(n_events)
+    ones = np.ones(n_events)
+    return np.array(
+        [
+            [ones, zeros, zeros, zeros],
+            [zeros, np.cos(angle), -np.sin(angle), zeros],
+            [zeros, np.sin(angle), np.cos(angle), zeros],
+            [zeros, zeros, zeros, ones],
+        ]
+    )
+
+
+def get_rotation_matrix_y(angle: np.ndarray) -> np.ndarray:
+    n_events = len(angle)
+    zeros = np.zeros(n_events)
+    ones = np.ones(n_events)
+    return np.array(
+        [
+            [ones, zeros, zeros, zeros],
+            [zeros, np.cos(angle), zeros, np.sin(angle)],
+            [zeros, zeros, ones, zeros],
+            [zeros, -np.sin(angle), zeros, np.cos(angle)],
+        ]
+    )
+
+
+def __reduce_ids(nested_list: DecayPath) -> Tuple[int, ...]:
+    ids: Set[int] = set()
+    for x in nested_list:
+        if isinstance(x, abc.Iterable):
+            ids.update(__reduce_ids(x))  # type: ignore
+        elif isinstance(x, int):
+            ids.add(x)
+        else:
+            raise TypeError()
+    return tuple(ids)
 
 
 def generate_kinematic_variables(
