@@ -99,38 +99,43 @@ class BlattWeisskopf(UnevaluatedExpression):
     def evaluate(self) -> sy.Expr:
         angular_momentum = self.angular_momentum
         z = (self.q * self.d) ** 2
-        return sy.Piecewise(
-            (
-                1,
-                sy.Eq(angular_momentum, 0),
-            ),
-            (
-                2 * z / (z + 1),
-                sy.Eq(angular_momentum, 1),
-            ),
-            (
-                13 * z ** 2 / ((z - 3) * (z - 3) + 9 * z),
-                sy.Eq(angular_momentum, 2),
-            ),
-            (
+        return sy.sqrt(
+            sy.Piecewise(
                 (
-                    277
-                    * z ** 3
-                    / (z * (z - 15) * (z - 15) + 9 * (2 * z - 5) * (2 * z - 5))
+                    1,
+                    sy.Eq(angular_momentum, 0),
                 ),
-                sy.Eq(angular_momentum, 3),
-            ),
-            (
                 (
-                    12746
-                    * z ** 4
-                    / (
-                        (z ** 2 - 45 * z + 105) * (z ** 2 - 45 * z + 105)
-                        + 25 * z * (2 * z - 21) * (2 * z - 21)
-                    )
+                    2 * z / (z + 1),
+                    sy.Eq(angular_momentum, 1),
                 ),
-                sy.Eq(angular_momentum, 4),
-            ),
+                (
+                    13 * z ** 2 / ((z - 3) * (z - 3) + 9 * z),
+                    sy.Eq(angular_momentum, 2),
+                ),
+                (
+                    (
+                        277
+                        * z ** 3
+                        / (
+                            z * (z - 15) * (z - 15)
+                            + 9 * (2 * z - 5) * (2 * z - 5)
+                        )
+                    ),
+                    sy.Eq(angular_momentum, 3),
+                ),
+                (
+                    (
+                        12746
+                        * z ** 4
+                        / (
+                            (z ** 2 - 45 * z + 105) * (z ** 2 - 45 * z + 105)
+                            + 25 * z * (2 * z - 21) * (2 * z - 21)
+                        )
+                    ),
+                    sy.Eq(angular_momentum, 4),
+                ),
+            )
         )
 
     def _latex(self, printer: LatexPrinter, *args: Any) -> str:
@@ -175,9 +180,11 @@ def relativistic_breit_wigner_with_ff(  # pylint: disable=too-many-arguments
     q0 = breakup_momentum(mass0, m_a, m_b)
     ff = BlattWeisskopf(q, meson_radius, angular_momentum)
     ff0 = BlattWeisskopf(q0, meson_radius, angular_momentum)
-    width = gamma0 * (mass0 / mass) * (ff ** 2 / ff0 ** 2)
-    width = width * (q / q0)
-    return relativistic_breit_wigner(mass, mass0, width) * ff
+    mass_dependent_width = gamma0 * (mass0 / mass) * (ff ** 2 / ff0 ** 2)
+    mass_dependent_width = mass_dependent_width * (q / q0)
+    return (mass0 * gamma0 * ff) / (
+        mass0 ** 2 - mass ** 2 - mass_dependent_width * mass0 * sy.I
+    )
 
 
 def breakup_momentum(
