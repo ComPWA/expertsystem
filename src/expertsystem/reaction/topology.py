@@ -237,6 +237,31 @@ class Topology:
             temp_edge_list = new_temp_edge_list
         return edge_ids
 
+    def relabel_edges(self, mapping: Mapping[int, int]) -> "Topology":
+        mapping = dict(mapping)
+        if not set(mapping) <= set(self.edges):
+            raise KeyError(
+                f"Keys {set(mapping)} do not match the existing edge IDs {set(self.edges)}"
+            )
+        # perform swappings if mapping to existing IDs
+        mapping.update(
+            {
+                new_edge_id: old_edge_id
+                for old_edge_id, new_edge_id in mapping.items()
+                if new_edge_id in self.edges
+            }
+        )
+        new_edge_ids = set(mapping.values())
+        if len(new_edge_ids) != len(mapping):
+            raise ValueError(f"Mapping {mapping} is not a bijection")
+        new_edges = dict(self.edges.items())
+        new_edges = {mapping.get(i, i): edge for i, edge in self.edges.items()}
+        if len(new_edges) != len(self.edges):
+            raise ValueError(
+                f"Mapping {mapping} resulted in a different number of edge IDs"
+            )
+        return attr.evolve(self, edges=FrozenDict(new_edges))
+
     def swap_edges(self, edge_id1: int, edge_id2: int) -> "Topology":
         new_edges = dict(self.edges.items())
         new_edges.update(

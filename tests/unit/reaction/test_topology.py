@@ -225,6 +225,18 @@ class TestTopology:
             node += 666
         assert two_to_three_decay.nodes == {0, 1, 2}
 
+    def test_relabel_edges(self, two_to_three_decay: Topology):
+        with pytest.raises(KeyError):
+            two_to_three_decay.relabel_edges({10: 2})
+        new_topology = two_to_three_decay.relabel_edges({2: 6})
+        assert new_topology.incoming_edge_ids == frozenset({0, 1})
+        assert new_topology.intermediate_edge_ids == frozenset({3, 6})
+        assert new_topology.outgoing_edge_ids == frozenset({2, 4, 5})
+        new_topology = two_to_three_decay.relabel_edges({2: 10})
+        assert new_topology.incoming_edge_ids == frozenset({0, 1})
+        assert new_topology.intermediate_edge_ids == frozenset({3, 10})
+        assert new_topology.outgoing_edge_ids == frozenset({4, 5, 6})
+
     @staticmethod
     def test_swap_edges(two_to_three_decay: Topology):
         original_topology = two_to_three_decay
