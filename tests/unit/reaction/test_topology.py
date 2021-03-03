@@ -2,7 +2,8 @@
 # pylint: disable=no-self-use, redefined-outer-name, too-many-arguments
 
 import typing
-from typing import Tuple
+from collections import abc
+from typing import Iterable, Tuple
 
 import attr
 import pytest
@@ -363,10 +364,21 @@ def test_create_n_body_topology(n_initial: int, n_final: int, exception):
 def test_get_decay_path_representation(
     n_final_states: int, expected: Tuple[int, ...]
 ):
+    def flatten(nested_list: Iterable) -> list:
+        ids = list()
+        for x in nested_list:
+            if isinstance(x, abc.Iterable):
+                ids.extend(flatten(x))
+            else:
+                ids.append(x)
+        return ids
+
     topologies = create_isobar_topologies(n_final_states)
     assert len(topologies) == len(expected)
     for i, topology in enumerate(topologies):
-        assert get_decay_path_representation(topology) == expected[i]
+        decay_path = get_decay_path_representation(topology)
+        assert set(flatten(decay_path)) == topology.outgoing_edge_ids
+        assert decay_path == expected[i]
 
 
 @pytest.mark.parametrize(
