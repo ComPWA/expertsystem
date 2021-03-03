@@ -425,10 +425,27 @@ class SimpleStateTransitionTopologyBuilder:
 
         logging.info("finished building topology graphs...")
         # strip the current open end edges list from the result graph tuples
-        topologies: Tuple[Topology, ...] = tuple()
+        topologies = list()
         for graph_tuple in graph_tuple_list:
-            topologies += (graph_tuple[0].freeze(),)
-        return topologies
+            topology = graph_tuple[0].freeze()
+            new_edges = dict()
+            # Relabel so that initial edge IDs are [-1, -2, ...]
+            for new_edge_id, edge_id in zip(
+                range(-1, -len(topology.incoming_edge_ids) - 1, -1),
+                topology.incoming_edge_ids,
+            ):
+                new_edges[new_edge_id] = topology.edges[edge_id]
+            # Relabel so that
+            # outgoing edge IDs are [0, 1, 2, ..., n]
+            # intermediate edge IDs are [n+1, n+2, ...]
+            for new_edge_id, edge_id in enumerate(
+                tuple(topology.outgoing_edge_ids)
+                + tuple(topology.intermediate_edge_ids)
+            ):
+                new_edges[new_edge_id] = topology.edges[edge_id]
+            topology = attr.evolve(topology, edges=new_edges)
+            topologies.append(topology)
+        return tuple(topologies)
 
     def _extend_graph(
         self, pair: Tuple[_MutableTopology, Sequence[int]]
