@@ -334,7 +334,7 @@ class P3Norm(UnevaluatedExpression):
 
     def evaluate(self) -> sy.Expr:
         vector3 = self.vector[1:]
-        return (vector3.T * vector3)[0]
+        return sy.sqrt((vector3.T * vector3)[0])
 
     def _latex(self, printer: LatexPrinter, *args: Any) -> str:
         args = tuple(map(printer._print, self.args))
