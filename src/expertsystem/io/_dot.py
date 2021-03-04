@@ -114,7 +114,10 @@ def __get_edge_label(
         edge_prop = graph.get_edge_props(edge_id)
         if not edge_prop:
             return str(edge_id)
-        return __edge_label(edge_prop)
+        edge_label = __edge_label(edge_prop)
+        if "\n" in edge_label:
+            return f"{edge_id}:\n{edge_label}"
+        return f"{edge_id}: {edge_label}"
     if isinstance(graph, Topology):
         return str(edge_id)
     raise NotImplementedError
