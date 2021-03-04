@@ -1,3 +1,4 @@
+# cspell:ignore atol
 # pylint: disable=no-self-use
 import numpy as np
 import pytest
@@ -6,15 +7,13 @@ from expertsystem.amplitude.kinematics import (
     SubSystem,
     _to_sorted_tuple,
     _to_sorted_tuple_pair,
+    compute_helicity_angles,
 )
+from expertsystem.reaction.topology import create_isobar_topologies
 
 # https://github.com/ComPWA/tensorwaves/blob/3d0ec44/tests/physics/helicity_formalism/test_helicity_angles.py#L61-L98
-# 2: pi0
-# 3: gamma
-# 4: pi0
-# 5: pi0
 TEST_DATA = {
-    2: np.array(
+    0: np.array(  # pi0
         [
             (1.35527, 0.514208, -0.184219, 1.23296),
             (0.841933, 0.0727385, -0.0528868, 0.826163),
@@ -28,7 +27,7 @@ TEST_DATA = {
             (1.38955, 1.33491, 0.358535, 0.0457548),
         ]
     ).T,
-    3: np.array(
+    1: np.array(  # gamma
         [
             (0.755744, -0.305812, 0.284, -0.630057),
             (1.02861, 0.784483, 0.614347, -0.255334),
@@ -42,7 +41,7 @@ TEST_DATA = {
             (0.386432, -0.196357, 0.00211926, -0.33282),
         ]
     ).T,
-    4: np.array(
+    2: np.array(  # pi0
         [
             (0.208274, -0.061663, -0.0211864, 0.144596),
             (0.461193, -0.243319, -0.283044, -0.234866),
@@ -56,7 +55,7 @@ TEST_DATA = {
             (0.616162, -0.464203, -0.358114, 0.13307),
         ]
     ).T,
-    5: np.array(
+    3: np.array(  # pi0
         [
             (0.777613, -0.146733, -0.0785946, -0.747499),
             (0.765168, -0.613903, -0.278416, -0.335962),
@@ -155,3 +154,103 @@ def test_to_sorted_tuple_pair(iterable, expected):
             _to_sorted_tuple_pair(iterable)
     else:
         assert _to_sorted_tuple_pair(iterable) == expected
+
+
+def test_compute_helicity_angles():
+    expected_angles = {
+        "phi_1+2+3": np.array(
+            [
+                2.79758,
+                2.51292,
+                -1.07396,
+                -1.88051,
+                1.06433,
+                -2.30129,
+                2.36878,
+                -2.46888,
+                0.568649,
+                -2.8792,
+            ]
+        ),
+        "theta_1+2+3": np.arccos(
+            [
+                -0.914298,
+                -0.994127,
+                0.769715,
+                -0.918418,
+                0.462214,
+                0.958535,
+                0.496489,
+                -0.674376,
+                0.614968,
+                -0.0330843,
+            ]
+        ),
+        "phi_2+3,1+2+3": np.array(
+            [
+                1.04362,
+                1.87349,
+                0.160733,
+                -2.81088,
+                2.84379,
+                2.29128,
+                2.24539,
+                -1.20272,
+                0.615838,
+                2.98067,
+            ]
+        ),
+        "theta_2+3,1+2+3": np.arccos(
+            [
+                -0.772533,
+                0.163659,
+                0.556365,
+                0.133251,
+                -0.0264361,
+                0.227188,
+                -0.166924,
+                0.652761,
+                0.443122,
+                0.503577,
+            ]
+        ),
+        "phi_2,2+3,1+2+3": np.array(
+            [  # WARNING: subsystem solution (ComPWA) results in pi differences
+                -2.77203 + np.pi,
+                1.45339 - np.pi,
+                -2.51096 + np.pi,
+                2.71085 - np.pi,
+                -1.12706 + np.pi,
+                -3.01323 + np.pi,
+                2.07305 - np.pi,
+                0.502648 - np.pi,
+                -1.23689 + np.pi,
+                1.7605 - np.pi,
+            ]
+        ),
+        "theta_2,2+3,1+2+3": np.arccos(
+            [
+                0.460324,
+                -0.410464,
+                0.248566,
+                -0.301959,
+                -0.522502,
+                0.787267,
+                0.488066,
+                0.954167,
+                -0.553114,
+                0.00256349,
+            ]
+        ),
+    }
+    topologies = create_isobar_topologies(4)
+    topology = topologies[1]
+    angles = compute_helicity_angles(TEST_DATA, topology)
+    assert len(angles) == len(expected_angles)
+    assert set(angles) == set(expected_angles)
+    for angle_name in angles:
+        np.testing.assert_allclose(
+            angles[angle_name],
+            expected_angles[angle_name],
+            atol=1e-5,
+        )

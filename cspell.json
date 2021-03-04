@@ -152,6 +152,7 @@
         "nbformat",
         "nbody",
         "nbsphinx",
+        "ndarray",
         "noqa",
         "nrows",
         "nsimplify",
