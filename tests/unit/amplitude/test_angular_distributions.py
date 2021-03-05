@@ -77,9 +77,7 @@ class TestEpemToDmD0Pip:
 
         amplitude_model = es.amplitude.get_builder(result).generate()
         full_model = sp.simplify(
-            amplitude_model.expression.subs(
-                amplitude_model.parameters.subs_values()
-            )
+            amplitude_model.expression.subs(amplitude_model.parameters)
             .doit()
             .expand(complex=True)
         )
@@ -167,15 +165,10 @@ class TestD1ToD0PiPi:
                 "C[D_{1}(2420)^{0} \\to D^{*}(2010)^{+}_{0} \\pi^{-}_{0};"
                 "D^{*}(2010)^{+} \\to D^{0}_{0} \\pi^{+}_{0}]"
             )
-        ].value = 0.5
+        ] = 0.5
 
         full_model = sp.simplify(
-            amplitude_model.expression.subs(
-                {
-                    param: props.value
-                    for param, props in amplitude_model.parameters.items()
-                }
-            )
+            amplitude_model.expression.subs(amplitude_model.parameters)
             .doit()
             .expand(complex=True)
         )

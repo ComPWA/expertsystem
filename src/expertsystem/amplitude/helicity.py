@@ -2,23 +2,8 @@
 
 import logging
 import operator
-from collections import abc
 from functools import reduce
-from typing import (
-    Any,
-    Dict,
-    Generic,
-    ItemsView,
-    Iterable,
-    KeysView,
-    List,
-    Mapping,
-    Optional,
-    Tuple,
-    TypeVar,
-    Union,
-    ValuesView,
-)
+from typing import Any, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 
 import attr
 import sympy as sp
@@ -110,107 +95,6 @@ class _TwoBodyDecay:
         )
 
 
-@attr.s
-class ParameterProperties(Generic[ValueType]):
-    value: ValueType = attr.ib()
-    fix: bool = attr.ib(default=False)
-
-
-class SuggestedParameterValues(abc.MutableMapping):
-    def __init__(
-        self,
-        parameters: Optional[
-            Mapping[
-                Union[sp.Symbol, str],
-                Union[ParameterProperties, complex, float],
-            ]
-        ] = None,
-    ) -> None:
-        self.__parameters: Dict[sp.Symbol, ParameterProperties] = dict()
-        if parameters is not None:
-            if not isinstance(parameters, abc.Mapping):
-                raise TypeError(
-                    f"{self.__class__.__name__} requires a mapping"
-                )
-            if not all(
-                map(lambda k: isinstance(k, (sp.Symbol, str)), parameters)
-            ):
-                raise TypeError(
-                    f"Not all keys are of type {sp.Symbol.__class__} or str"
-                )
-            if not all(
-                map(
-                    lambda v: isinstance(
-                        v, (ParameterProperties, complex, float)
-                    ),
-                    parameters.values(),
-                )
-            ):
-                raise TypeError(
-                    "Not all values are of type"
-                    f" {ParameterProperties.__class__} or complex or float"
-                )
-            for par, value in parameters.items():
-                if isinstance(par, sp.Symbol):
-                    par_symbol = par
-                else:
-                    par_symbol = sp.Symbol(par)
-                if isinstance(value, ParameterProperties):
-                    par_value = value
-                else:
-                    par_value = ParameterProperties(value)
-                self.__parameters[par_symbol] = par_value
-
-    def __delitem__(self, key: Union[sp.Symbol, str]) -> None:
-        if isinstance(key, str):
-            key = sp.Symbol(key)
-        del self.__parameters[key]
-
-    def __getitem__(self, key: Union[sp.Symbol, str]) -> ParameterProperties:
-        if isinstance(key, str):
-            key = sp.Symbol(key)
-        return self.__parameters[key]
-
-    def __iter__(self) -> sp.Symbol:
-        return iter(self.__parameters)
-
-    def __len__(self) -> int:
-        return len(self.__parameters)
-
-    def __repr__(self) -> str:
-        str_dict = {p.name: v for p, v in self.items()}
-        return f"{self.__class__.__name__}({str_dict})"
-
-    def __setitem__(
-        self, key: Union[sp.Symbol, str], value: ParameterProperties
-    ) -> None:
-        if isinstance(key, str):
-            key = sp.Symbol(key)
-        if not isinstance(value, ParameterProperties):
-            if not isinstance(
-                value,
-                ValueType.__constraints__,  # type: ignore  # pylint: disable=no-member
-            ):
-                raise ValueError(
-                    f"Cannot convert {value.__class__.__name__}"
-                    f" to {ParameterProperties.__name__}"
-                )
-            value = ParameterProperties(value)
-        self.__parameters[key] = value
-
-    def keys(self) -> KeysView[sp.Symbol]:
-        return self.__parameters.keys()
-
-    def items(self) -> ItemsView[sp.Symbol, ParameterProperties]:
-        return self.__parameters.items()
-
-    def values(self) -> ValuesView[ParameterProperties]:
-        return self.__parameters.values()
-
-    def subs_values(self) -> Dict[sp.Symbol, Union[complex, float]]:
-        return {p: v.value for p, v in self.items()}
-
-
 @attr.s(frozen=True)
 class HelicityModel:
     expression: sp.Expr = attr.ib(
@@ -219,8 +103,8 @@ class HelicityModel:
     components: Dict[str, sp.Expr] = attr.ib(
         validator=attr.validators.instance_of(dict)
     )
-    parameters: SuggestedParameterValues = attr.ib(
-        validator=attr.validators.instance_of(SuggestedParameterValues)
+    parameters: Dict[sp.Symbol, Union[complex, float]] = attr.ib(
+        validator=attr.validators.instance_of(dict)
     )
     kinematics: HelicityKinematics = attr.ib(
         validator=attr.validators.instance_of(HelicityKinematics)
@@ -550,9 +434,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
     def __init__(self, reaction_result: Result) -> None:
         self.name_generator = _HelicityAmplitudeNameGenerator()
         self.__graphs = reaction_result.transitions
-        self.__parameters: Dict[
-            sp.Symbol, Union[ParameterProperties, complex, float]
-        ] = dict()
+        self.__parameters: Dict[sp.Symbol, Union[complex, float]] = dict()
         self.__components: Dict[str, sp.Expr] = dict()
         self.__dynamics_choices: Dict[
             _TwoBodyDecay, ResonanceDynamicsBuilder
@@ -586,7 +468,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
         return HelicityModel(
             expression=self.__generate_intensity(),
             components=self.__components,
-            parameters=SuggestedParameterValues(self.__parameters),
+            parameters=self.__parameters,
             kinematics=self.__kinematics,
             particles=generate_particle_collection(self.__graphs),
         )
@@ -617,19 +499,13 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
             )
             for par, value in parameters.items():
                 if par in self.__parameters:
-                    if isinstance(self.__parameters[par], ParameterProperties):
-                        previous_value = self.__parameters[par].value  # type: ignore
-                    else:
-                        previous_value = self.__parameters[par]
-
+                    previous_value = self.__parameters[par]
                     if value != previous_value:
                         logging.warning(
                             f"Default value for parameter {par.name}"
                             f" inconsistent {value} and {previous_value}"
                         )
-                self.__parameters[par] = ParameterProperties[float](
-                    value, False
-                )
+                self.__parameters[par] = value
 
             return expression
 
@@ -717,9 +593,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
             graph
         )
         coefficient_symbol = sp.Symbol(f"C[{suffix}]")
-        self.__parameters[coefficient_symbol] = ParameterProperties(
-            complex(1, 0), fix=False
-        )
+        self.__parameters[coefficient_symbol] = complex(1, 0)
         return coefficient_symbol
 
     def __generate_amplitude_prefactor(
