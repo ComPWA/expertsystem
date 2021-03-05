@@ -6,6 +6,7 @@ from typing import Dict, Set, Tuple
 
 import attr
 import numpy as np
+from attr.validators import instance_of
 from numpy.lib.scimath import sqrt as complex_sqrt
 
 from expertsystem.io import convert_to_dot
@@ -65,10 +66,23 @@ class HelicityKinematics:
     :math:`phi` helicity angles.
     """
 
-    final_state_ids: Tuple[int, ...] = attr.ib(factory=tuple, init=False)
-    registered_topologies: Set[Topology] = attr.ib(factory=set, init=False)
+    reaction_info: ReactionInfo = attr.ib(validator=instance_of(ReactionInfo))
+    registered_topologies: Set[Topology] = attr.ib(
+        factory=set, init=False, repr=False
+    )
 
-    def register_topology(self, topology: Topology) -> None:
+    def register_transition(
+        self, transition: StateTransitionGraph[ParticleWithSpin]
+    ) -> None:
+        reaction_info = ReactionInfo.from_graph(transition)
+        if reaction_info != self.reaction_info:
+            raise ValueError(
+                "Transition has different initial and final states",
+                reaction_info,
+                self.reaction_info,
+            )
+        topology = transition.topology
+        assert_isobar_topology(topology)
         if len(self.registered_topologies) == 0:
             object.__setattr__(
                 self,

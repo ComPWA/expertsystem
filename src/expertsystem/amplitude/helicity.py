@@ -35,7 +35,6 @@ from expertsystem.reaction.quantum_numbers import ParticleWithSpin
 from expertsystem.reaction.topology import StateTransitionGraph
 
 from ._graph_info import (
-    assert_isobar_topology,
     generate_particle_collection,
     get_angular_momentum,
     get_coupled_spin,
@@ -225,9 +224,6 @@ class HelicityModel:
     )
     kinematics: HelicityKinematics = attr.ib(
         validator=attr.validators.instance_of(HelicityKinematics)
-    )
-    reaction_info: ReactionInfo = attr.ib(
-        validator=attr.validators.instance_of(ReactionInfo)
     )
     particles: ParticleCollection = attr.ib(
         validator=attr.validators.instance_of(ParticleCollection)
@@ -568,8 +564,10 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
                 " genenerate an amplitude model!"
             )
         first_graph = next(iter(self.__graphs))
-        assert_isobar_topology(first_graph.topology)
-        self.__reaction_info = ReactionInfo.from_graph(first_graph)
+        reaction_info = ReactionInfo.from_graph(first_graph)
+        self.__kinematics = HelicityKinematics(reaction_info)
+        for graph in self.__graphs:
+            self.__kinematics.register_transition(graph)
 
     def set_dynamics(
         self, particle_name: str, dynamics_builder: ResonanceDynamicsBuilder
@@ -585,22 +583,11 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
     def generate(self) -> HelicityModel:
         self.__components = dict()
         self.__parameters = dict()
-        kinematics = HelicityKinematics()
-        for graph in self.__graphs:
-            new_reaction_info = ReactionInfo.from_graph(graph)
-            if new_reaction_info != self.__reaction_info:
-                raise ValueError(
-                    "Transition has different initial and final states",
-                    new_reaction_info,
-                    self.__reaction_info,
-                )
-            kinematics.register_topology(graph.topology)
         return HelicityModel(
             expression=self.__generate_intensity(),
             components=self.__components,
             parameters=SuggestedParameterValues(self.__parameters),
-            kinematics=kinematics,
-            reaction_info=self.__reaction_info,
+            kinematics=self.__kinematics,
             particles=generate_particle_collection(self.__graphs),
         )
 
