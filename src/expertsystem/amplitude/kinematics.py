@@ -11,7 +11,7 @@ from numpy.lib.scimath import sqrt as complex_sqrt
 from expertsystem.io import convert_to_dot
 from expertsystem.reaction import Topology, create_isobar_topologies
 
-from ._graph_info import determine_attached_final_state
+from ._graph_info import assert_isobar_topology, determine_attached_final_state
 
 
 @attr.s(on_setattr=attr.setters.frozen)
@@ -102,6 +102,7 @@ def get_helicity_angle_label(
     6: 'phi_2+3+4'
     7: 'phi_3+4,2+3+4'
     """
+    assert_isobar_topology(topology)
 
     def recursive_label(topology: Topology, edge_id: int) -> str:
         edge = topology.edges[edge_id]
@@ -116,11 +117,6 @@ def get_helicity_angle_label(
             in_edges = topology.get_edge_ids_ingoing_to_node(
                 edge.originating_node_id
             )
-            if len(in_edges) != 1:
-                raise ValueError(
-                    f"Not an isobar topology: edge {edge.originating_node_id}"
-                    f" has {len(in_edges)} incoming edges"
-                )
             in_edge_id = next(iter(in_edges))
             if in_edge_id not in topology.incoming_edge_ids:
                 label += f",{recursive_label(topology, in_edge_id)}"

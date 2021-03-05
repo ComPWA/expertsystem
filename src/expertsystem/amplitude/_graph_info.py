@@ -124,3 +124,19 @@ def get_coupled_spin(node_props: InteractionProperties) -> Spin:
     if s_mag is None or s_proj is None:
         raise TypeError("Coupled spin S not defined!")
     return Spin(s_mag, s_proj)
+
+
+def assert_isobar_topology(topology: Topology) -> None:
+    for node_id in topology.nodes:
+        parent_edge_ids = topology.get_edge_ids_ingoing_to_node(node_id)
+        if len(parent_edge_ids) != 1:
+            raise ValueError(
+                f"Node {node_id} has {len(parent_edge_ids)} parent edges,"
+                " so this is not an isobar decay"
+            )
+        child_edge_ids = topology.get_edge_ids_outgoing_from_node(node_id)
+        if len(child_edge_ids) != 2:
+            raise ValueError(
+                f"Node {node_id} decays to {len(child_edge_ids)} edges,"
+                " so this is not an isobar decay"
+            )
