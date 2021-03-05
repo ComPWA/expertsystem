@@ -81,7 +81,9 @@ class HelicityKinematics:
                 reaction_info,
                 self.reaction_info,
             )
-        topology = transition.topology
+        self.register_topology(transition.topology)
+
+    def register_topology(self, topology: Topology) -> None:
         assert_isobar_topology(topology)
         if len(self.registered_topologies) == 0:
             object.__setattr__(
