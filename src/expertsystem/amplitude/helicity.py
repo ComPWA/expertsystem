@@ -5,6 +5,7 @@ import operator
 from collections import abc
 from functools import reduce
 from typing import (
+    Any,
     Dict,
     Generic,
     ItemsView,
@@ -23,6 +24,7 @@ import attr
 import sympy as sp
 from sympy.physics.quantum.cg import CG
 from sympy.physics.quantum.spin import Rotation as Wigner
+from sympy.printing.latex import LatexPrinter
 
 from expertsystem.particle import Particle, ParticleCollection, Spin
 from expertsystem.reaction import Result
@@ -804,7 +806,7 @@ class CanonicalAmplitudeBuilder(HelicityAmplitudeBuilder):
             daughter_spins[0].projection - daughter_spins[1].projection
         )
 
-        cg_ls = CG(
+        cg_ls = _ClebschGordanLatexFix(
             j1=sp.nsimplify(ang_mom.magnitude),
             m1=sp.nsimplify(ang_mom.projection),
             j2=sp.nsimplify(spin.magnitude),
@@ -812,7 +814,7 @@ class CanonicalAmplitudeBuilder(HelicityAmplitudeBuilder):
             j3=sp.nsimplify(parent_spin.magnitude),
             m3=sp.nsimplify(decay_particle_lambda),
         )
-        cg_ss = CG(
+        cg_ss = _ClebschGordanLatexFix(
             j1=sp.nsimplify(daughter_spins[0].magnitude),
             m1=sp.nsimplify(daughter_spins[0].projection),
             j2=sp.nsimplify(daughter_spins[1].magnitude),
@@ -821,3 +823,13 @@ class CanonicalAmplitudeBuilder(HelicityAmplitudeBuilder):
             m3=sp.nsimplify(decay_particle_lambda),
         )
         return cg_ls * cg_ss * amplitude
+
+
+# https://github.com/sympy/sympy/issues/21001
+class _ClebschGordanLatexFix(CG):
+    def _latex(self, printer: LatexPrinter, *args: Any) -> str:
+        label = map(
+            printer._print,  # pylint: disable=protected-access
+            (self.j3, self.m3, self.j1, self.m1, self.j2, self.m2),
+        )
+        return r"{C^{%s,%s}_{%s,%s,%s,%s}}" % tuple(label)
