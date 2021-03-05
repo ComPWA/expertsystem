@@ -5,7 +5,7 @@ from collections import OrderedDict
 from typing import Callable, Dict, Optional, Tuple
 
 import attr
-import sympy as sy
+import sympy as sp
 
 from expertsystem.particle import Particle
 
@@ -24,24 +24,24 @@ except ImportError:
 
 @attr.s(frozen=True)
 class TwoBodyKinematicVariableSet:
-    in_edge_inv_mass: sy.Symbol = attr.ib()
-    out_edge_inv_mass1: sy.Symbol = attr.ib()
-    out_edge_inv_mass2: sy.Symbol = attr.ib()
-    helicity_theta: sy.Symbol = attr.ib()
-    helicity_phi: sy.Symbol = attr.ib()
+    in_edge_inv_mass: sp.Symbol = attr.ib()
+    out_edge_inv_mass1: sp.Symbol = attr.ib()
+    out_edge_inv_mass2: sp.Symbol = attr.ib()
+    helicity_theta: sp.Symbol = attr.ib()
+    helicity_phi: sp.Symbol = attr.ib()
     angular_momentum: Optional[int] = attr.ib(default=None)
 
 
 def create_non_dynamic(
     particle: Particle, variable_pool: TwoBodyKinematicVariableSet
-) -> Tuple[sy.Expr, Dict[sy.Symbol, float]]:
+) -> Tuple[sp.Expr, Dict[sp.Symbol, float]]:
     # pylint: disable=unused-argument
     return (1, {})
 
 
 def create_non_dynamic_with_ff(
     particle: Particle, variable_pool: TwoBodyKinematicVariableSet
-) -> Tuple[sy.Expr, Dict[sy.Symbol, float]]:
+) -> Tuple[sp.Expr, Dict[sp.Symbol, float]]:
     angular_momentum = variable_pool.angular_momentum
     if angular_momentum is None:
         raise ValueError(
@@ -52,7 +52,7 @@ def create_non_dynamic_with_ff(
         variable_pool.out_edge_inv_mass1,
         variable_pool.out_edge_inv_mass2,
     )
-    meson_radius = sy.Symbol(f"d_{particle.name}")
+    meson_radius = sp.Symbol(f"d_{particle.name}")
     return (
         BlattWeisskopf(q, meson_radius, angular_momentum),
         {meson_radius: 1},
@@ -61,10 +61,10 @@ def create_non_dynamic_with_ff(
 
 def create_relativistic_breit_wigner(
     particle: Particle, variable_pool: TwoBodyKinematicVariableSet
-) -> Tuple[sy.Expr, Dict[sy.Symbol, float]]:
+) -> Tuple[sp.Expr, Dict[sp.Symbol, float]]:
     inv_mass = variable_pool.in_edge_inv_mass
-    res_mass = sy.Symbol(f"m_{particle.name}")
-    res_width = sy.Symbol(f"Gamma_{particle.name}")
+    res_mass = sp.Symbol(f"m_{particle.name}")
+    res_width = sp.Symbol(f"Gamma_{particle.name}")
     return (
         relativistic_breit_wigner(
             inv_mass,
@@ -77,19 +77,19 @@ def create_relativistic_breit_wigner(
 
 def create_relativistic_breit_wigner_with_ff(
     particle: Particle, variable_pool: TwoBodyKinematicVariableSet
-) -> Tuple[sy.Expr, Dict[sy.Symbol, float]]:
+) -> Tuple[sp.Expr, Dict[sp.Symbol, float]]:
     if variable_pool.angular_momentum is None:
         raise ValueError(
             "Angular momentum is not defined but is required in the form factor!"
         )
 
     inv_mass = variable_pool.in_edge_inv_mass
-    res_mass = sy.Symbol(f"m_{particle.name}")
-    res_width = sy.Symbol(f"Gamma_{particle.name}")
+    res_mass = sp.Symbol(f"m_{particle.name}")
+    res_width = sp.Symbol(f"Gamma_{particle.name}")
     product1_inv_mass = variable_pool.out_edge_inv_mass1
     product2_inv_mass = variable_pool.out_edge_inv_mass2
     angular_momentum = variable_pool.angular_momentum
-    meson_radius = sy.Symbol(f"d_{particle.name}")
+    meson_radius = sp.Symbol(f"d_{particle.name}")
 
     return (
         relativistic_breit_wigner_with_ff(
@@ -118,7 +118,7 @@ class ResonanceDynamicsBuilder(Protocol):
 
     def __call__(
         self, particle: Particle, variable_pool: TwoBodyKinematicVariableSet
-    ) -> Tuple[sy.Expr, Dict[sy.Symbol, float]]:
+    ) -> Tuple[sp.Expr, Dict[sp.Symbol, float]]:
         ...
 
 

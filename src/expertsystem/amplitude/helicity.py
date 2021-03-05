@@ -20,7 +20,7 @@ from typing import (
 )
 
 import attr
-import sympy as sy
+import sympy as sp
 from sympy.physics.quantum.cg import CG
 from sympy.physics.quantum.spin import Rotation as Wigner
 
@@ -118,22 +118,22 @@ class SuggestedParameterValues(abc.MutableMapping):
         self,
         parameters: Optional[
             Mapping[
-                Union[sy.Symbol, str],
+                Union[sp.Symbol, str],
                 Union[ParameterProperties, complex, float],
             ]
         ] = None,
     ) -> None:
-        self.__parameters: Dict[sy.Symbol, ParameterProperties] = dict()
+        self.__parameters: Dict[sp.Symbol, ParameterProperties] = dict()
         if parameters is not None:
             if not isinstance(parameters, abc.Mapping):
                 raise TypeError(
                     f"{self.__class__.__name__} requires a mapping"
                 )
             if not all(
-                map(lambda k: isinstance(k, (sy.Symbol, str)), parameters)
+                map(lambda k: isinstance(k, (sp.Symbol, str)), parameters)
             ):
                 raise TypeError(
-                    f"Not all keys are of type {sy.Symbol.__class__} or str"
+                    f"Not all keys are of type {sp.Symbol.__class__} or str"
                 )
             if not all(
                 map(
@@ -148,27 +148,27 @@ class SuggestedParameterValues(abc.MutableMapping):
                     f" {ParameterProperties.__class__} or complex or float"
                 )
             for par, value in parameters.items():
-                if isinstance(par, sy.Symbol):
+                if isinstance(par, sp.Symbol):
                     par_symbol = par
                 else:
-                    par_symbol = sy.Symbol(par)
+                    par_symbol = sp.Symbol(par)
                 if isinstance(value, ParameterProperties):
                     par_value = value
                 else:
                     par_value = ParameterProperties(value)
                 self.__parameters[par_symbol] = par_value
 
-    def __delitem__(self, key: Union[sy.Symbol, str]) -> None:
+    def __delitem__(self, key: Union[sp.Symbol, str]) -> None:
         if isinstance(key, str):
-            key = sy.Symbol(key)
+            key = sp.Symbol(key)
         del self.__parameters[key]
 
-    def __getitem__(self, key: Union[sy.Symbol, str]) -> ParameterProperties:
+    def __getitem__(self, key: Union[sp.Symbol, str]) -> ParameterProperties:
         if isinstance(key, str):
-            key = sy.Symbol(key)
+            key = sp.Symbol(key)
         return self.__parameters[key]
 
-    def __iter__(self) -> sy.Symbol:
+    def __iter__(self) -> sp.Symbol:
         return iter(self.__parameters)
 
     def __len__(self) -> int:
@@ -179,10 +179,10 @@ class SuggestedParameterValues(abc.MutableMapping):
         return f"{self.__class__.__name__}({str_dict})"
 
     def __setitem__(
-        self, key: Union[sy.Symbol, str], value: ParameterProperties
+        self, key: Union[sp.Symbol, str], value: ParameterProperties
     ) -> None:
         if isinstance(key, str):
-            key = sy.Symbol(key)
+            key = sp.Symbol(key)
         if not isinstance(value, ParameterProperties):
             if not isinstance(
                 value,
@@ -195,25 +195,25 @@ class SuggestedParameterValues(abc.MutableMapping):
             value = ParameterProperties(value)
         self.__parameters[key] = value
 
-    def keys(self) -> KeysView[sy.Symbol]:
+    def keys(self) -> KeysView[sp.Symbol]:
         return self.__parameters.keys()
 
-    def items(self) -> ItemsView[sy.Symbol, ParameterProperties]:
+    def items(self) -> ItemsView[sp.Symbol, ParameterProperties]:
         return self.__parameters.items()
 
     def values(self) -> ValuesView[ParameterProperties]:
         return self.__parameters.values()
 
-    def subs_values(self) -> Dict[sy.Symbol, Union[complex, float]]:
+    def subs_values(self) -> Dict[sp.Symbol, Union[complex, float]]:
         return {p: v.value for p, v in self.items()}
 
 
 @attr.s(frozen=True)
 class HelicityModel:
-    expression: sy.Expr = attr.ib(
-        validator=attr.validators.instance_of(sy.Expr)
+    expression: sp.Expr = attr.ib(
+        validator=attr.validators.instance_of(sp.Expr)
     )
-    components: Dict[str, sy.Expr] = attr.ib(
+    components: Dict[str, sp.Expr] = attr.ib(
         validator=attr.validators.instance_of(dict)
     )
     parameters: SuggestedParameterValues = attr.ib(
@@ -393,8 +393,8 @@ class _CanonicalAmplitudeNameGenerator(_HelicityAmplitudeNameGenerator):
         graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> str:
         node_props = graph.get_node_props(node_id)
-        ang_orb_mom = sy.Rational(get_angular_momentum(node_props).magnitude)
-        spin = sy.Rational(get_coupled_spin(node_props).magnitude)
+        ang_orb_mom = sp.Rational(get_angular_momentum(node_props).magnitude)
+        spin = sp.Rational(get_coupled_spin(node_props).magnitude)
         return f",L={ang_orb_mom},S={spin}"
 
 
@@ -463,13 +463,13 @@ def _generate_kinematic_variable_set(
 ) -> TwoBodyKinematicVariableSet:
     decay = _TwoBodyDecay.from_graph(transition, node_id)
     inv_mass, phi, theta = _generate_kinematic_variables(transition, node_id)
-    child1_mass = sy.Symbol(
+    child1_mass = sp.Symbol(
         get_invariant_mass_label(
             transition.topology, decay.children[0].edge_id
         ),
         real=True,
     )
-    child2_mass = sy.Symbol(
+    child2_mass = sp.Symbol(
         get_invariant_mass_label(
             transition.topology, decay.children[1].edge_id
         ),
@@ -525,7 +525,7 @@ def _extract_angular_momentum(
 
 def _generate_kinematic_variables(
     transition: StateTransitionGraph[ParticleWithSpin], node_id: int
-) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
+) -> Tuple[sp.Symbol, sp.Symbol, sp.Symbol]:
     """Generate symbol for invariant mass, phi angle, and theta angle."""
     decay = _TwoBodyDecay.from_graph(transition, node_id)
     phi_label, theta_label = get_helicity_angle_label(
@@ -535,9 +535,9 @@ def _generate_kinematic_variables(
         transition.topology, decay.parent.edge_id
     )
     return (
-        sy.Symbol(inv_mass_label, real=True),
-        sy.Symbol(phi_label, real=True),
-        sy.Symbol(theta_label, real=True),
+        sp.Symbol(inv_mass_label, real=True),
+        sp.Symbol(phi_label, real=True),
+        sp.Symbol(theta_label, real=True),
     )
 
 
@@ -548,9 +548,9 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
         self.name_generator = _HelicityAmplitudeNameGenerator()
         self.__graphs = reaction_result.transitions
         self.__parameters: Dict[
-            sy.Symbol, Union[ParameterProperties, complex, float]
+            sp.Symbol, Union[ParameterProperties, complex, float]
         ] = dict()
-        self.__components: Dict[str, sy.Expr] = dict()
+        self.__components: Dict[str, sp.Expr] = dict()
         self.__dynamics_choices: Dict[
             _TwoBodyDecay, ResonanceDynamicsBuilder
         ] = dict()
@@ -592,7 +592,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
             particles=generate_particle_collection(self.__graphs),
         )
 
-    def __generate_intensity(self) -> sy.Expr:
+    def __generate_intensity(self) -> sp.Expr:
         graph_groups = group_graphs_same_initial_and_final(self.__graphs)
         logging.debug("There are %d graph groups", len(graph_groups))
 
@@ -608,7 +608,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
 
     def __create_dynamics(
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
-    ) -> sy.Expr:
+    ) -> sp.Expr:
         decay = _TwoBodyDecay.from_graph(graph, node_id)
         if decay in self.__dynamics_choices:
             builder = self.__dynamics_choices[decay]
@@ -646,9 +646,9 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
     def __generate_coherent_intensity(
         self,
         graph_group: List[StateTransitionGraph[ParticleWithSpin]],
-    ) -> sy.Expr:
+    ) -> sp.Expr:
         graph_group_label = _get_graph_group_unique_label(graph_group)
-        expression: List[sy.Expr] = list()
+        expression: List[sp.Expr] = list()
         for graph in graph_group:
             sequential_graphs = (
                 perform_external_edge_identical_particle_combinatorics(graph)
@@ -662,8 +662,8 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
 
     def __generate_sequential_decay(
         self, graph: StateTransitionGraph[ParticleWithSpin]
-    ) -> sy.Expr:
-        partial_decays: List[sy.Symbol] = [
+    ) -> sp.Expr:
+        partial_decays: List[sp.Symbol] = [
             self._generate_partial_decay(graph, node_id)
             for node_id in graph.topology.nodes
         ]
@@ -681,7 +681,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
 
     def _generate_partial_decay(  # pylint: disable=too-many-locals
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
-    ) -> sy.Expr:
+    ) -> sp.Expr:
         wigner_d = self._generate_wigner_d(graph, node_id)
         dynamics_symbol = self.__create_dynamics(graph, node_id)
         return wigner_d * dynamics_symbol
@@ -689,14 +689,14 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def _generate_wigner_d(
         graph: StateTransitionGraph[ParticleWithSpin], node_id: int
-    ) -> sy.Symbol:
+    ) -> sp.Symbol:
         decay = _TwoBodyDecay.from_graph(graph, node_id)
         _, phi, theta = _generate_kinematic_variables(graph, node_id)
 
         return Wigner.D(
-            j=sy.nsimplify(decay.parent.state.particle.spin),
-            m=sy.nsimplify(decay.parent.state.spin_projection),
-            mp=sy.nsimplify(
+            j=sp.nsimplify(decay.parent.state.particle.spin),
+            m=sp.nsimplify(decay.parent.state.spin_projection),
+            mp=sp.nsimplify(
                 decay.children[0].state.spin_projection
                 - decay.children[1].state.spin_projection
             ),
@@ -707,7 +707,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
 
     def __generate_amplitude_coefficient(
         self, graph: StateTransitionGraph[ParticleWithSpin]
-    ) -> sy.Symbol:
+    ) -> sp.Symbol:
         """Generate coefficient parameter for a sequential amplitude graph.
 
         Generally, each partial amplitude of a sequential amplitude graph
@@ -717,7 +717,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
         suffix = self.name_generator.generate_sequential_amplitude_suffix(
             graph
         )
-        coefficient_symbol = sy.Symbol(f"C[{suffix}]")
+        coefficient_symbol = sp.Symbol(f"C[{suffix}]")
         self.__parameters[coefficient_symbol] = ParameterProperties(
             complex(1, 0), fix=False
         )
@@ -770,7 +770,7 @@ class CanonicalAmplitudeBuilder(HelicityAmplitudeBuilder):
 
     def _generate_partial_decay(  # pylint: disable=too-many-locals
         self, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
-    ) -> sy.Symbol:
+    ) -> sp.Symbol:
         amplitude = super()._generate_partial_decay(graph, node_id)
 
         node_props = graph.get_node_props(node_id)
@@ -805,19 +805,19 @@ class CanonicalAmplitudeBuilder(HelicityAmplitudeBuilder):
         )
 
         cg_ls = CG(
-            j1=sy.nsimplify(ang_mom.magnitude),
-            m1=sy.nsimplify(ang_mom.projection),
-            j2=sy.nsimplify(spin.magnitude),
-            m2=sy.nsimplify(decay_particle_lambda),
-            j3=sy.nsimplify(parent_spin.magnitude),
-            m3=sy.nsimplify(decay_particle_lambda),
+            j1=sp.nsimplify(ang_mom.magnitude),
+            m1=sp.nsimplify(ang_mom.projection),
+            j2=sp.nsimplify(spin.magnitude),
+            m2=sp.nsimplify(decay_particle_lambda),
+            j3=sp.nsimplify(parent_spin.magnitude),
+            m3=sp.nsimplify(decay_particle_lambda),
         )
         cg_ss = CG(
-            j1=sy.nsimplify(daughter_spins[0].magnitude),
-            m1=sy.nsimplify(daughter_spins[0].projection),
-            j2=sy.nsimplify(daughter_spins[1].magnitude),
-            m2=sy.nsimplify(-daughter_spins[1].projection),
-            j3=sy.nsimplify(spin.magnitude),
-            m3=sy.nsimplify(decay_particle_lambda),
+            j1=sp.nsimplify(daughter_spins[0].magnitude),
+            m1=sp.nsimplify(daughter_spins[0].projection),
+            j2=sp.nsimplify(daughter_spins[1].magnitude),
+            m2=sp.nsimplify(-daughter_spins[1].projection),
+            j3=sp.nsimplify(spin.magnitude),
+            m3=sp.nsimplify(decay_particle_lambda),
         )
         return cg_ls * cg_ss * amplitude

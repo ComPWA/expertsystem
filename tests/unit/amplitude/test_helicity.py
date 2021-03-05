@@ -1,5 +1,5 @@
 import pytest
-import sympy as sy
+import sympy as sp
 
 from expertsystem.amplitude import get_builder
 from expertsystem.amplitude.helicity import (
@@ -35,10 +35,10 @@ class TestSuggestedParameterValues:
     def dummy_parameters():
         return SuggestedParameterValues(
             {
-                sy.Symbol("par1"): 1.0,
-                sy.Symbol("par2"): complex(0, 1),
-                sy.Symbol("par3"): -1.0,
-                sy.Symbol("par4"): complex(-1, 0),
+                sp.Symbol("par1"): 1.0,
+                sp.Symbol("par2"): complex(0, 1),
+                sp.Symbol("par3"): -1.0,
+                sp.Symbol("par4"): complex(-1, 0),
             }
         )
 
@@ -46,11 +46,11 @@ class TestSuggestedParameterValues:
     @pytest.mark.parametrize("container", [SuggestedParameterValues, dict])
     def test_not_singleton(container):
         parameters1 = container()
-        parameters1[sy.Symbol("par1")] = ParameterProperties(1)
-        parameters1[sy.Symbol("par2")] = ParameterProperties(2)
+        parameters1[sp.Symbol("par1")] = ParameterProperties(1)
+        parameters1[sp.Symbol("par2")] = ParameterProperties(2)
         assert len(parameters1) == 2
         parameters2 = container()
-        parameters2[sy.Symbol("par3")] = ParameterProperties(1)
+        parameters2[sp.Symbol("par3")] = ParameterProperties(1)
         assert len(parameters2) == 1
 
     @staticmethod
@@ -66,7 +66,7 @@ class TestSuggestedParameterValues:
         parameters = SuggestedParameterValues()
         parameters["par1"] = value
         assert "par1" in parameters
-        assert sy.Symbol("par1") in parameters
+        assert sp.Symbol("par1") in parameters
         assert parameters["par1"].value == value
 
     @staticmethod
@@ -75,12 +75,12 @@ class TestSuggestedParameterValues:
             {
                 "par1": 1.0,
                 "par2": complex(0.0, 1.0),
-                sy.Symbol("par3"): -1.0,
-                sy.Symbol("par4"): ParameterProperties(complex(-1, 0)),
+                sp.Symbol("par3"): -1.0,
+                sp.Symbol("par4"): ParameterProperties(complex(-1, 0)),
             }
         )
         for par, value in parameters.items():
-            assert isinstance(par, sy.Symbol)
+            assert isinstance(par, sp.Symbol)
             assert isinstance(value, ParameterProperties)
             assert par.name.startswith("par")
             assert abs(value.value) == 1.0
@@ -97,8 +97,8 @@ class TestSuggestedParameterValues:
     @staticmethod
     def test_subs_values(dummy_parameters: SuggestedParameterValues):
         assert dummy_parameters.subs_values() == {
-            sy.Symbol("par1"): 1.0,
-            sy.Symbol("par2"): complex(0, 1),
-            sy.Symbol("par3"): -1.0,
-            sy.Symbol("par4"): complex(-1, 0),
+            sp.Symbol("par1"): 1.0,
+            sp.Symbol("par2"): complex(0, 1),
+            sp.Symbol("par3"): -1.0,
+            sp.Symbol("par4"): complex(-1, 0),
         }

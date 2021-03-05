@@ -8,13 +8,13 @@
 from abc import abstractmethod
 from typing import Any, Callable, Type
 
-import sympy as sy
+import sympy as sp
 from sympy.printing.latex import LatexPrinter
 
 
-class UnevaluatedExpression(sy.Expr):
+class UnevaluatedExpression(sp.Expr):
     @abstractmethod
-    def evaluate(self) -> sy.Expr:
+    def evaluate(self) -> sp.Expr:
         pass
 
     @abstractmethod
@@ -26,7 +26,7 @@ class UnevaluatedExpression(sy.Expr):
 
 def implement_expr(
     n_args: int,
-) -> Callable[[Type[UnevaluatedExpression]], sy.Expr]:
+) -> Callable[[Type[UnevaluatedExpression]], sp.Expr]:
     """Decorator for classes that derive from `UnevaluatedExpression`.
 
     Implement a `~object.__new__` and `~sympy.core.basic.Basic.doit` method for
@@ -35,23 +35,23 @@ def implement_expr(
     `~UnevaluatedExpression.evaluate` method has to be implemented
     """
 
-    def decorator(decorated_class: Type[UnevaluatedExpression]) -> sy.Expr:
+    def decorator(decorated_class: Type[UnevaluatedExpression]) -> sp.Expr:
         def new_method(
             cls: Type,
-            *args: sy.Symbol,
+            *args: sp.Symbol,
             **hints: Any,
         ) -> bool:
             if len(args) != n_args:
                 raise ValueError(
                     f"{n_args} parameters expected, got {len(args)}"
                 )
-            args = sy.sympify(args)
+            args = sp.sympify(args)
             evaluate = hints.get("evaluate", False)
             if evaluate:
-                return sy.Expr.__new__(cls, *args).evaluate()  # type: ignore  # pylint: disable=no-member
-            return sy.Expr.__new__(cls, *args)
+                return sp.Expr.__new__(cls, *args).evaluate()  # type: ignore  # pylint: disable=no-member
+            return sp.Expr.__new__(cls, *args)
 
-        def doit_method(self: Any, **hints: Any) -> sy.Expr:
+        def doit_method(self: Any, **hints: Any) -> sp.Expr:
             return type(self)(*self.args, **hints, evaluate=True)
 
         decorated_class.__new__ = new_method  # type: ignore
@@ -83,35 +83,35 @@ class BlattWeisskopf(UnevaluatedExpression):
     """
 
     @property
-    def q(self) -> sy.Symbol:
+    def q(self) -> sp.Symbol:
         """Break-up momentum."""
         return self.args[0]
 
     @property
-    def d(self) -> sy.Symbol:
+    def d(self) -> sp.Symbol:
         """Impact parameter, also called meson radius."""
         return self.args[1]
 
     @property
-    def angular_momentum(self) -> sy.Symbol:
+    def angular_momentum(self) -> sp.Symbol:
         return self.args[2]
 
-    def evaluate(self) -> sy.Expr:
+    def evaluate(self) -> sp.Expr:
         angular_momentum = self.angular_momentum
         z = (self.q * self.d) ** 2
-        return sy.sqrt(
-            sy.Piecewise(
+        return sp.sqrt(
+            sp.Piecewise(
                 (
                     1,
-                    sy.Eq(angular_momentum, 0),
+                    sp.Eq(angular_momentum, 0),
                 ),
                 (
                     2 * z / (z + 1),
-                    sy.Eq(angular_momentum, 1),
+                    sp.Eq(angular_momentum, 1),
                 ),
                 (
                     13 * z ** 2 / ((z - 3) * (z - 3) + 9 * z),
-                    sy.Eq(angular_momentum, 2),
+                    sp.Eq(angular_momentum, 2),
                 ),
                 (
                     (
@@ -122,7 +122,7 @@ class BlattWeisskopf(UnevaluatedExpression):
                             + 9 * (2 * z - 5) * (2 * z - 5)
                         )
                     ),
-                    sy.Eq(angular_momentum, 3),
+                    sp.Eq(angular_momentum, 3),
                 ),
                 (
                     (
@@ -133,7 +133,7 @@ class BlattWeisskopf(UnevaluatedExpression):
                             + 25 * z * (2 * z - 21) * (2 * z - 21)
                         )
                     ),
-                    sy.Eq(angular_momentum, 4),
+                    sp.Eq(angular_momentum, 4),
                 ),
             )
         )
@@ -144,8 +144,8 @@ class BlattWeisskopf(UnevaluatedExpression):
 
 
 def relativistic_breit_wigner(
-    mass: sy.Symbol, mass0: sy.Symbol, gamma0: sy.Symbol
-) -> sy.Expr:
+    mass: sp.Symbol, mass0: sp.Symbol, gamma0: sp.Symbol
+) -> sp.Expr:
     """Relativistic Breit-Wigner lineshape.
 
     .. glue:math:: relativistic_breit_wigner
@@ -154,18 +154,18 @@ def relativistic_breit_wigner(
     See :ref:`usage/dynamics/lineshapes:_Without_ form factor` and
     :cite:`asnerDalitzPlotAnalysis2006`.
     """
-    return gamma0 * mass0 / (mass0 ** 2 - mass ** 2 - gamma0 * mass0 * sy.I)
+    return gamma0 * mass0 / (mass0 ** 2 - mass ** 2 - gamma0 * mass0 * sp.I)
 
 
 def relativistic_breit_wigner_with_ff(  # pylint: disable=too-many-arguments
-    mass: sy.Symbol,
-    mass0: sy.Symbol,
-    gamma0: sy.Symbol,
-    m_a: sy.Symbol,
-    m_b: sy.Symbol,
-    angular_momentum: sy.Symbol,
-    meson_radius: sy.Symbol,
-) -> sy.Expr:
+    mass: sp.Symbol,
+    mass0: sp.Symbol,
+    gamma0: sp.Symbol,
+    m_a: sp.Symbol,
+    m_b: sp.Symbol,
+    angular_momentum: sp.Symbol,
+    meson_radius: sp.Symbol,
+) -> sp.Expr:
     """Relativistic Breit-Wigner with `.BlattWeisskopf` factor.
 
     For :math:`L=0`, this lineshape has the following form:
@@ -183,14 +183,14 @@ def relativistic_breit_wigner_with_ff(  # pylint: disable=too-many-arguments
     mass_dependent_width = gamma0 * (mass0 / mass) * (ff ** 2 / ff0 ** 2)
     mass_dependent_width = mass_dependent_width * (q / q0)
     return (mass0 * gamma0 * ff) / (
-        mass0 ** 2 - mass ** 2 - mass_dependent_width * mass0 * sy.I
+        mass0 ** 2 - mass ** 2 - mass_dependent_width * mass0 * sp.I
     )
 
 
 def breakup_momentum(
-    m_r: sy.Symbol, m_a: sy.Symbol, m_b: sy.Symbol
-) -> sy.Expr:
-    return sy.sqrt(
+    m_r: sp.Symbol, m_a: sp.Symbol, m_b: sp.Symbol
+) -> sp.Expr:
+    return sp.sqrt(
         (m_r ** 2 - (m_a + m_b) ** 2)
         * (m_r ** 2 - (m_a - m_b) ** 2)
         / (4 * m_r ** 2)

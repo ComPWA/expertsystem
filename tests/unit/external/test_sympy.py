@@ -5,26 +5,26 @@ import operator
 from copy import deepcopy
 from functools import reduce
 
-import sympy as sy
+import sympy as sp
 
 
 class TestFunction:
     def test_hash(self):
-        x = sy.Symbol("x")
-        f = sy.Function("h")
-        g = sy.Function("h")
+        x = sp.Symbol("x")
+        f = sp.Function("h")
+        g = sp.Function("h")
         assert f is g
         assert f(x) is g(x)
-        f = sy.Function("h")(x)
-        g = sy.Function("h")(x)
+        f = sp.Function("h")(x)
+        g = sp.Function("h")(x)
         assert f is g
 
 
 class TestSymbol:
     def test_hash(self):
-        x = sy.Symbol("a")
-        y = sy.Symbol("a")
-        y_real = sy.Symbol("a", real=True)
+        x = sp.Symbol("a")
+        y = sp.Symbol("a")
+        y_real = sp.Symbol("a", real=True)
         assert x == y
         assert x is y
         assert y != y_real
@@ -32,19 +32,19 @@ class TestSymbol:
 
     def test_name(self):
         # pylint: disable=no-member
-        x = sy.Symbol("x; weird-spacing\t.,")
-        f = sy.Function("  f.^")
-        g = sy.Function("g")(x)
+        x = sp.Symbol("x; weird-spacing\t.,")
+        f = sp.Function("  f.^")
+        g = sp.Function("g")(x)
         assert x.name == "x; weird-spacing	.,"
-        assert sy.srepr(x) == "Symbol('x; weird-spacing\\t.,')"
+        assert sp.srepr(x) == "Symbol('x; weird-spacing\\t.,')"
         assert f.name == "  f.^"
         assert g.name == "g"
         x.name = "x"
         assert x.name == "x"
 
     def test_name_change(self):
-        x = sy.Symbol("a")
-        y = sy.Symbol("a")
+        x = sp.Symbol("a")
+        y = sp.Symbol("a")
         assert x.name == y.name
         assert x == y
         assert x is y
@@ -60,8 +60,8 @@ class TestSymbol:
 
     def test_product(self):
         symbols = [
-            sy.Symbol("x"),
-            sy.Symbol("y"),
-            sy.Symbol("z"),
+            sp.Symbol("x"),
+            sp.Symbol("y"),
+            sp.Symbol("z"),
         ]
         reduce(operator.mul, symbols)
