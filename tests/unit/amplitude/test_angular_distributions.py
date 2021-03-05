@@ -121,6 +121,12 @@ class TestEpemToDmD0Pip:
         expected_distribution_function: sy.Expr,
         sympy_model: sy.Expr,
     ) -> None:
+        assert {s.name for s in sympy_model.free_symbols} == {
+            "phi_1_2_vs_0",
+            "theta_0_1+2",
+            "theta_1_2_vs_0",
+        }
+
         if isinstance(angular_variables, str):
             angular_variables = (angular_variables,)
 
@@ -205,6 +211,12 @@ class TestD1ToD0PiPi:
         expected_distribution_function: sy.Expr,
         sympy_model: sy.Expr,
     ) -> None:
+        assert {s.name for s in sympy_model.free_symbols} == {
+            "phi_1_2_vs_0",
+            "theta_0_1+2",
+            "theta_1_2_vs_0",
+        }
+
         if isinstance(angular_variables, str):
             angular_variables = (angular_variables,)
 
