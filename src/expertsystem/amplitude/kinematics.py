@@ -9,9 +9,50 @@ import numpy as np
 from numpy.lib.scimath import sqrt as complex_sqrt
 
 from expertsystem.io import convert_to_dot
+from expertsystem.particle import Particle
 from expertsystem.reaction import Topology, create_isobar_topologies
+from expertsystem.reaction.quantum_numbers import ParticleWithSpin
+from expertsystem.reaction.topology import FrozenDict, StateTransitionGraph
 
 from ._graph_info import assert_isobar_topology, determine_attached_final_state
+
+
+@attr.s(frozen=True)
+class ReactionInfo:
+    initial_state: FrozenDict[int, Particle] = attr.ib(converter=FrozenDict)
+    final_state: FrozenDict[int, Particle] = attr.ib(converter=FrozenDict)
+
+    def __attrs_post_init__(self) -> None:
+        initial_state_ids = set(self.initial_state)
+        final_state_ids = set(self.final_state)
+        if initial_state_ids & final_state_ids:
+            raise ValueError(
+                f"Initial state IDs {initial_state_ids} overlap"
+                f" with final state IDs {final_state_ids}"
+            )
+        particles = {
+            *self.initial_state.values(),
+            *self.final_state.values(),
+        }
+        if not all(map(lambda p: isinstance(p, Particle), particles)):
+            raise ValueError(
+                f"Not all items in state ID mappings are {Particle.__name__}"
+            )
+
+    @staticmethod
+    def from_graph(
+        graph: StateTransitionGraph[ParticleWithSpin],
+    ) -> "ReactionInfo":
+        return ReactionInfo(
+            initial_state={
+                i: graph.get_edge_props(i)[0]
+                for i in graph.topology.incoming_edge_ids
+            },
+            final_state={
+                i: graph.get_edge_props(i)[0]
+                for i in graph.topology.outgoing_edge_ids
+            },
+        )
 
 
 @attr.s(on_setattr=attr.setters.frozen)
