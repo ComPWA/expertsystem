@@ -11,7 +11,7 @@ from sympy.physics.quantum.cg import CG
 from sympy.physics.quantum.spin import Rotation as Wigner
 from sympy.printing.latex import LatexPrinter
 
-from expertsystem.particle import Particle, ParticleCollection, Spin
+from expertsystem.particle import Particle, Spin
 from expertsystem.reaction import Result
 from expertsystem.reaction.combinatorics import (
     perform_external_edge_identical_particle_combinatorics,
@@ -20,7 +20,6 @@ from expertsystem.reaction.quantum_numbers import ParticleWithSpin
 from expertsystem.reaction.topology import StateTransitionGraph
 
 from ._graph_info import (
-    generate_particle_collection,
     get_angular_momentum,
     get_coupled_spin,
     get_prefactor,
@@ -108,9 +107,6 @@ class HelicityModel:
     )
     kinematics: HelicityKinematics = attr.ib(
         validator=attr.validators.instance_of(HelicityKinematics)
-    )
-    particles: ParticleCollection = attr.ib(
-        validator=attr.validators.instance_of(ParticleCollection)
     )
 
 
@@ -470,7 +466,6 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
             components=self.__components,
             parameters=self.__parameters,
             kinematics=self.__kinematics,
-            particles=generate_particle_collection(self.__graphs),
         )
 
     def __generate_intensity(self) -> sp.Expr:
