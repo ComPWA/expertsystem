@@ -82,22 +82,12 @@ def determine_attached_final_state(
     These are attached downward (forward in time) for a given edge (resembling
     the root).
     """
-    final_state_edge_ids = []
-    all_final_state_edges = topology.outgoing_edge_ids
-    current_edges = [edge_id]
-    while current_edges:
-        temp_current_edges = current_edges
-        current_edges = []
-        for current_edge in temp_current_edges:
-            if current_edge in all_final_state_edges:
-                final_state_edge_ids.append(current_edge)
-            else:
-                node_id = topology.edges[current_edge].ending_node_id
-                if node_id:
-                    current_edges.extend(
-                        topology.get_edge_ids_outgoing_from_node(node_id)
-                    )
-    return final_state_edge_ids
+    edge = topology.edges[edge_id]
+    if edge.ending_node_id is None:
+        return [edge_id]
+    return sorted(
+        topology.get_originating_final_state_edge_ids(edge.ending_node_id)
+    )
 
 
 def get_recoil_edge(topology: Topology, edge_id: int) -> Optional[int]:
