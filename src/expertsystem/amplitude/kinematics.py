@@ -2,148 +2,16 @@
 """Kinematics of an amplitude model in the helicity formalism."""
 
 import textwrap
-from collections import abc
-from typing import Dict, Iterable, Optional, Set, Tuple
+from typing import Dict, Set, Tuple
 
 import attr
 import numpy as np
 from numpy.lib.scimath import sqrt as complex_sqrt
 
 from expertsystem.io import convert_to_dot
-from expertsystem.particle import Particle
-from expertsystem.reaction import (
-    ParticleWithSpin,
-    StateTransitionGraph,
-    Topology,
-    create_isobar_topologies,
-)
+from expertsystem.reaction import Topology, create_isobar_topologies
 
 from ._graph_info import determine_attached_final_state
-
-
-@attr.s(frozen=True)
-class ReactionInfo:
-    initial_state: Dict[int, Particle] = attr.ib()
-    final_state: Dict[int, Particle] = attr.ib()
-
-    def __attrs_post_init__(self) -> None:
-        overlapping_ids = set(self.initial_state) & set(self.final_state)
-        if len(overlapping_ids) > 0:
-            raise ValueError(
-                "Initial and final state have overlapping IDs",
-                overlapping_ids,
-            )
-
-    @property
-    def id_to_particle(self) -> Dict[int, Particle]:
-        return {**self.initial_state, **self.final_state}
-
-    @staticmethod
-    def from_graph(
-        graph: StateTransitionGraph[ParticleWithSpin],
-    ) -> "ReactionInfo":
-        initial_state = dict()
-        for state_id in graph.topology.incoming_edge_ids:
-            initial_state[state_id] = graph.get_edge_props(state_id)[0]
-        final_state = dict()
-        for state_id in graph.topology.outgoing_edge_ids:
-            final_state[state_id] = graph.get_edge_props(state_id)[0]
-        return ReactionInfo(
-            initial_state=initial_state,
-            final_state=final_state,
-        )
-
-
-def _to_sorted_tuple(instance: Optional[Iterable[int]]) -> Tuple[int, ...]:
-    if instance is None:
-        return tuple()
-    if not isinstance(instance, abc.Iterable):
-        raise TypeError(f"Instance {instance} is not iterable")
-    if not all(map(lambda i: isinstance(i, int), instance)):
-        raise TypeError(f"Not all items in {instance} are {int.__name__}")
-    return tuple(sorted(instance))
-
-
-def _to_sorted_tuple_pair(
-    pair: Tuple[Iterable[int], Iterable[int]],
-) -> Tuple[Tuple[int, ...], Tuple[int, ...]]:
-    if not len(pair) == 2:
-        raise ValueError(f"Pair is length {len(pair)}, should be 2")
-    return _to_sorted_tuple(pair[0]), _to_sorted_tuple(pair[1])
-
-
-@attr.s(frozen=True)
-class SubSystem:
-    """Represents a part of a decay chain (see `SubSystem.description`)."""
-
-    final_states: Tuple[Tuple[int, ...], Tuple[int, ...]] = attr.ib(
-        converter=_to_sorted_tuple_pair
-    )
-    recoil_state: Tuple[int, ...] = attr.ib(
-        factory=tuple, converter=_to_sorted_tuple
-    )
-    parent_recoil_state: Tuple[int, ...] = attr.ib(
-        default=None, converter=_to_sorted_tuple
-    )
-
-    def __attrs_post_init__(self) -> None:
-        angle_group, remnant = self.final_states
-        common_items = set(angle_group) & set(remnant)
-        common_items |= set(angle_group) & set(self.recoil_state)
-        common_items |= set(remnant) & set(self.recoil_state)
-        if len(common_items) != 0:
-            raise ValueError(f"{self} and has common items {common_items}")
-
-    @property
-    def description(self) -> str:
-        """Get a helicity angle description for this `SubSystem`.
-
-        Definition is as follows:
-
-        .. image:: /usage/physics/helicity_angles.svg
-            :align: center
-            :alt: 5-body decay illustration for helicity angle description
-            :width: 300 px
-
-        ==================  ==============================================================
-        Description         Meaning
-        ==================  ==============================================================
-        ``"1+2+3_4+5"``     Angle of **B** in restframe of **A**
-        ``"1+2_3_vs_4+5"``  Angle of **D** in restframe of **B** with **C** as recoil of B
-        ``"1_2_vs_3"``      Angle of **1** in restframe of **D** with **3** as recoil of D
-        ``"4_5_vs_1+2+3"``  Angle of **4** in restframe of **C** with **B** as recoil of C
-        ==================  ==============================================================
-
-        These cases are constructed in a `SubSystem` as follows:
-
-        >>> from expertsystem.amplitude.kinematics import SubSystem
-        >>> SubSystem(final_states=[[1, 2, 3], [4, 5]]).description
-        '1+2+3_4+5'
-        >>> SubSystem(
-        ...     final_states=[[1, 2], [3]],
-        ...     recoil_state=[4, 5],
-        ... ).description
-        '1+2_3_vs_4+5'
-        >>> SubSystem(
-        ...     final_states=[[1], [2]],
-        ...     recoil_state=[3],
-        ... ).description
-        '1_2_vs_3'
-        >>> SubSystem(
-        ...     final_states=[[4], [5]],
-        ...     recoil_state=[1, 2, 3],
-        ... ).description
-        '4_5_vs_1+2+3'
-        """
-        angle_group, remnant = self.final_states
-        description = "+".join(str(i) for i in angle_group)
-        if remnant:
-            description += "_"
-            description += "+".join(str(i) for i in remnant)
-        if self.recoil_state:
-            description += "_vs_"
-            description += "+".join(str(i) for i in self.recoil_state)
-        return description
 
 
 @attr.s(on_setattr=attr.setters.frozen)
