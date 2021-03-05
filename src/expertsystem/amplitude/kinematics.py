@@ -1,10 +1,9 @@
 # cspell:ignore einsum
-"""Kinematics of an amplitude model."""
+"""Kinematics of an amplitude model in the helicity formalism."""
 
-import logging
 import textwrap
 from collections import abc
-from typing import Dict, Iterable, Optional, Sequence, Tuple
+from typing import Dict, Iterable, Optional, Set, Tuple
 
 import attr
 import numpy as np
@@ -149,83 +148,57 @@ class SubSystem:
 
 @attr.s(on_setattr=attr.setters.frozen)
 class HelicityKinematics:
-    """Kinematics of the helicity formalism.
+    """Converter for four-momenta to kinematic variable data.
 
-    General usage is
-
-        1. Register kinematic variables via the three methods
-           (:meth:`register_invariant_mass`, :meth:`register_helicity_angles`,
-           :meth:`register_subsystem`) first.
-        2. Then convert events to these kinematic variables.
+    The `.convert` method forms the bridge between four-momentum data for the
+    decay you are studying and the kinematic variables that are in the
+    `.HelicityModel`. These are invariant mass and the :math:`theta` and
+    :math:`phi` helicity angles.
     """
 
-    registered_inv_masses: Dict[Tuple[int, ...], str] = attr.ib(
-        default=dict(), init=False
-    )
-    registered_subsystems: Dict[SubSystem, Tuple[str, str]] = attr.ib(
-        default=dict(), init=False
-    )
+    final_state_ids: Tuple[int, ...] = attr.ib(factory=tuple, init=False)
+    registered_topologies: Set[Topology] = attr.ib(factory=set, init=False)
 
-    def register_invariant_mass(self, final_state: Sequence[int]) -> str:
-        """Register an invariant mass :math:`s`.
-
-        Args:
-            final_state: collection of particle unique id's
-
-        Return:
-            A `str` key representing the invariant mass. Can be used as a name
-            for `sympy.core.symbol.Symbol`.
-
-        """
-        logging.debug("registering invariant mass in kinematics")
-        _final_state: tuple = tuple(sorted(final_state))
-        if _final_state not in self.registered_inv_masses:
-            label = "m_"
-            for particle_uid in _final_state:
-                label += str(particle_uid) + "+"
-            label = label[:-1]
-            self.registered_inv_masses[_final_state] = label
-        return self.registered_inv_masses[_final_state]
-
-    def register_helicity_angles(
-        self, subsystem: SubSystem
-    ) -> Tuple[str, str]:
-        r"""Register helicity angles :math:`(\theta, \phi)` of a `SubSystem`.
-
-        Args:
-            subsystem: `SubSystem` to which the registered angles correspond.
-
-        Return:
-            A pair of `str` keys representing the angles. Can be used as a name
-            for `sympy.core.symbol.Symbol`.
-
-        """
-        logging.debug("registering helicity angles in kinematics")
-        if subsystem not in self.registered_subsystems:
-            self.registered_subsystems[subsystem] = (
-                f"theta_{subsystem.description}",
-                f"phi_{subsystem.description}",
+    def register_topology(self, topology: Topology) -> None:
+        if len(self.registered_topologies) == 0:
+            object.__setattr__(
+                self,
+                "final_state_ids",
+                tuple(sorted(topology.outgoing_edge_ids)),
             )
-        return self.registered_subsystems[subsystem]
+        if len(topology.incoming_edge_ids) != 1:
+            raise ValueError(
+                f"Topology has {len(topology.incoming_edge_ids)} incoming"
+                " edges, so is not isobar"
+            )
+        if len(self.registered_topologies) != 0:
+            existing_topology = next(iter(self.registered_topologies))
+            if (
+                (
+                    topology.incoming_edge_ids
+                    != existing_topology.incoming_edge_ids
+                )
+                or (
+                    topology.outgoing_edge_ids
+                    != existing_topology.outgoing_edge_ids
+                )
+                or (
+                    topology.outgoing_edge_ids
+                    != existing_topology.outgoing_edge_ids
+                )
+                or (topology.nodes != existing_topology.nodes)
+            ):
+                raise ValueError("Edge or node IDs of topology do not match")
+        self.registered_topologies.add(topology)
 
-    def register_subsystem(self, subsystem: SubSystem) -> Tuple[str, ...]:
-        r"""Register all kinematic variables of the `SubSystem`.
-
-        Args:
-            subsystem: `SubSystem` to which the registered kinematic variables
-                correspond.
-
-        Return:
-            A tuple of `str` keys representing the :math:`(s, \theta, \phi)`.
-            Can be used as a name for `sympy.core.symbol.Symbol`.
-
-        """
-        state_fs: list = []
-        for fs_uid in subsystem.final_states:
-            state_fs += fs_uid
-        invmass_name = self.register_invariant_mass(list(set(state_fs)))
-        angle_names = self.register_helicity_angles(subsystem)
-        return (invmass_name,) + angle_names
+    def convert(
+        self, momentum_pool: Dict[int, np.ndarray]
+    ) -> Dict[str, np.ndarray]:
+        output = dict()
+        for topology in self.registered_topologies:
+            output.update(compute_helicity_angles(momentum_pool, topology))
+            output.update(compute_invariant_masses(momentum_pool, topology))
+        return output
 
 
 def get_helicity_angle_label(
@@ -479,25 +452,3 @@ def compute_invariant_mass(four_momenta: np.ndarray) -> np.ndarray:
     return complex_sqrt(
         four_momenta[0] ** 2 - np.sum(four_momenta[1:] ** 2, axis=0)
     )
-
-
-def generate_kinematic_variables(
-    decay_products_final_state_ids: Tuple[Tuple[int, ...], Tuple[int, ...]],
-    recoil_final_state_ids: Tuple[int, ...],
-    parent_recoil_final_state_ids: Tuple[int, ...],
-) -> Tuple[str, str, str]:
-    """Generate kinematic sympy variables of a helicity decay.
-
-    Kinematic variables are:
-    - invariant mass
-    - helicity angle theta
-    - helicity angle phi
-    """
-    kinematics = HelicityKinematics()
-    subsystem = SubSystem(
-        final_states=decay_products_final_state_ids,
-        recoil_state=recoil_final_state_ids,
-        parent_recoil_state=parent_recoil_final_state_ids,
-    )
-    inv_mass, theta, phi = kinematics.register_subsystem(subsystem)
-    return inv_mass, theta, phi

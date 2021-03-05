@@ -90,28 +90,28 @@ class TestEpemToDmD0Pip:
         "angular_variables, expected_distribution_function",  # type: ignore
         [
             (  # cos(theta) distribution from epem decay
-                "theta_0_1+2",
-                1 + sy.cos(sy.Symbol("theta_0_1+2", real=True)) ** 2,
+                "theta_0",
+                1 + sy.cos(sy.Symbol("theta_0", real=True)) ** 2,
             ),
             (  # phi distribution of the epem decay
-                "phi_1+2_0",
+                "phi_1+2",
                 1,
             ),
             (  # cos(theta') distribution from D2*
-                "theta_1_2_vs_0",
+                "theta_1,1+2",
                 1
-                - (2 * sy.cos(sy.Symbol("theta_1_2_vs_0", real=True)) ** 2 - 1)
+                - (2 * sy.cos(sy.Symbol("theta_1,1+2", real=True)) ** 2 - 1)
                 ** 2,
             ),
             (  # phi' distribution of the D2* decay
-                "phi_1_2_vs_0",
-                3 - 2 * sy.sin(sy.Symbol("phi_1_2_vs_0", real=True)) ** 2,
+                "phi_1,1+2",
+                3 - 2 * sy.sin(sy.Symbol("phi_1,1+2", real=True)) ** 2,
             ),
             (  # 2d distribution of the D2* decay
-                ["theta_1_2_vs_0", "phi_1_2_vs_0"],
-                (1 - sy.cos(sy.Symbol("theta_1_2_vs_0", real=True)) ** 2)
-                * (sy.cos(sy.Symbol("theta_1_2_vs_0", real=True)) ** 2)
-                * (2 + sy.cos(2 * sy.Symbol("phi_1_2_vs_0", real=True))),
+                ["theta_1,1+2", "phi_1,1+2"],
+                (1 - sy.cos(sy.Symbol("theta_1,1+2", real=True)) ** 2)
+                * (sy.cos(sy.Symbol("theta_1,1+2", real=True)) ** 2)
+                * (2 + sy.cos(2 * sy.Symbol("phi_1,1+2", real=True))),
             ),
         ],  # type: ignore
     )
@@ -122,9 +122,9 @@ class TestEpemToDmD0Pip:
         sympy_model: sy.Expr,
     ) -> None:
         assert {s.name for s in sympy_model.free_symbols} == {
-            "phi_1_2_vs_0",
-            "theta_0_1+2",
-            "theta_1_2_vs_0",
+            "phi_1,1+2",
+            "theta_0",
+            "theta_1,1+2",
         }
 
         if isinstance(angular_variables, str):
@@ -186,22 +186,22 @@ class TestD1ToD0PiPi:
         "angular_variables, expected_distribution_function",  # type: ignore
         [
             (  # theta distribution from D1 decay
-                "theta_0_1+2",
+                "theta_0",
                 sy.Rational(5, 4)
                 + sy.Rational(3, 4)
-                * sy.cos(sy.Symbol("theta_0_1+2", real=True)) ** 2,
+                * sy.cos(sy.Symbol("theta_0", real=True)) ** 2,
             ),
             (  # theta distribution from D*
-                "theta_1_2_vs_0",
+                "theta_1,1+2",
                 1
                 - sy.Rational(3, 4)
-                * sy.cos(sy.Symbol("theta_1_2_vs_0", real=True)) ** 2,
+                * sy.cos(sy.Symbol("theta_1,1+2", real=True)) ** 2,
             ),
             (  # phi distribution of the D* decay
-                "phi_1_2_vs_0",
+                "phi_1,1+2",
                 1
                 - sy.Rational(4, 9)
-                * sy.cos(2 * sy.Symbol("phi_1_2_vs_0", real=True)),
+                * sy.cos(2 * sy.Symbol("phi_1,1+2", real=True)),
             ),
         ],  # type: ignore
     )
@@ -212,9 +212,9 @@ class TestD1ToD0PiPi:
         sympy_model: sy.Expr,
     ) -> None:
         assert {s.name for s in sympy_model.free_symbols} == {
-            "phi_1_2_vs_0",
-            "theta_0_1+2",
-            "theta_1_2_vs_0",
+            "phi_1,1+2",
+            "theta_0",
+            "theta_1,1+2",
         }
 
         if isinstance(angular_variables, str):

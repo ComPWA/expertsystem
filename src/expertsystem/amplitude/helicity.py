@@ -33,13 +33,10 @@ from expertsystem.reaction.quantum_numbers import ParticleWithSpin
 from expertsystem.reaction.topology import StateTransitionGraph
 
 from ._graph_info import (
-    determine_attached_final_state,
     generate_particle_collection,
     get_angular_momentum,
     get_coupled_spin,
-    get_parent_recoil_edge,
     get_prefactor,
-    get_recoil_edge,
     group_graphs_same_initial_and_final,
 )
 from .dynamics.builder import (
@@ -49,8 +46,8 @@ from .dynamics.builder import (
 )
 from .kinematics import (
     HelicityKinematics,
-    ReactionInfo,
-    generate_kinematic_variables,
+    get_helicity_angle_label,
+    get_invariant_mass_label,
 )
 
 ValueType = TypeVar("ValueType", float, complex, int)
@@ -222,8 +219,8 @@ class HelicityModel:
     parameters: SuggestedParameterValues = attr.ib(
         validator=attr.validators.instance_of(SuggestedParameterValues)
     )
-    kinematics: ReactionInfo = attr.ib(
-        validator=attr.validators.instance_of(ReactionInfo)
+    kinematics: HelicityKinematics = attr.ib(
+        validator=attr.validators.instance_of(HelicityKinematics)
     )
     particles: ParticleCollection = attr.ib(
         validator=attr.validators.instance_of(ParticleCollection)
@@ -465,28 +462,23 @@ def _generate_kinematic_variable_set(
     transition: StateTransitionGraph[ParticleWithSpin], node_id: int
 ) -> TwoBodyKinematicVariableSet:
     decay = _TwoBodyDecay.from_graph(transition, node_id)
-    inv_mass, theta, phi = _generate_kinematic_variables(transition, node_id)
-    kinematics = HelicityKinematics()
+    inv_mass, phi, theta = _generate_kinematic_variables(transition, node_id)
+    child1_mass = sy.Symbol(
+        get_invariant_mass_label(
+            transition.topology, decay.children[0].edge_id
+        ),
+        real=True,
+    )
+    child2_mass = sy.Symbol(
+        get_invariant_mass_label(
+            transition.topology, decay.children[1].edge_id
+        ),
+        real=True,
+    )
     return TwoBodyKinematicVariableSet(
         in_edge_inv_mass=inv_mass,
-        out_edge_inv_mass1=sy.Symbol(
-            kinematics.register_invariant_mass(
-                determine_attached_final_state(
-                    transition.topology,
-                    decay.children[0].edge_id,
-                )
-            ),
-            real=True,
-        ),
-        out_edge_inv_mass2=sy.Symbol(
-            kinematics.register_invariant_mass(
-                determine_attached_final_state(
-                    transition.topology,
-                    decay.children[1].edge_id,
-                )
-            ),
-            real=True,
-        ),
+        out_edge_inv_mass1=child1_mass,
+        out_edge_inv_mass2=child2_mass,
         helicity_theta=theta,
         helicity_phi=phi,
         angular_momentum=_extract_angular_momentum(
@@ -532,46 +524,20 @@ def _extract_angular_momentum(
 
 
 def _generate_kinematic_variables(
-    graph: StateTransitionGraph[ParticleWithSpin], node_id: int
+    transition: StateTransitionGraph[ParticleWithSpin], node_id: int
 ) -> Tuple[sy.Symbol, sy.Symbol, sy.Symbol]:
-    decay = _TwoBodyDecay.from_graph(graph, node_id)
-    decay_products_fs_ids = (
-        tuple(
-            determine_attached_final_state(
-                graph.topology, decay.children[0].edge_id
-            )
-        ),
-        tuple(
-            determine_attached_final_state(
-                graph.topology, decay.children[1].edge_id
-            )
-        ),
+    """Generate symbol for invariant mass, phi angle, and theta angle."""
+    decay = _TwoBodyDecay.from_graph(transition, node_id)
+    phi_label, theta_label = get_helicity_angle_label(
+        transition.topology, decay.children[0].edge_id
     )
-
-    recoil_final_state: Tuple[int, ...] = tuple()
-    parent_recoil_final_state: Tuple[int, ...] = tuple()
-
-    recoil_edge_id = get_recoil_edge(graph.topology, decay.parent.edge_id)
-    if recoil_edge_id is not None:
-        recoil_final_state = tuple(
-            determine_attached_final_state(graph.topology, recoil_edge_id)
-        )
-        parent_recoil_edge_id = get_parent_recoil_edge(
-            graph.topology, decay.parent.edge_id
-        )
-        if parent_recoil_edge_id is not None:
-            parent_recoil_final_state = tuple(
-                determine_attached_final_state(
-                    graph.topology, parent_recoil_edge_id
-                )
-            )
-    return sy.symbols(
-        generate_kinematic_variables(
-            decay_products_fs_ids,
-            recoil_final_state,
-            parent_recoil_final_state,
-        ),
-        real=True,
+    inv_mass_label = get_invariant_mass_label(
+        transition.topology, decay.parent.edge_id
+    )
+    return (
+        sy.Symbol(inv_mass_label, real=True),
+        sy.Symbol(phi_label, real=True),
+        sy.Symbol(theta_label, real=True),
     )
 
 
@@ -615,12 +581,14 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
     def generate(self) -> HelicityModel:
         self.__components = dict()
         self.__parameters = dict()
-        some_graph = next(iter(self.__graphs))
+        kinematics = HelicityKinematics()
+        for graph in self.__graphs:
+            kinematics.register_topology(graph.topology)
         return HelicityModel(
             expression=self.__generate_intensity(),
             components=self.__components,
             parameters=SuggestedParameterValues(self.__parameters),
-            kinematics=ReactionInfo.from_graph(some_graph),
+            kinematics=kinematics,
             particles=generate_particle_collection(self.__graphs),
         )
 
@@ -723,7 +691,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
         graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> sy.Symbol:
         decay = _TwoBodyDecay.from_graph(graph, node_id)
-        _, theta, phi = _generate_kinematic_variables(graph, node_id)
+        _, phi, theta = _generate_kinematic_variables(graph, node_id)
 
         return Wigner.D(
             j=sy.nsimplify(decay.parent.state.particle.spin),
