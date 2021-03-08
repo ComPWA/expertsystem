@@ -2,12 +2,11 @@
 """Kinematics of an amplitude model in the helicity formalism."""
 
 import textwrap
-from typing import Dict, Set, Tuple
+from typing import Dict, Mapping, Set, Tuple
 
 import attr
 import numpy as np
 from attr.validators import instance_of
-from numpy.lib.scimath import sqrt as complex_sqrt
 
 from expertsystem.io import convert_to_dot
 from expertsystem.particle import Particle
@@ -16,6 +15,13 @@ from expertsystem.reaction.quantum_numbers import ParticleWithSpin
 from expertsystem.reaction.topology import FrozenDict, StateTransitionGraph
 
 from ._graph_info import assert_isobar_topology, determine_attached_final_state
+from .data import (
+    DataSet,
+    LorentzVector,
+    MatrixSeries,
+    MomentumPool,
+    ValueSeries,
+)
 
 
 @attr.s(frozen=True)
@@ -116,14 +122,12 @@ class HelicityKinematics:
                 raise ValueError("Edge or node IDs of topology do not match")
         self.registered_topologies.add(topology)
 
-    def convert(
-        self, momentum_pool: Dict[int, np.ndarray]
-    ) -> Dict[str, np.ndarray]:
-        output = dict()
+    def convert(self, momentum_pool: MomentumPool) -> DataSet:
+        output: Dict[str, ValueSeries] = dict()
         for topology in self.registered_topologies:
             output.update(compute_helicity_angles(momentum_pool, topology))
             output.update(compute_invariant_masses(momentum_pool, topology))
-        return output
+        return DataSet(output)
 
 
 def get_helicity_angle_label(
@@ -206,8 +210,8 @@ get_helicity_angle_label.__doc__ += f"""
 
 
 def compute_helicity_angles(  # pylint: disable=too-many-locals
-    momentum_pool: Dict[int, np.ndarray], topology: Topology
-) -> Dict[str, np.ndarray]:
+    momentum_pool: MomentumPool, topology: Topology
+) -> DataSet:
     if topology.outgoing_edge_ids != set(momentum_pool):
         raise ValueError(
             f"Momentum IDs {set(momentum_pool)} do not match "
@@ -215,9 +219,9 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
         )
 
     def __recursive_helicity_angles(  # pylint: disable=too-many-locals
-        momentum_pool: Dict[int, np.ndarray], node_id: int
-    ) -> Dict[str, np.ndarray]:
-        helicity_angles: Dict[str, np.ndarray] = {}
+        momentum_pool: MomentumPool, node_id: int
+    ) -> DataSet:
+        helicity_angles: Dict[str, ValueSeries] = {}
         child_edge_ids = sorted(
             topology.get_edge_ids_outgoing_from_node(node_id)
         )
@@ -229,8 +233,8 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
             phi_label, theta_label = get_helicity_angle_label(
                 topology, edge_id
             )
-            helicity_angles[phi_label] = compute_phi(four_momentum)
-            helicity_angles[theta_label] = compute_theta(four_momentum)
+            helicity_angles[phi_label] = four_momentum.phi()
+            helicity_angles[theta_label] = four_momentum.theta()
         for edge_id in child_edge_ids:
             edge = topology.edges[edge_id]
             if edge.ending_node_id is not None:
@@ -240,39 +244,39 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
                 )
                 if len(sub_momenta_ids) > 1:
                     # add all of these momenta together -> defines new subsystem
-                    four_momentum = sum(  # type: ignore
-                        momentum_pool[i] for i in sub_momenta_ids
-                    )
+                    four_momentum = momentum_pool.sum(sub_momenta_ids)
 
                     # boost all of those momenta into this new subsystem
-                    phi = compute_phi(four_momentum)
-                    theta = compute_theta(four_momentum)
+                    phi = four_momentum.phi()
+                    theta = four_momentum.theta()
                     p3_norm = np.sqrt(np.sum(four_momentum[1:] ** 2, axis=0))
                     beta = p3_norm / four_momentum[0]
-                    new_momentum_pool = {
-                        k: np.einsum(
-                            "ij...,j...",
-                            get_boost_z_matrix(beta),
-                            np.einsum(
+                    new_momentum_pool = MomentumPool(
+                        {
+                            k: np.einsum(
                                 "ij...,j...",
-                                get_rotation_matrix_y(-theta),
+                                get_boost_z_matrix(beta),
                                 np.einsum(
                                     "ij...,j...",
-                                    get_rotation_matrix_z(-phi),
-                                    v,
+                                    get_rotation_matrix_y(-theta),
+                                    np.einsum(
+                                        "ij...,j...",
+                                        get_rotation_matrix_z(-phi),
+                                        v,
+                                    ).T,
                                 ).T,
-                            ).T,
-                        ).T
-                        for k, v in momentum_pool.items()
-                        if k in sub_momenta_ids
-                    }
+                            ).T
+                            for k, v in momentum_pool.items()
+                            if k in sub_momenta_ids
+                        }
+                    )
 
                     # register current angle variables
                     phi_label, theta_label = get_helicity_angle_label(
                         topology, edge_id
                     )
-                    helicity_angles[phi_label] = compute_phi(four_momentum)
-                    helicity_angles[theta_label] = compute_theta(four_momentum)
+                    helicity_angles[phi_label] = four_momentum.phi()
+                    helicity_angles[theta_label] = four_momentum.theta()
 
                     # call next recursion
                     angles = __recursive_helicity_angles(
@@ -281,7 +285,7 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
                     )
                     helicity_angles.update(angles)
 
-        return helicity_angles
+        return DataSet(helicity_angles)
 
     initial_state_id = next(iter(topology.incoming_edge_ids))
     initial_state_edge = topology.edges[initial_state_id]
@@ -291,16 +295,7 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
     )
 
 
-def compute_phi(state: np.ndarray) -> np.ndarray:
-    return np.arctan2(state[2], state[1])
-
-
-def compute_theta(state: np.ndarray) -> np.ndarray:
-    p3_norm = np.sqrt(np.sum(state[1:] ** 2, axis=0))
-    return np.arccos(state[3] / p3_norm)
-
-
-def get_boost_z_matrix(beta: np.ndarray) -> np.ndarray:
+def get_boost_z_matrix(beta: ValueSeries) -> MatrixSeries:
     n_events = len(beta)
     gamma = 1 / np.sqrt(1 - beta ** 2)
     zeros = np.zeros(n_events)
@@ -312,10 +307,10 @@ def get_boost_z_matrix(beta: np.ndarray) -> np.ndarray:
             [zeros, zeros, ones, zeros],
             [-gamma * beta, zeros, zeros, gamma],
         ]
-    )
+    ).view(MatrixSeries)
 
 
-def get_rotation_matrix_z(angle: np.ndarray) -> np.ndarray:
+def get_rotation_matrix_z(angle: ValueSeries) -> MatrixSeries:
     n_events = len(angle)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
@@ -326,10 +321,10 @@ def get_rotation_matrix_z(angle: np.ndarray) -> np.ndarray:
             [zeros, np.sin(angle), np.cos(angle), zeros],
             [zeros, zeros, zeros, ones],
         ]
-    )
+    ).view(MatrixSeries)
 
 
-def get_rotation_matrix_y(angle: np.ndarray) -> np.ndarray:
+def get_rotation_matrix_y(angle: ValueSeries) -> MatrixSeries:
     n_events = len(angle)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
@@ -340,7 +335,7 @@ def get_rotation_matrix_y(angle: np.ndarray) -> np.ndarray:
             [zeros, zeros, ones, zeros],
             [zeros, -np.sin(angle), zeros, np.cos(angle)],
         ]
-    )
+    ).view(MatrixSeries)
 
 
 def get_invariant_mass_label(topology: Topology, edge_id: int) -> str:
@@ -349,8 +344,8 @@ def get_invariant_mass_label(topology: Topology, edge_id: int) -> str:
 
 
 def compute_invariant_masses(
-    momentum_pool: Dict[int, np.ndarray], topology: Topology
-) -> Dict[str, np.ndarray]:
+    momentum_pool: Mapping[int, LorentzVector], topology: Topology
+) -> DataSet:
     """Compute the invariant masses for all final state combinations."""
     if topology.outgoing_edge_ids != set(momentum_pool):
         raise ValueError(
@@ -360,16 +355,10 @@ def compute_invariant_masses(
     invariant_masses = dict()
     for edge_id in topology.edges:
         attached_edge_ids = determine_attached_final_state(topology, edge_id)
-        total_momentum: np.ndarray = sum(  # type: ignore
+        total_momentum: LorentzVector = sum(  # type: ignore
             momentum_pool[i] for i in attached_edge_ids
         )
-        values = compute_invariant_mass(total_momentum)
+        values = total_momentum.mass()
         name = get_invariant_mass_label(topology, edge_id)
         invariant_masses[name] = values
-    return invariant_masses
-
-
-def compute_invariant_mass(four_momenta: np.ndarray) -> np.ndarray:
-    return complex_sqrt(
-        four_momenta[0] ** 2 - np.sum(four_momenta[1:] ** 2, axis=0)
-    )
+    return DataSet(invariant_masses)
