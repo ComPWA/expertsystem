@@ -6,12 +6,25 @@
 """
 
 from collections import abc
-from typing import Iterable, Iterator, Mapping, Optional, Tuple, Union
+from typing import (
+    Iterable,
+    Iterator,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 from numpy.lib.mixins import NDArrayOperatorsMixin
 from numpy.lib.scimath import sqrt as complex_sqrt
-from numpy.typing import ArrayLike, DTypeLike
+
+try:
+    from numpy.typing import ArrayLike, DTypeLike
+except ImportError:
+    ArrayLike = Union[Sequence, np.ndarray]  # type: ignore
+    DTypeLike = object  # type: ignore
 
 
 class ValueSeries(NDArrayOperatorsMixin, abc.Sequence):
