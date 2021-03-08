@@ -247,18 +247,10 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
                     beta = ValueSeries(p3_norm / four_momentum.energy)
                     new_momentum_pool = MomentumPool(
                         {
-                            k: np.einsum(
-                                "ij...,j...",
-                                get_boost_z_matrix(beta),
-                                np.einsum(
-                                    "ij...,j...",
-                                    get_rotation_matrix_y(-theta),
-                                    np.einsum(
-                                        "ij...,j...",
-                                        get_rotation_matrix_z(-phi),
-                                        np.transpose(v),
-                                    ).T,
-                                ).T,
+                            k: get_boost_z_matrix(beta).dot(
+                                get_rotation_matrix_y(-theta).dot(
+                                    get_rotation_matrix_z(-phi).dot(v)
+                                )
                             )
                             for k, v in momentum_pool.items()
                             if k in sub_momenta_ids

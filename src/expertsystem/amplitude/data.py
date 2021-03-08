@@ -192,6 +192,9 @@ class MatrixSeries(NDArrayOperatorsMixin, abc.Sequence):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.__data.tolist()})"
 
+    def dot(self, vector: FourMomenta) -> FourMomenta:
+        return FourMomenta(np.einsum("ij...,j...", self, np.transpose(vector)))
+
 
 class MomentumPool(abc.Mapping):
     """A mapping of state IDs to their `FourMomenta` data samples."""
