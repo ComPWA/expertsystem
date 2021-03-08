@@ -121,6 +121,7 @@
         "doctest",
         "doctests",
         "dotprint",
+        "dtype",
         "einsum",
         "epem",
         "eval",

@@ -15,13 +15,7 @@ from expertsystem.reaction.quantum_numbers import ParticleWithSpin
 from expertsystem.reaction.topology import FrozenDict, StateTransitionGraph
 
 from ._graph_info import assert_isobar_topology, determine_attached_final_state
-from .data import (
-    DataSet,
-    LorentzVector,
-    MatrixSeries,
-    MomentumPool,
-    ValueSeries,
-)
+from .data import DataSet, FourMomenta, MatrixSeries, MomentumPool, ValueSeries
 
 
 @attr.s(frozen=True)
@@ -249,8 +243,8 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
                     # boost all of those momenta into this new subsystem
                     phi = four_momentum.phi()
                     theta = four_momentum.theta()
-                    p3_norm = np.sqrt(np.sum(four_momentum[1:] ** 2, axis=0))
-                    beta = p3_norm / four_momentum[0]
+                    p3_norm = four_momentum.p_norm()
+                    beta = ValueSeries(p3_norm / four_momentum.energy)
                     new_momentum_pool = MomentumPool(
                         {
                             k: np.einsum(
@@ -262,10 +256,10 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
                                     np.einsum(
                                         "ij...,j...",
                                         get_rotation_matrix_z(-phi),
-                                        v,
+                                        np.transpose(v),
                                     ).T,
                                 ).T,
-                            ).T
+                            )
                             for k, v in momentum_pool.items()
                             if k in sub_momenta_ids
                         }
@@ -300,42 +294,42 @@ def get_boost_z_matrix(beta: ValueSeries) -> MatrixSeries:
     gamma = 1 / np.sqrt(1 - beta ** 2)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
-    return np.array(
+    return MatrixSeries(
         [
             [gamma, zeros, zeros, -gamma * beta],
             [zeros, ones, zeros, zeros],
             [zeros, zeros, ones, zeros],
             [-gamma * beta, zeros, zeros, gamma],
         ]
-    ).view(MatrixSeries)
+    )
 
 
 def get_rotation_matrix_z(angle: ValueSeries) -> MatrixSeries:
     n_events = len(angle)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
-    return np.array(
+    return MatrixSeries(
         [
             [ones, zeros, zeros, zeros],
             [zeros, np.cos(angle), -np.sin(angle), zeros],
             [zeros, np.sin(angle), np.cos(angle), zeros],
             [zeros, zeros, zeros, ones],
         ]
-    ).view(MatrixSeries)
+    )
 
 
 def get_rotation_matrix_y(angle: ValueSeries) -> MatrixSeries:
     n_events = len(angle)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
-    return np.array(
+    return MatrixSeries(
         [
             [ones, zeros, zeros, zeros],
             [zeros, np.cos(angle), zeros, np.sin(angle)],
             [zeros, zeros, ones, zeros],
             [zeros, -np.sin(angle), zeros, np.cos(angle)],
         ]
-    ).view(MatrixSeries)
+    )
 
 
 def get_invariant_mass_label(topology: Topology, edge_id: int) -> str:
@@ -344,7 +338,7 @@ def get_invariant_mass_label(topology: Topology, edge_id: int) -> str:
 
 
 def compute_invariant_masses(
-    momentum_pool: Mapping[int, LorentzVector], topology: Topology
+    momentum_pool: Mapping[int, FourMomenta], topology: Topology
 ) -> DataSet:
     """Compute the invariant masses for all final state combinations."""
     if topology.outgoing_edge_ids != set(momentum_pool):
@@ -355,8 +349,8 @@ def compute_invariant_masses(
     invariant_masses = dict()
     for edge_id in topology.edges:
         attached_edge_ids = determine_attached_final_state(topology, edge_id)
-        total_momentum: LorentzVector = sum(  # type: ignore
-            momentum_pool[i] for i in attached_edge_ids
+        total_momentum = FourMomenta(
+            sum(momentum_pool[i] for i in attached_edge_ids)  # type: ignore
         )
         values = total_momentum.mass()
         name = get_invariant_mass_label(topology, edge_id)
