@@ -7,13 +7,16 @@
 
 from collections import abc
 from typing import (
+    ItemsView,
     Iterable,
     Iterator,
+    KeysView,
     Mapping,
     Optional,
     Sequence,
     Tuple,
     Union,
+    ValuesView,
 )
 
 import numpy as np
@@ -214,6 +217,15 @@ class MomentumPool(abc.Mapping):
     def sum(self, indices: Iterable[int]) -> FourMomenta:  # noqa: A003
         return FourMomenta(sum(self.__data[i] for i in indices))  # type: ignore
 
+    def keys(self) -> KeysView[int]:
+        return self.__data.keys()
+
+    def items(self) -> ItemsView[int, FourMomenta]:
+        return self.__data.items()
+
+    def values(self) -> ValuesView[FourMomenta]:
+        return self.__data.values()
+
 
 class DataSet(abc.Mapping):
     """A mapping of kinematic variable names to their `ScalarSeries`."""
@@ -236,3 +248,12 @@ class DataSet(abc.Mapping):
 
     def __len__(self) -> int:
         return len(self.__data)
+
+    def keys(self) -> KeysView[str]:
+        return self.__data.keys()
+
+    def items(self) -> ItemsView[str, ScalarSeries]:
+        return self.__data.items()
+
+    def values(self) -> ValuesView[ScalarSeries]:
+        return self.__data.values()
