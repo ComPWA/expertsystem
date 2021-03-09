@@ -84,7 +84,7 @@ class ThreeMomentum(NDArrayOperatorsMixin, abc.Sequence):
         return f"{self.__class__.__name__}({self.__data.tolist()})"
 
 
-class FourMomenta(NDArrayOperatorsMixin, abc.Sequence):
+class FourMomentumSequence(NDArrayOperatorsMixin, abc.Sequence):
     """Container for a `numpy.array` of four-momentum tuples.
 
     The input data has to be of shape (N, 4) and the order of the items has to
@@ -195,8 +195,8 @@ class MatrixSequence(NDArrayOperatorsMixin, abc.Sequence):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.__data.tolist()})"
 
-    def dot(self, vector: FourMomenta) -> FourMomenta:
-        return FourMomenta(
+    def dot(self, vector: FourMomentumSequence) -> FourMomentumSequence:
+        return FourMomentumSequence(
             np.einsum(
                 "ij...,j...",
                 np.transpose(self, axes=(1, 2, 0)),
@@ -206,12 +206,12 @@ class MatrixSequence(NDArrayOperatorsMixin, abc.Sequence):
 
 
 class MomentumPool(abc.Mapping):
-    """A mapping of state IDs to their `FourMomenta` data samples."""
+    """A mapping of state IDs to their `FourMomentumSequence` data samples."""
 
     def __init__(self, data: Mapping[int, ArrayLike]) -> None:
-        self.__data = {i: FourMomenta(v) for i, v in data.items()}
+        self.__data = {i: FourMomentumSequence(v) for i, v in data.items()}
 
-    def __getitem__(self, i: int) -> FourMomenta:
+    def __getitem__(self, i: int) -> FourMomentumSequence:
         return self.__data[i]
 
     def __iter__(self) -> Iterator[int]:
@@ -220,16 +220,18 @@ class MomentumPool(abc.Mapping):
     def __len__(self) -> int:
         return len(self.__data)
 
-    def sum(self, indices: Iterable[int]) -> FourMomenta:  # noqa: A003
-        return FourMomenta(sum(self.__data[i] for i in indices))  # type: ignore
+    def sum(  # noqa: A003
+        self, indices: Iterable[int]
+    ) -> FourMomentumSequence:
+        return FourMomentumSequence(sum(self.__data[i] for i in indices))  # type: ignore
 
     def keys(self) -> KeysView[int]:
         return self.__data.keys()
 
-    def items(self) -> ItemsView[int, FourMomenta]:
+    def items(self) -> ItemsView[int, FourMomentumSequence]:
         return self.__data.items()
 
-    def values(self) -> ValuesView[FourMomenta]:
+    def values(self) -> ValuesView[FourMomentumSequence]:
         return self.__data.values()
 
 

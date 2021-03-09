@@ -3,16 +3,16 @@ import numpy as np
 import pytest
 
 from expertsystem.amplitude.data import (
-    FourMomenta,
+    FourMomentumSequence,
     MatrixSequence,
     MomentumPool,
     ThreeMomentum,
 )
 
 
-class TestFourMomenta:
+class TestFourMomentumSequence:
     def test_properties(self):
-        sample = FourMomenta(
+        sample = FourMomentumSequence(
             [
                 [0, 1, 2, 3],
             ]
@@ -47,13 +47,13 @@ class TestFourMomenta:
         assert pytest.approx(average_mass, abs=1e-5) == expected_mass
 
     def test_phi(self):
-        vector = FourMomenta(np.array([[0, 1, 1, 0]]))
+        vector = FourMomentumSequence(np.array([[0, 1, 1, 0]]))
         assert pytest.approx(vector.phi()) == np.pi / 4
 
     def test_theta(self):
-        vector = FourMomenta(np.array([[0, 0, 1, 1]]))
+        vector = FourMomentumSequence(np.array([[0, 0, 1, 1]]))
         assert pytest.approx(vector.theta()) == np.pi / 4
-        vector = FourMomenta(np.array([[0, 1, 0, 1]]))
+        vector = FourMomentumSequence(np.array([[0, 1, 0, 1]]))
         assert pytest.approx(vector.theta()) == np.pi / 4
 
 

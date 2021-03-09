@@ -17,7 +17,7 @@ from expertsystem.reaction.topology import FrozenDict, StateTransitionGraph
 from ._graph_info import assert_isobar_topology, determine_attached_final_state
 from .data import (
     DataSet,
-    FourMomenta,
+    FourMomentumSequence,
     MatrixSequence,
     MomentumPool,
     ScalarSequence,
@@ -342,7 +342,7 @@ def get_invariant_mass_label(topology: Topology, edge_id: int) -> str:
 
 
 def compute_invariant_masses(
-    momentum_pool: Mapping[int, FourMomenta], topology: Topology
+    momentum_pool: Mapping[int, FourMomentumSequence], topology: Topology
 ) -> DataSet:
     """Compute the invariant masses for all final state combinations."""
     if topology.outgoing_edge_ids != set(momentum_pool):
@@ -353,7 +353,7 @@ def compute_invariant_masses(
     invariant_masses = dict()
     for edge_id in topology.edges:
         attached_edge_ids = determine_attached_final_state(topology, edge_id)
-        total_momentum = FourMomenta(
+        total_momentum = FourMomentumSequence(
             sum(momentum_pool[i] for i in attached_edge_ids)  # type: ignore
         )
         values = total_momentum.mass()
