@@ -4,12 +4,13 @@ import pytest
 
 from expertsystem.amplitude.data import (
     FourMomenta,
+    MatrixSeries,
     MomentumPool,
     ThreeMomentum,
 )
 
 
-class TestLorentzVector:
+class TestFourMomenta:
     def test_properties(self):
         sample = FourMomenta(
             [
@@ -54,3 +55,30 @@ class TestLorentzVector:
         assert pytest.approx(vector.theta()) == np.pi / 4
         vector = FourMomenta(np.array([[0, 1, 0, 1]]))
         assert pytest.approx(vector.theta()) == np.pi / 4
+
+
+class TestMatrixSeries:
+    def test_init(self):
+        n_events = 10
+        zeros = np.zeros(n_events)
+        ones = np.ones(n_events)
+        twos = 2 * ones
+        threes = 3 * ones
+        matrices = MatrixSeries(
+            np.array(
+                [
+                    [twos, zeros, zeros, twos],
+                    [zeros, ones, zeros, zeros],
+                    [zeros, threes, ones, zeros],
+                    [zeros, zeros, zeros, threes],
+                ]
+            ).transpose(2, 0, 1)
+        )
+        assert pytest.approx(matrices[0]) == np.array(
+            [
+                [2, 0, 0, 2],
+                [0, 1, 0, 0],
+                [0, 3, 1, 0],
+                [0, 0, 0, 3],
+            ]
+        )

@@ -177,9 +177,9 @@ class MatrixSeries(NDArrayOperatorsMixin, abc.Sequence):
                 f"{self.__class__.__name__} has to be of rank 3,"
                 f" but this data is of rank {len(self.__data.shape)}"
             )
-        if self.__data.shape[:-1] != (4, 4):
+        if self.__data.shape[1:] != (4, 4):
             raise ValueError(
-                f"{self.__class__.__name__} has to be of shape (4, 4, N),"
+                f"{self.__class__.__name__} has to be of shape (N, 4, 4),"
                 f" but this data sample is of shape {self.__data.shape}"
             )
 
@@ -196,7 +196,13 @@ class MatrixSeries(NDArrayOperatorsMixin, abc.Sequence):
         return f"{self.__class__.__name__}({self.__data.tolist()})"
 
     def dot(self, vector: FourMomenta) -> FourMomenta:
-        return FourMomenta(np.einsum("ij...,j...", self, np.transpose(vector)))
+        return FourMomenta(
+            np.einsum(
+                "ij...,j...",
+                np.transpose(self, axes=(1, 2, 0)),
+                np.transpose(vector),
+            )
+        )
 
 
 class MomentumPool(abc.Mapping):

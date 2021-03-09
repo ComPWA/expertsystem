@@ -293,12 +293,14 @@ def get_boost_z_matrix(beta: ScalarSeries) -> MatrixSeries:
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
     return MatrixSeries(
-        [
-            [gamma, zeros, zeros, -gamma * beta],
-            [zeros, ones, zeros, zeros],
-            [zeros, zeros, ones, zeros],
-            [-gamma * beta, zeros, zeros, gamma],
-        ]
+        np.array(
+            [
+                [gamma, zeros, zeros, -gamma * beta],
+                [zeros, ones, zeros, zeros],
+                [zeros, zeros, ones, zeros],
+                [-gamma * beta, zeros, zeros, gamma],
+            ]
+        ).transpose(2, 0, 1)
     )
 
 
@@ -307,12 +309,14 @@ def get_rotation_matrix_z(angle: ScalarSeries) -> MatrixSeries:
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
     return MatrixSeries(
-        [
-            [ones, zeros, zeros, zeros],
-            [zeros, np.cos(angle), -np.sin(angle), zeros],
-            [zeros, np.sin(angle), np.cos(angle), zeros],
-            [zeros, zeros, zeros, ones],
-        ]
+        np.array(
+            [
+                [ones, zeros, zeros, zeros],
+                [zeros, np.cos(angle), -np.sin(angle), zeros],
+                [zeros, np.sin(angle), np.cos(angle), zeros],
+                [zeros, zeros, zeros, ones],
+            ]
+        ).transpose(2, 0, 1)
     )
 
 
@@ -321,12 +325,14 @@ def get_rotation_matrix_y(angle: ScalarSeries) -> MatrixSeries:
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
     return MatrixSeries(
-        [
-            [ones, zeros, zeros, zeros],
-            [zeros, np.cos(angle), zeros, np.sin(angle)],
-            [zeros, zeros, ones, zeros],
-            [zeros, -np.sin(angle), zeros, np.cos(angle)],
-        ]
+        np.array(
+            [
+                [ones, zeros, zeros, zeros],
+                [zeros, np.cos(angle), zeros, np.sin(angle)],
+                [zeros, zeros, ones, zeros],
+                [zeros, -np.sin(angle), zeros, np.cos(angle)],
+            ]
+        ).transpose(2, 0, 1)
     )
 
 
