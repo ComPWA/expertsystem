@@ -76,15 +76,25 @@ class _TwoBodyDecay:
     def from_graph(
         cls, graph: StateTransitionGraph[ParticleWithSpin], node_id: int
     ) -> "_TwoBodyDecay":
-        in_edge_ids = graph.topology.get_edge_ids_ingoing_to_node(node_id)
-        out_edge_ids = graph.topology.get_edge_ids_outgoing_from_node(node_id)
+        topology = graph.topology
+        in_edge_ids = topology.get_edge_ids_ingoing_to_node(node_id)
+        out_edge_ids = topology.get_edge_ids_outgoing_from_node(node_id)
         if len(in_edge_ids) != 1 or len(out_edge_ids) != 2:
             raise ValueError(
                 f"Node {node_id} does not represent a 1-to-2 body decay!"
             )
-
         ingoing_edge_id = next(iter(in_edge_ids))
-        out_edge_id1, out_edge_id2 = tuple(out_edge_ids)
+
+        sorted_by_id = sorted(out_edge_ids)
+        final__edge_ids = [
+            i for i in sorted_by_id if i in topology.outgoing_edge_ids
+        ]
+        intermediate_edge_ids = [
+            i for i in sorted_by_id if i in topology.intermediate_edge_ids
+        ]
+        sorted_by_ending = tuple(intermediate_edge_ids + final__edge_ids)
+        out_edge_id1, out_edge_id2, *_ = tuple(sorted_by_ending)
+
         return cls(
             parent=_EdgeWithState.from_graph(graph, ingoing_edge_id),
             children=(

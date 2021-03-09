@@ -88,8 +88,8 @@ class TestEpemToDmD0Pip:
         "angular_variables, expected_distribution_function",  # type: ignore
         [
             (  # cos(theta) distribution from epem decay
-                "theta_0",
-                1 + sp.cos(sp.Symbol("theta_0", real=True)) ** 2,
+                "theta_1+2",
+                1 + sp.cos(sp.Symbol("theta_1+2", real=True)) ** 2,
             ),
             (  # phi distribution of the epem decay
                 "phi_1+2",
@@ -121,7 +121,7 @@ class TestEpemToDmD0Pip:
     ) -> None:
         assert {s.name for s in sympy_model.free_symbols} == {
             "phi_1,1+2",
-            "theta_0",
+            "theta_1+2",
             "theta_1,1+2",
         }
 
@@ -179,10 +179,10 @@ class TestD1ToD0PiPi:
         "angular_variables, expected_distribution_function",  # type: ignore
         [
             (  # theta distribution from D1 decay
-                "theta_0",
+                "theta_1+2",
                 sp.Rational(5, 4)
                 + sp.Rational(3, 4)
-                * sp.cos(sp.Symbol("theta_0", real=True)) ** 2,
+                * sp.cos(sp.Symbol("theta_1+2", real=True)) ** 2,
             ),
             (  # theta distribution from D*
                 "theta_1,1+2",
@@ -206,7 +206,7 @@ class TestD1ToD0PiPi:
     ) -> None:
         assert {s.name for s in sympy_model.free_symbols} == {
             "phi_1,1+2",
-            "theta_0",
+            "theta_1+2",
             "theta_1,1+2",
         }
 
