@@ -37,7 +37,7 @@ class ScalarSequence(NDArrayOperatorsMixin, abc.Sequence):
         self.__data = np.array(data, dtype)
         if len(self.__data.shape) != 1:
             raise ValueError(
-                f"{FourMomenta.__name__} has to be of rank 1,"
+                f"{self.__class__.__name__} has to be of rank 1,"
                 f" but input data is of rank {len(self.__data.shape)}"
             )
 
@@ -59,12 +59,12 @@ class ThreeMomentum(NDArrayOperatorsMixin, abc.Sequence):
         self.__data = np.array(data, dtype=np.float64, ndmin=2)
         if len(self.__data.shape) != 2:
             raise ValueError(
-                f"{FourMomenta.__name__} has to be of rank 2,"
+                f"{self.__class__.__name__} has to be of rank 2,"
                 f" but this data is of rank {len(self.__data.shape)}"
             )
         if self.__data.shape[1] != 3:
             raise ValueError(
-                f"{FourMomenta.__name__} has to be of shape (N, 3),"
+                f"{self.__class__.__name__} has to be of shape (N, 3),"
                 f" but this data sample is of shape {self.__data.shape}"
             )
 
@@ -95,12 +95,12 @@ class FourMomenta(NDArrayOperatorsMixin, abc.Sequence):
         self.__data = np.array(data)
         if len(self.__data.shape) != 2:
             raise ValueError(
-                f"{FourMomenta.__name__} has to be of rank 2,"
+                f"{self.__class__.__name__} has to be of rank 2,"
                 f" but this data is of rank {len(self.__data.shape)}"
             )
         if self.__data.shape[1] != 4:
             raise ValueError(
-                f"{FourMomenta.__name__} has to be of shape (N, 4),"
+                f"{self.__class__.__name__} has to be of shape (N, 4),"
                 f" but this data sample is of shape {self.__data.shape}"
             )
         if np.min(self.energy) < 0:
