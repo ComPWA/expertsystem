@@ -30,7 +30,7 @@ except ImportError:
     DTypeLike = object  # type: ignore
 
 
-class ScalarSeries(NDArrayOperatorsMixin, abc.Sequence):
+class ScalarSequence(NDArrayOperatorsMixin, abc.Sequence):
     """`numpy.array` data container of rank 1."""
 
     def __init__(self, data: ArrayLike, dtype: DTypeLike = np.float64) -> None:
@@ -125,49 +125,49 @@ class FourMomenta(NDArrayOperatorsMixin, abc.Sequence):
         return f"{self.__class__.__name__}({self.__data.tolist()})"
 
     @property
-    def energy(self) -> ScalarSeries:
-        return ScalarSeries(self[:, 0])
+    def energy(self) -> ScalarSequence:
+        return ScalarSequence(self[:, 0])
 
     @property
     def three_momentum(self) -> ThreeMomentum:
         return ThreeMomentum(self[:, 1:])
 
     @property
-    def p_x(self) -> ScalarSeries:
-        return ScalarSeries(self[:, 1])
+    def p_x(self) -> ScalarSequence:
+        return ScalarSequence(self[:, 1])
 
     @property
-    def p_y(self) -> ScalarSeries:
-        return ScalarSeries(self[:, 2])
+    def p_y(self) -> ScalarSequence:
+        return ScalarSequence(self[:, 2])
 
     @property
-    def p_z(self) -> ScalarSeries:
-        return ScalarSeries(self[:, 3])
+    def p_z(self) -> ScalarSequence:
+        return ScalarSequence(self[:, 3])
 
-    def p_norm(self) -> ScalarSeries:  # pylint: disable=invalid-name
+    def p_norm(self) -> ScalarSequence:  # pylint: disable=invalid-name
         """Norm of `.three_momentum`."""
-        return ScalarSeries(np.sqrt(self.p_squared()))
+        return ScalarSequence(np.sqrt(self.p_squared()))
 
-    def p_squared(self) -> ScalarSeries:  # pylint: disable=invalid-name
+    def p_squared(self) -> ScalarSequence:  # pylint: disable=invalid-name
         """Squared norm of `.three_momentum`."""
-        return ScalarSeries(np.sum(self.three_momentum ** 2, axis=1))
+        return ScalarSequence(np.sum(self.three_momentum ** 2, axis=1))
 
-    def phi(self) -> ScalarSeries:
-        return ScalarSeries(np.arctan2(self.p_y, self.p_x))
+    def phi(self) -> ScalarSequence:
+        return ScalarSequence(np.arctan2(self.p_y, self.p_x))
 
-    def theta(self) -> ScalarSeries:
-        return ScalarSeries(np.arccos(self.p_z / self.p_norm()))
+    def theta(self) -> ScalarSequence:
+        return ScalarSequence(np.arccos(self.p_z / self.p_norm()))
 
-    def mass(self) -> ScalarSeries:
-        return ScalarSeries(
+    def mass(self) -> ScalarSequence:
+        return ScalarSequence(
             complex_sqrt(self.mass_squared()), dtype=np.complex64
         )
 
-    def mass_squared(self) -> ScalarSeries:
-        return ScalarSeries(self.energy ** 2 - self.p_norm() ** 2)
+    def mass_squared(self) -> ScalarSequence:
+        return ScalarSequence(self.energy ** 2 - self.p_norm() ** 2)
 
 
-class MatrixSeries(NDArrayOperatorsMixin, abc.Sequence):
+class MatrixSequence(NDArrayOperatorsMixin, abc.Sequence):
     """Safe data container for functions like `.get_boost_z_matrix`."""
 
     def __init__(self, data: ArrayLike) -> None:
@@ -234,11 +234,11 @@ class MomentumPool(abc.Mapping):
 
 
 class DataSet(abc.Mapping):
-    """A mapping of kinematic variable names to their `ScalarSeries`."""
+    """A mapping of kinematic variable names to their `ScalarSequence`."""
 
     def __init__(self, data: Mapping[str, ArrayLike]) -> None:
         self.__data = {
-            name: ScalarSeries(v, dtype=None) for name, v in data.items()
+            name: ScalarSequence(v, dtype=None) for name, v in data.items()
         }
         if not all(map(lambda k: isinstance(k, str), self.__data)):
             raise TypeError(f"Not all keys {set(data)} are strings")
@@ -246,7 +246,7 @@ class DataSet(abc.Mapping):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.__data})"
 
-    def __getitem__(self, i: str) -> ScalarSeries:
+    def __getitem__(self, i: str) -> ScalarSequence:
         return self.__data[i]
 
     def __iter__(self) -> Iterator[str]:
@@ -258,8 +258,8 @@ class DataSet(abc.Mapping):
     def keys(self) -> KeysView[str]:
         return self.__data.keys()
 
-    def items(self) -> ItemsView[str, ScalarSeries]:
+    def items(self) -> ItemsView[str, ScalarSequence]:
         return self.__data.items()
 
-    def values(self) -> ValuesView[ScalarSeries]:
+    def values(self) -> ValuesView[ScalarSequence]:
         return self.__data.values()

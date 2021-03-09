@@ -4,7 +4,7 @@ import pytest
 
 from expertsystem.amplitude.data import (
     FourMomenta,
-    MatrixSeries,
+    MatrixSequence,
     MomentumPool,
     ThreeMomentum,
 )
@@ -57,14 +57,14 @@ class TestFourMomenta:
         assert pytest.approx(vector.theta()) == np.pi / 4
 
 
-class TestMatrixSeries:
+class TestMatrixSequence:
     def test_init(self):
         n_events = 10
         zeros = np.zeros(n_events)
         ones = np.ones(n_events)
         twos = 2 * ones
         threes = 3 * ones
-        matrices = MatrixSeries(
+        matrices = MatrixSequence(
             np.array(
                 [
                     [twos, zeros, zeros, twos],

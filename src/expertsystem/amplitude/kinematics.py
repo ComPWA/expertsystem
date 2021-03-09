@@ -18,9 +18,9 @@ from ._graph_info import assert_isobar_topology, determine_attached_final_state
 from .data import (
     DataSet,
     FourMomenta,
-    MatrixSeries,
+    MatrixSequence,
     MomentumPool,
-    ScalarSeries,
+    ScalarSequence,
 )
 
 
@@ -123,7 +123,7 @@ class HelicityKinematics:
         self.registered_topologies.add(topology)
 
     def convert(self, momentum_pool: MomentumPool) -> DataSet:
-        output: Dict[str, ScalarSeries] = dict()
+        output: Dict[str, ScalarSequence] = dict()
         for topology in self.registered_topologies:
             output.update(compute_helicity_angles(momentum_pool, topology))
             output.update(compute_invariant_masses(momentum_pool, topology))
@@ -221,7 +221,7 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
     def __recursive_helicity_angles(  # pylint: disable=too-many-locals
         momentum_pool: MomentumPool, node_id: int
     ) -> DataSet:
-        helicity_angles: Dict[str, ScalarSeries] = {}
+        helicity_angles: Dict[str, ScalarSequence] = {}
         child_edge_ids = sorted(
             topology.get_edge_ids_outgoing_from_node(node_id)
         )
@@ -250,7 +250,7 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
                     phi = four_momentum.phi()
                     theta = four_momentum.theta()
                     p3_norm = four_momentum.p_norm()
-                    beta = ScalarSeries(p3_norm / four_momentum.energy)
+                    beta = ScalarSequence(p3_norm / four_momentum.energy)
                     new_momentum_pool = MomentumPool(
                         {
                             k: get_boost_z_matrix(beta).dot(
@@ -287,12 +287,12 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
     )
 
 
-def get_boost_z_matrix(beta: ScalarSeries) -> MatrixSeries:
+def get_boost_z_matrix(beta: ScalarSequence) -> MatrixSequence:
     n_events = len(beta)
     gamma = 1 / np.sqrt(1 - beta ** 2)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
-    return MatrixSeries(
+    return MatrixSequence(
         np.array(
             [
                 [gamma, zeros, zeros, -gamma * beta],
@@ -304,11 +304,11 @@ def get_boost_z_matrix(beta: ScalarSeries) -> MatrixSeries:
     )
 
 
-def get_rotation_matrix_z(angle: ScalarSeries) -> MatrixSeries:
+def get_rotation_matrix_z(angle: ScalarSequence) -> MatrixSequence:
     n_events = len(angle)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
-    return MatrixSeries(
+    return MatrixSequence(
         np.array(
             [
                 [ones, zeros, zeros, zeros],
@@ -320,11 +320,11 @@ def get_rotation_matrix_z(angle: ScalarSeries) -> MatrixSeries:
     )
 
 
-def get_rotation_matrix_y(angle: ScalarSeries) -> MatrixSeries:
+def get_rotation_matrix_y(angle: ScalarSequence) -> MatrixSequence:
     n_events = len(angle)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
-    return MatrixSeries(
+    return MatrixSequence(
         np.array(
             [
                 [ones, zeros, zeros, zeros],
