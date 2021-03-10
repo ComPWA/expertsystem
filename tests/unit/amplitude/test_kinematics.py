@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from expertsystem.amplitude.data import MomentumPool
+from expertsystem.amplitude.data import EventCollection
 from expertsystem.amplitude.kinematics import (
     compute_helicity_angles,
     compute_invariant_masses,
@@ -11,7 +11,7 @@ from expertsystem.amplitude.kinematics import (
 from expertsystem.reaction.topology import create_isobar_topologies
 
 
-def test_compute_helicity_angles(data_sample: MomentumPool):
+def test_compute_helicity_angles(data_sample: EventCollection):
     expected_angles = {
         "phi_1+2+3": np.array(
             [
@@ -111,7 +111,7 @@ def test_compute_helicity_angles(data_sample: MomentumPool):
         )
 
 
-def test_compute_invariant_masses(data_sample: MomentumPool):
+def test_compute_invariant_masses(data_sample: EventCollection):
     topologies = create_isobar_topologies(4)
     topology = topologies[1]
     invariant_masses = compute_invariant_masses(data_sample, topology)

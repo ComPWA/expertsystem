@@ -3,9 +3,9 @@ import numpy as np
 import pytest
 
 from expertsystem.amplitude.data import (
+    EventCollection,
     FourMomentumSequence,
     MatrixSequence,
-    MomentumPool,
     ThreeMomentum,
 )
 
@@ -36,7 +36,7 @@ class TestFourMomentumSequence:
     )
     def test_mass(
         self,
-        data_sample: MomentumPool,
+        data_sample: EventCollection,
         state_id: int,
         expected_mass: float,
     ):

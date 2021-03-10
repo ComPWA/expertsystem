@@ -211,7 +211,7 @@ class MatrixSequence(NDArrayOperatorsMixin, abc.Sequence):
         )
 
 
-class MomentumPool(abc.Mapping):
+class EventCollection(abc.Mapping):
     """A mapping of state IDs to their `FourMomentumSequence` data samples."""
 
     def __init__(self, data: Mapping[int, ArrayLike]) -> None:
@@ -256,8 +256,8 @@ class MomentumPool(abc.Mapping):
         return self.__data.values()
 
     def append(self, other: Mapping[int, ArrayLike]) -> None:
-        if not isinstance(other, MomentumPool):
-            other = MomentumPool(other)
+        if not isinstance(other, EventCollection):
+            other = EventCollection(other)
         if self.n_events != 0 and set(self) != set(other):
             raise ValueError(
                 f"Trying to append a momentum pool with state IDs {set(other)}"
@@ -268,8 +268,8 @@ class MomentumPool(abc.Mapping):
             for i, values in self.items()
         }
 
-    def select_events(self, selection: Union[int, slice]) -> "MomentumPool":
-        return MomentumPool(
+    def select_events(self, selection: Union[int, slice]) -> "EventCollection":
+        return EventCollection(
             {i: values[selection] for i, values in self.items()}
         )
 

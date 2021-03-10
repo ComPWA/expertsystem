@@ -4,13 +4,13 @@ from typing import Dict
 import numpy as np
 import pytest
 
-from expertsystem.amplitude.data import MomentumPool
+from expertsystem.amplitude.data import EventCollection
 
 
 # https://github.com/ComPWA/tensorwaves/blob/3d0ec44/tests/physics/helicity_formalism/test_helicity_angles.py#L61-L98
 @pytest.fixture(scope="session")
-def data_sample_np() -> MomentumPool:
-    return MomentumPool(
+def data_sample_np() -> EventCollection:
+    return EventCollection(
         {
             0: np.array(  # pi0
                 [
@@ -73,5 +73,5 @@ def data_sample_np() -> MomentumPool:
 
 
 @pytest.fixture(scope="session")
-def data_sample(data_sample_np: Dict[int, np.ndarray]) -> MomentumPool:
-    return MomentumPool(data_sample_np)
+def data_sample(data_sample_np: Dict[int, np.ndarray]) -> EventCollection:
+    return EventCollection(data_sample_np)

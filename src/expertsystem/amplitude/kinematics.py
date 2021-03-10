@@ -17,9 +17,9 @@ from expertsystem.reaction.topology import FrozenDict, StateTransitionGraph
 from ._graph_info import assert_isobar_topology, determine_attached_final_state
 from .data import (
     DataSet,
+    EventCollection,
     FourMomentumSequence,
     MatrixSequence,
-    MomentumPool,
     ScalarSequence,
 )
 
@@ -122,11 +122,11 @@ class HelicityKinematics:
                 raise ValueError("Edge or node IDs of topology do not match")
         self.registered_topologies.add(topology)
 
-    def convert(self, momentum_pool: MomentumPool) -> DataSet:
+    def convert(self, events: EventCollection) -> DataSet:
         output: Dict[str, ScalarSequence] = dict()
         for topology in self.registered_topologies:
-            output.update(compute_helicity_angles(momentum_pool, topology))
-            output.update(compute_invariant_masses(momentum_pool, topology))
+            output.update(compute_helicity_angles(events, topology))
+            output.update(compute_invariant_masses(events, topology))
         return DataSet(output)
 
 
@@ -210,16 +210,16 @@ get_helicity_angle_label.__doc__ += f"""
 
 
 def compute_helicity_angles(  # pylint: disable=too-many-locals
-    momentum_pool: MomentumPool, topology: Topology
+    events: EventCollection, topology: Topology
 ) -> DataSet:
-    if topology.outgoing_edge_ids != set(momentum_pool):
+    if topology.outgoing_edge_ids != set(events):
         raise ValueError(
-            f"Momentum IDs {set(momentum_pool)} do not match "
+            f"Momentum IDs {set(events)} do not match "
             f"final state edge IDs {set(topology.outgoing_edge_ids)}"
         )
 
     def __recursive_helicity_angles(  # pylint: disable=too-many-locals
-        momentum_pool: MomentumPool, node_id: int
+        events: EventCollection, node_id: int
     ) -> DataSet:
         helicity_angles: Dict[str, ScalarSequence] = {}
         child_edge_ids = sorted(
@@ -229,7 +229,7 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
             topology.edges[i].ending_node_id is None for i in child_edge_ids
         ):
             edge_id = child_edge_ids[0]
-            four_momentum = momentum_pool[edge_id]
+            four_momentum = events[edge_id]
             phi_label, theta_label = get_helicity_angle_label(
                 topology, edge_id
             )
@@ -244,21 +244,21 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
                 )
                 if len(sub_momenta_ids) > 1:
                     # add all of these momenta together -> defines new subsystem
-                    four_momentum = momentum_pool.sum(sub_momenta_ids)
+                    four_momentum = events.sum(sub_momenta_ids)
 
                     # boost all of those momenta into this new subsystem
                     phi = four_momentum.phi()
                     theta = four_momentum.theta()
                     p3_norm = four_momentum.p_norm()
                     beta = ScalarSequence(p3_norm / four_momentum.energy)
-                    new_momentum_pool = MomentumPool(
+                    new_momentum_pool = EventCollection(
                         {
                             k: get_boost_z_matrix(beta).dot(
                                 get_rotation_matrix_y(-theta).dot(
                                     get_rotation_matrix_z(-phi).dot(v)
                                 )
                             )
-                            for k, v in momentum_pool.items()
+                            for k, v in events.items()
                             if k in sub_momenta_ids
                         }
                     )
@@ -283,7 +283,7 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
     initial_state_edge = topology.edges[initial_state_id]
     assert initial_state_edge.ending_node_id is not None
     return __recursive_helicity_angles(
-        momentum_pool, initial_state_edge.ending_node_id
+        events, initial_state_edge.ending_node_id
     )
 
 
@@ -342,19 +342,19 @@ def get_invariant_mass_label(topology: Topology, edge_id: int) -> str:
 
 
 def compute_invariant_masses(
-    momentum_pool: Mapping[int, FourMomentumSequence], topology: Topology
+    events: Mapping[int, FourMomentumSequence], topology: Topology
 ) -> DataSet:
     """Compute the invariant masses for all final state combinations."""
-    if topology.outgoing_edge_ids != set(momentum_pool):
+    if topology.outgoing_edge_ids != set(events):
         raise ValueError(
-            f"Momentum IDs {set(momentum_pool)} do not match "
+            f"Momentum IDs {set(events)} do not match "
             f"final state edge IDs {set(topology.outgoing_edge_ids)}"
         )
     invariant_masses = dict()
     for edge_id in topology.edges:
         attached_edge_ids = determine_attached_final_state(topology, edge_id)
         total_momentum = FourMomentumSequence(
-            sum(momentum_pool[i] for i in attached_edge_ids)  # type: ignore
+            sum(events[i] for i in attached_edge_ids)  # type: ignore
         )
         values = total_momentum.mass()
         name = get_invariant_mass_label(topology, edge_id)
