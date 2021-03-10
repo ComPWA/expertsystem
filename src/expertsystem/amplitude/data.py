@@ -212,7 +212,11 @@ class MatrixSequence(NDArrayOperatorsMixin, abc.Sequence):
 
 
 class EventCollection(abc.Mapping):
-    """A mapping of state IDs to their `FourMomentumSequence` data samples."""
+    """A mapping of state IDs to their `FourMomentumSequence` data samples.
+
+    An `EventCollection` has to be converted to `DataSet` so that it can be
+    used to evaluate a `.HelicityModel`.
+    """
 
     def __init__(self, data: Mapping[int, ArrayLike]) -> None:
         self.__data = {i: FourMomentumSequence(v) for i, v in data.items()}
@@ -291,7 +295,12 @@ class EventCollection(abc.Mapping):
 
 
 class DataSet(abc.Mapping):
-    """A mapping of kinematic variable names to their `ScalarSequence`."""
+    """A mapping of variable names to their `ScalarSequence`.
+
+    The `~.DataSet.keys` of `DataSet` represent variable names in a
+    `.HelicityModel`, while its `~.DataSet.values` are inserted in their
+    place.
+    """
 
     def __init__(
         self, data: Mapping[str, ArrayLike], dtype: Optional[DTypeLike] = None

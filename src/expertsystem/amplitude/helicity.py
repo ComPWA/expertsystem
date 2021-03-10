@@ -3,7 +3,7 @@
 import logging
 import operator
 from functools import reduce
-from typing import Any, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import attr
 import sympy as sp
@@ -33,13 +33,13 @@ from .dynamics.builder import (
     verify_signature,
 )
 from .kinematics import (
-    HelicityKinematics,
+    HelicityAdapter,
     ReactionInfo,
     get_helicity_angle_label,
     get_invariant_mass_label,
 )
 
-ValueType = TypeVar("ValueType", float, complex, int)
+ParameterValue = Union[float, complex, int]
 
 
 @attr.s(frozen=True)
@@ -108,21 +108,33 @@ class _TwoBodyDecay:
 
 @attr.s(frozen=True)
 class HelicityModel:
-    expression: sp.Expr = attr.ib(
+    _expression: sp.Expr = attr.ib(
         validator=attr.validators.instance_of(sp.Expr)
+    )
+    _parameters: Dict[sp.Symbol, ParameterValue] = attr.ib(
+        validator=attr.validators.instance_of(dict)
     )
     components: Dict[str, sp.Expr] = attr.ib(
         validator=attr.validators.instance_of(dict)
     )
-    parameters: Dict[sp.Symbol, Union[complex, float]] = attr.ib(
-        validator=attr.validators.instance_of(dict)
-    )
-    kinematics: HelicityKinematics = attr.ib(
-        validator=attr.validators.instance_of(HelicityKinematics)
+    _adapter: HelicityAdapter = attr.ib(
+        validator=attr.validators.instance_of(HelicityAdapter)
     )
     particles: ParticleCollection = attr.ib(
         validator=instance_of(ParticleCollection)
     )
+
+    @property
+    def expression(self) -> sp.Expr:
+        return self._expression
+
+    @property
+    def parameters(self) -> Dict[str, ParameterValue]:
+        return self._parameters
+
+    @property
+    def adapter(self) -> HelicityAdapter:
+        return self._adapter
 
 
 class _HelicityAmplitudeNameGenerator:
@@ -445,7 +457,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
     def __init__(self, reaction_result: Result) -> None:
         self.name_generator = _HelicityAmplitudeNameGenerator()
         self.__graphs = reaction_result.transitions
-        self.__parameters: Dict[sp.Symbol, Union[complex, float]] = dict()
+        self.__parameters: Dict[sp.Symbol, ParameterValue] = dict()
         self.__components: Dict[str, sp.Expr] = dict()
         self.__dynamics_choices: Dict[
             _TwoBodyDecay, ResonanceDynamicsBuilder
@@ -458,9 +470,9 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
             )
         first_graph = next(iter(self.__graphs))
         reaction_info = ReactionInfo.from_graph(first_graph)
-        self.__kinematics = HelicityKinematics(reaction_info)
+        self.__adapter = HelicityAdapter(reaction_info)
         for graph in self.__graphs:
-            self.__kinematics.register_transition(graph)
+            self.__adapter.register_transition(graph)
         self.__particles = generate_particle_collection(self.__graphs)
 
     def set_dynamics(
@@ -481,7 +493,7 @@ class HelicityAmplitudeBuilder:  # pylint: disable=too-many-instance-attributes
             expression=self.__generate_intensity(),
             components=self.__components,
             parameters=self.__parameters,
-            kinematics=self.__kinematics,
+            adapter=self.__adapter,
             particles=self.__particles,
         )
 

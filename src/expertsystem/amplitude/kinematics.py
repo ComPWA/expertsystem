@@ -63,13 +63,13 @@ class ReactionInfo:
 
 
 @attr.s(on_setattr=attr.setters.frozen)
-class HelicityKinematics:
-    """Converter for four-momenta to kinematic variable data.
+class HelicityAdapter:
+    r"""Converter for four-momenta to kinematic variable data.
 
     The `.convert` method forms the bridge between four-momentum data for the
     decay you are studying and the kinematic variables that are in the
-    `.HelicityModel`. These are invariant mass and the :math:`theta` and
-    :math:`phi` helicity angles.
+    `.HelicityModel`. These are invariant mass and the :math:`\theta` and
+    :math:`\phi` helicity angles.
     """
 
     reaction_info: ReactionInfo = attr.ib(validator=instance_of(ReactionInfo))
