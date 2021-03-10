@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Tuple, Union
 
-from expertsystem.particle import Spin
+from expertsystem.particle import ParticleCollection, Spin
 from expertsystem.reaction.quantum_numbers import (
     InteractionProperties,
     ParticleWithSpin,
@@ -96,6 +96,18 @@ def __validate_float_type(
             f"{interaction_property.__class__.__name__} is not of type {float.__name__}"
         )
     return interaction_property
+
+
+def generate_particle_collection(
+    graphs: List[StateTransitionGraph[ParticleWithSpin]],
+) -> ParticleCollection:
+    particles = ParticleCollection()
+    for graph in graphs:
+        for edge_props in map(graph.get_edge_props, graph.topology.edges):
+            particle, _ = edge_props
+            if particle not in particles:
+                particles.add(particle)
+    return particles
 
 
 def get_angular_momentum(node_props: InteractionProperties) -> Spin:
