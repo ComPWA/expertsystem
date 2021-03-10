@@ -1,4 +1,4 @@
-"""Generate an amplitude model in terms of SymPy objects."""
+"""Generate an amplitude model with the helicity formalism."""
 
 import logging
 import operator
