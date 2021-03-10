@@ -210,6 +210,12 @@ class MomentumPool(abc.Mapping):
 
     def __init__(self, data: Mapping[int, ArrayLike]) -> None:
         self.__data = {i: FourMomentumSequence(v) for i, v in data.items()}
+        n_events = self.n_events
+        if any(map(lambda v: len(v) != n_events, self.values())):
+            raise ValueError(
+                f"Not all {FourMomentumSequence.__name__} items"
+                f" are of length {n_events}"
+            )
 
     def __getitem__(self, i: int) -> FourMomentumSequence:
         return self.__data[i]
@@ -268,6 +274,12 @@ class DataSet(abc.Mapping):
         }
         if not all(map(lambda k: isinstance(k, str), self.__data)):
             raise TypeError(f"Not all keys {set(data)} are strings")
+        n_events = self.n_events
+        if any(map(lambda v: len(v) != n_events, self.values())):
+            raise ValueError(
+                f"Not all {FourMomentumSequence.__name__} items"
+                f" are of length {n_events}"
+            )
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.__data})"
