@@ -1,4 +1,4 @@
-# cspell:ignore ndmin ufunc
+# cspell:ignore ndmin ufunc vstack
 # pylint: disable=too-many-ancestors
 """Data containers for working with four-momenta.
 
@@ -234,6 +234,19 @@ class MomentumPool(abc.Mapping):
     def values(self) -> ValuesView[FourMomentumSequence]:
         return self.__data.values()
 
+    def append(self, other: Mapping[int, ArrayLike]) -> None:
+        if not isinstance(other, MomentumPool):
+            other = MomentumPool(other)
+        if self.n_events != 0 and set(self) != set(other):
+            raise ValueError(
+                f"Trying to append a momentum pool with state IDs {set(other)}"
+                f" to a momentum pool with state IDs {set(self)}"
+            )
+        self.__data = {
+            i: FourMomentumSequence(np.vstack((four_momenta, other[i])))
+            for i, four_momenta in self.items()
+        }
+
     @property
     def n_events(self) -> int:
         if len(self) == 0:
@@ -277,3 +290,16 @@ class DataSet(abc.Mapping):
         if len(self) == 0:
             return 0
         return len(next(iter(self.values())))
+
+    def append(self, other: Mapping[str, ArrayLike]) -> None:
+        if not isinstance(other, DataSet):
+            other = DataSet(other)
+        if self.n_events != 0 and set(self) != set(other):
+            raise ValueError(
+                f"Trying to append a data set with state IDs {set(other)}"
+                f" to a data set with state IDs {set(self)}"
+            )
+        self.__data = {
+            i: ScalarSequence(np.vstack((scalars, other[i])))
+            for i, scalars in self.items()
+        }
