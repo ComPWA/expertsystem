@@ -53,7 +53,7 @@ class ScalarSequence(NDArrayOperatorsMixin, abc.Sequence):
         return len(self.__data)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.__data.tolist()})"
+        return f"{self.__class__.__name__}({np.array(self)}"
 
 
 class ThreeMomentum(NDArrayOperatorsMixin, abc.Sequence):
@@ -85,7 +85,7 @@ class ThreeMomentum(NDArrayOperatorsMixin, abc.Sequence):
         return len(self.__data)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.__data.tolist()})"
+        return f"{self.__class__.__name__}({np.array(self)})"
 
 
 class FourMomentumSequence(NDArrayOperatorsMixin, abc.Sequence):
@@ -126,7 +126,7 @@ class FourMomentumSequence(NDArrayOperatorsMixin, abc.Sequence):
         return len(self.__data)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.__data.tolist()})"
+        return f"{self.__class__.__name__}({np.array(self)})"
 
     @property
     def energy(self) -> ScalarSequence:
@@ -198,7 +198,7 @@ class MatrixSequence(NDArrayOperatorsMixin, abc.Sequence):
         return len(self.__data)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.__data.tolist()})"
+        return f"{self.__class__.__name__}({np.array(self)})"
 
     def dot(self, vector: FourMomentumSequence) -> FourMomentumSequence:
         return FourMomentumSequence(
