@@ -69,7 +69,7 @@ class BlattWeisskopf(UnevaluatedExpression):
         q: Break-up momentum. Can be computed with `breakup_momentum`.
         d: impact parameter :math:`d`, also called meson radius. Usually of the
             order 1 fm.
-        angular_momentum: Angular momentum $L$ of the decaying particle.
+        angular_momentum: Angular momentum :math:`L` of the decaying particle.
 
     .. glue:math:: BlattWeisskopf
         :label: BlattWeisskopf
