@@ -33,7 +33,9 @@ except ImportError:
 class ScalarSequence(NDArrayOperatorsMixin, abc.Sequence):
     """`numpy.array` data container of rank 1."""
 
-    def __init__(self, data: ArrayLike, dtype: DTypeLike = np.float64) -> None:
+    def __init__(
+        self, data: ArrayLike, dtype: Optional[DTypeLike] = None
+    ) -> None:
         self.__data = np.array(data, dtype)
         if len(self.__data.shape) != 1:
             raise ValueError(
@@ -55,8 +57,10 @@ class ScalarSequence(NDArrayOperatorsMixin, abc.Sequence):
 
 
 class ThreeMomentum(NDArrayOperatorsMixin, abc.Sequence):
-    def __init__(self, data: ArrayLike) -> None:
-        self.__data = np.array(data, dtype=np.float64, ndmin=2)
+    def __init__(
+        self, data: ArrayLike, dtype: Optional[DTypeLike] = None
+    ) -> None:
+        self.__data = np.array(data, dtype=dtype, ndmin=2)
         if len(self.__data.shape) != 2:
             raise ValueError(
                 f"{self.__class__.__name__} has to be of rank 2,"
@@ -159,9 +163,10 @@ class FourMomentumSequence(NDArrayOperatorsMixin, abc.Sequence):
         return ScalarSequence(np.arccos(self.p_z / self.p_norm()))
 
     def mass(self) -> ScalarSequence:
-        return ScalarSequence(
-            complex_sqrt(self.mass_squared()), dtype=np.complex64
-        )
+        mass_squared = self.mass_squared()
+        if np.min(mass_squared) < 0:
+            return ScalarSequence(complex_sqrt(mass_squared))
+        return ScalarSequence(np.sqrt(mass_squared))
 
     def mass_squared(self) -> ScalarSequence:
         return ScalarSequence(self.energy ** 2 - self.p_norm() ** 2)
@@ -271,9 +276,11 @@ class MomentumPool(abc.Mapping):
 class DataSet(abc.Mapping):
     """A mapping of kinematic variable names to their `ScalarSequence`."""
 
-    def __init__(self, data: Mapping[str, ArrayLike]) -> None:
+    def __init__(
+        self, data: Mapping[str, ArrayLike], dtype: Optional[DTypeLike] = None
+    ) -> None:
         self.__data = {
-            name: ScalarSequence(v, dtype=None) for name, v in data.items()
+            name: ScalarSequence(v, dtype=dtype) for name, v in data.items()
         }
         if not all(map(lambda k: isinstance(k, str), self.__data)):
             raise TypeError(f"Not all keys {set(data)} are strings")
