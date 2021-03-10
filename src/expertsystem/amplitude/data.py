@@ -226,6 +226,9 @@ class MomentumPool(abc.Mapping):
     def __len__(self) -> int:
         return len(self.__data)
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.__data})"
+
     @property
     def n_events(self) -> int:
         if len(self) == 0:
