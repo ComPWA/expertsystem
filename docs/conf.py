@@ -186,6 +186,7 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/stable/", None),
     "mypy": ("https://mypy.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/doc/stable", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "pwa": ("https://pwa.readthedocs.io", None),
     "pycompwa": ("https://compwa.github.io", None),
     "python": ("https://docs.python.org/3", None),

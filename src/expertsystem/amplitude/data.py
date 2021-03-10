@@ -7,6 +7,7 @@
 
 from collections import abc
 from typing import (
+    Dict,
     ItemsView,
     Iterable,
     Iterator,
@@ -272,6 +273,22 @@ class MomentumPool(abc.Mapping):
             {i: values[selection] for i, values in self.items()}
         )
 
+    def to_pandas(
+        self, _: Optional[DTypeLike] = None
+    ) -> Dict[Tuple[int, str], np.ndarray]:
+        """Converter for the :code:`data` argument of `pandas.DataFrame`.
+
+        The resulting `~pandas.DataFrame` has multi-columns (see
+        :doc:`pandas:user_guide/advanced`) where the first column layer
+        represents the state IDs and the second column layer represents
+        each of the four-momentum entries (:math:`E, p_x, p_y, p_z`).
+        """
+        return {
+            (k, label): np.transpose(v)[i]
+            for k, v in self.items()
+            for i, label in enumerate(["E", "px", "py", "pz"])
+        }
+
 
 class DataSet(abc.Mapping):
     """A mapping of kinematic variable names to their `ScalarSequence`."""
@@ -333,3 +350,9 @@ class DataSet(abc.Mapping):
 
     def select_events(self, selection: Union[int, slice]) -> "DataSet":
         return DataSet({i: values[selection] for i, values in self.items()})
+
+    def to_pandas(
+        self, _: Optional[DTypeLike] = None
+    ) -> Dict[str, np.ndarray]:
+        """Converter for the :code:`data` argument of `pandas.DataFrame`."""
+        return {k: np.array(v) for k, v in self.items()}
