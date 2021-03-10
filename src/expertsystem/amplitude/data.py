@@ -220,6 +220,12 @@ class MomentumPool(abc.Mapping):
     def __len__(self) -> int:
         return len(self.__data)
 
+    @property
+    def n_events(self) -> int:
+        if len(self) == 0:
+            return 0
+        return len(next(iter(self.values())))
+
     def sum(  # noqa: A003
         self, indices: Iterable[int]
     ) -> FourMomentumSequence:
@@ -243,15 +249,14 @@ class MomentumPool(abc.Mapping):
                 f" to a momentum pool with state IDs {set(self)}"
             )
         self.__data = {
-            i: FourMomentumSequence(np.vstack((four_momenta, other[i])))
-            for i, four_momenta in self.items()
+            i: FourMomentumSequence(np.vstack((values, other[i])))
+            for i, values in self.items()
         }
 
-    @property
-    def n_events(self) -> int:
-        if len(self) == 0:
-            return 0
-        return len(next(iter(self.values())))
+    def select_events(self, selection: Union[int, slice]) -> "MomentumPool":
+        return MomentumPool(
+            {i: values[selection] for i, values in self.items()}
+        )
 
 
 class DataSet(abc.Mapping):
@@ -276,6 +281,12 @@ class DataSet(abc.Mapping):
     def __len__(self) -> int:
         return len(self.__data)
 
+    @property
+    def n_events(self) -> int:
+        if len(self) == 0:
+            return 0
+        return len(next(iter(self.values())))
+
     def keys(self) -> KeysView[str]:
         return self.__data.keys()
 
@@ -284,12 +295,6 @@ class DataSet(abc.Mapping):
 
     def values(self) -> ValuesView[ScalarSequence]:
         return self.__data.values()
-
-    @property
-    def n_events(self) -> int:
-        if len(self) == 0:
-            return 0
-        return len(next(iter(self.values())))
 
     def append(self, other: Mapping[str, ArrayLike]) -> None:
         if not isinstance(other, DataSet):
@@ -300,6 +305,9 @@ class DataSet(abc.Mapping):
                 f" to a data set with state IDs {set(self)}"
             )
         self.__data = {
-            i: ScalarSequence(np.vstack((scalars, other[i])))
-            for i, scalars in self.items()
+            i: ScalarSequence(np.vstack((values, other[i])))
+            for i, values in self.items()
         }
+
+    def select_events(self, selection: Union[int, slice]) -> "DataSet":
+        return DataSet({i: values[selection] for i, values in self.items()})
