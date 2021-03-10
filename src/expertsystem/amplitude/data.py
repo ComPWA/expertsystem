@@ -174,7 +174,7 @@ class FourMomentumSequence(NDArrayOperatorsMixin, abc.Sequence):
 
 
 class MatrixSequence(NDArrayOperatorsMixin, abc.Sequence):
-    """Safe data container for functions like `.get_boost_z_matrix`."""
+    """Safe data container for a sequence of 4x4-matrices."""
 
     def __init__(self, data: ArrayLike) -> None:
         self.__data = np.array(data)

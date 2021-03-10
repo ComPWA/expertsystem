@@ -5,8 +5,8 @@ import pytest
 
 from expertsystem.amplitude.data import EventCollection
 from expertsystem.amplitude.kinematics import (
-    compute_helicity_angles,
-    compute_invariant_masses,
+    _compute_helicity_angles,
+    _compute_invariant_masses,
 )
 from expertsystem.reaction.topology import create_isobar_topologies
 
@@ -100,7 +100,7 @@ def test_compute_helicity_angles(data_sample: EventCollection):
     }
     topologies = create_isobar_topologies(4)
     topology = topologies[1]
-    angles = compute_helicity_angles(data_sample, topology)
+    angles = _compute_helicity_angles(data_sample, topology)
     assert len(angles) == len(expected_angles)
     assert set(angles) == set(expected_angles)
     for angle_name in angles:
@@ -114,7 +114,7 @@ def test_compute_helicity_angles(data_sample: EventCollection):
 def test_compute_invariant_masses(data_sample: EventCollection):
     topologies = create_isobar_topologies(4)
     topology = topologies[1]
-    invariant_masses = compute_invariant_masses(data_sample, topology)
+    invariant_masses = _compute_invariant_masses(data_sample, topology)
     assert set(invariant_masses) == {
         "m_0",
         "m_0123",

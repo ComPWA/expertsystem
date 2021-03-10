@@ -125,8 +125,8 @@ class HelicityAdapter:
     def convert(self, events: EventCollection) -> DataSet:
         output: Dict[str, ScalarSequence] = dict()
         for topology in self.registered_topologies:
-            output.update(compute_helicity_angles(events, topology))
-            output.update(compute_invariant_masses(events, topology))
+            output.update(_compute_helicity_angles(events, topology))
+            output.update(_compute_invariant_masses(events, topology))
         return DataSet(output)
 
 
@@ -209,7 +209,12 @@ get_helicity_angle_label.__doc__ += f"""
 """
 
 
-def compute_helicity_angles(  # pylint: disable=too-many-locals
+def get_invariant_mass_label(topology: Topology, edge_id: int) -> str:
+    final_state_ids = determine_attached_final_state(topology, edge_id)
+    return f"m_{''.join(map(str, sorted(final_state_ids)))}"
+
+
+def _compute_helicity_angles(  # pylint: disable=too-many-locals
     events: EventCollection, topology: Topology
 ) -> DataSet:
     if topology.outgoing_edge_ids != set(events):
@@ -253,9 +258,9 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
                     beta = ScalarSequence(p3_norm / four_momentum.energy)
                     new_momentum_pool = EventCollection(
                         {
-                            k: get_boost_z_matrix(beta).dot(
-                                get_rotation_matrix_y(-theta).dot(
-                                    get_rotation_matrix_z(-phi).dot(v)
+                            k: _get_boost_z_matrix(beta).dot(
+                                _get_rotation_matrix_y(-theta).dot(
+                                    _get_rotation_matrix_z(-phi).dot(v)
                                 )
                             )
                             for k, v in events.items()
@@ -287,7 +292,7 @@ def compute_helicity_angles(  # pylint: disable=too-many-locals
     )
 
 
-def get_boost_z_matrix(beta: ScalarSequence) -> MatrixSequence:
+def _get_boost_z_matrix(beta: ScalarSequence) -> MatrixSequence:
     n_events = len(beta)
     gamma = 1 / np.sqrt(1 - beta ** 2)
     zeros = np.zeros(n_events)
@@ -304,7 +309,7 @@ def get_boost_z_matrix(beta: ScalarSequence) -> MatrixSequence:
     )
 
 
-def get_rotation_matrix_z(angle: ScalarSequence) -> MatrixSequence:
+def _get_rotation_matrix_z(angle: ScalarSequence) -> MatrixSequence:
     n_events = len(angle)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
@@ -320,7 +325,7 @@ def get_rotation_matrix_z(angle: ScalarSequence) -> MatrixSequence:
     )
 
 
-def get_rotation_matrix_y(angle: ScalarSequence) -> MatrixSequence:
+def _get_rotation_matrix_y(angle: ScalarSequence) -> MatrixSequence:
     n_events = len(angle)
     zeros = np.zeros(n_events)
     ones = np.ones(n_events)
@@ -336,12 +341,7 @@ def get_rotation_matrix_y(angle: ScalarSequence) -> MatrixSequence:
     )
 
 
-def get_invariant_mass_label(topology: Topology, edge_id: int) -> str:
-    final_state_ids = determine_attached_final_state(topology, edge_id)
-    return f"m_{''.join(map(str, sorted(final_state_ids)))}"
-
-
-def compute_invariant_masses(
+def _compute_invariant_masses(
     events: Mapping[int, FourMomentumSequence], topology: Topology
 ) -> DataSet:
     """Compute the invariant masses for all final state combinations."""
