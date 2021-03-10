@@ -234,6 +234,12 @@ class MomentumPool(abc.Mapping):
     def values(self) -> ValuesView[FourMomentumSequence]:
         return self.__data.values()
 
+    @property
+    def n_events(self) -> int:
+        if len(self) == 0:
+            return 0
+        return len(next(iter(self.values())))
+
 
 class DataSet(abc.Mapping):
     """A mapping of kinematic variable names to their `ScalarSequence`."""
@@ -265,3 +271,9 @@ class DataSet(abc.Mapping):
 
     def values(self) -> ValuesView[ScalarSequence]:
         return self.__data.values()
+
+    @property
+    def n_events(self) -> int:
+        if len(self) == 0:
+            return 0
+        return len(next(iter(self.values())))
