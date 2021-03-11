@@ -8,11 +8,14 @@ import attr
 import numpy as np
 from attr.validators import instance_of
 
-from expertsystem.io import convert_to_dot
 from expertsystem.particle import Particle
-from expertsystem.reaction import Topology, create_isobar_topologies
-from expertsystem.reaction.quantum_numbers import ParticleWithSpin
-from expertsystem.reaction.topology import FrozenDict, StateTransitionGraph
+from expertsystem.reaction import (
+    ParticleWithSpin,
+    StateTransitionGraph,
+    Topology,
+    create_isobar_topologies,
+)
+from expertsystem.reaction.topology import FrozenDict, asdot
 
 from ._graph_info import assert_isobar_topology, determine_attached_final_state
 from .data import (
@@ -195,7 +198,7 @@ get_helicity_angle_label.__doc__ += f"""
 
   .. graphviz::
 
-    {textwrap.indent(convert_to_dot(create_isobar_topologies(5)[0]), '    ')}
+    {textwrap.indent(asdot(create_isobar_topologies(5)[0]), '    ')}
 
   :code:`topologies[0]`
 
@@ -203,7 +206,7 @@ get_helicity_angle_label.__doc__ += f"""
 
   .. graphviz::
 
-    {textwrap.indent(convert_to_dot(create_isobar_topologies(5)[1]), '    ')}
+    {textwrap.indent(asdot(create_isobar_topologies(5)[1]), '    ')}
 
   :code:`topologies[1]`
 """

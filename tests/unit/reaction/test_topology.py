@@ -4,8 +4,10 @@
 import typing
 
 import attr
+import pydot
 import pytest
 
+from expertsystem.reaction import Result
 from expertsystem.reaction.topology import (
     FrozenDict,  # pyright: reportUnusedImport=false
 )
@@ -15,9 +17,11 @@ from expertsystem.reaction.topology import (
     SimpleStateTransitionTopologyBuilder,
     Topology,
     _MutableTopology,
+    asdot,
     create_isobar_topologies,
     create_n_body_topology,
     get_originating_node_list,
+    write,
 )
 
 
@@ -300,3 +304,82 @@ def test_create_n_body_topology(n_initial: int, n_final: int, exception):
         assert len(topology.outgoing_edge_ids) == n_final
         assert len(topology.intermediate_edge_ids) == 0
         assert len(topology.nodes) == 1
+
+
+def test_asdot(jpsi_to_gamma_pi_pi_helicity_solutions: Result):
+    result = jpsi_to_gamma_pi_pi_helicity_solutions
+    for transition in result.transitions:
+        dot_data = asdot(transition)
+        assert pydot.graph_from_dot_data(dot_data) is not None
+    dot_data = asdot(result.transitions)
+    assert pydot.graph_from_dot_data(dot_data) is not None
+    dot_data = asdot(result.get_particle_graphs())
+    assert pydot.graph_from_dot_data(dot_data) is not None
+    dot_data = asdot(result.collapse_graphs())
+    assert pydot.graph_from_dot_data(dot_data) is not None
+    dot_data = asdot(create_n_body_topology(3, 4))
+    assert pydot.graph_from_dot_data(dot_data) is not None
+    dot_data = asdot(create_isobar_topologies(2))
+    assert pydot.graph_from_dot_data(dot_data) is not None
+    dot_data = asdot(create_isobar_topologies(3))
+    assert pydot.graph_from_dot_data(dot_data) is not None
+    dot_data = asdot(create_isobar_topologies(4))
+    assert pydot.graph_from_dot_data(dot_data) is not None
+
+
+def test_write_topology(output_dir):
+    output_file = output_dir + "two_body_decay_topology.gv"
+    topology = Topology(
+        nodes={0},
+        edges={0: Edge(0, None), 1: Edge(None, 0), 2: Edge(None, 0)},
+    )
+    write(
+        instance=topology,
+        filename=output_file,
+    )
+    with open(output_file, "r") as stream:
+        dot_data = stream.read()
+    assert pydot.graph_from_dot_data(dot_data) is not None
+
+
+def test_write_single_graph(
+    output_dir,
+    jpsi_to_gamma_pi_pi_helicity_solutions: Result,
+):
+    output_file = output_dir + "test_single_graph.gv"
+    write(
+        instance=jpsi_to_gamma_pi_pi_helicity_solutions.transitions[0],
+        filename=output_file,
+    )
+    with open(output_file, "r") as stream:
+        dot_data = stream.read()
+    assert pydot.graph_from_dot_data(dot_data) is not None
+
+
+def test_write_graph_list(
+    output_dir, jpsi_to_gamma_pi_pi_helicity_solutions: Result
+):
+    output_file = output_dir + "test_graph_list.gv"
+    write(
+        instance=jpsi_to_gamma_pi_pi_helicity_solutions.transitions,
+        filename=output_file,
+    )
+    with open(output_file, "r") as stream:
+        dot_data = stream.read()
+    assert pydot.graph_from_dot_data(dot_data) is not None
+
+
+def test_write_particle_graphs(
+    output_dir,
+    jpsi_to_gamma_pi_pi_helicity_solutions: Result,
+):
+    result = jpsi_to_gamma_pi_pi_helicity_solutions
+    particle_graphs = result.get_particle_graphs()
+    output_file = output_dir + "test_particle_graphs.gv"
+    write(
+        instance=particle_graphs,
+        filename=output_file,
+    )
+    with open(output_file, "r") as stream:
+        dot_data = stream.read()
+    assert pydot.graph_from_dot_data(dot_data) is not None

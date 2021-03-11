@@ -29,12 +29,15 @@ from typing import (
     Set,
     Tuple,
     TypeVar,
+    Union,
     ValuesView,
 )
 
 import attr
 
-from .quantum_numbers import InteractionProperties
+from expertsystem.particle import Particle, ParticleCollection
+
+from .quantum_numbers import InteractionProperties, ParticleWithSpin
 
 _K = TypeVar("_K")
 _V = TypeVar("_V")
@@ -275,6 +278,15 @@ class Topology:
             }
         )
         return attr.evolve(self, edges=FrozenDict(new_edges))
+
+    def asdot(
+        self, render_edge_id: bool = True, render_node: bool = True
+    ) -> str:
+        return _graph_to_dot(
+            self,
+            render_edge_id=render_edge_id,
+            render_node=render_node,
+        )
 
 
 def get_originating_node_list(
@@ -675,6 +687,15 @@ class StateTransitionGraph(Generic[EdgeType]):
         if value2 is not None:
             self.__edge_props[edge_id1] = value2
 
+    def asdot(
+        self, render_edge_id: bool = True, render_node: bool = True
+    ) -> str:
+        return _graph_to_dot(
+            self,
+            render_edge_id=render_edge_id,
+            render_node=render_node,
+        )
+
 
 def _assert_over_defined(items: Collection, properties: Mapping) -> None:
     defined = set(properties)
@@ -685,3 +706,221 @@ def _assert_over_defined(items: Collection, properties: Mapping) -> None:
             "Properties have been defined for items that don't exist."
             f" Available items: {existing}, over-defined: {over_defined}"
         )
+
+
+def asdot(
+    instance: object,
+    render_edge_id: bool = True,
+    render_node: bool = True,
+) -> str:
+    """Express an `object` in DOT language.
+
+    Only works for objects that can be represented as a graph, particularly a
+    `.StateTransitionGraph` or a `list` of `.StateTransitionGraph` instances.
+
+    .. seealso:: :doc:`/usage/visualization`
+    """
+    if isinstance(instance, (StateTransitionGraph, Topology)):
+        return _graph_to_dot(
+            instance,
+            render_edge_id=render_edge_id,
+            render_node=render_node,
+        )
+    if isinstance(instance, abc.Sequence):
+        return _graph_list_to_dot(
+            instance,
+            render_edge_id=render_edge_id,
+            render_node=render_node,
+        )
+    raise NotImplementedError(
+        f"Cannot convert a {instance.__class__.__name__} to DOT language"
+    )
+
+
+def write(instance: object, filename: str) -> None:
+    """Write `Topology` or `StateTransitionGraph` instances to :code:`.gv` file."""
+    with open(filename, "w") as stream:
+        if isinstance(instance, str):
+            dot = instance
+        else:
+            dot = asdot(instance)
+        stream.write(dot)
+
+
+_DOT_HEAD = """digraph {
+    rankdir=LR;
+    node [shape=point, width=0];
+    edge [arrowhead=none];
+"""
+_DOT_TAIL = "}\n"
+_DOT_RANK_SAME = "    {{ rank=same {} }};\n"
+_DOT_DEFAULT_NODE = '    "{}" [shape=none, label="{}"];\n'
+_DOT_DEFAULT_EDGE = '    "{}" -> "{}";\n'
+_DOT_LABEL_EDGE = '    "{}" -> "{}" [label="{}"];\n'
+
+
+def _embed_dot(func: Callable) -> Callable:
+    """Add a DOT head and tail to some DOT content."""
+
+    def wrapper(*args, **kwargs):  # type: ignore
+        dot = _DOT_HEAD
+        dot += func(*args, **kwargs)
+        dot += _DOT_TAIL
+        return dot
+
+    return wrapper
+
+
+@_embed_dot
+def _graph_to_dot(
+    graph: StateTransitionGraph,
+    render_edge_id: bool = True,
+    render_node: bool = True,
+) -> str:
+    return __graph_to_dot_content(
+        graph,
+        render_edge_id=render_edge_id,
+        render_node=render_node,
+    )
+
+
+@_embed_dot
+def _graph_list_to_dot(  # pyright: reportUnusedFunction=false
+    graphs: Sequence[StateTransitionGraph],
+    render_edge_id: bool = True,
+    render_node: bool = True,
+) -> str:
+    dot = ""
+    for i, graph in enumerate(reversed(graphs)):
+        dot += __graph_to_dot_content(
+            graph,
+            render_edge_id=render_edge_id,
+            render_node=render_node,
+            prefix=f"g{i}_",
+        )
+    return dot
+
+
+def __graph_to_dot_content(  # pylint: disable=too-many-locals,too-many-branches
+    graph: Union[StateTransitionGraph, Topology],
+    render_edge_id: bool = True,
+    render_node: bool = True,
+    prefix: str = "",
+) -> str:
+    dot = ""
+    if isinstance(graph, StateTransitionGraph):
+        topology = graph.topology
+    elif isinstance(graph, Topology):
+        topology = graph
+    else:
+        raise NotImplementedError
+    top = topology.incoming_edge_ids
+    outs = topology.outgoing_edge_ids
+    for edge_id in top | outs:
+        dot += _DOT_DEFAULT_NODE.format(
+            prefix + __node_name(edge_id),
+            __get_edge_label(graph, edge_id, render_edge_id),
+        )
+    dot += __rank_string(top, prefix)
+    dot += __rank_string(outs, prefix)
+    for i, edge in topology.edges.items():
+        j, k = edge.ending_node_id, edge.originating_node_id
+        if j is None or k is None:
+            dot += _DOT_DEFAULT_EDGE.format(
+                prefix + __node_name(i, k), prefix + __node_name(i, j)
+            )
+        else:
+            dot += _DOT_LABEL_EDGE.format(
+                prefix + __node_name(i, k),
+                prefix + __node_name(i, j),
+                __get_edge_label(graph, i, render_edge_id),
+            )
+    if isinstance(graph, StateTransitionGraph):
+        for node_id in topology.nodes:
+            node_prop = graph.get_node_props(node_id)
+            node_label = ""
+            if render_node:
+                node_label = __node_label(node_prop)
+            dot += _DOT_DEFAULT_NODE.format(
+                f"{prefix}node{node_id}", node_label
+            )
+    if isinstance(graph, Topology):
+        if len(topology.nodes) > 1:
+            for node_id in topology.nodes:
+                node_label = ""
+                if render_node:
+                    node_label = f"({node_id})"
+                dot += _DOT_DEFAULT_NODE.format(
+                    f"{prefix}node{node_id}", node_label
+                )
+    return dot
+
+
+def __node_name(edge_id: int, node_id: Optional[int] = None) -> str:
+    if node_id is None:
+        return f"edge{edge_id}"
+    return f"node{node_id}"
+
+
+def __rank_string(node_edge_ids: Iterable[int], prefix: str = "") -> str:
+    name_list = [f'"{prefix}{__node_name(i)}"' for i in node_edge_ids]
+    name_string = ", ".join(name_list)
+    return _DOT_RANK_SAME.format(name_string)
+
+
+def __get_edge_label(
+    graph: Union[StateTransitionGraph, Topology],
+    edge_id: int,
+    render_edge_id: bool = True,
+) -> str:
+    if isinstance(graph, StateTransitionGraph):
+        edge_prop = graph.get_edge_props(edge_id)
+        if not edge_prop:
+            return str(edge_id)
+        edge_label = __edge_label(edge_prop)
+        if not render_edge_id:
+            return edge_label
+        if "\n" in edge_label:
+            return f"{edge_id}:\n{edge_label}"
+        return f"{edge_id}: {edge_label}"
+    if isinstance(graph, Topology):
+        return str(edge_id)
+    raise NotImplementedError
+
+
+def __edge_label(
+    edge_prop: Union[ParticleCollection, Particle, ParticleWithSpin]
+) -> str:
+    if isinstance(edge_prop, Particle):
+        return edge_prop.name
+    if isinstance(edge_prop, tuple):
+        particle, projection = edge_prop
+        spin_projection = float(projection)
+        if spin_projection.is_integer():
+            spin_projection = int(spin_projection)
+        label = particle.name
+        if spin_projection is not None:
+            label += f"[{projection}]"
+        return label
+    if isinstance(edge_prop, ParticleCollection):
+        return "\n".join(sorted(edge_prop.names))
+    raise NotImplementedError
+
+
+def __node_label(node_prop: Union[InteractionProperties]) -> str:
+    if isinstance(node_prop, InteractionProperties):
+        output = ""
+        if node_prop.l_magnitude is not None:
+            l_label = str(node_prop.l_magnitude)
+            if node_prop.l_projection is not None:
+                l_label = f"{(node_prop.l_magnitude, node_prop.l_projection)}"
+            output += f"l={l_label}\n"
+        if node_prop.s_magnitude is not None:
+            s_label = str(node_prop.s_magnitude)
+            if node_prop.s_projection is not None:
+                s_label = f"{(node_prop.s_magnitude, node_prop.s_projection)}"
+            output += f"s={s_label}\n"
+        if node_prop.parity_prefactor is not None:
+            output += f"P={node_prop.parity_prefactor}"
+        return output
+    raise NotImplementedError
