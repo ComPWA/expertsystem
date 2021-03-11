@@ -11,11 +11,14 @@ computes which `.StateTransitionGraph` s are allowed between an initial state
 and final state.
 """
 
+import json
 import logging
+import pathlib
 import re
 from collections import abc
 from functools import total_ordering
 from math import copysign
+from os.path import dirname, realpath
 from typing import (
     Any,
     Callable,
@@ -29,6 +32,8 @@ from typing import (
 )
 
 import attr
+import jsonschema
+import yaml
 from particle import Particle as PdgDatabase
 from particle.particle import enums
 
@@ -201,6 +206,25 @@ class Particle:  # pylint: disable=too-many-instance-attributes
             or self.muon_lepton_number != 0
             or self.tau_lepton_number != 0
         )
+
+    def asdict(self) -> dict:
+        return attr.asdict(
+            self,
+            recurse=True,
+            value_serializer=_value_serializer,
+            filter=lambda attr, value: attr.default != value,
+        )
+
+    @staticmethod
+    def fromdict(definition: dict) -> "Particle":
+        isospin_def = definition.get("isospin", None)
+        if isospin_def is not None:
+            definition["isospin"] = Spin(**isospin_def)
+        for parity in ["parity", "c_parity", "g_parity"]:
+            parity_def = definition.get(parity, None)
+            if parity_def is not None:
+                definition[parity] = Parity(**parity_def)
+        return Particle(**definition)
 
 
 class GellmannNishijima:
@@ -408,6 +432,96 @@ class ParticleCollection(abc.MutableSet):
     @property
     def names(self) -> Set[str]:
         return set(self.__particles)
+
+    def asdict(self) -> dict:
+        return {"particles": [p.asdict() for p in self]}
+
+    @staticmethod
+    def fromdict(
+        definition: dict, validate: bool = True
+    ) -> "ParticleCollection":
+        if validate:
+            jsonschema.validate(definition, schema=_SCHEMA_PARTICLES)
+        return ParticleCollection(
+            Particle.fromdict(p) for p in definition["particles"]
+        )
+
+    @staticmethod
+    def load(filename: str) -> "ParticleCollection":
+        with open(filename) as stream:
+            file_extension = _get_file_extension(filename)
+            if file_extension == "json":
+                definition = json.load(stream)
+                return ParticleCollection.fromdict(definition, validate=True)
+            if file_extension in {"yaml", "yml"}:
+                definition = yaml.load(stream, Loader=yaml.SafeLoader)
+                return ParticleCollection.fromdict(definition, validate=True)
+        raise NotImplementedError(
+            f'No loader defined for file type "{file_extension}"'
+        )
+
+    def write(self, filename: str) -> None:
+        with open(filename, "w") as stream:
+            file_extension = _get_file_extension(filename)
+            if file_extension == "json":
+                json.dump(self.asdict(), stream, indent=2)
+                return
+            if file_extension in ["yaml", "yml"]:
+                yaml.dump(
+                    self.asdict(),
+                    stream,
+                    sort_keys=False,
+                    Dumper=_IncreasedIndent,
+                    default_flow_style=False,
+                )
+                return
+        raise NotImplementedError(
+            f'No writer defined for file type "{file_extension}"'
+        )
+
+
+def _get_file_extension(filename: str) -> str:
+    path = pathlib.Path(filename)
+    extension = path.suffix.lower()
+    if not extension:
+        raise Exception(f"No file extension in file {filename}")
+    extension = extension[1:]
+    return extension
+
+
+class _IncreasedIndent(yaml.Dumper):
+    # pylint: disable=too-many-ancestors
+    def increase_indent(self, flow=False, indentless=False):  # type: ignore
+        return super().increase_indent(flow, False)
+
+    def write_line_break(self, data=None):  # type: ignore
+        """See https://stackoverflow.com/a/44284819."""
+        super().write_line_break(data)
+        if len(self.indents) == 1:
+            super().write_line_break()
+
+
+__EXPERTSYSTEM_PATH = dirname(realpath(__file__))
+with open(f"{__EXPERTSYSTEM_PATH}/schemas/particle-list.json") as __STREAM:
+    _SCHEMA_PARTICLES = json.load(__STREAM)
+
+
+def _value_serializer(  # pylint: disable=unused-argument
+    inst: type, field: attr.Attribute, value: Any
+) -> Any:
+    if isinstance(value, abc.Mapping):
+        if all(map(lambda p: isinstance(p, Particle), value.values())):
+            return {k: v.name for k, v in value.items()}
+    if isinstance(value, Particle):
+        return value.name
+    if isinstance(value, Parity):
+        return {"value": value.value}
+    if isinstance(value, Spin):
+        return {
+            "magnitude": value.magnitude,
+            "projection": value.projection,
+        }
+    return value
 
 
 def create_particle(  # pylint: disable=too-many-arguments,too-many-locals

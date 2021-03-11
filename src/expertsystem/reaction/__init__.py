@@ -30,7 +30,6 @@ from typing import (
 import attr
 from tqdm.auto import tqdm
 
-from expertsystem import io
 from expertsystem.particle import Particle, ParticleCollection, load_pdg
 from expertsystem.reaction.conservation_rules import (
     BaryonNumberConservation,
@@ -1065,9 +1064,7 @@ def load_default_particles() -> ParticleCollection:
     </../src/expertsystem/additional_particle_definitions.yml>`.
     """
     particles = load_pdg()
-    additional_particles = io.load(DEFAULT_PARTICLE_LIST_PATH)
-    assert isinstance(additional_particles, ParticleCollection)
-    particles.update(additional_particles)
+    particles += ParticleCollection.load(DEFAULT_PARTICLE_LIST_PATH)
     logging.info(f"Loaded {len(particles)} particles!")
     return particles
 

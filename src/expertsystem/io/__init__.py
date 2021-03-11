@@ -6,83 +6,17 @@ disk, so that they can be used by external packages, or just to store (cache)
 the state of the system.
 """
 
-import json
 from collections import abc
 from pathlib import Path
 
-import yaml
-
-from expertsystem.particle import Particle, ParticleCollection
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
 
-from . import _dict, _dot
-
-
-def asdict(instance: object) -> dict:
-    if isinstance(instance, Particle):
-        return _dict.dump.from_particle(instance)
-    if isinstance(instance, ParticleCollection):
-        return _dict.dump.from_particle_collection(instance)
-    raise NotImplementedError(
-        f"No conversion for dict available for class {instance.__class__.__name__}"
-    )
-
-
-def fromdict(definition: dict) -> object:
-    type_defined = _determine_type(definition)
-    if type_defined == ParticleCollection:
-        return _dict.build.build_particle_collection(definition)
-    raise NotImplementedError
-
-
-def validate(instance: dict) -> None:
-    type_defined = _determine_type(instance)
-    if type_defined == ParticleCollection:
-        return _dict.validate.particle_collection(instance)
-    raise NotImplementedError
-
-
-def load(filename: str) -> object:
-    with open(filename) as stream:
-        file_extension = _get_file_extension(filename)
-        if file_extension == "json":
-            definition = json.load(stream)
-            return fromdict(definition)
-        if file_extension in ["yaml", "yml"]:
-            definition = yaml.load(stream, Loader=yaml.SafeLoader)
-            return fromdict(definition)
-    raise NotImplementedError(
-        f'No loader defined for file type "{file_extension}"'
-    )
-
-
-class _IncreasedIndent(yaml.Dumper):
-    # pylint: disable=too-many-ancestors
-    def increase_indent(self, flow=False, indentless=False):  # type: ignore
-        return super().increase_indent(flow, False)
-
-    def write_line_break(self, data=None):  # type: ignore
-        """See https://stackoverflow.com/a/44284819."""
-        super().write_line_break(data)
-        if len(self.indents) == 1:
-            super().write_line_break()
+from . import _dot
 
 
 def write(instance: object, filename: str) -> None:
     with open(filename, "w") as stream:
-        file_extension = _get_file_extension(filename)
-        if file_extension == "json":
-            json.dump(asdict(instance), stream, indent=2)
-            return
-        if file_extension in ["yaml", "yml"]:
-            yaml.dump(
-                asdict(instance),
-                stream,
-                sort_keys=False,
-                Dumper=_IncreasedIndent,
-                default_flow_style=False,
-            )
-            return
+        file_extension = __get_file_extension(filename)
         if file_extension == "gv":
             output_str = convert_to_dot(instance)
             with open(filename, "w") as stream:
@@ -122,17 +56,10 @@ def convert_to_dot(
     )
 
 
-def _get_file_extension(filename: str) -> str:
+def __get_file_extension(filename: str) -> str:
     path = Path(filename)
     extension = path.suffix.lower()
     if not extension:
         raise Exception(f"No file extension in file {filename}")
     extension = extension[1:]
     return extension
-
-
-def _determine_type(definition: dict) -> type:
-    keys = set(definition.keys())
-    if keys == {"particles"}:
-        return ParticleCollection
-    raise NotImplementedError(f"Could not determine type from keys {keys}")
