@@ -13,7 +13,7 @@ The `expertsystem` consists of three main components:
 
   `expertsystem.particle`
     ― a stand-alone submodule with which one can investigate specific quantum
-    properties of `.Particle` instances (see :doc:`/usage/particles`).
+    properties of `.Particle` instances (see :doc:`/usage/particle`).
 
   `expertsystem.reaction`
     ― the core of the `expertsystem` that computes which transitions

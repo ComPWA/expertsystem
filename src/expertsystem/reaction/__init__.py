@@ -1116,7 +1116,7 @@ def generate(  # pylint: disable=too-many-arguments
             by default. It's better to use a subset for larger reactions,
             because of the computation times. This argument is especially
             useful when you want to use your own particle definitions (see
-            :doc:`/usage/particles`).
+            :doc:`/usage/particle`).
 
         mass_conservation_factor: Width factor that is taken into account for
             for the `.MassConservation` rule.
