@@ -501,8 +501,8 @@ class _IncreasedIndent(yaml.Dumper):
             super().write_line_break()
 
 
-__EXPERTSYSTEM_PATH = dirname(realpath(__file__))
-with open(f"{__EXPERTSYSTEM_PATH}/schemas/particle-list.json") as __STREAM:
+__EXPERTSYSTEM_PATH = dirname(dirname(realpath(__file__)))
+with open(f"{__EXPERTSYSTEM_PATH}/particle/validation.json") as __STREAM:
     _SCHEMA_PARTICLES = json.load(__STREAM)
 
 
