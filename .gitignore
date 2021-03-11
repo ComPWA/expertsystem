@@ -55,4 +55,3 @@ pyvenv*/
 !docs/usage/additional_particles.yml
 !src/expertsystem/additional_particle_definitions.yml
 !src/expertsystem/schemas/*.json
-!tests/**/expected_recipe.yml
