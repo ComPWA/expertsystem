@@ -15,7 +15,7 @@ import yaml
 from expertsystem.particle import Particle, ParticleCollection
 from expertsystem.reaction.topology import StateTransitionGraph, Topology
 
-from . import _dict, _dot, _pdg
+from . import _dict, _dot
 
 
 def asdict(instance: object) -> dict:
@@ -54,15 +54,6 @@ def load(filename: str) -> object:
     raise NotImplementedError(
         f'No loader defined for file type "{file_extension}"'
     )
-
-
-def load_pdg() -> ParticleCollection:
-    """Create a `.ParticleCollection` with all entries from the PDG.
-
-    PDG info is imported from the `scikit-hep/particle
-    <https://github.com/scikit-hep/particle>`_ package.
-    """
-    return _pdg.load_pdg()
 
 
 class _IncreasedIndent(yaml.Dumper):
