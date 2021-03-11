@@ -40,6 +40,7 @@ def embed_dot(func: Callable) -> Callable:
 def graph_list_to_dot(
     graphs: Sequence[StateTransitionGraph],
     render_edge_id: bool = True,
+    render_node: bool = True,
 ) -> str:
     dot_source = ""
     for i, graph in enumerate(reversed(graphs)):
@@ -47,6 +48,7 @@ def graph_list_to_dot(
             graph,
             prefix=f"g{i}_",
             render_edge_id=render_edge_id,
+            render_node=render_node,
         )
     return dot_source
 
@@ -55,17 +57,20 @@ def graph_list_to_dot(
 def graph_to_dot(
     graph: StateTransitionGraph,
     render_edge_id: bool = True,
+    render_node: bool = True,
 ) -> str:
     return __graph_to_dot_content(
         graph,
         render_edge_id=render_edge_id,
+        render_node=render_node,
     )
 
 
-def __graph_to_dot_content(
+def __graph_to_dot_content(  # pylint: disable=too-many-locals,too-many-branches
     graph: Union[StateTransitionGraph, Topology],
     prefix: str = "",
     render_edge_id: bool = True,
+    render_node: bool = True,
 ) -> str:
     dot_source = ""
     if isinstance(graph, StateTransitionGraph):
@@ -98,15 +103,20 @@ def __graph_to_dot_content(
     if isinstance(graph, StateTransitionGraph):
         for node_id in topology.nodes:
             node_prop = graph.get_node_props(node_id)
-            node_label = __node_label(node_prop)
+            node_label = ""
+            if render_node:
+                node_label = __node_label(node_prop)
             dot_source += _DOT_DEFAULT_NODE.format(
                 f"{prefix}node{node_id}", node_label
             )
     if isinstance(graph, Topology):
         if len(topology.nodes) > 1:
             for node_id in topology.nodes:
+                node_label = ""
+                if render_node:
+                    node_label = f"({node_id})"
                 dot_source += _DOT_DEFAULT_NODE.format(
-                    f"{prefix}node{node_id}", f"({node_id})"
+                    f"{prefix}node{node_id}", node_label
                 )
     return dot_source
 
