@@ -411,7 +411,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         number_of_threads: Optional[int] = None,
         solving_mode: SolvingMode = SolvingMode.FAST,
         reload_pdg: bool = False,
-        mass_conservation_factor: Optional[float] = 5.0,
+        mass_conservation_factor: Optional[float] = 3.0,
     ) -> None:
         if interaction_type_settings is None:
             interaction_type_settings = {}
@@ -874,7 +874,7 @@ def _convert_to_qn_problem_set(
 def check_reaction_violations(
     initial_state: Union[StateDefinition, Sequence[StateDefinition]],
     final_state: Sequence[StateDefinition],
-    mass_conservation_factor: Optional[float] = 5.0,
+    mass_conservation_factor: Optional[float] = 3.0,
 ) -> Set[FrozenSet[str]]:
     """Determine violated interaction rules for a given particle reaction.
 
@@ -1079,7 +1079,7 @@ def generate(  # pylint: disable=too-many-arguments
     allowed_interaction_types: Optional[Union[str, List[str]]] = None,
     formalism_type: str = "helicity",
     particles: Optional[ParticleCollection] = None,
-    mass_conservation_factor: Optional[float] = 5.0,
+    mass_conservation_factor: Optional[float] = 3.0,
     topology_building: str = "isobar",
     number_of_threads: Optional[int] = None,
 ) -> Result:
