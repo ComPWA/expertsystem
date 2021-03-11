@@ -243,7 +243,7 @@ class Result:
         Extract a `list` of `.StateTransitionGraph` instances with only
         particles on the edges.
 
-        .. seealso:: :doc:`/usage/visualization`
+        .. seealso:: :doc:`/usage/visualize`
         """
         inventory: List[StateTransitionGraph[Particle]] = list()
         for transition in self.transitions:
