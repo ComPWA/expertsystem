@@ -20,9 +20,9 @@ from . import _dict, _dot
 
 def asdict(instance: object) -> dict:
     if isinstance(instance, Particle):
-        return _dict.dump.from_particle(instance)
+        return _dict.from_particle(instance)
     if isinstance(instance, ParticleCollection):
-        return _dict.dump.from_particle_collection(instance)
+        return _dict.from_particle_collection(instance)
     raise NotImplementedError(
         f"No conversion for dict available for class {instance.__class__.__name__}"
     )
@@ -31,14 +31,7 @@ def asdict(instance: object) -> dict:
 def fromdict(definition: dict) -> object:
     type_defined = _determine_type(definition)
     if type_defined == ParticleCollection:
-        return _dict.build.build_particle_collection(definition)
-    raise NotImplementedError
-
-
-def validate(instance: dict) -> None:
-    type_defined = _determine_type(instance)
-    if type_defined == ParticleCollection:
-        return _dict.validate.particle_collection(instance)
+        return _dict.build_particle_collection(definition)
     raise NotImplementedError
 
 
