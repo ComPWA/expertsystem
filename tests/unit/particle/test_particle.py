@@ -120,12 +120,6 @@ class TestParity:
 
 
 class TestParticle:
-    def test_asdict_fromdict(self, particle_database: ParticleCollection):
-        particle = particle_database.find(211)
-        asdict = particle.asdict()
-        fromdict = Particle.fromdict(asdict)
-        assert fromdict == particle
-
     @staticmethod
     def test_repr(particle_database: ParticleCollection):
         for particle in particle_database:
@@ -213,24 +207,6 @@ class TestParticle:
 
 
 class TestParticleCollection:
-    def test_asdict_fromdict(
-        self, output_dir: str, selection: ParticleCollection
-    ):
-        asdict = selection.asdict()
-        fromdict = ParticleCollection.fromdict(asdict)
-        assert fromdict == selection
-        selection.write(output_dir + "particle_selection.yml")
-
-    @pytest.fixture(scope="session")
-    def selection(self, particle_database: ParticleCollection):
-        pdg = particle_database
-        selection = ParticleCollection()
-        selection += pdg.filter(lambda p: p.name.startswith("pi"))
-        selection += pdg.filter(lambda p: p.name.startswith("K"))
-        selection += pdg.filter(lambda p: p.name.startswith("D"))
-        selection += pdg.filter(lambda p: p.name.startswith("J/psi"))
-        return selection
-
     @staticmethod
     def test_init(particle_database: ParticleCollection):
         new_pdg = ParticleCollection(particle_database)
@@ -374,16 +350,6 @@ class TestParticleCollection:
                 "omega(3)(1670)",
                 "omega(1650)",
             ]
-
-    def test_load_write_exceptions(
-        self, output_dir: str, selection: ParticleCollection
-    ):
-        with pytest.raises(NotImplementedError):
-            ParticleCollection.load(__file__)
-        with pytest.raises(NotImplementedError):
-            selection.write(output_dir + "test.py")
-        with pytest.raises(Exception):
-            selection.write(output_dir + "no_file_extension")
 
 
 class TestSpin:
