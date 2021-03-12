@@ -10,6 +10,7 @@ import json
 from collections import abc
 from pathlib import Path
 
+import attr
 import yaml
 
 from expertsystem.particle import Particle, ParticleCollection
@@ -30,6 +31,8 @@ def asdict(instance: object) -> dict:
 
 def fromdict(definition: dict) -> object:
     type_defined = __determine_type(definition)
+    if type_defined == Particle:
+        return _dict.build_particle(definition)
     if type_defined == ParticleCollection:
         return _dict.build_particle_collection(definition)
     raise NotImplementedError
@@ -39,7 +42,16 @@ def __determine_type(definition: dict) -> type:
     keys = set(definition.keys())
     if keys == {"particles"}:
         return ParticleCollection
+    if __REQUIRED_PARTICLE_FIELDS <= keys:
+        return Particle
     raise NotImplementedError(f"Could not determine type from keys {keys}")
+
+
+__REQUIRED_PARTICLE_FIELDS = {
+    field.name
+    for field in attr.fields(Particle)
+    if field.default == attr.NOTHING
+}
 
 
 def asdot(

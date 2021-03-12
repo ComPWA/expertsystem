@@ -48,11 +48,11 @@ def build_particle_collection(
     if do_validate:
         validate_particle_collection(definition)
     return ParticleCollection(
-        __build_particle(p) for p in definition["particles"]
+        build_particle(p) for p in definition["particles"]
     )
 
 
-def __build_particle(definition: dict) -> Particle:
+def build_particle(definition: dict) -> Particle:
     isospin_def = definition.get("isospin", None)
     if isospin_def is not None:
         definition["isospin"] = Spin(**isospin_def)
