@@ -64,7 +64,7 @@ def asdot(
     Only works for objects that can be represented as a graph, particularly a
     `.StateTransitionGraph` or a `list` of `.StateTransitionGraph` instances.
 
-    .. seealso:: :doc:`/usage/visualization`
+    .. seealso:: :doc:`/usage/visualize`
     """
     if isinstance(instance, (StateTransitionGraph, Topology)):
         return _dot.graph_to_dot(
