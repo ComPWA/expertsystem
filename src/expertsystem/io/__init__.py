@@ -77,7 +77,7 @@ def write(instance: object, filename: str) -> None:
             )
             return
         if file_extension == "gv":
-            output_str = convert_to_dot(instance)
+            output_str = asdot(instance)
             with open(filename, "w") as stream:
                 stream.write(output_str)
             return
@@ -86,7 +86,7 @@ def write(instance: object, filename: str) -> None:
     )
 
 
-def convert_to_dot(
+def asdot(
     instance: object,
     render_edge_id: bool = True,
     render_node: bool = True,
