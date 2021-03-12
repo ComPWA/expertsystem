@@ -29,10 +29,46 @@ def asdict(instance: object) -> dict:
 
 
 def fromdict(definition: dict) -> object:
-    type_defined = _determine_type(definition)
+    type_defined = __determine_type(definition)
     if type_defined == ParticleCollection:
         return _dict.build_particle_collection(definition)
     raise NotImplementedError
+
+
+def __determine_type(definition: dict) -> type:
+    keys = set(definition.keys())
+    if keys == {"particles"}:
+        return ParticleCollection
+    raise NotImplementedError(f"Could not determine type from keys {keys}")
+
+
+def asdot(
+    instance: object,
+    render_edge_id: bool = True,
+    render_node: bool = True,
+) -> str:
+    """Convert a `object` to a DOT language `str`.
+
+    Only works for objects that can be represented as a graph, particularly a
+    `.StateTransitionGraph` or a `list` of `.StateTransitionGraph` instances.
+
+    .. seealso:: :doc:`/usage/visualization`
+    """
+    if isinstance(instance, (StateTransitionGraph, Topology)):
+        return _dot.graph_to_dot(
+            instance,
+            render_edge_id=render_edge_id,
+            render_node=render_node,
+        )
+    if isinstance(instance, abc.Sequence):
+        return _dot.graph_list_to_dot(
+            instance,
+            render_edge_id=render_edge_id,
+            render_node=render_node,
+        )
+    raise NotImplementedError(
+        f"Cannot convert a {instance.__class__.__name__} to DOT language"
+    )
 
 
 def load(filename: str) -> object:
@@ -86,35 +122,6 @@ def write(instance: object, filename: str) -> None:
     )
 
 
-def asdot(
-    instance: object,
-    render_edge_id: bool = True,
-    render_node: bool = True,
-) -> str:
-    """Convert a `object` to a DOT language `str`.
-
-    Only works for objects that can be represented as a graph, particularly a
-    `.StateTransitionGraph` or a `list` of `.StateTransitionGraph` instances.
-
-    .. seealso:: :doc:`/usage/visualization`
-    """
-    if isinstance(instance, (StateTransitionGraph, Topology)):
-        return _dot.graph_to_dot(
-            instance,
-            render_edge_id=render_edge_id,
-            render_node=render_node,
-        )
-    if isinstance(instance, abc.Sequence):
-        return _dot.graph_list_to_dot(
-            instance,
-            render_edge_id=render_edge_id,
-            render_node=render_node,
-        )
-    raise NotImplementedError(
-        f"Cannot convert a {instance.__class__.__name__} to DOT language"
-    )
-
-
 def _get_file_extension(filename: str) -> str:
     path = Path(filename)
     extension = path.suffix.lower()
@@ -122,10 +129,3 @@ def _get_file_extension(filename: str) -> str:
         raise Exception(f"No file extension in file {filename}")
     extension = extension[1:]
     return extension
-
-
-def _determine_type(definition: dict) -> type:
-    keys = set(definition.keys())
-    if keys == {"particles"}:
-        return ParticleCollection
-    raise NotImplementedError(f"Could not determine type from keys {keys}")
