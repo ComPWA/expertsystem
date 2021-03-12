@@ -27,6 +27,9 @@ The `expertsystem` consists of three main components:
     found by `reaction` into an `.HelicityModel`. This module is specifically
     designed to create amplitude model templates for :doc:`PWA fitter packages
     <pwa:software>`.
+
+Finally, the `.io` module provides tools that can read and write the objects of
+`particle`, `reaction`, and `amplitude`.
 """
 
 
@@ -35,13 +38,14 @@ __all__ = [
     "amplitude",
     "particle",
     "reaction",
+    "io",
     # Facade functions
     "generate_transitions",
     "check_reaction_violations",
 ]
 
 
-from . import amplitude, particle, reaction
+from . import amplitude, io, particle, reaction
 
 generate_transitions = reaction.generate
 """An alias to `.reaction.generate`."""
