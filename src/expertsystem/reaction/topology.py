@@ -78,12 +78,22 @@ class FrozenDict(  # pylint: disable=too-many-ancestors
         return self.__mapping.values()
 
 
+def _to_optional_int(optional_int: Optional[int]) -> Optional[int]:
+    if optional_int is None:
+        return None
+    return int(optional_int)
+
+
 @attr.s(frozen=True)
 class Edge:
     """Struct-like definition of an edge, used in `Topology`."""
 
-    originating_node_id: Optional[int] = attr.ib(default=None)
-    ending_node_id: Optional[int] = attr.ib(default=None)
+    originating_node_id: Optional[int] = attr.ib(
+        default=None, converter=_to_optional_int
+    )
+    ending_node_id: Optional[int] = attr.ib(
+        default=None, converter=_to_optional_int
+    )
 
     def get_connected_nodes(self) -> Set[int]:
         connected_nodes = {self.ending_node_id, self.originating_node_id}

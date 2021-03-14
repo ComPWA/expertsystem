@@ -134,10 +134,10 @@ def build_stg(definition: dict) -> StateTransitionGraph[ParticleWithSpin]:
         spin_projection = float(edge_def["spin_projection"])
         if spin_projection.is_integer():
             spin_projection = int(spin_projection)
-        edge_props[i] = (particle, spin_projection)
+        edge_props[int(i)] = (particle, spin_projection)
     node_props_def: Dict[int, dict] = definition["node_props"]
     node_props = {
-        i: InteractionProperties(**node_def)
+        int(i): InteractionProperties(**node_def)
         for i, node_def in node_props_def.items()
     }
     return StateTransitionGraph(
@@ -150,7 +150,7 @@ def build_stg(definition: dict) -> StateTransitionGraph[ParticleWithSpin]:
 def build_topology(definition: dict) -> Topology:
     nodes = definition["nodes"]
     edges_def: Dict[int, dict] = definition["edges"]
-    edges = {i: Edge(**edge_def) for i, edge_def in edges_def.items()}
+    edges = {int(i): Edge(**edge_def) for i, edge_def in edges_def.items()}
     return Topology(
         edges=edges,
         nodes=nodes,
