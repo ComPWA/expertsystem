@@ -14,7 +14,7 @@ import attr
 import yaml
 
 from expertsystem.particle import Particle, ParticleCollection
-from expertsystem.reaction.topology import StateTransitionGraph, Topology
+from expertsystem.reaction import StateTransitionGraph, Topology
 
 from . import _dict, _dot
 

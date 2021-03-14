@@ -9,11 +9,13 @@ import attr
 import jsonschema
 
 from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
-from expertsystem.reaction.quantum_numbers import (
+from expertsystem.reaction import (
     InteractionProperties,
     ParticleWithSpin,
+    StateTransitionGraph,
+    Topology,
 )
-from expertsystem.reaction.topology import Edge, StateTransitionGraph, Topology
+from expertsystem.reaction.topology import Edge
 
 
 def from_particle_collection(particles: ParticleCollection) -> dict:
