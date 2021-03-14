@@ -12,6 +12,7 @@ from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
 from expertsystem.reaction import (
     InteractionProperties,
     ParticleWithSpin,
+    Result,
     StateTransitionGraph,
     Topology,
 )
@@ -29,6 +30,15 @@ def from_particle(particle: Particle) -> dict:
         value_serializer=__value_serializer,
         filter=lambda attr, value: attr.default != value,
     )
+
+
+def from_result(result: Result) -> dict:
+    output: Dict[str, Any] = {
+        "transitions": [from_stg(graph) for graph in result.transitions],
+    }
+    if result.formalism_type is not None:
+        output["formalism_type"] = result.formalism_type
+    return output
 
 
 def from_stg(graph: StateTransitionGraph[ParticleWithSpin]) -> dict:
@@ -102,6 +112,17 @@ def build_particle(definition: dict) -> Particle:
         if parity_def is not None:
             definition[parity] = Parity(**parity_def)
     return Particle(**definition)
+
+
+def build_result(definition: dict) -> Result:
+    formalism_type = definition.get("formalism_type")
+    transitions = [
+        build_stg(graph_def) for graph_def in definition["transitions"]
+    ]
+    return Result(
+        transitions=transitions,
+        formalism_type=formalism_type,
+    )
 
 
 def build_stg(definition: dict) -> StateTransitionGraph[ParticleWithSpin]:

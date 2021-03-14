@@ -14,7 +14,7 @@ import attr
 import yaml
 
 from expertsystem.particle import Particle, ParticleCollection
-from expertsystem.reaction import StateTransitionGraph, Topology
+from expertsystem.reaction import Result, StateTransitionGraph, Topology
 
 from . import _dict, _dot
 
@@ -24,6 +24,8 @@ def asdict(instance: object) -> dict:
         return _dict.from_particle(instance)
     if isinstance(instance, ParticleCollection):
         return _dict.from_particle_collection(instance)
+    if isinstance(instance, Result):
+        return _dict.from_result(instance)
     if isinstance(instance, StateTransitionGraph):
         return _dict.from_stg(instance)
     if isinstance(instance, Topology):
@@ -39,6 +41,8 @@ def fromdict(definition: dict) -> object:
         return _dict.build_particle(definition)
     if type_defined == ParticleCollection:
         return _dict.build_particle_collection(definition)
+    if type_defined == Result:
+        return _dict.build_result(definition)
     if type_defined == StateTransitionGraph:
         return _dict.build_stg(definition)
     if type_defined == Topology:
@@ -52,6 +56,8 @@ def __determine_type(definition: dict) -> type:
         return ParticleCollection
     if __REQUIRED_PARTICLE_FIELDS <= keys:
         return Particle
+    if __REQUIRED_RESULT_FIELDS == keys:
+        return Result
     if __REQUIRED_STG_FIELDS == keys:
         return StateTransitionGraph
     if __REQUIRED_TOPOLOGY_FIELDS == keys:
@@ -64,6 +70,7 @@ __REQUIRED_PARTICLE_FIELDS = {
     for field in attr.fields(Particle)
     if field.default == attr.NOTHING
 }
+__REQUIRED_RESULT_FIELDS = {"transitions", "formalism_type"}
 __REQUIRED_STG_FIELDS = {"topology", "edge_props", "node_props"}
 __REQUIRED_TOPOLOGY_FIELDS = {
     field.name for field in attr.fields(Topology) if field.init

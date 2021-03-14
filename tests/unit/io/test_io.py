@@ -51,6 +51,15 @@ def test_asdict_fromdict(
         fromdict = io.fromdict(asdict)
         assert isinstance(fromdict, StateTransitionGraph)
         assert graph == fromdict
+    # Result
+    asdict = io.asdict(jpsi_to_gamma_pi_pi_canonical_solutions)
+    fromdict = io.fromdict(asdict)
+    assert isinstance(fromdict, Result)
+    assert jpsi_to_gamma_pi_pi_canonical_solutions == fromdict
+    asdict = io.asdict(jpsi_to_gamma_pi_pi_helicity_solutions)
+    fromdict = io.fromdict(asdict)
+    assert isinstance(fromdict, Result)
+    assert jpsi_to_gamma_pi_pi_helicity_solutions == fromdict
 
 
 def test_fromdict_exceptions():
