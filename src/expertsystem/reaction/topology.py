@@ -604,6 +604,23 @@ class StateTransitionGraph(Generic[EdgeType]):
         _assert_over_defined(self.topology.nodes, self.__node_props)
         _assert_over_defined(self.topology.edges, self.__edge_props)
 
+    def __eq__(self, other: object) -> bool:
+        """Check if two `.StateTransitionGraph` instances are **identical**."""
+        if isinstance(other, StateTransitionGraph):
+            if self.topology != other.topology:
+                return False
+            for i in self.topology.edges:
+                if self.get_edge_props(i) != other.get_edge_props(i):
+                    return False
+            for i in self.topology.nodes:
+                if self.get_node_props(i) != other.get_node_props(i):
+                    return False
+            return True
+        raise NotImplementedError(
+            f"Cannot compare {self.__class__.__name__}"
+            f" with {other.__class__.__name__}"
+        )
+
     def get_node_props(self, node_id: int) -> InteractionProperties:
         return self.__node_props[node_id]
 
