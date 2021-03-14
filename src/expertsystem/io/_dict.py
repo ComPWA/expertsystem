@@ -3,12 +3,13 @@
 import json
 from collections import abc
 from os.path import dirname, realpath
-from typing import Any
+from typing import Any, Dict
 
 import attr
 import jsonschema
 
 from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
+from expertsystem.reaction.topology import Edge, Topology
 
 
 def from_particle_collection(particles: ParticleCollection) -> dict:
@@ -24,12 +25,22 @@ def from_particle(particle: Particle) -> dict:
     )
 
 
+def from_topology(topology: Topology) -> dict:
+    return attr.asdict(
+        topology,
+        recurse=True,
+        value_serializer=__value_serializer,
+        filter=lambda a, v: a.init and a.default != v,
+    )
+
+
 def __value_serializer(  # pylint: disable=unused-argument
     inst: type, field: attr.Attribute, value: Any
 ) -> Any:
     if isinstance(value, abc.Mapping):
         if all(map(lambda p: isinstance(p, Particle), value.values())):
             return {k: v.name for k, v in value.items()}
+        return dict(value)
     if isinstance(value, Particle):
         return value.name
     if isinstance(value, Parity):
@@ -61,6 +72,16 @@ def build_particle(definition: dict) -> Particle:
         if parity_def is not None:
             definition[parity] = Parity(**parity_def)
     return Particle(**definition)
+
+
+def build_topology(definition: dict) -> Topology:
+    nodes = definition["nodes"]
+    edges_def: Dict[int, dict] = definition["edges"]
+    edges = {i: Edge(**edge_def) for i, edge_def in edges_def.items()}
+    return Topology(
+        edges=edges,
+        nodes=nodes,
+    )
 
 
 def validate_particle_collection(instance: dict) -> None:
