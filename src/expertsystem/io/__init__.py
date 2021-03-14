@@ -24,6 +24,8 @@ def asdict(instance: object) -> dict:
         return _dict.from_particle(instance)
     if isinstance(instance, ParticleCollection):
         return _dict.from_particle_collection(instance)
+    if isinstance(instance, StateTransitionGraph):
+        return _dict.from_stg(instance)
     if isinstance(instance, Topology):
         return _dict.from_topology(instance)
     raise NotImplementedError(
@@ -37,6 +39,8 @@ def fromdict(definition: dict) -> object:
         return _dict.build_particle(definition)
     if type_defined == ParticleCollection:
         return _dict.build_particle_collection(definition)
+    if type_defined == StateTransitionGraph:
+        return _dict.build_stg(definition)
     if type_defined == Topology:
         return _dict.build_topology(definition)
     raise NotImplementedError
@@ -48,6 +52,8 @@ def __determine_type(definition: dict) -> type:
         return ParticleCollection
     if __REQUIRED_PARTICLE_FIELDS <= keys:
         return Particle
+    if __REQUIRED_STG_FIELDS == keys:
+        return StateTransitionGraph
     if __REQUIRED_TOPOLOGY_FIELDS == keys:
         return Topology
     raise NotImplementedError(f"Could not determine type from keys {keys}")
@@ -58,6 +64,7 @@ __REQUIRED_PARTICLE_FIELDS = {
     for field in attr.fields(Particle)
     if field.default == attr.NOTHING
 }
+__REQUIRED_STG_FIELDS = {"topology", "edge_props", "node_props"}
 __REQUIRED_TOPOLOGY_FIELDS = {
     field.name for field in attr.fields(Topology) if field.init
 }

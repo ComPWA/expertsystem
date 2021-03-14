@@ -9,7 +9,11 @@ import attr
 import jsonschema
 
 from expertsystem.particle import Parity, Particle, ParticleCollection, Spin
-from expertsystem.reaction.topology import Edge, Topology
+from expertsystem.reaction.quantum_numbers import (
+    InteractionProperties,
+    ParticleWithSpin,
+)
+from expertsystem.reaction.topology import Edge, StateTransitionGraph, Topology
 
 
 def from_particle_collection(particles: ParticleCollection) -> dict:
@@ -23,6 +27,30 @@ def from_particle(particle: Particle) -> dict:
         value_serializer=__value_serializer,
         filter=lambda attr, value: attr.default != value,
     )
+
+
+def from_stg(graph: StateTransitionGraph[ParticleWithSpin]) -> dict:
+    topology = graph.topology
+    edge_props_def = dict()
+    for i in topology.edges:
+        particle, spin_projection = graph.get_edge_props(i)
+        if isinstance(spin_projection, float) and spin_projection.is_integer():
+            spin_projection = int(spin_projection)
+        edge_props_def[i] = {
+            "particle": from_particle(particle),
+            "spin_projection": spin_projection,
+        }
+    node_props_def = dict()
+    for i in topology.nodes:
+        node_prop = graph.get_node_props(i)
+        node_props_def[i] = attr.asdict(
+            node_prop, filter=lambda a, v: a.init and a.default != v
+        )
+    return {
+        "topology": from_topology(topology),
+        "edge_props": edge_props_def,
+        "node_props": node_props_def,
+    }
 
 
 def from_topology(topology: Topology) -> dict:
@@ -72,6 +100,28 @@ def build_particle(definition: dict) -> Particle:
         if parity_def is not None:
             definition[parity] = Parity(**parity_def)
     return Particle(**definition)
+
+
+def build_stg(definition: dict) -> StateTransitionGraph[ParticleWithSpin]:
+    topology = build_topology(definition["topology"])
+    edge_props_def: Dict[int, dict] = definition["edge_props"]
+    edge_props: Dict[int, ParticleWithSpin] = dict()
+    for i, edge_def in edge_props_def.items():
+        particle = build_particle(edge_def["particle"])
+        spin_projection = float(edge_def["spin_projection"])
+        if spin_projection.is_integer():
+            spin_projection = int(spin_projection)
+        edge_props[i] = (particle, spin_projection)
+    node_props_def: Dict[int, dict] = definition["node_props"]
+    node_props = {
+        i: InteractionProperties(**node_def)
+        for i, node_def in node_props_def.items()
+    }
+    return StateTransitionGraph(
+        topology=topology,
+        edge_props=edge_props,
+        node_props=node_props,
+    )
 
 
 def build_topology(definition: dict) -> Topology:

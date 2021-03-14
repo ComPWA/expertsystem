@@ -3,14 +3,18 @@ import pytest
 from expertsystem import io
 from expertsystem.particle import Particle, ParticleCollection
 from expertsystem.reaction import (
+    Result,
     create_isobar_topologies,
     create_n_body_topology,
 )
-from expertsystem.reaction.topology import Topology
+from expertsystem.reaction.topology import StateTransitionGraph, Topology
 
 
-def test_asdict_fromdict(particle_selection: ParticleCollection):
-    # ParticleCollection
+def test_asdict_fromdict(
+    particle_selection: ParticleCollection,
+    jpsi_to_gamma_pi_pi_canonical_solutions: Result,
+    jpsi_to_gamma_pi_pi_helicity_solutions: Result,
+):
     asdict = io.asdict(particle_selection)
     fromdict = io.fromdict(asdict)
     assert isinstance(fromdict, ParticleCollection)
@@ -34,6 +38,19 @@ def test_asdict_fromdict(particle_selection: ParticleCollection):
             fromdict = io.fromdict(asdict)
             assert isinstance(fromdict, Topology)
             assert topology == fromdict
+    # StateTransitionGraph
+    result = jpsi_to_gamma_pi_pi_canonical_solutions
+    for graph in result.transitions:
+        asdict = io.asdict(graph)
+        fromdict = io.fromdict(asdict)
+        assert isinstance(fromdict, StateTransitionGraph)
+        assert graph == fromdict
+    result = jpsi_to_gamma_pi_pi_helicity_solutions
+    for graph in result.transitions:
+        asdict = io.asdict(graph)
+        fromdict = io.fromdict(asdict)
+        assert isinstance(fromdict, StateTransitionGraph)
+        assert graph == fromdict
 
 
 def test_fromdict_exceptions():
