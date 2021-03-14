@@ -72,7 +72,7 @@ from .combinatorics import (
     match_external_edges,
 )
 from .default_settings import (
-    DEFAULT_PARTICLE_LIST_PATH,
+    ADDITIONAL_PARTICLES_DEFINITIONS_PATH,
     InteractionTypes,
     create_default_interaction_settings,
 )
@@ -1065,7 +1065,7 @@ def load_default_particles() -> ParticleCollection:
     </../src/expertsystem/particle/additional_definitions.yml>`.
     """
     particles = load_pdg()
-    additional_particles = io.load(DEFAULT_PARTICLE_LIST_PATH)
+    additional_particles = io.load(ADDITIONAL_PARTICLES_DEFINITIONS_PATH)
     assert isinstance(additional_particles, ParticleCollection)
     particles.update(additional_particles)
     logging.info(f"Loaded {len(particles)} particles!")
