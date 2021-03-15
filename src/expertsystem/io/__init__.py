@@ -78,7 +78,9 @@ def asdot(
             render_edge_id=render_edge_id,
             render_node=render_node,
         )
-    if isinstance(instance, abc.Sequence):
+    if isinstance(instance, (Result, abc.Sequence)):
+        if isinstance(instance, Result):
+            instance = instance.transitions
         return _dot.graph_list_to_dot(
             instance,
             render_edge_id=render_edge_id,

@@ -16,7 +16,7 @@ def test_asdot(jpsi_to_gamma_pi_pi_helicity_solutions: Result):
     for transition in result.transitions:
         dot_data = io.asdot(transition)
         assert pydot.graph_from_dot_data(dot_data) is not None
-    dot_data = io.asdot(result.transitions)
+    dot_data = io.asdot(result)
     assert pydot.graph_from_dot_data(dot_data) is not None
     dot_data = io.asdot(result.get_particle_graphs())
     assert pydot.graph_from_dot_data(dot_data) is not None
