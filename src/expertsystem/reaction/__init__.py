@@ -30,7 +30,6 @@ from typing import (
 import attr
 from tqdm.auto import tqdm
 
-from expertsystem import io
 from expertsystem.particle import Particle, ParticleCollection, load_pdg
 from expertsystem.reaction.conservation_rules import (
     BaryonNumberConservation,
@@ -72,7 +71,6 @@ from .combinatorics import (
     match_external_edges,
 )
 from .default_settings import (
-    DEFAULT_PARTICLE_LIST_PATH,
     InteractionTypes,
     create_default_interaction_settings,
 )
@@ -237,120 +235,6 @@ class Result:
                         intermediate_states.add(particle)
         return intermediate_states
 
-    def get_particle_graphs(self) -> List[StateTransitionGraph[Particle]]:
-        """Strip `list` of `.StateTransitionGraph` s of the spin projections.
-
-        Extract a `list` of `.StateTransitionGraph` instances with only
-        particles on the edges.
-
-        .. seealso:: :doc:`/usage/visualize`
-        """
-        inventory: List[StateTransitionGraph[Particle]] = list()
-        for transition in self.transitions:
-            if any(
-                transition.compare(
-                    other, edge_comparator=lambda e1, e2: e1[0] == e2
-                )
-                for other in inventory
-            ):
-                continue
-            new_edge_props = dict()
-            for edge_id in transition.topology.edges:
-                edge_props = transition.get_edge_props(edge_id)
-                if edge_props:
-                    new_edge_props[edge_id] = edge_props[0]
-            inventory.append(
-                StateTransitionGraph[Particle](
-                    topology=transition.topology,
-                    node_props={
-                        i: node_props
-                        for i, node_props in zip(
-                            transition.topology.nodes,
-                            map(
-                                transition.get_node_props,
-                                transition.topology.nodes,
-                            ),
-                        )
-                        if node_props
-                    },
-                    edge_props=new_edge_props,
-                )
-            )
-        inventory = sorted(
-            inventory,
-            key=lambda g: [
-                g.get_edge_props(i).mass
-                for i in g.topology.intermediate_edge_ids
-            ],
-        )
-        return inventory
-
-    def collapse_graphs(
-        self,
-    ) -> List[StateTransitionGraph[ParticleCollection]]:
-        def merge_into(
-            graph: StateTransitionGraph[Particle],
-            merged_graph: StateTransitionGraph[ParticleCollection],
-        ) -> None:
-            if (
-                graph.topology.intermediate_edge_ids
-                != merged_graph.topology.intermediate_edge_ids
-            ):
-                raise ValueError(
-                    "Cannot merge graphs that don't have the same edge IDs"
-                )
-            for i in graph.topology.edges:
-                particle = graph.get_edge_props(i)
-                other_particles = merged_graph.get_edge_props(i)
-                if particle not in other_particles:
-                    other_particles += particle
-
-        def is_same_shape(
-            graph: StateTransitionGraph[Particle],
-            merged_graph: StateTransitionGraph[ParticleCollection],
-        ) -> bool:
-            if graph.topology.edges != merged_graph.topology.edges:
-                return False
-            for edge_id in (
-                graph.topology.incoming_edge_ids
-                | graph.topology.outgoing_edge_ids
-            ):
-                edge_prop = merged_graph.get_edge_props(edge_id)
-                if len(edge_prop) != 1:
-                    return False
-                other_particle = next(iter(edge_prop))
-                if other_particle != graph.get_edge_props(edge_id):
-                    return False
-            return True
-
-        particle_graphs = self.get_particle_graphs()
-        inventory: List[StateTransitionGraph[ParticleCollection]] = list()
-        for graph in particle_graphs:
-            append_to_inventory = True
-            for merged_graph in inventory:
-                if is_same_shape(graph, merged_graph):
-                    merge_into(graph, merged_graph)
-                    append_to_inventory = False
-                    break
-            if append_to_inventory:
-                new_edge_props = {
-                    edge_id: ParticleCollection(
-                        {graph.get_edge_props(edge_id)}
-                    )
-                    for edge_id in graph.topology.edges
-                }
-                inventory.append(
-                    StateTransitionGraph[ParticleCollection](
-                        topology=graph.topology,
-                        node_props={
-                            i: graph.get_node_props(i)
-                            for i in graph.topology.nodes
-                        },
-                        edge_props=new_edge_props,
-                    )
-                )
-        return inventory
-
 
 @attr.s
 class ProblemSet:
@@ -483,7 +367,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             )
 
         if reload_pdg or len(self.__particles) == 0:
-            self.__particles = load_default_particles()
+            self.__particles = load_pdg()
 
         self.__user_allowed_intermediate_particles = (
             allowed_intermediate_particles
@@ -990,7 +874,7 @@ def check_reaction_violations(
 
     initial_facts = create_initial_facts(
         topology=topology,
-        particles=load_default_particles(),
+        particles=load_pdg(),
         initial_state=initial_state,
         final_state=final_state,
     )
@@ -1057,21 +941,6 @@ def check_reaction_violations(
     return violations
 
 
-def load_default_particles() -> ParticleCollection:
-    """Load the default particle list that comes with the `expertsystem`.
-
-    Runs `.load_pdg` and supplements its output definitions from the file
-    :download:`additional_definitions.yml
-    </../src/expertsystem/particle/additional_definitions.yml>`.
-    """
-    particles = load_pdg()
-    additional_particles = io.load(DEFAULT_PARTICLE_LIST_PATH)
-    assert isinstance(additional_particles, ParticleCollection)
-    particles.update(additional_particles)
-    logging.info(f"Loaded {len(particles)} particles!")
-    return particles
-
-
 def generate(  # pylint: disable=too-many-arguments
     initial_state: Union[StateDefinition, Sequence[StateDefinition]],
     final_state: Sequence[StateDefinition],
@@ -1112,10 +981,10 @@ def generate(  # pylint: disable=too-many-arguments
             eventual `.HelicityModel`.
 
         particles (`.ParticleCollection`, optional): The particles that you
-            want to be involved in the reaction. Uses `.load_default_particles`
-            by default. It's better to use a subset for larger reactions,
-            because of the computation times. This argument is especially
-            useful when you want to use your own particle definitions (see
+            want to be involved in the reaction. Uses `.load_pdg` by default.
+            It's better to use a subset for larger reactions, because of
+            the computation times. This argument is especially useful when you
+            want to use your own particle definitions (see
             :doc:`/usage/particle`).
 
         mass_conservation_factor: Width factor that is taken into account for
