@@ -1,7 +1,6 @@
 -r requirements.in
 
 # Requirements to build documentation
-graphviz
 ipywidgets
 jupyter
 matplotlib
