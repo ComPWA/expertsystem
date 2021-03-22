@@ -1,4 +1,4 @@
--r requirements.in
+-r requirements-extras.in
 
 # Requirements to build documentation
 ipywidgets
