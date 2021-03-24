@@ -129,7 +129,7 @@ class HelicityModel:
         return self._expression
 
     @property
-    def parameters(self) -> Dict[str, ParameterValue]:
+    def parameters(self) -> Dict[sp.Symbol, ParameterValue]:
         return self._parameters
 
     @property
