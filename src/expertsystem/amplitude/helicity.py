@@ -114,7 +114,7 @@ class HelicityModel:
     _parameters: Dict[sp.Symbol, ParameterValue] = attr.ib(
         validator=attr.validators.instance_of(dict)
     )
-    components: Dict[str, sp.Expr] = attr.ib(
+    _components: Dict[str, sp.Expr] = attr.ib(
         validator=attr.validators.instance_of(dict)
     )
     _adapter: HelicityAdapter = attr.ib(
@@ -127,6 +127,10 @@ class HelicityModel:
     @property
     def expression(self) -> sp.Expr:
         return self._expression
+
+    @property
+    def components(self) -> Dict[str, sp.Expr]:
+        return self._components
 
     @property
     def parameters(self) -> Dict[sp.Symbol, ParameterValue]:
