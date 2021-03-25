@@ -107,24 +107,23 @@ repos:
           - python
 
       # Custom hooks
-      - id: fix-nbformat-version
-        name: Set nbformat minor version 4 and remove cell IDs
-        entry: python .pre-commit-hooks/fix_nbformat_version.py
-        language: system
-        types:
-          - jupyter
-
-      - id: set-first-nb-cell
+      - id: fix-first-nbcell
         name: Check first cells in notebooks
-        entry: python .pre-commit-hooks/set_first_cell.py
+        entry: python .pre-commit-hooks/fix_first_nbcell.py
         args:
-          - --autofix
           - --replace
           - --additional_packages=graphviz
         exclude: >
           (?x)^(
             docs/adr/.*
           )$
+        language: system
+        types:
+          - jupyter
+
+      - id: fix-nbformat-version
+        name: Set nbformat minor version 4 and remove cell IDs
+        entry: python .pre-commit-hooks/fix_nbformat_version.py
         language: system
         types:
           - jupyter
