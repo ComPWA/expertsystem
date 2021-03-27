@@ -15,13 +15,17 @@ categories:
   - title: 🖱️ Developer Experience
     label: 🖱️ DX
 
-change-template: "- $TITLE (#$NUMBER)"
+change-template: >
+  - $TITLE (#$NUMBER)
+    $BODY
+
 sort-direction: ascending
-template: |
+template: >
   # Release $NEXT_PATCH_VERSION
 
   $CHANGES
 
-  ## Contributors since [$PREVIOUS_TAG](https://github.com/ComPWA/expertsystem/releases/tag/$PREVIOUS_TAG)
+  ## Contributors since
+  [$PREVIOUS_TAG](https://github.com/ComPWA/expertsystem/releases/tag/$PREVIOUS_TAG)
 
   $CONTRIBUTORS
