@@ -228,6 +228,97 @@ class TestParticleCollection:
             assert particle_database == 0
 
     @staticmethod
+    def test_repr(particle_database: ParticleCollection):
+        instance = particle_database
+        from_repr = eval(repr(instance))
+        assert from_repr == instance
+        from_repr = eval(pretty(instance))
+        assert from_repr == instance
+
+    def test_add(self, particle_database: ParticleCollection):
+        subset_copy = particle_database.filter(
+            lambda p: p.name.startswith("omega")
+        )
+        subset_copy += particle_database.filter(
+            lambda p: p.name.startswith("pi")
+        )
+        n_subset = len(subset_copy)
+
+        new_particle = create_particle(
+            particle_database.find(443),
+            pid=666,
+            name="EpEm",
+            mass=1.0,
+            width=0.0,
+        )
+        subset_copy.add(new_particle)
+        assert len(subset_copy) == n_subset + 1
+        assert subset_copy["EpEm"] is new_particle
+
+    def test_add_warnings(self, particle_database: ParticleCollection, caplog):
+        pions = particle_database.filter(lambda p: p.name.startswith("pi"))
+        pi_plus = pions["pi+"]
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
+            pions.add(create_particle(pi_plus, name="new pi+", mass=0.0))
+        assert f"{pi_plus.pid}" in caplog.text
+        caplog.clear()
+        with caplog.at_level(logging.WARNING):
+            pions.add(create_particle(pi_plus, width=1.0))
+        assert "pi+" in caplog.text
+
+    @pytest.mark.parametrize("name", ["gamma", "pi0", "K+"])
+    def test_contains(self, name: str, particle_database: ParticleCollection):
+        assert name in particle_database
+        particle = particle_database[name]
+        assert particle in particle_database
+        assert particle.pid in particle_database
+
+    def test_discard(self, particle_database: ParticleCollection):
+        pions = particle_database.filter(lambda p: p.name.startswith("pi"))
+        n_pions = len(pions)
+        pim = pions["pi-"]
+        pip = pions["pi+"]
+
+        pions.discard(pions["pi+"])
+        assert len(pions) == n_pions - 1
+        assert "pi+" not in pions
+        assert pip.name == "pi+"  # still exists
+
+        pions.remove("pi-")
+        assert len(pions) == n_pions - 2
+        assert pim not in pions
+        assert pim.name == "pi-"  # still exists
+
+        with pytest.raises(NotImplementedError):
+            pions.discard(111)  # type: ignore
+
+    @staticmethod
+    def test_filter(particle_database: ParticleCollection):
+        search_result = particle_database.filter(lambda p: "f(0)" in p.name)
+        f0_1500_from_subset = search_result["f(0)(1500)"]
+        assert len(search_result) == 5
+        assert f0_1500_from_subset.mass == 1.506
+        assert f0_1500_from_subset is particle_database["f(0)(1500)"]
+        assert f0_1500_from_subset is not particle_database["f(0)(980)"]
+
+        search_result = particle_database.filter(lambda p: p.pid == 22)
+        gamma_from_subset = search_result["gamma"]
+        assert len(search_result) == 1
+        assert gamma_from_subset.pid == 22
+        assert gamma_from_subset is particle_database["gamma"]
+        filtered_result = particle_database.filter(
+            lambda p: p.mass > 1.8
+            and p.mass < 2.0
+            and p.spin == 2
+            and p.strangeness == 1
+        )
+        assert filtered_result.names == {
+            "K(2)(1820)0",
+            "K(2)(1820)+",
+        }
+
+    @staticmethod
     def test_find(particle_database: ParticleCollection):
         f2_1950 = particle_database.find(9050225)
         assert f2_1950.name == "f(2)(1950)"
@@ -266,39 +357,6 @@ class TestParticleCollection:
             assert message.endswith(expected)
 
     @staticmethod
-    def test_filter(particle_database: ParticleCollection):
-        search_result = particle_database.filter(lambda p: "f(0)" in p.name)
-        f0_1500_from_subset = search_result["f(0)(1500)"]
-        assert len(search_result) == 5
-        assert f0_1500_from_subset.mass == 1.506
-        assert f0_1500_from_subset is particle_database["f(0)(1500)"]
-        assert f0_1500_from_subset is not particle_database["f(0)(980)"]
-
-        search_result = particle_database.filter(lambda p: p.pid == 22)
-        gamma_from_subset = search_result["gamma"]
-        assert len(search_result) == 1
-        assert gamma_from_subset.pid == 22
-        assert gamma_from_subset is particle_database["gamma"]
-        filtered_result = particle_database.filter(
-            lambda p: p.mass > 1.8
-            and p.mass < 2.0
-            and p.spin == 2
-            and p.strangeness == 1
-        )
-        assert filtered_result.names == {
-            "K(2)(1820)0",
-            "K(2)(1820)+",
-        }
-
-    @staticmethod
-    def test_repr(particle_database: ParticleCollection):
-        instance = particle_database
-        from_repr = eval(repr(instance))
-        assert from_repr == instance
-        from_repr = eval(pretty(instance))
-        assert from_repr == instance
-
-    @staticmethod
     def test_exceptions(particle_database: ParticleCollection):
         gamma = particle_database["gamma"]
         with pytest.raises(ValueError):
@@ -311,64 +369,6 @@ class TestParticleCollection:
             assert 3.14 in particle_database
         with pytest.raises(AssertionError):
             assert gamma == "gamma"
-
-    @pytest.mark.parametrize("name", ["gamma", "pi0", "K+"])
-    def test_contains(self, name: str, particle_database: ParticleCollection):
-        assert name in particle_database
-        particle = particle_database[name]
-        assert particle in particle_database
-        assert particle.pid in particle_database
-
-    def test_add(self, particle_database: ParticleCollection):
-        subset_copy = particle_database.filter(
-            lambda p: p.name.startswith("omega")
-        )
-        subset_copy += particle_database.filter(
-            lambda p: p.name.startswith("pi")
-        )
-        n_subset = len(subset_copy)
-
-        new_particle = create_particle(
-            particle_database.find(443),
-            pid=666,
-            name="EpEm",
-            mass=1.0,
-            width=0.0,
-        )
-        subset_copy.add(new_particle)
-        assert len(subset_copy) == n_subset + 1
-        assert subset_copy["EpEm"] is new_particle
-
-    def test_add_warnings(self, particle_database: ParticleCollection, caplog):
-        pions = particle_database.filter(lambda p: p.name.startswith("pi"))
-        pi_plus = pions["pi+"]
-        caplog.clear()
-        with caplog.at_level(logging.WARNING):
-            pions.add(create_particle(pi_plus, name="new pi+", mass=0.0))
-        assert f"{pi_plus.pid}" in caplog.text
-        caplog.clear()
-        with caplog.at_level(logging.WARNING):
-            pions.add(create_particle(pi_plus, width=1.0))
-        assert "pi+" in caplog.text
-
-    def test_discard(self, particle_database: ParticleCollection):
-        pions = particle_database.filter(lambda p: p.name.startswith("pi"))
-        n_pions = len(pions)
-        pim = pions["pi-"]
-        pip = pions["pi+"]
-
-        pions.discard(pions["pi+"])
-        assert len(pions) == n_pions - 1
-        assert "pi+" not in pions
-        assert pip.name == "pi+"  # still exists
-
-        pions.remove("pi-")
-        assert len(pions) == n_pions - 2
-        assert pim not in pions
-        assert pim.name == "pi-"  # still exists
-
-        with pytest.raises(NotImplementedError):
-            pions.discard(111)  # type: ignore
 
 
 class TestSpin:
