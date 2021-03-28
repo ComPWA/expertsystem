@@ -236,12 +236,34 @@ class TestParticleCollection:
         assert phi.pid == 333
         assert pytest.approx(phi.width) == 0.004249
 
-    @pytest.mark.parametrize("search_term", [666, "non-existing"])
+    @pytest.mark.parametrize(
+        "search_term, expected",
+        [
+            (666, None),
+            ("non-existing", None),
+            # cspell:disable
+            ("gamm", "'gamma'"),
+            ("gama", "'gamma', 'Sigma0', 'Sigma-', 'Sigma+', 'Lambda'"),
+            (
+                "omega",
+                "'omega(782)', 'omega(1420)', 'omega(3)(1670)', 'omega(1650)'",
+            ),
+            ("p~~", "'p~'"),
+            ("~", "'p~', 'n~'"),
+            ("lambda", "'Lambda', 'Lambda~', 'Lambda(c)+', 'Lambda(b)0'"),
+            # cspell:enable
+        ],
+    )
     def test_find_fail(
-        self, particle_database: ParticleCollection, search_term
+        self, particle_database: ParticleCollection, search_term, expected
     ):
-        with pytest.raises(LookupError):
+        with pytest.raises(LookupError) as exception:
             particle_database.find(search_term)
+        if expected is not None:
+            message = str(exception.value.args[0])
+            message = message.strip("?")
+            message = message.strip("]")
+            assert message.endswith(expected)
 
     @staticmethod
     def test_filter(particle_database: ParticleCollection):
