@@ -63,7 +63,7 @@ __REQUIRED_TOPOLOGY_FIELDS = {
 def asdot(
     instance: object,
     *,
-    render_edge_id: bool = True,
+    render_edge_id: bool = False,
     render_node: bool = True,
     strip_spin: bool = False,
     collapse_graphs: bool = False,
