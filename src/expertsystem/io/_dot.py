@@ -41,12 +41,12 @@ def embed_dot(func: Callable) -> Callable:
 def graph_list_to_dot(
     graphs: Sequence[StateTransitionGraph],
     *,
-    render_edge_id: bool,
     render_node: bool,
+    render_final_state_id: bool,
+    render_resonance_id: bool,
+    render_initial_state_id: bool,
     strip_spin: bool,
     collapse_graphs: bool,
-    render_final_state_id: bool,
-    render_initial_state_id: bool,
 ) -> str:
     if strip_spin and collapse_graphs:
         raise ValueError("Cannot both strip spin and collapse graphs")
@@ -59,9 +59,9 @@ def graph_list_to_dot(
         dot += __graph_to_dot_content(
             graph,
             prefix=f"g{i}_",
-            render_edge_id=render_edge_id,
             render_node=render_node,
             render_final_state_id=render_final_state_id,
+            render_resonance_id=render_resonance_id,
             render_initial_state_id=render_initial_state_id,
         )
     return dot
@@ -71,16 +71,16 @@ def graph_list_to_dot(
 def graph_to_dot(
     graph: StateTransitionGraph,
     *,
-    render_edge_id: bool,
     render_node: bool,
     render_final_state_id: bool,
+    render_resonance_id: bool,
     render_initial_state_id: bool,
 ) -> str:
     return __graph_to_dot_content(
         graph,
-        render_edge_id=render_edge_id,
         render_node=render_node,
         render_final_state_id=render_final_state_id,
+        render_resonance_id=render_resonance_id,
         render_initial_state_id=render_initial_state_id,
     )
 
@@ -89,9 +89,9 @@ def __graph_to_dot_content(  # pylint: disable=too-many-locals,too-many-branches
     graph: Union[StateTransitionGraph, Topology],
     prefix: str = "",
     *,
-    render_edge_id: bool,
     render_node: bool,
     render_final_state_id: bool,
+    render_resonance_id: bool,
     render_initial_state_id: bool,
 ) -> str:
     dot = ""
@@ -104,10 +104,9 @@ def __graph_to_dot_content(  # pylint: disable=too-many-locals,too-many-branches
     top = topology.incoming_edge_ids
     outs = topology.outgoing_edge_ids
     for edge_id in top | outs:
-        render = render_edge_id
         if edge_id in top:
             render = render_initial_state_id
-        if edge_id in outs:
+        else:
             render = render_final_state_id
         edge_label = __get_edge_label(graph, edge_id, render)
         dot += _DOT_DEFAULT_NODE.format(
@@ -126,7 +125,7 @@ def __graph_to_dot_content(  # pylint: disable=too-many-locals,too-many-branches
             dot += _DOT_LABEL_EDGE.format(
                 prefix + __node_name(i, k),
                 prefix + __node_name(i, j),
-                __get_edge_label(graph, i, render_edge_id),
+                __get_edge_label(graph, i, render_resonance_id),
             )
     if isinstance(graph, StateTransitionGraph):
         for node_id in topology.nodes:
