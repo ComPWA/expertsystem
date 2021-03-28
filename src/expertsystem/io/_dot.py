@@ -40,10 +40,13 @@ def embed_dot(func: Callable) -> Callable:
 @embed_dot
 def graph_list_to_dot(
     graphs: Sequence[StateTransitionGraph],
-    render_edge_id: bool = True,
-    render_node: bool = True,
-    strip_spin: bool = False,
-    collapse_graphs: bool = False,
+    *,
+    render_edge_id: bool,
+    render_node: bool,
+    strip_spin: bool,
+    collapse_graphs: bool,
+    render_final_state_id: bool,
+    render_initial_state_id: bool,
 ) -> str:
     if strip_spin and collapse_graphs:
         raise ValueError("Cannot both strip spin and collapse graphs")
@@ -58,6 +61,8 @@ def graph_list_to_dot(
             prefix=f"g{i}_",
             render_edge_id=render_edge_id,
             render_node=render_node,
+            render_final_state_id=render_final_state_id,
+            render_initial_state_id=render_initial_state_id,
         )
     return dot
 
@@ -65,21 +70,29 @@ def graph_list_to_dot(
 @embed_dot
 def graph_to_dot(
     graph: StateTransitionGraph,
-    render_edge_id: bool = True,
-    render_node: bool = True,
+    *,
+    render_edge_id: bool,
+    render_node: bool,
+    render_final_state_id: bool,
+    render_initial_state_id: bool,
 ) -> str:
     return __graph_to_dot_content(
         graph,
         render_edge_id=render_edge_id,
         render_node=render_node,
+        render_final_state_id=render_final_state_id,
+        render_initial_state_id=render_initial_state_id,
     )
 
 
 def __graph_to_dot_content(  # pylint: disable=too-many-locals,too-many-branches
     graph: Union[StateTransitionGraph, Topology],
     prefix: str = "",
-    render_edge_id: bool = True,
-    render_node: bool = True,
+    *,
+    render_edge_id: bool,
+    render_node: bool,
+    render_final_state_id: bool,
+    render_initial_state_id: bool,
 ) -> str:
     dot = ""
     if isinstance(graph, StateTransitionGraph):
@@ -91,9 +104,15 @@ def __graph_to_dot_content(  # pylint: disable=too-many-locals,too-many-branches
     top = topology.incoming_edge_ids
     outs = topology.outgoing_edge_ids
     for edge_id in top | outs:
+        render = render_edge_id
+        if edge_id in top:
+            render = render_initial_state_id
+        if edge_id in outs:
+            render = render_final_state_id
+        edge_label = __get_edge_label(graph, edge_id, render)
         dot += _DOT_DEFAULT_NODE.format(
             prefix + __node_name(edge_id),
-            __get_edge_label(graph, edge_id, render_edge_id),
+            edge_label,
         )
     dot += __rank_string(top, prefix)
     dot += __rank_string(outs, prefix)
@@ -145,7 +164,7 @@ def __rank_string(node_edge_ids: Iterable[int], prefix: str = "") -> str:
 def __get_edge_label(
     graph: Union[StateTransitionGraph, Topology],
     edge_id: int,
-    render_edge_id: bool = True,
+    render_edge_id: bool,
 ) -> str:
     if isinstance(graph, StateTransitionGraph):
         edge_prop = graph.get_edge_props(edge_id)

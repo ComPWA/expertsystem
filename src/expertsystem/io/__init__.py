@@ -62,10 +62,13 @@ __REQUIRED_TOPOLOGY_FIELDS = {
 
 def asdot(
     instance: object,
+    *,
     render_edge_id: bool = True,
     render_node: bool = True,
     strip_spin: bool = False,
     collapse_graphs: bool = False,
+    render_final_state_id: bool = True,
+    render_initial_state_id: bool = False,
 ) -> str:
     """Convert a `object` to a DOT language `str`.
 
@@ -79,6 +82,8 @@ def asdot(
             instance,
             render_edge_id=render_edge_id,
             render_node=render_node,
+            render_final_state_id=render_final_state_id,
+            render_initial_state_id=render_initial_state_id,
         )
     if isinstance(instance, (Result, abc.Sequence)):
         if isinstance(instance, Result):
@@ -89,6 +94,8 @@ def asdot(
             render_node=render_node,
             strip_spin=strip_spin,
             collapse_graphs=collapse_graphs,
+            render_final_state_id=render_final_state_id,
+            render_initial_state_id=render_initial_state_id,
         )
     raise NotImplementedError(
         f"Cannot convert a {instance.__class__.__name__} to DOT language"
