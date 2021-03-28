@@ -370,18 +370,6 @@ class TestParticleCollection:
         with pytest.raises(NotImplementedError):
             pions.discard(111)  # type: ignore
 
-    @staticmethod
-    def test_key_error(particle_database: ParticleCollection):
-        try:
-            assert particle_database["omega"]
-        except LookupError as error:
-            assert error.args[-1] == [
-                "omega(782)",
-                "omega(1420)",
-                "omega(3)(1670)",
-                "omega(1650)",
-            ]
-
 
 class TestSpin:
     @staticmethod
