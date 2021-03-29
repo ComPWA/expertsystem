@@ -11,7 +11,6 @@ from expertsystem.reaction.particle import (
     Particle,
     ParticleCollection,
     Spin,
-    _compute_isospin_projection,
     create_antiparticle,
     create_particle,
 )
@@ -316,52 +315,6 @@ class TestSpin:
     def test_exceptions(self, magnitude, projection):
         with pytest.raises(ValueError):
             print(Spin(magnitude, projection))
-
-
-@pytest.mark.parametrize(
-    "state",
-    [
-        Particle(
-            name="p1",
-            pid=1,
-            spin=0.0,
-            mass=1,
-            charge=1,
-            isospin=Spin(1.0, 0.0),
-            strangeness=2,
-        ),
-        Particle(
-            name="p1",
-            pid=1,
-            spin=1.0,
-            mass=1,
-            charge=1,
-            isospin=Spin(1.5, 0.5),
-            charmness=1,
-        ),
-        Particle(
-            name="p1",
-            pid=1,
-            spin=0.5,
-            mass=1,
-            charge=1.5,  # type: ignore
-            isospin=Spin(1.0, 1.0),
-            baryon_number=1,
-        ),
-    ],
-)
-def test_compute_isospin_projection(state: Particle):
-    assert (
-        _compute_isospin_projection(
-            charge=state.charge,
-            baryon_number=state.baryon_number,
-            strangeness=state.strangeness,
-            charmness=state.charmness,
-            bottomness=state.bottomness,
-            topness=state.topness,
-        )
-        == state.isospin.projection  # type: ignore
-    )
 
 
 @pytest.mark.parametrize(

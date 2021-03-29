@@ -238,20 +238,6 @@ class Particle:  # pylint: disable=too-many-instance-attributes
 ParticleWithSpin = Tuple[Particle, float]
 
 
-def _compute_isospin_projection(  # pylint: disable=too-many-arguments
-    charge: float,
-    baryon_number: float,
-    strangeness: float,
-    charmness: float,
-    bottomness: float,
-    topness: float,
-) -> float:
-    """Compute isospin projection using the Gell-Mann–Nishijima formula."""
-    return charge - 0.5 * (
-        baryon_number + strangeness + charmness + bottomness + topness
-    )
-
-
 class ParticleCollection(abc.MutableSet):
     """Searchable collection of immutable `.Particle` instances."""
 
@@ -649,13 +635,8 @@ def __isospin_projection_from_pdg(pdg_particle: PdgDatabase) -> float:
             pdg_particle
         )
         baryon_number = __compute_baryonnumber(pdg_particle)
-        projection = _compute_isospin_projection(
-            charge=pdg_particle.charge,
-            baryon_number=baryon_number,
-            strangeness=strangeness,
-            charmness=charmness,
-            bottomness=bottomness,
-            topness=topness,
+        projection = pdg_particle.charge - 0.5 * (
+            baryon_number + strangeness + charmness + bottomness + topness
         )
     else:
         projection = 0.0
