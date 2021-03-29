@@ -1,6 +1,6 @@
 """A collection of particle info containers.
 
-The `~expertsystem.reaction.particle` module is the starting point of the
+The `~.reaction.particle` module is the starting point of the
 `expertsystem`. Its main interface is the `ParticleCollection`, which is a
 collection of immutable `Particle` instances that are uniquely defined by their
 properties. As such, it can be used stand-alone as a database of quantum
@@ -15,8 +15,6 @@ import logging
 import re
 from collections import abc
 from difflib import get_close_matches
-from fractions import Fraction
-from functools import total_ordering
 from math import copysign
 from typing import (
     Any,
@@ -37,40 +35,12 @@ from attr.validators import instance_of
 from particle import Particle as PdgDatabase
 from particle.particle import enums
 
+from .quantum_numbers import Parity, _to_fraction
+
 try:
     from IPython.lib.pretty import PrettyPrinter
 except ImportError:
     PrettyPrinter = Any
-
-
-@total_ordering
-@attr.s(frozen=True, repr=False, eq=False, hash=True)
-class Parity:
-    value: int = attr.ib(validator=instance_of(int))
-
-    @value.validator
-    def __check_plusminus(  # type: ignore  # pylint: disable=no-self-use,unused-argument
-        self, _: attr.Attribute, value: int
-    ) -> None:
-        if value not in [-1, +1]:
-            raise ValueError(f"Parity can only be +1 or -1, not {value}")
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, Parity):
-            return self.value == other.value
-        return self.value == other
-
-    def __gt__(self, other: Any) -> bool:
-        return self.value > int(other)
-
-    def __int__(self) -> int:
-        return self.value
-
-    def __neg__(self) -> "Parity":
-        return Parity(-self.value)
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({_to_fraction(self.value)})"
 
 
 def _to_float(value: SupportsFloat) -> float:
@@ -735,10 +705,3 @@ def __create_parity(parity_enum: enums.Parity) -> Optional[Parity]:
     if parity_enum == getattr(parity_enum, "o", None):  # particle < 0.14
         return None
     return Parity(int(parity_enum))
-
-
-def _to_fraction(value: Union[float, int], render_plus: bool = False) -> str:
-    label = str(Fraction(value))
-    if render_plus and value > 0:
-        return f"+{label}"
-    return label

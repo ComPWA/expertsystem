@@ -7,11 +7,49 @@ as data containers but only as type hints. `.EdgeQuantumNumbers` and
 :mod:`.reaction.particle` and the :mod:`.reaction` module.
 """
 
-from typing import NewType, Optional, Union
+from fractions import Fraction
+from functools import total_ordering
+from typing import Any, NewType, Optional, Union
 
 import attr
+from attr.validators import instance_of
 
-from expertsystem.reaction.particle import Parity
+
+@total_ordering
+@attr.s(frozen=True, repr=False, eq=False, hash=True)
+class Parity:
+    value: int = attr.ib(validator=instance_of(int))
+
+    @value.validator
+    def __check_plusminus(  # type: ignore  # pylint: disable=no-self-use,unused-argument
+        self, _: attr.Attribute, value: int
+    ) -> None:
+        if value not in [-1, +1]:
+            raise ValueError(f"Parity can only be +1 or -1, not {value}")
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Parity):
+            return self.value == other.value
+        return self.value == other
+
+    def __gt__(self, other: Any) -> bool:
+        return self.value > int(other)
+
+    def __int__(self) -> int:
+        return self.value
+
+    def __neg__(self) -> "Parity":
+        return Parity(-self.value)
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({_to_fraction(self.value)})"
+
+
+def _to_fraction(value: Union[float, int], render_plus: bool = False) -> str:
+    label = str(Fraction(value))
+    if render_plus and value > 0:
+        return f"+{label}"
+    return label
 
 
 @attr.s(frozen=True, init=False)
