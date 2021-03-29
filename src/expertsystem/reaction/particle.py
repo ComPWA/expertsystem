@@ -243,6 +243,9 @@ class Particle:  # pylint: disable=too-many-instance-attributes
             p.text(")")
 
 
+ParticleWithSpin = Tuple[Particle, float]
+
+
 class GellmannNishijima:
     r"""Collection of conversion methods using Gell-Mann–Nishijima.
 

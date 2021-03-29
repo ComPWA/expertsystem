@@ -29,7 +29,8 @@ import attr
 
 from expertsystem.reaction.particle import Particle, ParticleCollection
 
-from .quantum_numbers import InteractionProperties, ParticleWithSpin
+from .particle import ParticleWithSpin
+from .quantum_numbers import InteractionProperties
 from .topology import StateTransitionGraph, Topology, get_originating_node_list
 
 StateWithSpins = Tuple[str, Sequence[float]]

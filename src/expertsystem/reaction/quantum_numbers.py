@@ -7,13 +7,11 @@ as data containers but only as type hints. `.EdgeQuantumNumbers` and
 :mod:`.reaction.particle` and the :mod:`.reaction` module.
 """
 
-from typing import NewType, Optional, Tuple, Union
+from typing import NewType, Optional, Union
 
 import attr
 
-from expertsystem.reaction.particle import Parity, Particle
-
-ParticleWithSpin = Tuple[Particle, float]
+from expertsystem.reaction.particle import Parity
 
 
 @attr.s(frozen=True, init=False)
