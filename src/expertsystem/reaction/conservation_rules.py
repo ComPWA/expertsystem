@@ -47,13 +47,12 @@ defined to provide type checks on `.parity_conservation_helicity`.
 """
 
 from copy import deepcopy
-from decimal import Decimal
 from functools import reduce
-from typing import Any, Callable, Generator, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, List, Optional, Set, Tuple, Union
 
 import attr
 
-from .quantum_numbers import EdgeQuantumNumbers, NodeQuantumNumbers
+from .quantum_numbers import EdgeQuantumNumbers, NodeQuantumNumbers, arange
 
 try:
     from typing import Protocol
@@ -613,15 +612,6 @@ def __spin_couplings(spin1: _Spin, spin2: _Spin) -> Set[_Spin]:
             spin1, spin2, _Spin(x, sum_proj)
         )
     )
-
-
-def arange(
-    x_1: float, x_2: float, delta: float
-) -> Generator[float, None, None]:
-    current = Decimal(x_1)
-    while current < x_2:
-        yield float(current)
-        current += Decimal(delta)
 
 
 @attr.s

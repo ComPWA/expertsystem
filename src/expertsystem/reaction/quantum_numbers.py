@@ -7,9 +7,10 @@ as data containers but only as type hints. `.EdgeQuantumNumbers` and
 :mod:`.reaction.particle` and the :mod:`.reaction` module.
 """
 
+from decimal import Decimal
 from fractions import Fraction
 from functools import total_ordering
-from typing import Any, NewType, Optional, Union
+from typing import Any, Generator, NewType, Optional, Union
 
 import attr
 from attr.validators import instance_of
@@ -178,3 +179,12 @@ class InteractionProperties:
     parity_prefactor: Optional[float] = attr.ib(
         default=None, converter=_to_optional_float
     )
+
+
+def arange(
+    x_1: float, x_2: float, delta: float
+) -> Generator[float, None, None]:
+    current = Decimal(x_1)
+    while current < x_2:
+        yield float(current)
+        current += Decimal(delta)
