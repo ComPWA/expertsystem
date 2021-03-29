@@ -166,7 +166,7 @@ class Particle:  # pylint: disable=too-many-instance-attributes
     )
 
     def __attrs_post_init__(self) -> None:
-        if not gellmann_nishijima(
+        if self.isospin is not None and not gellmann_nishijima(
             GellMannNishijimaInput(
                 charge=EdgeQuantumNumbers.charge(self.charge),
                 isospin_proj=EdgeQuantumNumbers.isospin_projection(
