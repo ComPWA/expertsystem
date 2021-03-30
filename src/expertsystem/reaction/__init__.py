@@ -250,6 +250,23 @@ class ProblemSet:
     initial_facts: InitialFacts = attr.ib()
     solving_settings: GraphSettings = attr.ib()
 
+    def to_qn_problem_set(self) -> QNProblemSet:
+        node_props = {
+            k: create_node_properties(v)
+            for k, v in self.initial_facts.node_props.items()
+        }
+        edge_props = {
+            k: create_edge_properties(v[0], v[1])
+            for k, v in self.initial_facts.edge_props.items()
+        }
+        return QNProblemSet(
+            topology=self.topology,
+            initial_facts=GraphElementProperties(
+                node_props=node_props, edge_props=edge_props
+            ),
+            solving_settings=self.solving_settings,
+        )
+
 
 def _group_by_strength(
     problem_sets: List[ProblemSet],
@@ -597,7 +614,7 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
             logging.info(f"{len(problems)} entries in this group")
             logging.info(f"running with {self.number_of_threads} threads...")
 
-            qn_problems = [_convert_to_qn_problem_set(x) for x in problems]
+            qn_problems = [x.to_qn_problem_set() for x in problems]
 
             # Because of pickling problems of Generic classes (in this case
             # StateTransitionGraph), multithreaded code has to work with
@@ -726,27 +743,6 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
         )
 
 
-def _convert_to_qn_problem_set(
-    problem_set: ProblemSet,
-) -> QNProblemSet:
-    node_props = {
-        k: create_node_properties(v)
-        for k, v in problem_set.initial_facts.node_props.items()
-    }
-    edge_props = {
-        k: create_edge_properties(v[0], v[1])
-        for k, v in problem_set.initial_facts.edge_props.items()
-    }
-
-    return QNProblemSet(
-        topology=problem_set.topology,
-        initial_facts=GraphElementProperties(
-            node_props=node_props, edge_props=edge_props
-        ),
-        solving_settings=problem_set.solving_settings,
-    )
-
-
 def check_reaction_violations(
     initial_state: Union[StateDefinition, Sequence[StateDefinition]],
     final_state: Sequence[StateDefinition],
@@ -783,24 +779,21 @@ def check_reaction_violations(
         node_rules: Dict[int, Set[Rule]],
         edge_rules: Dict[int, Set[GraphElementRule]],
     ) -> QNResult:
-        return validate_full_solution(
-            _convert_to_qn_problem_set(
-                ProblemSet(
-                    topology=topology,
-                    initial_facts=facts,
-                    solving_settings=GraphSettings(
-                        node_settings={
-                            i: NodeSettings(conservation_rules=rules)
-                            for i, rules in node_rules.items()
-                        },
-                        edge_settings={
-                            i: EdgeSettings(conservation_rules=rules)
-                            for i, rules in edge_rules.items()
-                        },
-                    ),
-                )
-            )
+        problem_set = ProblemSet(
+            topology=topology,
+            initial_facts=facts,
+            solving_settings=GraphSettings(
+                node_settings={
+                    i: NodeSettings(conservation_rules=rules)
+                    for i, rules in node_rules.items()
+                },
+                edge_settings={
+                    i: EdgeSettings(conservation_rules=rules)
+                    for i, rules in edge_rules.items()
+                },
+            ),
         )
+        return validate_full_solution(problem_set.to_qn_problem_set())
 
     def check_pure_edge_rules() -> None:
         pure_edge_rules: Set[GraphElementRule] = {
