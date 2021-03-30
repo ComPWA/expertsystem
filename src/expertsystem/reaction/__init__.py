@@ -438,7 +438,13 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
     def create_problem_sets(self) -> Dict[float, List[ProblemSet]]:
         problem_sets = []
         for topology in self.__topologies:
-            for initial_facts in self.__create_initial_facts(topology):
+            for initial_facts in create_initial_facts(
+                topology=topology,
+                particles=self.__particles,
+                initial_state=self.initial_state,
+                final_state=self.final_state,
+                final_state_groupings=self.final_state_groupings,
+            ):
                 problem_sets.extend(
                     [
                         ProblemSet(
@@ -453,18 +459,6 @@ class StateTransitionManager:  # pylint: disable=too-many-instance-attributes
                 )
         # create groups of settings ordered by "probability"
         return _group_by_strength(problem_sets)
-
-    def __create_initial_facts(self, topology: Topology) -> List[InitialFacts]:
-        initial_facts = create_initial_facts(
-            topology=topology,
-            particles=self.__particles,
-            initial_state=self.initial_state,
-            final_state=self.final_state,
-            final_state_groupings=self.final_state_groupings,
-        )
-
-        logging.info(f"initialized {len(initial_facts)} graphs!")
-        return initial_facts
 
     def __determine_graph_settings(
         self, topology: Topology, initial_facts: InitialFacts
