@@ -7,10 +7,10 @@ from expertsystem.reaction.conservation_rules import (
     CParityNodeInput,
     c_parity_conservation,
 )
-from expertsystem.reaction.particle import Parity
 from expertsystem.reaction.quantum_numbers import (
     EdgeQuantumNumbers,
     NodeQuantumNumbers,
+    Parity,
 )
 
 # Currently need to cast to the proper Edge/NodeQuantumNumber type, see

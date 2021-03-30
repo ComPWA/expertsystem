@@ -4,8 +4,7 @@ from expertsystem.reaction.conservation_rules import (
     IdenticalParticleSymmetryOutEdgeInput,
     identical_particle_symmetrization,
 )
-from expertsystem.reaction.particle import Parity
-from expertsystem.reaction.quantum_numbers import EdgeQuantumNumbers
+from expertsystem.reaction.quantum_numbers import EdgeQuantumNumbers, Parity
 
 # Currently need to cast to the proper Edge/NodeQuantumNumber type, see
 # https://github.com/ComPWA/expertsystem/issues/255
