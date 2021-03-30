@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 """Collection of quantum number conservation rules for particle reactions.
 
 This module is the place where the 'expert' defines the rules that verify
@@ -54,7 +53,9 @@ from typing import Any, Callable, List, Optional, Set, Tuple, Union
 import attr
 from attr.converters import optional
 
-from .quantum_numbers import EdgeQuantumNumbers, NodeQuantumNumbers, arange
+from .quantum_numbers import EdgeQuantumNumbers as EdgeQN
+from .quantum_numbers import NodeQuantumNumbers as NodeQN
+from .quantum_numbers import arange
 
 try:
     from typing import Protocol
@@ -131,50 +132,50 @@ def additive_quantum_number_rule(
     return decorator
 
 
-@additive_quantum_number_rule(EdgeQuantumNumbers.charge)
+@additive_quantum_number_rule(EdgeQN.charge)
 class ChargeConservation(EdgeQNConservationRule):
     pass
 
 
-@additive_quantum_number_rule(EdgeQuantumNumbers.baryon_number)
+@additive_quantum_number_rule(EdgeQN.baryon_number)
 class BaryonNumberConservation(EdgeQNConservationRule):
     pass
 
 
-@additive_quantum_number_rule(EdgeQuantumNumbers.electron_lepton_number)
+@additive_quantum_number_rule(EdgeQN.electron_lepton_number)
 class ElectronLNConservation(EdgeQNConservationRule):
     pass
 
 
-@additive_quantum_number_rule(EdgeQuantumNumbers.muon_lepton_number)
+@additive_quantum_number_rule(EdgeQN.muon_lepton_number)
 class MuonLNConservation(EdgeQNConservationRule):
     pass
 
 
-@additive_quantum_number_rule(EdgeQuantumNumbers.tau_lepton_number)
+@additive_quantum_number_rule(EdgeQN.tau_lepton_number)
 class TauLNConservation(EdgeQNConservationRule):
     pass
 
 
-@additive_quantum_number_rule(EdgeQuantumNumbers.strangeness)
+@additive_quantum_number_rule(EdgeQN.strangeness)
 class StrangenessConservation(EdgeQNConservationRule):
     pass
 
 
-@additive_quantum_number_rule(EdgeQuantumNumbers.charmness)
+@additive_quantum_number_rule(EdgeQN.charmness)
 class CharmConservation(EdgeQNConservationRule):
     pass
 
 
-@additive_quantum_number_rule(EdgeQuantumNumbers.bottomness)
+@additive_quantum_number_rule(EdgeQN.bottomness)
 class BottomnessConservation(EdgeQNConservationRule):
     pass
 
 
 def parity_conservation(
-    ingoing_edge_qns: List[EdgeQuantumNumbers.parity],
-    outgoing_edge_qns: List[EdgeQuantumNumbers.parity],
-    l_mag: NodeQuantumNumbers.l_magnitude,
+    ingoing_edge_qns: List[EdgeQN.parity],
+    outgoing_edge_qns: List[EdgeQN.parity],
+    l_mag: NodeQN.l_magnitude,
 ) -> bool:
     r"""Implement :math:`P_{in} = P_{out} \cdot (-1)^L`."""
     if len(ingoing_edge_qns) == 1 and len(outgoing_edge_qns) == 2:
@@ -186,21 +187,17 @@ def parity_conservation(
 
 @attr.s(frozen=True)
 class HelicityParityEdgeInput:
-    parity: EdgeQuantumNumbers.parity = attr.ib(
-        converter=EdgeQuantumNumbers.parity
-    )
-    spin_mag: EdgeQuantumNumbers.spin_magnitude = attr.ib(
-        converter=EdgeQuantumNumbers.spin_magnitude
-    )
-    spin_proj: EdgeQuantumNumbers.spin_projection = attr.ib(
-        converter=EdgeQuantumNumbers.spin_projection
+    parity: EdgeQN.parity = attr.ib(converter=EdgeQN.parity)
+    spin_mag: EdgeQN.spin_magnitude = attr.ib(converter=EdgeQN.spin_magnitude)
+    spin_proj: EdgeQN.spin_projection = attr.ib(
+        converter=EdgeQN.spin_projection
     )
 
 
 def parity_conservation_helicity(
     ingoing_edge_qns: List[HelicityParityEdgeInput],
     outgoing_edge_qns: List[HelicityParityEdgeInput],
-    parity_prefactor: NodeQuantumNumbers.parity_prefactor,
+    parity_prefactor: NodeQN.parity_prefactor,
 ) -> bool:
     r"""Implements parity conservation for helicity formalism.
 
@@ -238,25 +235,17 @@ def parity_conservation_helicity(
 
 @attr.s(frozen=True)
 class CParityEdgeInput:
-    spin_mag: EdgeQuantumNumbers.spin_magnitude = attr.ib(
-        converter=EdgeQuantumNumbers.spin_magnitude
-    )
-    pid: EdgeQuantumNumbers.pid = attr.ib(
-        converter=EdgeQuantumNumbers.pid,
-    )
-    c_parity: Optional[EdgeQuantumNumbers.c_parity] = attr.ib(
-        converter=EdgeQuantumNumbers.c_parity, default=None
+    spin_mag: EdgeQN.spin_magnitude = attr.ib(converter=EdgeQN.spin_magnitude)
+    pid: EdgeQN.pid = attr.ib(converter=EdgeQN.pid)
+    c_parity: Optional[EdgeQN.c_parity] = attr.ib(
+        converter=EdgeQN.c_parity, default=None
     )
 
 
 @attr.s(frozen=True)
 class CParityNodeInput:
-    l_mag: NodeQuantumNumbers.l_magnitude = attr.ib(
-        converter=NodeQuantumNumbers.l_magnitude
-    )
-    s_mag: NodeQuantumNumbers.s_magnitude = attr.ib(
-        converter=NodeQuantumNumbers.s_magnitude
-    )
+    l_mag: NodeQN.l_magnitude = attr.ib(converter=NodeQN.l_magnitude)
+    s_mag: NodeQN.s_magnitude = attr.ib(converter=NodeQN.s_magnitude)
 
 
 def c_parity_conservation(
@@ -308,26 +297,20 @@ def c_parity_conservation(
 
 @attr.s(frozen=True)
 class GParityEdgeInput:
-    isospin: EdgeQuantumNumbers.isospin_magnitude = attr.ib(
-        converter=EdgeQuantumNumbers.isospin_magnitude
+    isospin: EdgeQN.isospin_magnitude = attr.ib(
+        converter=EdgeQN.isospin_magnitude
     )
-    spin_mag: EdgeQuantumNumbers.spin_magnitude = attr.ib(
-        converter=EdgeQuantumNumbers.spin_magnitude
-    )
-    pid: EdgeQuantumNumbers.pid = attr.ib(converter=EdgeQuantumNumbers.pid)
-    g_parity: Optional[EdgeQuantumNumbers.g_parity] = attr.ib(
-        converter=EdgeQuantumNumbers.g_parity, default=None
+    spin_mag: EdgeQN.spin_magnitude = attr.ib(converter=EdgeQN.spin_magnitude)
+    pid: EdgeQN.pid = attr.ib(converter=EdgeQN.pid)
+    g_parity: Optional[EdgeQN.g_parity] = attr.ib(
+        converter=EdgeQN.g_parity, default=None
     )
 
 
 @attr.s(frozen=True)
 class GParityNodeInput:
-    l_mag: NodeQuantumNumbers.l_magnitude = attr.ib(
-        converter=NodeQuantumNumbers.l_magnitude
-    )
-    s_mag: NodeQuantumNumbers.s_magnitude = attr.ib(
-        converter=NodeQuantumNumbers.s_magnitude
-    )
+    l_mag: NodeQN.l_magnitude = attr.ib(converter=NodeQN.l_magnitude)
+    s_mag: NodeQN.s_magnitude = attr.ib(converter=NodeQN.s_magnitude)
 
 
 def g_parity_conservation(
@@ -341,7 +324,7 @@ def g_parity_conservation(
     """
 
     def check_multistate_g_parity(
-        isospin: EdgeQuantumNumbers.isospin_magnitude,
+        isospin: EdgeQN.isospin_magnitude,
         double_state_qns: Tuple[GParityEdgeInput, GParityEdgeInput],
     ) -> Optional[int]:
         if _is_particle_antiparticle_pair(
@@ -413,17 +396,17 @@ def g_parity_conservation(
 
 @attr.s(frozen=True)
 class IdenticalParticleSymmetryOutEdgeInput:
-    spin_magnitude: EdgeQuantumNumbers.spin_magnitude = attr.ib(
-        converter=EdgeQuantumNumbers.spin_magnitude
+    spin_magnitude: EdgeQN.spin_magnitude = attr.ib(
+        converter=EdgeQN.spin_magnitude
     )
-    spin_projection: EdgeQuantumNumbers.spin_projection = attr.ib(
-        converter=EdgeQuantumNumbers.spin_projection
+    spin_projection: EdgeQN.spin_projection = attr.ib(
+        converter=EdgeQN.spin_projection
     )
-    pid: EdgeQuantumNumbers.pid = attr.ib(converter=EdgeQuantumNumbers.pid)
+    pid: EdgeQN.pid = attr.ib(converter=EdgeQN.pid)
 
 
 def identical_particle_symmetrization(
-    ingoing_parities: List[EdgeQuantumNumbers.parity],
+    ingoing_parities: List[EdgeQN.parity],
     outgoing_edge_qns: List[IdenticalParticleSymmetryOutEdgeInput],
 ) -> bool:
     """Verifies multi particle state symmetrization for identical particles.
@@ -502,28 +485,16 @@ def _is_clebsch_gordan_coefficient_zero(
 
 @attr.s(frozen=True)
 class SpinNodeInput:
-    l_magnitude: NodeQuantumNumbers.l_magnitude = attr.ib(
-        converter=NodeQuantumNumbers.l_magnitude
-    )
-    l_projection: NodeQuantumNumbers.l_projection = attr.ib(
-        converter=NodeQuantumNumbers.l_projection
-    )
-    s_magnitude: NodeQuantumNumbers.s_magnitude = attr.ib(
-        converter=NodeQuantumNumbers.s_magnitude
-    )
-    s_projection: NodeQuantumNumbers.s_projection = attr.ib(
-        converter=NodeQuantumNumbers.s_projection
-    )
+    l_magnitude: NodeQN.l_magnitude = attr.ib(converter=NodeQN.l_magnitude)
+    l_projection: NodeQN.l_projection = attr.ib(converter=NodeQN.l_projection)
+    s_magnitude: NodeQN.s_magnitude = attr.ib(converter=NodeQN.s_magnitude)
+    s_projection: NodeQN.s_projection = attr.ib(converter=NodeQN.s_projection)
 
 
 @attr.s(frozen=True)
 class SpinMagnitudeNodeInput:
-    l_magnitude: NodeQuantumNumbers.l_magnitude = attr.ib(
-        converter=NodeQuantumNumbers.l_magnitude
-    )
-    s_magnitude: NodeQuantumNumbers.s_magnitude = attr.ib(
-        converter=NodeQuantumNumbers.s_magnitude
-    )
+    l_magnitude: NodeQN.l_magnitude = attr.ib(converter=NodeQN.l_magnitude)
+    s_magnitude: NodeQN.s_magnitude = attr.ib(converter=NodeQN.s_magnitude)
 
 
 def ls_spin_validity(spin_input: SpinNodeInput) -> bool:
@@ -660,11 +631,11 @@ def __spin_couplings(spin1: _Spin, spin2: _Spin) -> Set[_Spin]:
 
 @attr.s
 class IsoSpinEdgeInput:
-    isospin_mag: EdgeQuantumNumbers.isospin_magnitude = attr.ib(
-        converter=EdgeQuantumNumbers.isospin_magnitude
+    isospin_mag: EdgeQN.isospin_magnitude = attr.ib(
+        converter=EdgeQN.isospin_magnitude
     )
-    isospin_proj: EdgeQuantumNumbers.isospin_projection = attr.ib(
-        converter=EdgeQuantumNumbers.isospin_projection
+    isospin_proj: EdgeQN.isospin_projection = attr.ib(
+        converter=EdgeQN.isospin_projection
     )
 
 
@@ -714,11 +685,11 @@ def isospin_conservation(
 
 @attr.s
 class SpinEdgeInput:
-    spin_magnitude: EdgeQuantumNumbers.spin_magnitude = attr.ib(
-        converter=EdgeQuantumNumbers.spin_magnitude
+    spin_magnitude: EdgeQN.spin_magnitude = attr.ib(
+        converter=EdgeQN.spin_magnitude
     )
-    spin_projection: EdgeQuantumNumbers.spin_projection = attr.ib(
-        converter=EdgeQuantumNumbers.spin_projection
+    spin_projection: EdgeQN.spin_projection = attr.ib(
+        converter=EdgeQN.spin_projection
     )
 
 
@@ -870,8 +841,8 @@ def clebsch_gordan_helicity_to_canonical(
 
 
 def helicity_conservation(
-    ingoing_spin_mags: List[EdgeQuantumNumbers.spin_magnitude],
-    outgoing_helicities: List[EdgeQuantumNumbers.spin_projection],
+    ingoing_spin_mags: List[EdgeQN.spin_magnitude],
+    outgoing_helicities: List[EdgeQN.spin_projection],
 ) -> bool:
     r"""Implementation of helicity conservation.
 
@@ -887,44 +858,33 @@ def helicity_conservation(
 @attr.s(frozen=True)
 class GellMannNishijimaInput:
     # pylint: disable=too-many-instance-attributes
-    charge: EdgeQuantumNumbers.charge = attr.ib(
-        converter=EdgeQuantumNumbers.charge
+    charge: EdgeQN.charge = attr.ib(converter=EdgeQN.charge)
+    isospin_proj: Optional[EdgeQN.isospin_projection] = attr.ib(
+        converter=optional(EdgeQN.isospin_projection), default=None
     )
-    isospin_proj: Optional[EdgeQuantumNumbers.isospin_projection] = attr.ib(
-        converter=optional(EdgeQuantumNumbers.isospin_projection),
-        default=None,
+    strangeness: Optional[EdgeQN.strangeness] = attr.ib(
+        converter=optional(EdgeQN.strangeness), default=None
     )
-    strangeness: Optional[EdgeQuantumNumbers.strangeness] = attr.ib(
-        converter=optional(EdgeQuantumNumbers.strangeness),
-        default=None,
+    charmness: Optional[EdgeQN.charmness] = attr.ib(
+        converter=optional(EdgeQN.charmness), default=None
     )
-    charmness: Optional[EdgeQuantumNumbers.charmness] = attr.ib(
-        converter=optional(EdgeQuantumNumbers.charmness),
-        default=None,
+    bottomness: Optional[EdgeQN.bottomness] = attr.ib(
+        converter=optional(EdgeQN.bottomness), default=None
     )
-    bottomness: Optional[EdgeQuantumNumbers.bottomness] = attr.ib(
-        converter=optional(EdgeQuantumNumbers.bottomness),
-        default=None,
+    topness: Optional[EdgeQN.topness] = attr.ib(
+        converter=optional(EdgeQN.topness), default=None
     )
-    topness: Optional[EdgeQuantumNumbers.topness] = attr.ib(
-        converter=optional(EdgeQuantumNumbers.topness),
-        default=None,
+    baryon_number: Optional[EdgeQN.baryon_number] = attr.ib(
+        converter=optional(EdgeQN.baryon_number), default=None
     )
-    baryon_number: Optional[EdgeQuantumNumbers.baryon_number] = attr.ib(
-        converter=optional(EdgeQuantumNumbers.baryon_number),
-        default=None,
+    electron_ln: Optional[EdgeQN.electron_lepton_number] = attr.ib(
+        converter=optional(EdgeQN.electron_lepton_number), default=None
     )
-    electron_ln: Optional[EdgeQuantumNumbers.electron_lepton_number] = attr.ib(
-        converter=optional(EdgeQuantumNumbers.electron_lepton_number),
-        default=None,
+    muon_ln: Optional[EdgeQN.muon_lepton_number] = attr.ib(
+        converter=optional(EdgeQN.muon_lepton_number), default=None
     )
-    muon_ln: Optional[EdgeQuantumNumbers.muon_lepton_number] = attr.ib(
-        converter=optional(EdgeQuantumNumbers.muon_lepton_number),
-        default=None,
-    )
-    tau_ln: Optional[EdgeQuantumNumbers.tau_lepton_number] = attr.ib(
-        converter=optional(EdgeQuantumNumbers.tau_lepton_number),
-        default=None,
+    tau_ln: Optional[EdgeQN.tau_lepton_number] = attr.ib(
+        converter=optional(EdgeQN.tau_lepton_number), default=None
     )
 
 
@@ -978,9 +938,9 @@ def gellmann_nishijima(edge_qns: GellMannNishijimaInput) -> bool:
 
 @attr.s(frozen=True)
 class MassEdgeInput:
-    mass: EdgeQuantumNumbers.mass = attr.ib(converter=EdgeQuantumNumbers.mass)
-    width: Optional[EdgeQuantumNumbers.width] = attr.ib(
-        converter=EdgeQuantumNumbers.width, default=None
+    mass: EdgeQN.mass = attr.ib(converter=EdgeQN.mass)
+    width: Optional[EdgeQN.width] = attr.ib(
+        converter=EdgeQN.width, default=None
     )
 
 
