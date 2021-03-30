@@ -47,7 +47,7 @@ def test_initialize_graph(
         particles=particle_database,
         final_state_groupings=final_state_groupings,
     )
-    assert len(initial_facts) == 4
+    assert len(initial_facts) == 1
 
 
 @pytest.mark.parametrize(

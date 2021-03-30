@@ -43,7 +43,7 @@ from expertsystem.reaction.topology import Edge, StateTransitionGraph, Topology
             [("Y(4260)", [-1, 1])],
             [("D0", [0]), ("D~0", [0]), ("pi0", [0]), ("pi0", [0])],
             [[["D0", "pi0"], ["D~0", "pi0"]]],
-            2,
+            1,
         ),
         (
             [("Y(4260)", [1])],
@@ -55,7 +55,7 @@ from expertsystem.reaction.topology import Edge, StateTransitionGraph, Topology
             [("Y(4260)", [-1, 1])],
             [("D0", [0]), ("D~0", [0]), ("pi0", [0]), ("pi0", [0])],
             [],
-            18,
+            9,
         ),
         (
             [("Y(4260)", [1])],
@@ -67,19 +67,19 @@ from expertsystem.reaction.topology import Edge, StateTransitionGraph, Topology
             [("J/psi(1S)", [-1, 1])],
             [("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
             [["pi0", "pi0"]],
-            4,
+            1,
         ),
         (
             [("J/psi(1S)", [-1, 1])],
             [("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
             [["pi0", "gamma"]],
-            4,
+            1,
         ),
         (
             [("J/psi(1S)", [-1, 1])],
             [("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
             [],
-            8,
+            2,
         ),
         (
             [("J/psi(1S)", [-1, 1])],
@@ -466,7 +466,7 @@ def test_match_external_edges(particle_database, initial_state, final_state):
             [("J/psi(1S)", [-1, 1])],
             [("gamma", [-1, 1]), ("pi0", [0]), ("pi0", [0])],
             [],
-            12,
+            3,
         ),
         (
             [("J/psi(1S)", [1])],
