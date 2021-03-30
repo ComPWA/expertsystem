@@ -9,9 +9,13 @@ import numpy as np
 from attr.validators import instance_of
 
 from expertsystem.io import asdot
-from expertsystem.reaction import Topology, create_isobar_topologies
 from expertsystem.reaction.particle import Particle, ParticleWithSpin
-from expertsystem.reaction.topology import FrozenDict, StateTransitionGraph
+from expertsystem.reaction.topology import (
+    FrozenDict,
+    StateTransitionGraph,
+    Topology,
+    create_isobar_topologies,
+)
 
 from ._graph_info import assert_isobar_topology, determine_attached_final_state
 from .data import (
