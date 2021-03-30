@@ -119,8 +119,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r reqs/3.7/requirements-sty.txt
           pip install .
-          sudo npm install -g pyright@1.1.99
-        # https://github.com/ComPWA/expertsystem/issues/437
+          sudo npm install -g pyright
       - name: Perform style checks
         run: pre-commit run -a
       - name: Run pyright
