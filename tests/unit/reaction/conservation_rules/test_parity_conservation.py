@@ -7,11 +7,7 @@ from expertsystem.reaction.conservation_rules import (
     parity_conservation,
     parity_conservation_helicity,
 )
-from expertsystem.reaction.quantum_numbers import (
-    EdgeQuantumNumbers,
-    NodeQuantumNumbers,
-    Parity,
-)
+from expertsystem.reaction.quantum_numbers import NodeQuantumNumbers, Parity
 
 # Currently need to cast to the proper Edge/NodeQuantumNumber type, see
 # https://github.com/ComPWA/expertsystem/issues/255
@@ -22,11 +18,11 @@ from expertsystem.reaction.quantum_numbers import (
     [
         (
             [
-                EdgeQuantumNumbers.parity(Parity(parity_in)),
+                Parity(parity_in),
             ],
             [
-                EdgeQuantumNumbers.parity(Parity(parity_out1)),
-                EdgeQuantumNumbers.parity(Parity(1)),
+                Parity(parity_out1),
+                Parity(1),
             ],
             NodeQuantumNumbers.l_magnitude(l_mag),
             parity_in
@@ -48,21 +44,21 @@ def test_parity_conservation(in_parities, out_parities, l_mag, expected):
         (
             [
                 HelicityParityEdgeInput(
-                    parity=EdgeQuantumNumbers.parity(Parity(in_parity)),
-                    spin_mag=EdgeQuantumNumbers.spin_magnitude(in_spin_mag),
-                    spin_proj=EdgeQuantumNumbers.spin_projection(0),
+                    parity=Parity(in_parity),
+                    spin_mag=in_spin_mag,
+                    spin_proj=0,
                 )
             ],
             [
                 HelicityParityEdgeInput(
-                    parity=EdgeQuantumNumbers.parity(Parity(out_parity1)),
-                    spin_mag=EdgeQuantumNumbers.spin_magnitude(1),
-                    spin_proj=EdgeQuantumNumbers.spin_projection(-1),
+                    parity=Parity(out_parity1),
+                    spin_mag=1,
+                    spin_proj=-1,
                 ),
                 HelicityParityEdgeInput(
-                    parity=EdgeQuantumNumbers.parity(Parity(out_parity2)),
-                    spin_mag=EdgeQuantumNumbers.spin_magnitude(1),
-                    spin_proj=EdgeQuantumNumbers.spin_projection(-1),
+                    parity=Parity(out_parity2),
+                    spin_mag=1,
+                    spin_proj=-1,
                 ),
             ],
             NodeQuantumNumbers.parity_prefactor(1),
@@ -89,21 +85,21 @@ def test_parity_conservation_helicity_prefactor(
         (
             [
                 HelicityParityEdgeInput(
-                    parity=EdgeQuantumNumbers.parity(Parity(in_parity)),
-                    spin_mag=EdgeQuantumNumbers.spin_magnitude(in_spin_mag),
-                    spin_proj=EdgeQuantumNumbers.spin_projection(0),
+                    parity=Parity(in_parity),
+                    spin_mag=in_spin_mag,
+                    spin_proj=0,
                 )
             ],
             [
                 HelicityParityEdgeInput(
-                    parity=EdgeQuantumNumbers.parity(Parity(1)),
-                    spin_mag=EdgeQuantumNumbers.spin_magnitude(1),
-                    spin_proj=EdgeQuantumNumbers.spin_projection(0),
+                    parity=Parity(1),
+                    spin_mag=1,
+                    spin_proj=0,
                 ),
                 HelicityParityEdgeInput(
-                    parity=EdgeQuantumNumbers.parity(Parity(1)),
-                    spin_mag=EdgeQuantumNumbers.spin_magnitude(1),
-                    spin_proj=EdgeQuantumNumbers.spin_projection(0),
+                    parity=Parity(1),
+                    spin_mag=1,
+                    spin_proj=0,
                 ),
             ],
             NodeQuantumNumbers.parity_prefactor(parity_prefactor),
