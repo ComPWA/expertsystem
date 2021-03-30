@@ -169,15 +169,17 @@ class Particle:  # pylint: disable=too-many-instance-attributes
         if self.isospin is not None and not gellmann_nishijima(
             GellMannNishijimaInput(
                 charge=self.charge,
-                isospin_proj=self.isospin.projection if self.isospin else None,
+                isospin_projection=self.isospin.projection
+                if self.isospin
+                else None,
                 strangeness=self.strangeness,
                 charmness=self.charmness,
                 bottomness=self.bottomness,
                 topness=self.topness,
                 baryon_number=self.baryon_number,
-                electron_ln=self.electron_lepton_number,
-                muon_ln=self.muon_lepton_number,
-                tau_ln=self.tau_lepton_number,
+                electron_lepton_number=self.electron_lepton_number,
+                muon_lepton_number=self.muon_lepton_number,
+                tau_lepton_number=self.tau_lepton_number,
             )
         ):
             raise ValueError(

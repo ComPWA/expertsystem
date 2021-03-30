@@ -17,7 +17,7 @@ from expertsystem.reaction.conservation_rules import (
         (
             GellMannNishijimaInput(
                 charge=charge,
-                isospin_proj=isospin_z,
+                isospin_projection=isospin_z,
                 baryon_number=1,
             ),
             charge == isospin_z + 0.5,
@@ -28,7 +28,7 @@ from expertsystem.reaction.conservation_rules import (
         (
             GellMannNishijimaInput(
                 charge=charge,
-                isospin_proj=isospin_z,
+                isospin_projection=isospin_z,
                 baryon_number=1,
                 strangeness=strangeness,
             ),
