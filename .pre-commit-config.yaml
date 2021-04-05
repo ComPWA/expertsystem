@@ -32,7 +32,9 @@ repos:
     rev: 0.0.2
     hooks:
       - id: fix-first-nbcell
-        args: [--replace]
+        args:
+          - --colab
+          - --replace
         exclude: >
           (?x)^(
             docs/adr/.*
