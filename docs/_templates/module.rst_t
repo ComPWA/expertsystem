@@ -1,6 +1,10 @@
 {%- if show_headings and not separate %}
 {{ basename.split(".")[-1] | e | heading }}
 
+.. deprecated:: 0.7.3
+
+    Use :doc:`QRules <qrules:index>` and :doc:`AmpForm <ampform:index>` instead
+
 .. code-block:: python
 
     import {{ basename }}

@@ -16,6 +16,14 @@ For an overview of upcoming releases and planned functionality, see
 ```
 ````
 
+:::{warning}
+
+The {doc}`PWA Expert System <index>` has been split up into
+{doc}`QRules <qrules:index>` and {doc}`AmpForm <ampform:index>`. Please use
+these packages instead!
+
+:::
+
 The two purposes of the Partial Wave Analysis Expert System are to:
 
 1. validate a particle reaction, based on given information. <br> E.g.: Can a
@@ -122,6 +130,8 @@ ADRs <adr>
 caption: Related projects
 hidden:
 ---
-TensorWaves <http://tensorwaves.readthedocs.io>
-PWA Pages <http://pwa.readthedocs.io>
+QRules <https://qrules.readthedocs.io>
+AmpForm <https://ampform.readthedocs.io>
+TensorWaves <https://tensorwaves.readthedocs.io>
+PWA Pages <https://pwa.readthedocs.io>
 ```

@@ -107,6 +107,7 @@
     ],
     "ignoreWords": [
         "adrs",
+        "ampform",
         "arange",
         "asdict",
         "asdot",
@@ -175,6 +176,7 @@
         "pyproject",
         "pyright",
         "pytestconfig",
+        "qrules",
         "reqs",
         "rightarrow",
         "risch",
