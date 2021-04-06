@@ -173,6 +173,7 @@ nitpick_ignore = [
 
 # Intersphinx settings
 intersphinx_mapping = {
+    "ampform": ("https://ampform.readthedocs.io/en/stable", None),
     "attrs": ("https://www.attrs.org/en/stable", None),
     "constraint": (
         "https://labix.org/doc/constraint/public",
@@ -190,11 +191,9 @@ intersphinx_mapping = {
     "pwa": ("https://pwa.readthedocs.io", None),
     "pycompwa": ("https://compwa.github.io", None),
     "python": ("https://docs.python.org/3", None),
+    "qrules": ("https://qrules.readthedocs.io/en/stable", None),
     "sympy": ("https://docs.sympy.org/latest", None),
-    "tensorwaves": (
-        "https://pwa.readthedocs.io/projects/tensorwaves/en/stable",
-        None,
-    ),
+    "tensorwaves": ("https://tensorwaves.readthedocs.io/en/stable", None),
     "tox": ("https://tox.readthedocs.io/en/stable", None),
 }
 

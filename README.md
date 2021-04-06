@@ -18,42 +18,9 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort)
 
+**The PWA Expert System has been split into
+[QRules](https://qrules.readthedocs.io) and
+[AmpForm](https://ampform.readthedocs.io). Use those two packages instead!**
+
 Visit [expertsystem.rtfd.io](https://pwa.readthedocs.io/projects/expertsystem)
 for an introduction to the Particle Wave Analysis Expert System!
-
-For an overview of **upcoming releases and planned functionality**, see
-[here](https://github.com/ComPWA/expertsystem/milestones?direction=asc&sort=title&state=open).
-
-## Available features
-
-- **Input**: Particle database
-  - [x] Source of truth: PDG
-  - [x] Predefined particle list file
-  - [x] Option to overwrite and append with custom particle definitions
-- **State transition graph**
-  - [x] Feynman graph like description of the reactions
-  - [x] Visualization of the decay topology
-- **Conservation rules**
-  - [x] Open-closed design
-  - [x] Large set of predefined rules
-    - [x] Spin/Angular momentum conservation
-    - [x] Quark and Lepton flavor conservation (incl. isospin)
-    - [x] Baryon number conservation
-    - [x] EM-charge conservation
-    - [x] Parity, C-Parity, G-Parity conservation
-    - [ ] CP-Parity conservation
-    - [x] Mass conservation
-  - [x] Predefined sets of conservation rules representing Strong, EM, Weak
-        interactions
-- **PWA formalisms (for amplitude model generation)**
-  - [x] Helicity formalism
-  - [x] Canonical formalism
-  - [ ] Tensor formalisms
-- **Amplitude model**: Convert the state transition graphs to an amplitude
-  model that is _mathematically expressed_ with [SymPy](https://docs.sympy.org)
-  and can be _converted to any backend_ (see
-  [`tensorwaves`](http://tensorwaves.rtfd.io)).
-
-## Contribute
-
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md)

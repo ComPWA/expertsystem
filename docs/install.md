@@ -1,5 +1,13 @@
 # Installation
 
+:::{warning}
+
+The {doc}`PWA Expert System <index>` has been split up into
+{doc}`QRules <qrules:index>` and {doc}`AmpForm <ampform:index>`. Please use
+these packages instead!
+
+:::
+
 The fastest way of installing this package is through PyPI:
 
 ```shell
