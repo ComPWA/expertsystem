@@ -139,7 +139,7 @@ def get_helicity_angle_label(
     """Generate labels that can be used to identify helicity angles.
 
     >>> from expertsystem.amplitude.kinematics import get_helicity_angle_label
-    >>> from expertsystem.reaction import create_isobar_topologies
+    >>> from expertsystem.reaction.topology import create_isobar_topologies
     >>> topologies = create_isobar_topologies(5)
     >>> topology = topologies[0]
     >>> for i in topology.intermediate_edge_ids | topology.outgoing_edge_ids:
