@@ -25,11 +25,21 @@ installed as follows:
 python3 -m pip install git+https://github.com/ComPWA/expertsystem@main
 ```
 
-In that case, however, we highly recommend using the more dynamic,
+In that case, however, we highly recommend using the more dynamic
 {ref}`'editable installation' <pwa:develop:Editable installation>` instead.
 This goes as follows:
 
-1. Get the source code (see {doc}`pwa:software/git`):
+:::{margin}
+
+```{seealso}
+
+{doc}`pwa:software/git`
+
+```
+
+:::
+
+1. Get the source code:
 
    ```shell
    git clone https://github.com/ComPWA/expertsystem.git
@@ -39,17 +49,34 @@ This goes as follows:
 2. **[Recommended]** Create a virtual environment (see
    {ref}`here <pwa:develop:Virtual environment>`).
 
-3. Install the project in
-   {ref}`'editable installation' <pwa:develop:Editable installation>`, as well
-   as {ref}`additional dependencies <pwa:develop:Additional dependencies>` for
+3. Install the project as an
+   {ref}`'editable installation' <pwa:develop:Editable installation>` and
+   install {ref}`additional packages <pwa:develop:Optional dependencies>` for
    the developer:
 
    ```shell
-   # pin dependencies first!
-   python3 -m pip install -r reqs/PYTHON_VERSION/requirements-dev.txt
-   python3 -m pip install -e .
+   python3 -m pip install -e .[dev]
    ```
 
-That's all! Have a look at the {doc}`/usage` page to try out the package, and
-see {doc}`pwa:develop` for tips on how to work with this 'editable' developer
-setup!
+   :::{dropdown} Pinning dependency versions
+
+   In order to install the _exact same versions_ of the dependencies with which
+   the framework has been tested, use the provided
+   [constraints files](https://pip.pypa.io/en/stable/user_guide/#constraints-files)
+   for the specific Python version `3.x` you are using:
+
+   ```shell
+   python3 -m pip install -c .constraints/py3.x.txt -e .[dev]
+   ```
+
+   ```{seealso}
+
+   {ref}`develop:Pinning dependency versions`
+
+   ```
+
+   :::
+
+That's all! Have a look at the {doc}`/usage` page to try out the package. You
+can also have a look at the {doc}`pwa:develop` page for tips on how to work
+with this 'editable' developer setup!

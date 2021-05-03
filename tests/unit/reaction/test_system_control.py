@@ -31,7 +31,12 @@ from expertsystem.reaction.topology import Edge, StateTransitionGraph, Topology
 
 
 @pytest.mark.parametrize(
-    "initial_state,final_state,final_state_groupings,result_graph_count",
+    (
+        "initial_state",
+        "final_state",
+        "final_state_groupings",
+        "result_graph_count",
+    ),
     [
         (
             [("Y(4260)", [-1])],
@@ -114,7 +119,7 @@ def test_external_edge_initialization(
 
 
 @pytest.mark.parametrize(
-    "particle_name, spin_projection, expected_properties",
+    ("particle_name", "spin_projection", "expected_properties"),
     [
         (
             "pi0",
@@ -244,7 +249,7 @@ def make_ls_test_graph_scrambled(
 
 class TestSolutionFilter:  # pylint: disable=no-self-use
     @pytest.mark.parametrize(
-        "ls_pairs, result",
+        ("ls_pairs", "result"),
         [
             ([(1, 0), (1, 1)], 2),
             ([(1, 0), (1, 0)], 1),
@@ -267,7 +272,7 @@ class TestSolutionFilter:  # pylint: disable=no-self-use
         assert len(results) == result
 
     @pytest.mark.parametrize(
-        "input_values,filter_parameters,result",
+        ("input_values", "filter_parameters", "result"),
         [
             (
                 [("foo", (1, 0)), ("foo", (1, 1))],
@@ -350,7 +355,7 @@ def _create_graph(
 
 
 @pytest.mark.parametrize(
-    "initial_state,final_state",
+    ("initial_state", "final_state"),
     [
         (
             [("Y(4260)", [-1])],
@@ -393,7 +398,7 @@ def test_edge_swap(particle_database, initial_state, final_state):
 
 
 @pytest.mark.parametrize(
-    "initial_state,final_state",
+    ("initial_state", "final_state"),
     [
         (
             [("Y(4260)", [-1])],
@@ -442,7 +447,12 @@ def test_match_external_edges(particle_database, initial_state, final_state):
 
 
 @pytest.mark.parametrize(
-    "initial_state,final_state,final_state_groupings,result_graph_count",
+    (
+        "initial_state",
+        "final_state",
+        "final_state_groupings",
+        "result_graph_count",
+    ),
     [
         (
             [("Y(4260)", [1])],

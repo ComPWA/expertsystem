@@ -235,7 +235,7 @@ def _get_particle_graphs(
 
     .. seealso:: :doc:`/usage/visualize`
     """
-    inventory: List[StateTransitionGraph[Particle]] = list()
+    inventory: List[StateTransitionGraph[Particle]] = []
     for transition in graphs:
         if any(
             transition.compare(
@@ -244,7 +244,7 @@ def _get_particle_graphs(
             for other in inventory
         ):
             continue
-        new_edge_props = dict()
+        new_edge_props = {}
         for edge_id in transition.topology.edges:
             edge_props = transition.get_edge_props(edge_id)
             if edge_props:
@@ -313,7 +313,7 @@ def _collapse_graphs(
         return True
 
     particle_graphs = _get_particle_graphs(graphs)
-    inventory: List[StateTransitionGraph[ParticleCollection]] = list()
+    inventory: List[StateTransitionGraph[ParticleCollection]] = []
     for graph in particle_graphs:
         append_to_inventory = True
         for merged_graph in inventory:

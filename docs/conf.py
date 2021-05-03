@@ -10,6 +10,7 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import shutil
 import subprocess
+import sys
 
 import sphobjinv as soi
 from pkg_resources import get_distribution
@@ -25,7 +26,10 @@ if os.path.exists(f"../src/{package}/version.py"):
     __release = get_distribution(package).version
     version = ".".join(__release.split(".")[:3])
 
-# -- Generate API skeleton ----------------------------------------------------
+# -- Generate API ------------------------------------------------------------
+sys.path.insert(0, os.path.abspath("."))
+import abbreviate_signature
+
 shutil.rmtree("api", ignore_errors=True)
 subprocess.call(
     " ".join(
@@ -110,6 +114,13 @@ exclude_patterns = [
 # General sphinx settings
 add_module_names = False
 autodoc_default_options = {
+    "exclude-members": ", ".join(
+        [
+            "default_assumptions",
+            "doit",
+            "evaluate",
+        ]
+    ),
     "members": True,
     "undoc-members": True,
     "show-inheritance": True,
@@ -117,16 +128,22 @@ autodoc_default_options = {
         [
             "__call__",
             "__eq__",
+            "__getitem__",
         ]
     ),
 }
+autodoc_insert_signature_linebreaks = False
 graphviz_output_format = "svg"
 html_copy_source = True  # needed for download notebook button
+html_css_files = []
+if autodoc_insert_signature_linebreaks:
+    html_css_files.append("linebreaks-api.css")
 html_favicon = "_static/favicon.ico"
 html_show_copyright = False
 html_show_sourcelink = False
 html_show_sphinx = False
 html_sourcelink_suffix = ""
+html_static_path = ["_static"]
 html_theme = "sphinx_book_theme"
 html_theme_options = {
     "repository_url": f"https://github.com/ComPWA/{repo_name}",
@@ -155,20 +172,7 @@ default_role = "py:obj"
 primary_domain = "py"
 nitpicky = True  # warn if cross-references are missing
 nitpick_ignore = [
-    ("py:class", "EdgeType"),
-    ("py:class", "NoneType"),
-    ("py:class", "StateTransitionGraph"),
-    ("py:class", "ValueType"),
-    ("py:class", "a set-like object providing a view on D's items"),
-    ("py:class", "a set-like object providing a view on D's keys"),
-    ("py:class", "an object providing a view on D's values"),
-    ("py:class", "numpy.typing._array_like._SupportsArray"),
-    ("py:class", "numpy.typing._dtype_like._DTypeDict"),
-    ("py:class", "numpy.typing._dtype_like._SupportsDType"),
     ("py:class", "typing_extensions.Protocol"),
-    ("py:obj", "expertsystem.amplitude.helicity.ValueType"),
-    ("py:obj", "expertsystem.reaction.topology._K"),
-    ("py:obj", "expertsystem.reaction.topology._V"),
 ]
 
 # Intersphinx settings
@@ -180,21 +184,16 @@ intersphinx_mapping = {
         "constraint.inv",
     ),
     "graphviz": ("https://graphviz.readthedocs.io/en/stable", None),
-    "jsonschema": (
-        "https://python-jsonschema.readthedocs.io/en/latest",
-        None,
-    ),
+    "jsonschema": ("https://python-jsonschema.readthedocs.io/en/latest", None),
     "matplotlib": ("https://matplotlib.org/stable/", None),
     "mypy": ("https://mypy.readthedocs.io/en/stable", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "pwa": ("https://pwa.readthedocs.io", None),
-    "pycompwa": ("https://compwa.github.io", None),
     "python": ("https://docs.python.org/3", None),
     "qrules": ("https://qrules.readthedocs.io/en/stable", None),
     "sympy": ("https://docs.sympy.org/latest", None),
     "tensorwaves": ("https://tensorwaves.readthedocs.io/en/stable", None),
-    "tox": ("https://tox.readthedocs.io/en/stable", None),
 }
 
 # Settings for autosectionlabel
@@ -205,6 +204,7 @@ bibtex_bibfiles = ["bibliography.bib"]
 suppress_warnings = [
     "myst.domains",
 ]
+bibtex_reference_style = "author_year_no_comma"
 
 # Settings for copybutton
 copybutton_prompt_is_regexp = True
@@ -257,11 +257,17 @@ thebe_config = {
 
 
 # Specify bibliography style
+import dataclasses
+from typing import Union
+
+import sphinxcontrib.bibtex.plugin
+from pybtex.database import Entry
 from pybtex.plugin import register_plugin
 from pybtex.richtext import Tag, Text
 from pybtex.style.formatting.unsrt import Style as UnsrtStyle
 from pybtex.style.template import (
     FieldIsMissing,
+    Node,
     _format_list,
     field,
     href,
@@ -269,6 +275,28 @@ from pybtex.style.template import (
     node,
     sentence,
     words,
+)
+from sphinxcontrib.bibtex.style.referencing import BracketStyle
+from sphinxcontrib.bibtex.style.referencing.author_year import (
+    AuthorYearReferenceStyle,
+)
+
+no_brackets = BracketStyle(
+    left="",
+    right="",
+)
+
+
+@dataclasses.dataclass
+class NoCommaReferenceStyle(AuthorYearReferenceStyle):
+    author_year_sep: Union["BaseText", str] = " "
+    bracket_parenthetical: BracketStyle = no_brackets
+
+
+sphinxcontrib.bibtex.plugin.register_plugin(
+    "sphinxcontrib.bibtex.style.referencing",
+    "author_year_no_comma",
+    NoCommaReferenceStyle,
 )
 
 
@@ -309,7 +337,7 @@ class MyStyle(UnsrtStyle):
     def __init__(self):
         super().__init__(abbreviate_names=True)
 
-    def format_names(self, role, as_sentence=True):
+    def format_names(self, role, as_sentence=True) -> Node:
         formatted_names = names(
             role, sep=", ", sep2=" and ", last_sep=", and "
         )
@@ -318,7 +346,14 @@ class MyStyle(UnsrtStyle):
         else:
             return formatted_names
 
-    def format_url(self, e):
+    def format_eprint(self, e):
+        if "doi" in e.fields:
+            return ""
+        return super().format_eprint(e)
+
+    def format_url(self, e: Entry) -> Node:
+        if "doi" in e.fields or "eprint" in e.fields:
+            return ""
         return words[
             href[
                 field("url", raw=True),
@@ -326,7 +361,7 @@ class MyStyle(UnsrtStyle):
             ]
         ]
 
-    def format_isbn(self, e):
+    def format_isbn(self, e: Entry) -> Node:
         return href[
             join[
                 "https://isbnsearch.org/isbn/",

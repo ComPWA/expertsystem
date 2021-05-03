@@ -15,9 +15,6 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.wordWrap": "off"
   },
-  "[pip-requirements]": {
-    "editor.wordWrap": "off"
-  },
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
@@ -26,7 +23,6 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.customFolderDictionaries": ["cspell.json"],
   "cSpell.enabled": true,
   "coverage-gutters.coverageFileNames": ["coverage.xml"],
   "coverage-gutters.coverageReportFileName": "**/htmlcov/index.html",
@@ -69,8 +65,8 @@
   "rewrap.wrappingColumn": 79,
   "search.exclude": {
     "**/tests/**/__init__.py": true,
-    "*/tox.ini": true,
-    "reqs/3.*/*.txt": true
+    "*/.pydocstyle": true,
+    ".constraints/*.txt": true
   },
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,

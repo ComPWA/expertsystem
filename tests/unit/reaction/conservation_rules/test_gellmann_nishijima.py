@@ -12,7 +12,7 @@ from expertsystem.reaction.conservation_rules import (
 
 
 @pytest.mark.parametrize(
-    "particle, expected",
+    ("particle", "expected"),
     [
         (
             GellMannNishijimaInput(

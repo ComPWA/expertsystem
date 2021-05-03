@@ -14,7 +14,7 @@ from expertsystem.reaction.quantum_numbers import Parity
 
 
 @pytest.mark.parametrize(
-    "rule_input, expected",
+    ("rule_input", "expected"),
     [
         (
             (
@@ -61,7 +61,7 @@ def test_c_parity_all_defined(rule_input, expected):
 
 
 @pytest.mark.parametrize(
-    "rule_input, expected",
+    ("rule_input", "expected"),
     [
         (
             (
@@ -86,7 +86,7 @@ def test_c_parity_multiparticle_boson(rule_input, expected):
 
 
 @pytest.mark.parametrize(
-    "rule_input, expected",
+    ("rule_input", "expected"),
     [
         (
             (

@@ -19,11 +19,11 @@ from expertsystem.reaction.quantum_numbers import (
     NodeQuantumNumbers,
 )
 
-RULE_INPUT_CLASSES = set(
+RULE_INPUT_CLASSES = {
     getattr(conservation_rules, name)
     for name in dir(conservation_rules)
     if name.endswith("Input")
-)
+}
 
 
 def test_protocol_compliance():

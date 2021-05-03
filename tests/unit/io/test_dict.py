@@ -12,7 +12,7 @@ def test_not_implemented_errors(
         io.load(__file__)
     with pytest.raises(NotImplementedError):
         io.write(particle_selection, output_dir + "test.py")
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match="No file extension in file"):
         io.write(particle_selection, output_dir + "no_file_extension")
     with pytest.raises(NotImplementedError):
         io.write(666, output_dir + "wont_work_anyway.yml")

@@ -31,8 +31,8 @@ def implement_expr(
 
     Implement a `~object.__new__` and `~sympy.core.basic.Basic.doit` method for
     a class that derives from `~sympy.core.expr.Expr` (via
-    `UnevaluatedExpression`). It is important to derive from
-    `~UnevaluatedExpression.evaluate` method has to be implemented
+    `UnevaluatedExpression`). It is important to derive from :code:`evaluate()`
+    method has to be implemented
     """
 
     def decorator(decorated_class: Type[UnevaluatedExpression]) -> sp.Expr:

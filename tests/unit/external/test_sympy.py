@@ -1,5 +1,5 @@
 # cspell: disable srepr
-# pylint: disable=invalid-name,no-self-use
+# pylint: disable=invalid-name, no-member, no-self-use, not-callable
 
 import operator
 from copy import deepcopy
@@ -31,7 +31,6 @@ class TestSymbol:
         assert hash(x) == hash(y)
 
     def test_name(self):
-        # pylint: disable=no-member
         x = sp.Symbol("x; weird-spacing\t.,")
         f = sp.Function("  f.^")
         g = sp.Function("g")(x)

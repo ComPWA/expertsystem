@@ -18,9 +18,8 @@ repos:
       - id: end-of-file-fixer
         exclude: >
           (?x)^(
-            cspell.json|
             .*\.bib|
-            .*\.svg
+            \.cspell\.json
           )$
       - id: mixed-line-ending
       - id: name-tests-test
@@ -29,22 +28,34 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ComPWA/repo-maintenance
-    rev: 0.0.2
+    rev: 0.0.16
     hooks:
+      - id: check-dev-files
       - id: fix-first-nbcell
         args:
           - --colab
           - --replace
-        exclude: >
-          (?x)^(
-            docs/adr/.*
-          )$
       - id: fix-nbformat-version
+      - id: format-setup-cfg
+
+  - repo: https://github.com/asottile/blacken-docs
+    rev: v1.10.0
+    hooks:
+      - id: blacken-docs
 
   - repo: https://github.com/ComPWA/mirrors-cspell
-    rev: v5.3.11
+    rev: v5.3.12
     hooks:
       - id: cspell
+
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 2.3.5
+    hooks:
+      - id: editorconfig-checker
+        exclude: >
+          (?x)^(
+            .*\.py
+          )$
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.27.1
@@ -52,7 +63,7 @@ repos:
       - id: markdownlint
 
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 0.6.0
+    rev: 0.8.0
     hooks:
       - id: nbqa-black
         args: [--nbqa-mutate]
@@ -68,7 +79,7 @@ repos:
         language_version: 12.18.2 # prettier does not specify node correctly
 
   - repo: https://github.com/ComPWA/mirrors-pyright
-    rev: v1.1.126
+    rev: v1.1.136
     hooks:
       - id: pyright
 
@@ -104,13 +115,6 @@ repos:
         language: system
         types:
           - python
-
-      - id: nbstripout
-        name: nbstripout
-        entry: nbstripout
-        language: system
-        types:
-          - jupyter
 
       - id: pydocstyle
         name: pydocstyle

@@ -11,7 +11,7 @@ from expertsystem.reaction.quantum_numbers import Parity
 
 
 @pytest.mark.parametrize(
-    "in_edges, out_edges, expected",
+    ("in_edges", "out_edges", "expected"),
     [
         (
             [
@@ -39,7 +39,7 @@ def test_identical_boson_symmetrization(in_edges, out_edges, expected):
 
 
 @pytest.mark.parametrize(
-    "in_edges, out_edges, expected",
+    ("in_edges", "out_edges", "expected"),
     [
         (
             [
@@ -67,7 +67,7 @@ def test_identical_fermion_symmetrization(in_edges, out_edges, expected):
 
 
 @pytest.mark.parametrize(
-    "in_edges, out_edges, expected",
+    ("in_edges", "out_edges", "expected"),
     [
         (
             [
@@ -95,7 +95,7 @@ def test_nonidentical_particle_symmetrization(in_edges, out_edges, expected):
 
 
 @pytest.mark.parametrize(
-    "in_edges, out_edges, expected",
+    ("in_edges", "out_edges", "expected"),
     [
         (
             [

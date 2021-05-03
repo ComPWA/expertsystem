@@ -10,7 +10,7 @@ from expertsystem.reaction.conservation_rules import (
 
 
 @pytest.mark.parametrize(
-    "rule_input, expected",
+    ("rule_input", "expected"),
     [
         # we assume a two charged pion final state here
         # units are always in GeV
